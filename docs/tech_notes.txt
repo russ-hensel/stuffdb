@@ -1,0 +1,109 @@
+
+====Environment/Tools
+====Adding Documents
+====First
+====
+====
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+====First
+Reading the help and running the applicion will make this document make more sense.
+
+====DB Structure and Application Structure
+
+Each document type, Stuff, Photos, PhotoShows has some unique aspects but they follow
+a similar pattern which is reflected in the User Interface ( GUI ) and the database structure
+
+Lets take the stuff type of document as a "typical" case.  The stuff document is rendered in
+code by: StuffSubWindow which has the pretty much standard set of tabs
+( criteria list detail text Photo History )
+
+The database has a structure to match the GUI  For stuff the tables of interest are:
+
+    stuff
+        columns for an id and all of the data that maps one to one with an item
+        of stuff except the text
+
+    stuff_text
+        columns for an id and the text for a single item.  stuff.id and stuff_text.id
+        are equal for the same item
+
+    so far all tables have a primary integer key named id, and the code depends on this
+
+    the events for stuff are in a one to many relationship with the stuff table,
+    so they have their own primary key, id and a foreign key to stuff, stuff_id
+
+
+
+
+
+
+
+
+==== Standards
+
+see Photo win and tab
+    table primary key always id
+    self.id_field.text()
+
+    more std fields
+    many  have add_ts and edit_ts  -- is this a problem for text tables?
+
+    use standard names in all tabs and move as much as possible to ancestors
+
+    model for a tab is always tab_model or model_tab   self. see photo
+
+
+
+
+====Tech
+main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
+
+sub_windows are documents are QMdiSubWindow
+
+inherit   stuff_dt_tabbed_subwineos   -->  stuff_sub_window
+
+main window -> stuff_db_main_window
+
+stuff-sub_window.py
+QMdiSubWindow  -->
+
+
+====Adding Documents
+
+* create new tables           db_create.py     old   stuffdb_def.py
+* make entry in key_gen       table  under table name
+* add to document maker
+* copy template
+        class Stuff   --> class Photo
+        no this caused problems perhaps do manually  or make case sens stuff         --> photo
+
+        field names in:
+            window      function
+
+* add to menu in ...  StuffDbMainWindow
+* modify new template
+    * change table
+    * change list tab
+
+
+
+====Environment/Tools
+
+Linux Mint
+Python 10
+QT 5
+
+
+
+db
+
+
+id   key
+
+
+sql
+
+
+click or clicked   .... be consistent

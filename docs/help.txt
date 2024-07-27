@@ -1,0 +1,152 @@
+this is help for stuff_db_qt
+
+This is an application and framework for tracking of stuff where stuff can be any kind of stuff:
+
+	implemented or working on
+		help topics,
+			-- basically text around a topic
+
+		stuff
+			-- basically physical think to be kept track of
+
+		photos
+			-- typically images in files with some sort of graphic content
+
+		plants
+			-- things that grow
+
+		some interactions between the above are also managed:
+			-- ex: items of stuff may have one or more photos
+
+
+Gui and ....
+
+	Each category ( stuff, photo ... ) has its own window(s) using a multi document interface.
+    From one of these windows you can select any of the "document" of the type the
+    window is designed to manage.
+
+	Each window has its own set of tabs, typically (but with useful variations):
+
+		-- criteria:
+				criteria for selection, perhaps for a photo in the photo document
+
+		-- list
+				a list of items, say photos, that meet the criteria from the tab above
+
+		-- detail
+				detail on a particular item, selected from the list tab, the history tab, or
+                by creating a new item.
+
+                Some detail tab may have their own sub-tabs such as:
+                    events about the item
+                    photos or other graphics about the item.
+
+
+		-- text
+  				text, basically a document about the item.  Usually on its own tab to give it
+                pleanty of room.
+
+        -- Photo
+                for display of a single photo, typically selected on the Detai Tab
+
+		-- history
+				a list of items that have been displayed in the detail tab since
+				the document ( window ) was opened.  Click on a history item
+                and it will be selected on the detail tab.
+
+
+The stuff document interface in more detail, including its special features:
+
+        coming, I need to write some code first
+
+
+Menu -- as much plan as implementation
+
+	File
+		Save current document
+		Save all documents
+		Exit the Application
+
+    DocOps
+        -- operations on the open document with focus
+
+	Open
+		-- open windows on different topics
+
+
+	Configure
+		Edit Parameters
+		View/Edit Log
+
+		Some db operations for setup and testing
+
+
+
+
+
+	Windows  ( arrange windows, navigate between open windows )
+
+		Cascade
+		Tile
+		Layer
+		Split Left
+		Split Right
+
+		-----------------
+		{Open windows by name }
+
+
+
+	Help
+		This help and more coming
+		About Box
+
+
+ToolBar
+
+	Save current document
+	Go to prior item on list for current document
+    Go to next item on list for current document
+
+	Go to prior item on history for current document
+    Go to next item on history for current document
+
+
+Document, features and purpose
+
+    All ( most ) documents
+        search by criterr
+        list for results search
+        history of documents viewed
+        long text -- almost all
+        photos    -- most, with some variations
+
+    Help
+        Mostly text topics as notes for your reference
+
+    Photos
+        Photos with names - captions for the photos.
+        Photos can be associated with other items in the stystem like People or Stuff
+
+    People
+        Contact information....
+        Photos for them
+
+    Stuff
+        Meant for physical ( and usually dead ) stuff that you are tracking for some reaason.
+        Has photos and long text.
+        Also events.
+        There is also the idea that some stuff is a container for other stuff, so you can "find" or "store"
+        stuff
+
+    PhotoShows
+        some would call an album
+
+    Plant
+        Information on some kind of plant, like a tomato.
+        Photos and Long Text
+        Links to Planting
+
+    Planting
+        An instance of a plant, like a tomato I saw in my friends greenoutse
+        Links to Plant
