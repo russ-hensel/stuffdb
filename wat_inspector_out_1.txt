@@ -1,0 +1,190 @@
+ 
+info_about
+
+so it begins
+object is an instance of <class 'PyQt5.QtSql.QSqlRelationalTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlRelationalTableModel object at 0x7f92b55536e0><
+end of begin 
+object is an instance of <class 'PyQt5.QtSql.QSqlRelationalTableModel'>
+
+Custom_info for a QSqlRelationalTableModel
+    For the model 
+      model.rowCount() = 12 model.columnCount() = 12 
+    for model ix_row = 0 ix_col = 0 c_header = 'id'  field = 0  data = 10264
+    for model ix_row = 0 ix_col = 1 c_header = 'photo_id_old'  field = 1  data = 'rsh58705'
+    for model ix_row = 0 ix_col = 2 c_header = 'photo_show_id_old'  field = 2  data = 'rsh3168'
+    for model ix_row = 0 ix_col = 3 c_header = 'sequence'  field = 3  data = 1
+    for model ix_row = 0 ix_col = 4 c_header = 'photo_in_show_id_old'  field = 4  data = 'rsh10279'
+    for model ix_row = 0 ix_col = 5 c_header = 'camera'  field = 5  data = ''
+    for model ix_row = 0 ix_col = 6 c_header = 'file'  field = 6  data = 'dcp_0396.jpg'
+    for model ix_row = 0 ix_col = 7 c_header = 'photo_id'  field = 7  data = 6871
+    for model ix_row = 0 ix_col = 8 c_header = 'sub_dir'  field = 8  data = '01\\\\'
+    for model ix_row = 0 ix_col = 9 c_header = 'name'  field = 9  data = 'Birthday in the Barn'
+    for model ix_row = 0 ix_col = 10 c_header = 'photo_show_id'  field = 10  data = 10042
+    for model ix_row = 0 ix_col = 11 c_header = 'photo_in_show_id'  field = 11  data = 0
+    for model ix_row = 1 ix_col = 0 c_header = 'id'  field = 0  data = 10265
+    for model ix_row = 1 ix_col = 1 c_header = 'photo_id_old'  field = 1  data = 'rsh58703'
+    for model ix_row = 1 ix_col = 2 c_header = 'photo_show_id_old'  field = 2  data = 'rsh3168'
+    for model ix_row = 1 ix_col = 3 c_header = 'sequence'  field = 3  data = 2
+    for model ix_row = 1 ix_col = 4 c_header = 'photo_in_show_id_old'  field = 4  data = 'rsh10280'
+    for model ix_row = 1 ix_col = 5 c_header = 'camera'  field = 5  data = ''
+    for model ix_row = 1 ix_col = 6 c_header = 'file'  field = 6  data = 'dcp_0398.jpg'
+    for model ix_row = 1 ix_col = 7 c_header = 'photo_id'  field = 7  data = 6869
+    for model ix_row = 1 ix_col = 8 c_header = 'sub_dir'  field = 8  data = '01\\\\'
+    for model ix_row = 1 ix_col = 9 c_header = 'name'  field = 9  data = 'Birthday Party by the Barn'
+    for model ix_row = 1 ix_col = 10 c_header = 'photo_show_id'  field = 10  data = 10042
+    for model ix_row = 1 ix_col = 11 c_header = 'photo_in_show_id'  field = 11  data = 0
+    for model ix_row = 2 ix_col = 0 c_header = 'id'  field = 0  data = 10266
+    for model ix_row = 2 ix_col = 1 c_header = 'photo_id_old'  field = 1  data = 'rsh58702'
+    for model ix_row = 2 ix_col = 2 c_header = 'photo_show_id_old'  field = 2  data = 'rsh3168'
+    for model ix_row = 2 ix_col = 3 c_header = 'sequence'  field = 3  data = 3
+    for model ix_row = 2 ix_col = 4 c_header = 'photo_in_show_id_old'  field = 4  data = 'rsh10281'
+    for model ix_row = 2 ix_col = 5 c_header = 'camera'  field = 5  data = ''
+    for model ix_row = 2 ix_col = 6 c_header = 'file'  field = 6  data = 'dcp_0399.jpg'
+    for model ix_row = 2 ix_col = 7 c_header = 'photo_id'  field = 7  data = 6868
+    for model ix_row = 2 ix_col = 8 c_header = 'sub_dir'  field = 8  data = '01\\\\'
+    for model ix_row = 2 ix_col = 9 c_header = 'name'  field = 9  data = 'Birthday Party by the Barn'
+    for model ix_row = 2 ix_col = 10 c_header = 'photo_show_id'  field = 10  data = 10042
+    for model ix_row = 2 ix_col = 11 c_header = 'photo_in_show_id'  field = 11  data = 0
+    for model ix_row = 3 ix_col = 0 c_header = 'id'  field = 0  data = 10267
+    for model ix_row = 3 ix_col = 1 c_header = 'photo_id_old'  field = 1  data = 'rsh58704'
+    for model ix_row = 3 ix_col = 2 c_header = 'photo_show_id_old'  field = 2  data = 'rsh3168'
+    for model ix_row = 3 ix_col = 3 c_header = 'sequence'  field = 3  data = 4
+    for model ix_row = 3 ix_col = 4 c_header = 'photo_in_show_id_old'  field = 4  data = 'rsh10282'
+    for model ix_row = 3 ix_col = 5 c_header = 'camera'  field = 5  data = ''
+    for model ix_row = 3 ix_col = 6 c_header = 'file'  field = 6  data = 'dcp_0397.jpg'
+    for model ix_row = 3 ix_col = 7 c_header = 'photo_id'  field = 7  data = 6870
+    for model ix_row = 3 ix_col = 8 c_header = 'sub_dir'  field = 8  data = '01\\\\'
+    for model ix_row = 3 ix_col = 9 c_header = 'name'  field = 9  data = 'Birthday Party in the Barn'
+    for model ix_row = 3 ix_col = 10 c_header = 'photo_show_id'  field = 10  data = 10042
+    for model ix_row = 3 ix_col = 11 c_header = 'photo_in_show_id'  field = 11  data = 0
+    for model ix_row = 4 ix_col = 0 c_header = 'id'  field = 0  data = 10268
+    for model ix_row = 4 ix_col = 1 c_header = 'photo_id_old'  field = 1  data = 'rsh58701'
+    for model ix_row = 4 ix_col = 2 c_header = 'photo_show_id_old'  field = 2  data = 'rsh3168'
+    for model ix_row = 4 ix_col = 3 c_header = 'sequence'  field = 3  data = 5
+    for model ix_row = 4 ix_col = 4 c_header = 'photo_in_show_id_old'  field = 4  data = 'rsh10283'
+    for model ix_row = 4 ix_col = 5 c_header = 'camera'  field = 5  data = ''
+    for model ix_row = 4 ix_col = 6 c_header = 'file'  field = 6  data = 'dcp_0400.jpg'
+    for model ix_row = 4 ix_col = 7 c_header = 'photo_id'  field = 7  data = 6867
+    for model ix_row = 4 ix_col = 8 c_header = 'sub_dir'  field = 8  data = '01\\\\'
+    for model ix_row = 4 ix_col = 9 c_header = 'name'  field = 9  data = 'Birthday Party by the Barn'
+    for model ix_row = 4 ix_col = 10 c_header = 'photo_show_id'  field = 10  data = 10042
+    for model ix_row = 4 ix_col = 11 c_header = 'photo_in_show_id'  field = 11  data = 0
+    for model ix_row = 5 ix_col = 0 c_header = 'id'  field = 0  data = 10271
+    for model ix_row = 5 ix_col = 1 c_header = 'photo_id_old'  field = 1  data = 'rsh57316'
+    for model ix_row = 5 ix_col = 2 c_header = 'photo_show_id_old'  field = 2  data = 'rsh3168'
+    for model ix_row = 5 ix_col = 3 c_header = 'sequence'  field = 3  data = 8
+    for model ix_row = 5 ix_col = 4 c_header = 'photo_in_show_id_old'  field = 4  data = 'rsh10286'
+    for model ix_row = 5 ix_col = 5 c_header = 'camera'  field = 5  data = ''
+    for model ix_row = 5 ix_col = 6 c_header = 'file'  field = 6  data = 'june99_07.jpg'
+    for model ix_row = 5 ix_col = 7 c_header = 'photo_id'  field = 7  data = 5599
+    for model ix_row = 5 ix_col = 8 c_header = 'sub_dir'  field = 8  data = '99\\\\'
+    for model ix_row = 5 ix_col = 9 c_header = 'name'  field = 9  data = 'Farm -- The Barn -- just a bit of the tire tree'
+    for model ix_row = 5 ix_col = 10 c_header = 'photo_show_id'  field = 10  data = 10042
+    for model ix_row = 5 ix_col = 11 c_header = 'photo_in_show_id'  field = 11  data = 0
+    for model ix_row = 6 ix_col = 0 c_header = 'id'  field = 0  data = 10272
+    for model ix_row = 6 ix_col = 1 c_header = 'photo_id_old'  field = 1  data = 'rsh57001'
+    for model ix_row = 6 ix_col = 2 c_header = 'photo_show_id_old'  field = 2  data = 'rsh3168'
+    for model ix_row = 6 ix_col = 3 c_header = 'sequence'  field = 3  data = 9
+    for model ix_row = 6 ix_col = 4 c_header = 'photo_in_show_id_old'  field = 4  data = 'rsh10287'
+    for model ix_row = 6 ix_col = 5 c_header = 'camera'  field = 5  data = 'Bob and Cathy'
+    for model ix_row = 6 ix_col = 6 c_header = 'file'  field = 6  data = '9903_002.jpg'
+    for model ix_row = 6 ix_col = 7 c_header = 'photo_id'  field = 7  data = 5284
+    for model ix_row = 6 ix_col = 8 c_header = 'sub_dir'  field = 8  data = '99\\\\'
+    for model ix_row = 6 ix_col = 9 c_header = 'name'  field = 9  data = 'Karen and Russ Down by the Barn'
+    for model ix_row = 6 ix_col = 10 c_header = 'photo_show_id'  field = 10  data = 10042
+    for model ix_row = 6 ix_col = 11 c_header = 'photo_in_show_id'  field = 11  data = 0
+    for model ix_row = 7 ix_col = 0 c_header = 'id'  field = 0  data = 10273
+    for model ix_row = 7 ix_col = 1 c_header = 'photo_id_old'  field = 1  data = 'rsh57006'
+    for model ix_row = 7 ix_col = 2 c_header = 'photo_show_id_old'  field = 2  data = 'rsh3168'
+    for model ix_row = 7 ix_col = 3 c_header = 'sequence'  field = 3  data = 10
+    for model ix_row = 7 ix_col = 4 c_header = 'photo_in_show_id_old'  field = 4  data = 'rsh10288'
+    for model ix_row = 7 ix_col = 5 c_header = 'camera'  field = 5  data = 'Bob and Cathy'
+    for model ix_row = 7 ix_col = 6 c_header = 'file'  field = 6  data = '9903_007.jpg'
+    for model ix_row = 7 ix_col = 7 c_header = 'photo_id'  field = 7  data = 5289
+    for model ix_row = 7 ix_col = 8 c_header = 'sub_dir'  field = 8  data = '99\\\\'
+    for model ix_row = 7 ix_col = 9 c_header = 'name'  field = 9  data = 'Field and Barn'
+    for model ix_row = 7 ix_col = 10 c_header = 'photo_show_id'  field = 10  data = 10042
+    for model ix_row = 7 ix_col = 11 c_header = 'photo_in_show_id'  field = 11  data = 0
+    for model ix_row = 8 ix_col = 0 c_header = 'id'  field = 0  data = 10274
+    for model ix_row = 8 ix_col = 1 c_header = 'photo_id_old'  field = 1  data = 'rsh57002'
+    for model ix_row = 8 ix_col = 2 c_header = 'photo_show_id_old'  field = 2  data = 'rsh3168'
+    for model ix_row = 8 ix_col = 3 c_header = 'sequence'  field = 3  data = 11
+    for model ix_row = 8 ix_col = 4 c_header = 'photo_in_show_id_old'  field = 4  data = 'rsh10289'
+    for model ix_row = 8 ix_col = 5 c_header = 'camera'  field = 5  data = 'Bob and Cathy'
+    for model ix_row = 8 ix_col = 6 c_header = 'file'  field = 6  data = '9903_003.jpg'
+    for model ix_row = 8 ix_col = 7 c_header = 'photo_id'  field = 7  data = 5285
+    for model ix_row = 8 ix_col = 8 c_header = 'sub_dir'  field = 8  data = '99\\\\'
+    for model ix_row = 8 ix_col = 9 c_header = 'name'  field = 9  data = 'Field and Barn in Distance'
+    for model ix_row = 8 ix_col = 10 c_header = 'photo_show_id'  field = 10  data = 10042
+    for model ix_row = 8 ix_col = 11 c_header = 'photo_in_show_id'  field = 11  data = 0
+    for model ix_row = 9 ix_col = 0 c_header = 'id'  field = 0  data = 10275
+    for model ix_row = 9 ix_col = 1 c_header = 'photo_id_old'  field = 1  data = 'rsh57008'
+    for model ix_row = 9 ix_col = 2 c_header = 'photo_show_id_old'  field = 2  data = 'rsh3168'
+    for model ix_row = 9 ix_col = 3 c_header = 'sequence'  field = 3  data = 12
+    for model ix_row = 9 ix_col = 4 c_header = 'photo_in_show_id_old'  field = 4  data = 'rsh10290'
+    for model ix_row = 9 ix_col = 5 c_header = 'camera'  field = 5  data = 'Bob and Cathy'
+    for model ix_row = 9 ix_col = 6 c_header = 'file'  field = 6  data = '9903_009.jpg'
+    for model ix_row = 9 ix_col = 7 c_header = 'photo_id'  field = 7  data = 5291
+    for model ix_row = 9 ix_col = 8 c_header = 'sub_dir'  field = 8  data = '99\\\\'
+    for model ix_row = 9 ix_col = 9 c_header = 'name'  field = 9  data = 'Cathy with Barn Behind'
+    for model ix_row = 9 ix_col = 10 c_header = 'photo_show_id'  field = 10  data = 10042
+    for model ix_row = 9 ix_col = 11 c_header = 'photo_in_show_id'  field = 11  data = 0
+    
+    
+    for model ix_row = 10 ix_col = 0 c_header = 'id'  field = 0  data = 10276
+    for model ix_row = 10 ix_col = 1 c_header = 'photo_id_old'  field = 1  data = 'rsh57010'
+    for model ix_row = 10 ix_col = 2 c_header = 'photo_show_id_old'  field = 2  data = 'rsh3168'
+    for model ix_row = 10 ix_col = 3 c_header = 'sequence'  field = 3  data = 13
+    for model ix_row = 10 ix_col = 4 c_header = 'photo_in_show_id_old'  field = 4  data = 'rsh10291'
+    for model ix_row = 10 ix_col = 5 c_header = 'camera'  field = 5  data = 'Bob and Cathy'
+    for model ix_row = 10 ix_col = 6 c_header = 'file'  field = 6  data = '9903_011.jpg'
+    for model ix_row = 10 ix_col = 7 c_header = 'photo_id'  field = 7  data = 5293
+    for model ix_row = 10 ix_col = 8 c_header = 'sub_dir'  field = 8  data = '99\\\\'
+    for model ix_row = 10 ix_col = 9 c_header = 'name'  field = 9  data = 'Karen  and Russ at the Barn Entrance'
+    for model ix_row = 10 ix_col = 10 c_header = 'photo_show_id'  field = 10  data = 10042
+    for model ix_row = 10 ix_col = 11 c_header = 'photo_in_show_id'  field = 11  data = 0
+    
+    
+    
+    
+    for model ix_row = 11 ix_col = 0 c_header = 'id'  field = 0  data = 1015
+    for model ix_row = 11 ix_col = 1 c_header = 'photo_id_old'  field = 1  data = ''
+    for model ix_row = 11 ix_col = 2 c_header = 'photo_show_id_old'  field = 2  data = ''
+    for model ix_row = 11 ix_col = 3 c_header = 'sequence'  field = 3  data = 13
+    for model ix_row = 11 ix_col = 4 c_header = 'photo_in_show_id_old'  field = 4  data = ''
+    for model ix_row = 11 ix_col = 5 c_header = 'camera'  field = 5  data = ''
+    for model ix_row = 11 ix_col = 6 c_header = 'file'  field = 6  data = 'withdaddy.jpg'
+    for model ix_row = 11 ix_col = 7 c_header = 'photo_id'  field = 7  data = 1042
+    for model ix_row = 11 ix_col = 8 c_header = 'sub_dir'  field = 8  data = '04//'
+    for model ix_row = 11 ix_col = 9 c_header = 'name'  field = 9  data = 'this is the test'
+    for model ix_row = 11 ix_col = 10 c_header = 'photo_show_id'  field = 10  data = 10042
+    for model ix_row = 11 ix_col = 11 c_header = 'photo_in_show_id'  field = 11  data = 0
+    
+    
+    
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'photo_id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'photo_show_id_old' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sequence' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'photo_in_show_id_old' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'camera' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'file' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'photo_id' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'sub_dir' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'name' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'photo_show_id' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'photo_in_show_id' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'photo_id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'photo_show_id_old':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sequence':  new_record.indexOf( i_name ) = 3 
+    i_name = 'photo_in_show_id_old':  new_record.indexOf( i_name ) = 4 
+    i_name = 'camera':  new_record.indexOf( i_name ) = 5 
+    i_name = 'file':  new_record.indexOf( i_name ) = 6 
+    i_name = 'photo_id':  new_record.indexOf( i_name ) = 7 
+    i_name = 'sub_dir':  new_record.indexOf( i_name ) = 8 
+    i_name = 'name':  new_record.indexOf( i_name ) = 9 
+    i_name = 'photo_show_id':  new_record.indexOf( i_name ) = 10 
+    i_name = 'photo_in_show_id':  new_record.indexOf( i_name ) = 11 

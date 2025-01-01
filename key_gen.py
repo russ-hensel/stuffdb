@@ -12,40 +12,34 @@ if __name__ == "__main__":
     main.main()
 # --------------------
 
-# ---- QtSql
-from PyQt5.QtSql import (
-    QSqlDatabase,
-    QSqlTableModel,
-    QSqlQuery,
-    QSqlError,
-    QSqlRecord,
-    QSqlField,
-    )
-
-# ----QtWidgets
-from PyQt5.QtWidgets import (
-    QWidget,
-    )
-
-
 # ---- imports
 import sqlite3
-from   app_global import AppGlobal
-import ia_qt
+
+from app_global import AppGlobal
+# ---- QtSql
+from PyQt5.QtSql import (QSqlDatabase,
+                         QSqlError,
+                         QSqlField,
+                         QSqlQuery,
+                         QSqlRecord,
+                         QSqlTableModel)
+# ----QtWidgets
+from PyQt5.QtWidgets import QWidget
+
 
 class KeyGenerator:
     def __init__(self, db):
+        """
+        just connect to db
+        """
         self.db = db
 
-    def get_next_key(self, table_name):
+    def get_next_key(self, table_name, refresh = False):
         """
-
-
-
+        what it says, read
+        if refresh is true get the max fom the table first
+            but not implemented --- think about it !!
         """
-
-
-
         query = QSqlQuery(self.db)
 
         # Start a transaction to ensure atomic operation
@@ -57,15 +51,15 @@ class KeyGenerator:
         query.exec()
 
         if query.next():
-            current_key = query.value(0)
-            next_key = current_key + 1
-            update_query = QSqlQuery(self.db)
+            current_key     = query.value(0)
+            next_key        = current_key + 1
+            update_query = QSqlQuery( self.db )
             update_query.prepare("UPDATE key_gen SET key_value = :next_key WHERE table_name = :table_name")
             update_query.bindValue(":next_key", next_key)
             update_query.bindValue(":table_name", table_name)
             update_query.exec()
         else:
-            next_key = 1
+            next_key = 1000
             insert_query = QSqlQuery(self.db)
             insert_query.prepare("INSERT INTO key_gen (table_name, key_value) VALUES (:table_name, :key_value)")
             insert_query.bindValue(":table_name", table_name)
@@ -73,9 +67,43 @@ class KeyGenerator:
             insert_query.exec()
 
         self.db.commit()
-
+        print( f"key gen {next_key = } for {table_name = } ")
         return next_key
 
+
+
+
+
+    #---------------------------
+    def update_key_for_table(self, table_name, a_key ):
+        """ """
+
+        update_query = QSqlQuery( self.db )
+        update_query.prepare("UPDATE key_gen SET key_value = :next_key WHERE table_name = :table_name")
+        update_query.bindValue(":next_key",   a_key)
+        update_query.bindValue(":table_name", table_name)
+        update_query.exec()
+
+
+    #---------------------------
+    def get_max_for_table( self, table_name ):
+        """
+        what it says, reading should be clear
+
+        """
+        query = QSqlQuery( self.db )
+        sql   =  f"SELECT MAX(id) FROM  {table_name}"
+        query.exec_( sql )
+
+        if query.next():
+            max_id     = query.value(0)
+
+        else:
+            max_id     = -9999
+
+        msg    = f"max id for table {table_name =} is {max_id = }"
+
+        return max_id
 
 
 # ========================================
@@ -189,8 +217,6 @@ class KeyGeneratorWithModel( QWidget ):
 
         #return result  # next_key
 
-
-
         #row             = AppGlobal.sql_runner.select( sql, sql_data  )
 
 
@@ -210,7 +236,6 @@ class KeyGeneratorWithModel( QWidget ):
         return next_key
 
     # -------------------------
-
 
     # -------------------------
     def get_next_key_old( self, table_name ):
@@ -251,3 +276,5 @@ class KeyGeneratorWithModel( QWidget ):
         # """
 
         return next_key
+
+

@@ -1,0 +1,19 @@
+
+
+
+
+This is help specific to the picture document
+
+
+
+
+There are a couple of special feature of the picture document type:
+
+
+    * Pictures can be pictures of different subjects or topics
+    
+        ****
+            
+    * Pictures can be added to one or more albums, or collections of pictures.
+    
+        ....

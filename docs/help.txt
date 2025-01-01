@@ -1,5 +1,10 @@
 this is help for stuff_db_qt
 
+
+Watch out overlaps with general document help  ---- move merge .... 
+
+
+
 This is an application and framework for tracking of stuff where stuff can be any kind of stuff:
 
 	implemented or working on

@@ -13,6 +13,13 @@ db_create.create_table_stuff( db )
 see in backup
       /mnt/WIN_D/Russ/0000/python00/python3/_projects/stuff_db_qt/stuffdb_def.py
 
+
+In process of modifying to use externally and call from other contexts
+
+import db_create
+    db_create.create_connection()
+    #   db-create.DB_CONNECTION
+
 """
 
 # ---- to main
@@ -23,29 +30,93 @@ see in backup
 #     main.main()
 # # --------------------
 
-
-
 # ---- imports
-import sys
-sys.path.insert( 1, "../rshlib" )
-sys.path.insert( 1, "./ex_qt" )
-sys.path.insert( 1, ".//mnt/WIN_D/Russ/0000/python00/python3/_examples/" )
-sys.path.insert( 1, ".//mnt/WIN_D/Russ/0000/python00/python3/_examples/qt" )
 
 
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery
+import sqlite3
 
-import ia_qt
+import ex_helpers
+#import ia_qt
+# ---- QtCore
+from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+from PyQt5.QtGui import QIntValidator, QStandardItem, QStandardItemModel
+# ---- QtSql
+from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+# ----QtWidgets Boxs, Dialogs
+# ----QtWidgets layouts
+# ----QtWidgets big
+# ----QtWidgets
+from PyQt5.QtWidgets import (QAction,
+                             QActionGroup,
+                             QApplication,
+                             QButtonGroup,
+                             QCheckBox,
+                             QComboBox,
+                             QDateEdit,
+                             QDockWidget,
+                             QFileDialog,
+                             QFrame,
+                             QGridLayout,
+                             QHBoxLayout,
+                             QInputDialog,
+                             QLabel,
+                             QLineEdit,
+                             QListWidget,
+                             QMainWindow,
+                             QMdiArea,
+                             QMdiSubWindow,
+                             QMenu,
+                             QMessageBox,
+                             QPushButton,
+                             QSpinBox,
+                             QTableView,
+                             QTableWidget,
+                             QTableWidgetItem,
+                             QTabWidget,
+                             QTextEdit,
+                             QVBoxLayout,
+                             QWidget)
+
+import adjust_path
+import code_gen
+import data_dict
+
+# ---- begin pyqt from import_qt.py
 
 
-def create_connection():
+
+
+
+
+
+
+
+
+
+
+DB_CONNECTION    = None
+
+DB_FILE_NAME     = "./data/appdb.db"  # normally used for run manual
+DB_FILE_NAME     = "/tmp/ramdisk/sept_26.db"
+
+
+
+print( DB_FILE_NAME )
+
+
+
+# ---- general purpose -------------------------------------
+def create_connection( db_fn = None ):
     """
-
+    shoudl only be called on manual run
     Returns:
         TYPE: DESCRIPTION.
 
     """
-    db_fn           = "/mnt/WIN_D/Russ/0000/python00/python3/_projects/stuff_db_qt/data/appdb.db"
+    global  DB_CONNECTION
+
+    if db_fn is None:
+        db_fn = DB_FILE_NAME
     print( f"using {db_fn =}" )
 
     db = QSqlDatabase.addDatabase("QSQLITE")  # or another appropriate database driver
@@ -55,8 +126,57 @@ def create_connection():
         print("Unable to open database")
         1/0
         return False
+    DB_CONNECTION   = db
     return db
 
+#--------------
+def execute_sql( msg = None, db = None, sql = None  ):
+    """
+    what it says
+
+    """
+    print( f"execute_sql: {msg} \n    {sql}")
+    db.transaction()
+    query = QSqlQuery( db )
+
+    query.exec( sql )
+
+    last_error    = query.lastError ()
+    print( f"create_table_help {last_error} = " )
+    ia_qt.q_sql_error( last_error,
+                       msg =  "now in code at: execute_sql ",
+                       print_it = True,
+                       include_dir = False,    # default False
+                       )
+    db.commit()
+
+    print( "execute_sql done")
+
+
+#--------------
+def create_table( msg = None, db = None, sql = None  ):
+    """
+    what it says
+
+    """
+    print( f"db_create create_table: {msg}")
+    db.transaction()
+    query = QSqlQuery( db )
+
+    query.exec( sql )
+
+    last_error    = query.lastError ()
+    print( f"create_table_help {last_error} = " )
+    ia_qt.q_sql_error( last_error,
+                       msg          =  "now in code at: create_table ",
+                       print_it     = True,
+                       include_dir  = False,    # default False
+                       )
+    db.commit()
+
+    print( "create_table done")
+
+#--------------------------------
 def querry_ok( what, query, db ):
     """
 
@@ -69,10 +189,10 @@ def querry_ok( what, query, db ):
         None.
 
     """
-
     if query.lastError().isValid():
         ok = False
         print("Error:", query.lastError().text())
+        ia_qt.q_sql_error( query.lastError() )
     else:
         ok = False
         print("Table created successfully")
@@ -82,502 +202,343 @@ def querry_ok( what, query, db ):
     print(  f"{what} table created??" )
     return ok
 
-def create_table_key_gen( db ):
+#--------------
+def delete_table( db, table_name ):
+    """
+    """
+    query = QSqlQuery( db )
+    query.prepare( f"DROP TABLE IF EXISTS {table_name}" )
+
+    # Execute the query
+    if not query.exec_():
+        print( f"Error dropping table {table_name}:", query.lastError().text())
+    else:
+        print( f"Table {table_name} dropped successfully!")
 
 
-    query = QSqlQuery()
-    # Create the key_gen table if it doesn't exist
-    query.exec("""
+#----------------------------------
+def drop_table_by_name(  db_file_name, table_name   ):
+    ex_name  = "drop_table"
+    print( f"{ex_helpers.begin_example( ex_name )}"
+            "\n    "
+    )
+    """
+    db_create.drop_table_by_name(  db_file_name, table_name   )
+    """
+
+    global DB_FILE_NAME
+    DB_FILE_NAME  = db_file_name
+    create_connection(  )
+
+
+    #sql         = data_dict.sql_dict[ TABLE_NAME ]
+
+    sql          = f"DROP TABLE IF EXISTS {table_name}"
+
+    msg   = "a message"
+    execute_sql( msg = msg , db =  DB_CONNECTION, sql = sql  )
+
+    ex_helpers.end_example( ex_name )
+
+
+
+# ---- key gen -------------------------------------
+def create_table_key_genxxx( db ):
+    """
+    """
+    msg   = "create_table_key_gen"
+    sql    = """
         CREATE TABLE IF NOT EXISTS key_gen (
             table_name VARCHAR(30) PRIMARY KEY UNIQUE NOT NULL,
             key_value INTEGER
         )
-    """)
+    """
 
-# ---- stuff --------------------------
-def create_table_stuff( db ):
+    create_table( msg = None, db = db, sql = sql  )
+
+# # ---- key gen
+# def create_table_key_gen( db ):
+#     """
+#     """
+#     query = QSqlQuery()
+#     # Create the key_gen table if it doesn't exist
+#     query.exec("""
+#         CREATE TABLE IF NOT EXISTS key_gen (
+#             table_name VARCHAR(30) PRIMARY KEY UNIQUE NOT NULL,
+#             key_value INTEGER
+#         )
+#     """)
+
+
+# # -----------------------------
+# def insert_key_gen( db, table_name, key_value  ):
+#     """ """
+
+#     what    = "insert_key_gen"
+#     print( f"begin {what}")
+
+#     sql     = ( 'INSERT INTO key_gen (  '
+#                                  f'{table_name},   {key_value} )  ' )
+#     queries = [
+#        #( f'{begin_sql} VALUES (  "planting",      6060        )' ),
+#        ( f'{begin_sql} VALUES (  "people",        7000        )' ),
+
+
+
+# -----------------------------
+def insert_key_gen( db  ):
+    """ """
+
+    what    = "insert_key_gen"
+    print( f"begin {what}")
+    query = QSqlQuery()
+    begin_sql     = ( 'INSERT INTO key_gen (  '
+                                 'table_name,   key_value )  ' )
+    queries = [
+       #( f'{begin_sql} VALUES (  "planting",      6060        )' ),
+       ( f'{begin_sql} VALUES (  "people",        7000        )' ),
+
+    ]
+
+    for sql in queries:
+        print( sql )
+        if not query.exec_(sql):
+            print(f"Query failed: {query.lastError().text()}")
+            print(f"Query was: {sql}")
+            ia_qt.q_sql_error( query.lastError() )
+
+    print( f"end {what}")
+
+# ------------
+def update_table_key_gen( db ):
     """
     what it says
-    seems not to work but sql ok in browser
 
-    Args:
-        db (TYPE): DESCRIPTION.
-
-    Returns:
-        None.
 
     """
-    print( "create_table_stuff add transaction ?? **")
+    what   =  "update_table_key_gen"
+    print( f"begin {what}"  )
     db.transaction()
     query = QSqlQuery( db )
 
-    query.exec("""
-        CREATE TABLE IF NOT EXISTS stuff (
-            id          INTEGER PRIMARY KEY  UNIQUE NOT NULL,
-            add_kw      VARCHAR(50),
-            descr       VARCHAR(60),
-            type        VARCHAR(20),
-            type_sub    VARCHAR(20),
-            author      VARCHAR(40),
-            publish     VARCHAR(40),
-            model       VARCHAR(40),
-            serial_no   VARCHAR(40),
-            value       DECMIAL,
-            project     VARCHAR(40),
-            file        VARCHAR(40),
-            owner       VARCHAR(40),
-            start_ix     VARCHAR(20),
-            end_ix      VARCHAR(20),
-            sign_out     VARCHAR(40),
-            format     VARCHAR(40),
-            inv_id     VARCHAR(40),
-            cmnt        VARCHAR(250),
-            status     VARCHAR(15),
-            in_id       VARCHAR(15),
-            dt_item     VARCHAR(40),
-            # c_name
-            # preformer
-            # cont_type
-            # url
-            # author_f
-            # title
-            # name
-            # loc_add_info
-            manafuct    VARCHAR(40),
-            add_ts      INTEGER,
-            edit_ts      INTEGER
+    # query.exec("""
+    # UPDATE key_gen
+    #     SET key_value = 5000
+    #     WHERE   table_name = "stuff";
+    #     """ )
 
-        )
-    """)
+    query.exec("""
+    UPDATE key_gen
+        SET key_value = 6060
+        WHERE   table_name = "planting";
+        """ )
+
+    # query.exec("""
+    # UPDATE key_gen
+    #     SET key_value = 60060
+    #     WHERE   table_name = "planting_event";
+    #     """ )
 
     last_error    = query.lastError()
-    print( f"create_table_stuff {last_error} = " )
-
+    print( f"{what} {last_error} = " )
+    ia_qt.q_sql_error( query.lastError() )
     db.commit()
+    print( f"end {what}"  )
 
-    print( "stuff table created??")
 
 #--------------
-def create_table_stuff_text( db ):
+
+
+#--------------
+def delete_table_help_key_word( db ):
+    # Prepare the SQL command to drop a table
+    table_name     = "help_key_word"
+    delete_table( db, table_name )
+
+#--------------
+def delete_table_photo_key_word( db ):
+    # Prepare the SQL command to drop a table
+    table_name     = "photo_key_word"
+    delete_table( db, table_name )
+
+#--------------
+def create_table_parm_key_word( db, table_name ):
     """
     what it says
-    seems not to work but sql ok in browser
-
-    Args:
-        db (TYPE): DESCRIPTION.
-
-    Returns:
-        None.
-
-        Note that numeric arguments in parentheses that following the type name (ex: "VARCHAR(255)")
-
+    on way to replacing all create____
     """
-    print( "create_table_stuff add transaction ?? **")
+    #what   = "create_table_stuff_key_word"
+    what   = f"create_{table_name = } "
+    print( f"{what}")
+
     db.transaction()
-    query = QSqlQuery( db )
+    query     = QSqlQuery( db )
 
-    query.exec("""
-        CREATE TABLE IF NOT EXISTS stuff_text (
-            id          INTEGER PRIMARY KEY  UNIQUE NOT NULL,
-            text_data   TEXT
+    # sql    = data_dict.sql_dict[ table_name ]
+    sql    = code_gen.to_sql_create( table_name )
 
-        )
-    """)
+    query.exec( sql )
 
     last_error    = query.lastError ()
-    print( f"create_table_stuff_text {last_error} = " )
+    print( f"{what} {last_error} = " )
     ia_qt.q_sql_error( last_error,
-                       msg =  "now in code at: create_table_stuff_text ",
-
+                       msg       =  f"now in code at: {what}",
                        print_it = True,
                        include_dir = False,    # default False
                        )
     db.commit()
 
-    print( "stuf_textf table created??")
-
-# -------------------------------
-def insert_stuff_text( db  ):
-    query = QSqlQuery()
-    queries = [
-        # recheck match to stuff
-        'INSERT INTO stuff_text  VALUES (  27,   "text for id  =27 and some more \ntext on next line "   )',
-        'INSERT INTO stuff_text  VALUES (   28,   "text for id  =28 and some more \ntext on next line "   )',
-        'INSERT INTO stuff_text  VALUES (   29,   "text for id  =28 and some more \ntext on next line "   )',
-        'INSERT INTO stuff_text  VALUES (   30,   "text for id  =28 and some more \ntext on next line "   )',
-        # 'INSERT INTO photo_text  VALUES (  49,   "text for id  =2*29 and some more \ntext on next line "   )',
-        # 'INSERT INTO photo_text  VALUES (  999,   "text for id  =999 and some more \ntext on next line "   )',
-
-        # 'INSERT INTO stuff_event  VALUES (  2001, 28, "comment for 2001", 80000, -99, "test", 0 )',
-        # 'INSERT INTO stuff_event  VALUES (  2002, 28, "comment for 2002",80000,  -99, "test", 0 )',
-        # 'INSERT INTO stuff_event  VALUES (  2003, 28, "comment for 2003",80000,  -99, "test", 0 )',
-        # 'INSERT INTO stuff_event  VALUES (  2004, 28, "comment for 2004", 80000, -99, "test", 0 )',
-
-    ]
-    for sql in queries:
-        if not query.exec_(sql):
-            print(f"Query failed: {query.lastError().text()}")
-            print(f"Query was: {sql}")
-
-
-# -------------------------------
-def insert_stuff_events( db  ):
-    query = QSqlQuery()
-    queries = [
-
-        'INSERT INTO stuff_event  VALUES (  2001, 28, "comment for 2001", 80000, -99, "test", 0 )',
-        'INSERT INTO stuff_event  VALUES (  2002, 28, "comment for 2002",80000,  -99, "test", 0 )',
-        'INSERT INTO stuff_event  VALUES (  2003, 28, "comment for 2003",80000,  -99, "test", 0 )',
-        'INSERT INTO stuff_event  VALUES (  2004, 28, "comment for 2004", 80000, -99, "test", 0 )',
-
-    ]
-    for sql in queries:
-        if not query.exec_(sql):
-            print(f"Query failed: {query.lastError().text()}")
-            print(f"Query was: {sql}")
-
-# ---- help -------------------------------
-"""
-CREATE TABLE help_info (
-            id              INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
-            title           VARCHAR( 150 ),
-            key_words       VARCHAR( 100 )
-        )
-"""
-# -------------------------------
-def insert_help_info( db  ):
-    query = QSqlQuery()
-    queries = [
-        # recheck match to stuff
-        'INSERT  INTO help_info  VALUES (   5000,   "this is a title 5000 ", "5000 key words"   )',
-        'INSERT  INTO help_info  VALUES (   5001,   "this is a title 5001 ", "5001 key words"   )',
-        'INSERT  INTO help_info  VALUES (   5002,   "this is a title 5002 ", "5002 key words"   )',
-    ]
-    for sql in queries:
-        if not query.exec_(sql):
-            print(f"Query failed: {query.lastError().text()}")
-            print(f"Query was: {sql}")
-
+    print( f"{what} table created??")
 
 
 #--------------
-def create_table_help_text( db ):
+def drop_table_by_table_name( db_file_name, table_name ):
     """
     what it says
+    on way to replacing all create___-- will now delete this is version 46 _
+    also delete the inserts as we are using exported data now
+    db_create.drop_table_by_table_name( db_file_name, table_name )
+
+    """
+    global DB_FILE_NAME
+    DB_FILE_NAME  = db_file_name
+    create_connection(  )
+
+    sql          = f"DROP TABLE IF EXISTS {table_name}";
+
+    msg   = "drop_table_by_table_name a message {db_file_name = }  {table_name = }"
+    execute_sql( msg = msg , db = DB_CONNECTION, sql = sql  )
+
+    print( "drop_table_by_table_name done")
+    #ex_helpers.end_example( ex_name )
+
+#--------------
+def create_table_by_table_name( db_file_name, table_name ):
+    """
+    what it says
+    on way to replacing all create___-- will now delete this is version 46 _
+    also delete the inserts as we are using exported data now
+
+    people may be tmplat for use
 
 
     """
-    print( "create_table_help_text add transaction ?? **")
+    what   = f"create_{table_name = } {db_file_name} "
+    print( f"{what}")
+
+    #DB_FILE_NAME  = DB_FILE_NAME
+    db             = create_connection( db_file_name )
+
     db.transaction()
-    query = QSqlQuery( db )
+    query     = QSqlQuery( db )
 
-    query.exec("""
-        CREATE TABLE IF NOT EXISTS help_text (
-            id          INTEGER PRIMARY KEY  UNIQUE NOT NULL,
-            text_data   TEXT
+    # sql    = data_dict.sql_dict[ table_name ]
+    sql    = code_gen.to_sql_create( table_name )
 
-        )
-    """)
+    query.exec( sql )
 
     last_error    = query.lastError ()
-    print( f"create_table_help_text {last_error} = " )
+    print( f"{what} {last_error} = " )
     ia_qt.q_sql_error( last_error,
-                       msg =  "now in code at: create_table_stuff_text ",
-
-                       print_it = True,
-                       include_dir = False,    # default False
+                       msg          =  f"now in code at: {what}",
+                       print_it     = True,
+                       include_dir  = False,    # default False
                        )
     db.commit()
 
-    print( "create_table_help_text table created??")
+    print( f"{what} table created??")
 
 # -------------------------------
-def insert_help_text( db  ):
+def insert_query_list( db, query_list  ):
     query = QSqlQuery()
-    queries = [
-        # recheck match to stuff
 
-        'INSERT INTO help_text  VALUES (   5000,   "text for id  =5 000 and some more \ntext on next line "   )',
-        'INSERT INTO help_text  VALUES (   5001,   "text for id  =5 000 and some more \ntext on next line "   )',
-        'INSERT INTO help_text  VALUES (   5002,   "text for id  =5 000 and some more \ntext on next line "   )',
-        # 'INSERT INTO photo_text  VALUES (  49,   "text for id  =2*29 and some more \ntext on next line "   )',
-        # 'INSERT INTO photo_text  VALUES (  999,   "text for id  =999 and some more \ntext on next line "   )',
-
-        # 'INSERT INTO stuff_event  VALUES (  2001, 28, "comment for 2001", 80000, -99, "test", 0 )',
-        # 'INSERT INTO stuff_event  VALUES (  2002, 28, "comment for 2002",80000,  -99, "test", 0 )',
-        # 'INSERT INTO stuff_event  VALUES (  2003, 28, "comment for 2003",80000,  -99, "test", 0 )',
-        # 'INSERT INTO stuff_event  VALUES (  2004, 28, "comment for 2004", 80000, -99, "test", 0 )',
-
-    ]
-    for sql in queries:
+    for sql in query_list:
         if not query.exec_(sql):
             print(f"Query failed: {query.lastError().text()}")
             print(f"Query was: {sql}")
 
-
-
-
-
-
-# -------------------------------
-def create_table_photo( db ):
+# --------------------
+if __name__ == "__main__":
     """
-    what it says
-
-    Args:
-        db (TYPE): DESCRIPTION.
-
-    """
-    print( "create_table_photo  ")
-    what    = "create_table_photo"
-    db.transaction()
-    query = QSqlQuery( db )
-
-    query.exec("""
-        CREATE TABLE IF NOT EXISTS photo (
-            id          INTEGER PRIMARY KEY  UNIQUE NOT NULL,
-            add_kw      VARCHAR(50),
-            name        VARCHAR(60),
-            descr       VARCHAR(60),
-            photo_fn    VARCHAR(60),
-            photo_ts    INTEGER,
-            url         VARCHAR(60),
-            title       VARCHAR(60),
-            camera      VARCHAR(40),
-            add_ts      INTEGER,
-            edit_ts     INTEGER,
-            no_comma    INTEGER
-
-        )
-    """)
-
-    last_error    = query.lastError()
-    print( f"{what} {last_error} = " )
-
-    db.commit()
-
-    print(  f"{what} table created??" )
-
-def create_table_photo_text( db ):
-    """
-    what it says
-
-        Note that numeric arguments in parentheses that following the type name (ex: "VARCHAR(255)")
-
-    """
-    what    = "create_table_photo_text"
-    print( "create_table_photo_text add transaction ?? **")
-    db.transaction()
-    query = QSqlQuery( db )
-
-    query.exec("""
-        CREATE TABLE IF NOT EXISTS photo_text (
-            id          INTEGER PRIMARY KEY  UNIQUE NOT NULL,
-            text_data   TEXT
-
-        )
-    """)
-
-    last_error    = query.lastError ()
-    print( f"create_table_photo_text {last_error} = " )
-    ia_qt.q_sql_error( last_error,
-                       msg =  "now in code at: create_table_photo_text ",
-
-                       print_it    = True,
-                       include_dir = False,    # default False
-                       )
-    db.commit()
-
-    print(  f"{what} table created??" )
-
-
-# -------------------------------
-def insert_photo_text( db  ):
-    query = QSqlQuery()
-    queries = [
-
-        'INSERT INTO photo_text  VALUES (  29,   "text for id  =29 and some more \ntext on next line "   )',
-         'INSERT INTO photo_text  VALUES (  39,   "text for id  =39 and some more \ntext on next line "   )',
-         'INSERT INTO photo_text  VALUES (  49,   "text for id  =2*29 and some more \ntext on next line "   )',
-         'INSERT INTO photo_text  VALUES (  999,   "text for id  =999 and some more \ntext on next line "   )',
-
-
-    ]
-    for sql in queries:
-        if not query.exec_(sql):
-            print(f"Query failed: {query.lastError().text()}")
-            print(f"Query was: {sql}")
-
-
-
-
-
-def create_table_photoshow( db ):
-    """
-    what it says
-
-    Args:
-        db (TYPE): DESCRIPTION.
-
     """
 
-    what    = "create_table_photoshow"
-    print(  f"{what = }")
-    db.transaction()
-    query = QSqlQuery( db )
+    # ---- run manually --------------------------
+    # nire at tio
+    PARM            = "X"
+    TABLE_NAME      = ""
+    FUNCTION        = None
 
-    query.exec("""
-        CREATE TABLE IF NOT EXISTS photoshow (
-            id          INTEGER PRIMARY KEY  UNIQUE NOT NULL,
-            name        VARCHAR(60),
-            cmnt        VARCHAR(60),
-            add_kw      VARCHAR(60),
-            start_ts    INTEGER,
-            end_ts      INTEGER,
-            descr       VARCHAR(60),
-            add_ts      INTEGER,
-            edit_ts     INTEGER,
-            no_comma    INTEGER
+    print( "!!still needs work" )
+    print( "running manually ---------- disconnect other stuff please  ---------")
 
-        )
-    """)
+    #create_table_photo_text( db = create_connection() )
+    #create_table_photo( db = create_connection() )
+    # insert_photo_text( db = create_connection()  )
 
-    last_error    = query.lastError()
-    print( f"{what} {last_error} = " )
+    #create_table_photoshow( db = create_connection() )
+    #create_table_photoshow_photo( db = create_connection() )
+    # ---- stuff
 
-    if query.lastError().isValid():
-           print("Error:", query.lastError().text())
-    else:
-           print("Table created successfully")
-
-    db.commit()
-
-    print(  f"{what} table created??" )
+    #insert_stuff( db = create_connection()  )
+    # create_table_stuff_event( db = create_connection() )
+    # insert_stuff_events( db = create_connection()  )
+    #insert_stuff_text( db = create_connection()  )
 
 
-def create_table_photoshow_photo( db ):
-    """
-    what it says
+    #create_table_stuff_key_word( db = create_connection() )
+    # ---- help
+    # insert_help_info( db = create_connection()  )
 
-    Args:
-        db (TYPE): DESCRIPTION.
+    # create_table_help_text( db = create_connection()  )stuff
+    # insert_help_text( db = create_connection()  )
 
-    """
+    # ---- people
+    #create_people( db = create_connection() )
+    #insert_people( db = create_connection() )
 
-    what    = "create_table_photoshow_photo"
-    print(  f"{what = }")
-    db.transaction()
-    query = QSqlQuery( db )
+    #create_people_text( db = create_connection() )
+    #insert_people_text( db = create_connection() )
 
-    query.exec("""
-        CREATE TABLE IF NOT EXISTS photoshow_photo (
-            id              INTEGER PRIMARY KEY  UNIQUE NOT NULL,
-            photoshow_id    INTEGER,
-            photo_id        INTEGER,
-            seq_no          INTEGER,
-            no_comma        INTEGER
-
-        )
-    """)
-
-    # last_error    = query.lastError()
-    # print( f"{what} {last_error} = " )
-
-    if query.lastError().isValid():
-           print("Error:", query.lastError().text())
-    else:
-           print("Table created successfully")
-
-    db.commit()
-
-    print(  f"{what} table created??" )
-
-# -------------------------------
-def create_table_stuff_event( db ):
-    """
-    what it says
-
-    Args:
-        db (TYPE): DESCRIPTION.
-
-    """
-    what    = "create_stuff_event"
-    print(  f"{what = }")
-    db.transaction()
-    query = QSqlQuery( db )
-
-    query.exec("""
-        CREATE TABLE IF NOT EXISTS stuff_event (
-            id              INTEGER PRIMARY KEY  UNIQUE NOT NULL,
-            stuff_id        INTEGER,
-            cmnt            VARCHAR(100),
-            event_ts        INTEGER,
-            dlr             INTEGER,
-            type            VARCHAR(20),
-            no_comma        INTEGER
-
-        )
-    """)
-
-    querry_ok( what, query, db )
+    #create_people_contact( db = create_connection() )
+    #insert_people_contact( db = create_connection() )
 
 
-
-def setup_databasexxx(self):
-    query = QSqlQuery()
-    queries = [
-        """CREATE TABLE photo (
-            id INTEGER PRIMARY KEY,
-            name TEXT,
-            photo_fn TEXT
-        )""",
-        """CREATE TABLE photoshow (
-            id INTEGER PRIMARY KEY,
-            name TEXT
-        )""",
-        """CREATE TABLE photoshow_photo (
-            photoshow_id INTEGER,
-            photo_id INTEGER,
-            FOREIGN KEY(photoshow_id) REFERENCES photoshow(id),
-            FOREIGN KEY(photo_id) REFERENCES photo(id)
-        )""",
-        "INSERT INTO photo VALUES (1, 'Photo 1', 'photo1.jpg')",
-        "INSERT INTO photo VALUES (2, 'Photo 2', 'photo2.jpg')",
-        "INSERT INTO photoshow VALUES (1, 'Show 1')",
-        "INSERT INTO photoshow_photo VALUES (1, 1)",
-        "INSERT INTO photoshow_photo VALUES (1, 2)"
-    ]
-    for sql in queries:
-        if not query.exec_(sql):
-            print(f"Query failed: {query.lastError().text()}")
-            print(f"Query was: {sql}")
-
-# ---- run manually --------------------------
-
-print( "running manually ---------- disconnect other stuff please  ---------")
-
-#create_table_photo_text( db = create_connection() )
-#create_table_photo( db = create_connection() )
-# insert_photo_text( db = create_connection()  )
-
-#create_table_photoshow( db = create_connection() )
-#create_table_photoshow_photo( db = create_connection() )
+    #create_people( db = create_connection() )
+    #insert_stuff( db = create_connection()  )
+    # create_table_stuff_event( db = create_connection() )
+    # insert_stuff_events( db = create_connection()  )
+    #insert_stuff_text( db = create_connection()  )
 
 
-# create_table_stuff_event( db = create_connection() )
-# insert_stuff_events( db = create_connection()  )
-#insert_stuff_text( db = create_connection()  )
+    # ---- photo
+    # create_table_photo_subject( db = create_connection()  )
+    #insert_photo_subject( db = create_connection()  )
 
-# ---- help
-# insert_help_info( db = create_connection()  )
+    #update_table_key_gen( db = create_connection()  )
 
-# create_table_help_text( db = create_connection()  )
+    #insert_photo( db = create_connection()  )
+    #insert_photo_text( db = create_connection()  )
 
-insert_help_text( db = create_connection()  )
+    #insert_photo_subject( db = create_connection()  )
 
+    #create_table_photo_key_word( db = create_connection()  )
 
+    # ---- planting
+    # edit next two first -- should need only one
+    #insert_key_gen( db = create_connection()  )
+    #update_table_key_gen(  db = create_connection()  )
 
+    #create_planting( db = create_connection()  )
+    #insert_planting( db = create_connection()  )
 
-print( "ran manually -------------------------------------------------")
+    #create_planting_text( db = create_connection()  )
+    #insert_planting_text( db = create_connection()  )
+
+    #create_planting_event( db = create_connection()  )
+    #insert_planting_event( db = create_connection()  )
+
+    #insert_photo_planting_subject( db = create_connection()  )
+
+    print( "ran manually -------------------------------------------------")
 
 

@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Oct 25 08:40:12 2024
+
+@author: russ
+"""
+Which of the following AI tools have you ever used or tried for
+coding and other development-related activities? *This question is required.
+
+    ChatGPT
+    CodeGPT plugin in VS Code
+    CodeGPT plugin in JetBrains IDEs (IntelliJ IDEA, PyCharm, PhpStorm, etc.)
+    GitHub Copilot
+    Google Gemini (previously Bard)
+    JetBrains AI Assistant
+    Visual Studio IntelliCode
+    Microsoft 365 Copilot
+    Aide by CodeStory
+    Amazon Q Developer (previously CodeWhisperer)
+
+    Anthropic Claude
+    Tabnine
+    Codeium
+    Blackbox AI
+    Code Llama
+    Gemini Code Assist (previously Duet AI for Developers)
+    Cursor
+    Custom local AI tool for coding and development
+    Other, please specify: Please enter an 'other' value for this selection.
+    None
+
+What editors/IDEs do you use for Python development in addition to Spyder?​​​​ *This question is required.
+
+    None
+    PyCharm Professional Edition
+    PyCharm Community Edition
+    Sublime Text
+    Cursor
+    Vim
+    Atom
+    Visual Studio Code
+    Eclipse with PyDev
+    JupyterLab
+    Jupyter Notebook
+
+    IntelliJ IDEA
+    NotePad++
+    IDLE
+    Emacs
+    Python Tools for Visual Studio (PTVS)
+    DataSpell
+    Neovim
+    Nano
+    Wing IDE
+    Other, please specify:

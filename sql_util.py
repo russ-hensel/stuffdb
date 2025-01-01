@@ -21,13 +21,18 @@ this is just sql lite, no alchemy or qt
 """
 
 
+import collections
+import logging
 # ---- imports
 #import os
 #import sys
 import sqlite3 as lite
-import collections
-import logging
-from   subprocess import Popen
+import time
+from subprocess import Popen
+
+import app_global
+import string_util
+from app_global import AppGlobal
 
 # ------------ local
 #from   app_global import AppGlobal
@@ -36,10 +41,6 @@ from   subprocess import Popen
 
 
 
-import time
-import app_global
-import string_util
-from   app_global import AppGlobal
 
 # ----------------------------------------
 class SqlRunner(   ):

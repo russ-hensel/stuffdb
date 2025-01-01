@@ -1,0 +1,289 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jul 16 16:04:34 2024
+
+@author: russ
+"""
+SELECT         photo.name,         photo.photo_fn,         photo.id,         photoshow.name,         photoshow.id,         photoshow_photo.seq_no,         photoshow_photo.photoshow_id       FROM   photo       JOIN   photoshow_photo       ON   photoshow_photo.photo_id = photo.id       JOIN   photoshow       ON   photoshow.id = photoshow_photo.photoshow_id       WHERE  photoshow.id = :id;     '
+
+
+
+
+
+
+
+SELECT         photo.name,
+photo.photo_fn,
+photo.id,
+photoshow.name,
+photoshow.id,
+photoshow_photo.seq_no,
+photoshow_photo.photoshow_id
+FROM   photo
+JOIN   photoshow_photo       ON   photoshow_photo.photo_id = photo.id
+JOIN   photoshow       ON   photoshow.id = photoshow_photo.photoshow_id
+WHERE  photoshow.id = 29;
+
+
+bad:
+
+
+SELECT
+  photo.name,
+  photo.photo_fn,
+  photo.id,
+  photoshow.name,
+  photoshow.id
+FROM   photo
+JOIN   photoshow_photo
+ON     photoshow_photo.photo_id = photo.id
+JOIN   photoshow
+ON     photoshow.id = photoshow_photo.photoshow_id
+
+WHERE  photoshow.id = 29;
+
+
+returned 3 rows
+
+
+SELECT "id", "photoshow_id", "photo_id", "seq_no", "no_comma"
+
+FROM "photoshow_photo"
+
+WHERE photoshow.id = 29
+ORDER BY "photoshow_photo.id" ASC
+
+===================== 0k 3 rows ====================
+SELECT
+  photo.name,
+  photo.photo_fn,
+  photo.id,
+  photoshow.name,
+  photoshow.id,
+  photoshow_photo.seq_no,
+  photoshow_photo.photoshow_id
+FROM   photo
+JOIN   photoshow_photo
+ON     photoshow_photo.photo_id = photo.id
+JOIN   photoshow
+ON     photoshow.id = photoshow_photo.photoshow_id
+WHERE  photoshow.id = 29;
+
+
+
+  self.sql_read = """
+      SELECT
+        photo.name,
+        photo.photo_fn,
+        photo.id,
+        photoshow.name,
+        photoshow.id,
+        photoshow_photo.seq_no,
+        photoshow_photo.photoshow_id
+      FROM   photo
+      JOIN   photoshow_photo
+      ON     photoshow_photo.photo_id = photo.id
+      JOIN   photoshow
+      ON     photoshow.id = photoshow_photo.photoshow_id
+      WHERE  photoshow.id = :id;
+  """
+
+
+
+my primay recoed for adding photos is the many to many switch table
+
+photoshow_photo
+
+# CREATE TABLE photoshow_photo (
+#             id              INTEGER PRIMARY KEY  UNIQUE NOT NULL,
+#             photoshow_id    INTEGER,
+#             photo_id        INTEGER,
+#             seq_no          INTEGER,
+#             no_comma        INTEGER
+
+        )
+
+
+SELECT
+
+             id,
+             photoshow_id,
+             photo_id,
+            seq_no,
+            no_comma
+
+    from        photoshow_photo
+
+# --------------ok ----------------
+SELECT
+             photoshow_photo.id,
+             photoshow_photo.photoshow_id,
+             photoshow_photo.photo_id,
+             photoshow_photo.seq_no
+
+
+    from     photoshow_photo
+
+    JOIN   photoshow
+    ON     photoshow.id = photoshow_photo.photoshow_id
+
+
+
+    WHERE  photoshow.id = 29;
+
+# ------------ok ----------------
+SELECT
+             photoshow_photo.id,
+             photo.id,
+             photoshow_photo.photoshow_id,
+             photoshow_photo.photo_id,
+             photoshow_photo.seq_no,
+             photo.name,
+             photo.photo_fn
+
+
+    from     photoshow_photo
+
+    JOIN   photoshow
+    ON     photoshow.id = photoshow_photo.photoshow_id
+
+    JOIN   photo
+    ON     photoshow_photo.photo_id = photo.id
+
+    WHERE  photoshow.id = 29;
+
+# ---- photo_subject
+# ------------ok ----------------
+SELECT
+
+             photo.id,
+             photo.name,
+             photo.photo_fn
+
+
+    from     photo
+
+    JOIN   photo_subject
+    ON     photo_subject.photo_id = photo.id
+
+    WHERE  photo_subject.table_joined = "stuff"
+           and photo_subject.table_id = 9;
+
+
+# ---- photo_subject 2
+# ------------ ok ----------------
+SELECT
+
+             photo.id,
+             photo.name,
+             photo.photo_fn
+
+
+    from     photo_subject
+
+    JOIN   photo
+    ON     photo_subject.photo_id = photo.id
+
+    WHERE  photo_subject.table_joined = "stuff"
+           and photo_subject.table_id = 9;
+
+
+# ---- photo_subject 3  all photos and for stuff  will show stuff with photos
+
+5012 is one
+# ------------ ok ----------------
+SELECT
+
+             photo.id,
+             photo.name,
+             photo.photo_fn,
+             photo_subject.table_id
+
+    from     photo_subject
+
+    JOIN   photo
+    ON     photo_subject.photo_id = photo.id
+
+    WHERE  photo_subject.table_joined = "stuff";
+
+
+# ---- all subjects for a given photo .... requires a bunch of joins, or some itteration to get info
+
+# ---- photo joinde to photo subject for all photos
+# ------------ ok ----------------
+SELECT
+
+             photo.id,
+             photo.name,
+             photo.photo_fn,
+             photo_subject.table_id,
+             photo_subject.table_joined
+
+    from     photo_subject
+
+    JOIN   photo
+    ON     photo_subject.photo_id = photo.id
+    ORDER BY   photo_subject.table_joined ASC, photo_subject.table_id ASC, photo.id ASC;
+
+# ---- single table for a model in photosubjects
+# ------------ ok ----------------
+SELECT
+
+             photo_subject.photo_id,
+             photo_subject.table_id,
+             photo_subject.table_joined
+
+    from     photo_subject
+    WHERE    photo_subject.photo_id = 3019
+    ORDER BY   photo_subject.table_joined ASC, photo_subject.table_id ASC, photo.id ASC;
+
+    WHERE    photo_subject.photo_id = 3019;
+
+
+# ---- insert into key gen
+
+INSERT  INTO key_gen  VALUES (   "stuff_event",    2000   );
+
+
+
+UPDATE Customers
+SET ContactName = 'Alfred Schmidt', City= 'Frankfurt'
+WHERE CustomerID = 1;
+
+
+
+# ---- albems photoshow for a photo  -- ok WORKS BUT wrong select see actual code  put i photo tab for album
+
+
+SELECT
+
+photoshow.name,
+photoshow.id,
+
+photoshow_photo.seq_no,
+photoshow_photo.photoshow_id=
+
+FROM   photoshow
+JOIN   photoshow_photo  ON   photoshow_photo.photoshow_id  = photoshow.id
+
+WHERE  photoshow.id = 29;
+
+==================================
+
+
+
+select_by_id PictureAlbumtSubTab
+SQL select:
+
+    SELECT relTblAl_0.id,photoshow."name",
+    photoshow."cmnt",photoshow."add_kw",photoshow."start_ts",photoshow."end_ts",
+    photoshow."descr",photoshow."add_ts",photoshow."edit_ts",photoshow."no_comma"
+
+    FROM photoshow,photoshow_photo relTblAl_0
+
+    WHERE (photoshow."id"=relTblAl_0.photoshow_id) AND (photoshow_photo.photo_id = 29)
+
+
+
+StuffdbTab.select_record PictureTextTab id_value = 29

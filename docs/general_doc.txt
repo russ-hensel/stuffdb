@@ -1,0 +1,124 @@
+this is the general document help
+
+
+
+The user interface typically opens "document" that focus on some topic.  
+Topics include:
+
+    * Help
+        text to give you reminders or help around some topic
+        
+    * Stuff
+        Here you can keep information about your ( or even other people's )
+        stuff
+        
+    * People
+        Here you can keep infomation about people of interest including
+        their addres, phone numbers and pictures.
+        
+This document covers general use of the documents, each documen type has
+it own help topic about things that are unique to that document type.     
+
+Documents are made up of several different tabs.  The primary tab has the
+details of the document some the other tabs are used to find the particular
+document you want or navigate between documents :
+
+    Criteria:
+        Contains search terms for documents.  These are used
+        to populate the List tab.
+        
+    List:
+        This is a list of items that match the criteria.
+        By clicking on one of the items, the item will be
+        opened in the detail tab.
+      
+    Detail:
+        The primary tab of the document.  Contains its details.
+        May also consist of sub tabs.
+        
+        Pictures sub tab:
+            Many documents have one or more pictures associated with them.
+            This tab lists the pictures in a list and shows the picture
+            you click on.  This picture is a bit small so it is also
+            show in the Picture Tab 
+        
+    Picture:
+        ....
+      
+    History
+        a list of the documents that you have viewd.
+        Like the list click on any row to select that 
+        item in the detail tab.
+        
+        
+A typical use of the document is to:
+
+    Enter some criteria in the Criteria tab and select records which
+    appear in the List Tab.  When a row in this tab is clicked
+    the corresponding record is opend in other tabs:
+    
+    The detail tab has the detail of the record where the data can
+    be viewed or edited.
+    
+    The picture tab shows the picture ( if there is one, or the first one
+    if many ) associated with the record
+    
+    History:
+        Adds or updates a line in its list of records that have be viewed
+        since the document window has been opened.        
+        
+        
+The detail tab often has some sub tabs:
+    These may include:
+    
+        Events
+            A list of things that recorded as events associated with the
+            info in the Detail Tab
+        
+        Pictures
+            A list pictures associated with the record in the Detail Tab
+            
+            
+         
+        
+        
+        
+            
+
+
+
+
+
+  
+      
+Most documents have a main topic, or detail about the topic, and then
+some additional information on tabs within the document:
+These tabs may include:
+    *Events about the topic
+        ( ex: when your tractor was serviced )
+    *Pictures
+        ( example picture of a person )      
+        
+Tyoical interactions with documents include:
+    full cycle of add, update, delete
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

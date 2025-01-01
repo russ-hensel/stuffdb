@@ -1,29 +1,39 @@
 # -*- coding: utf-8 -*-
-
+# ---- tof
 
 """
     parameters    for  stuff_db_qt
 
-
+    parameters    for  stuffdb_qt
+    parameters.PARAMETERS.
 
 """
-
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
     import main
-    main.main()
 
 # --------------------
 
-import os
-import logging
-import sys
+
 
 # ---- local imports
-import string_util
-from   app_global import AppGlobal
+
+
+global PARAMETERS
+PARAMETERS   = None
+
+
+
+import logging
+import os
+import sys
+
 import running_on
+# ---- local imports
+import string_util
+from app_global import AppGlobal
+
 
 # ========================================
 class Parameters( ):
@@ -38,7 +48,6 @@ class Parameters( ):
             if you comment all out all modes you get the default mode which should
             run, perhaps not in the way you want
         """
-
         self.mode_russ_on_theprof()
         #self.new_user_mode()
         #self.millhouse_1_mode()
@@ -52,9 +61,7 @@ class Parameters( ):
         #self.plus_test_mode()
 
 
-
     # ---- ---->> Methods:  one for each mode
-
     # -------
     def mode_russ_on_theprof( self ):
         """
@@ -68,6 +75,28 @@ class Parameters( ):
         self.qt_xpos            = 50
         self.qt_ypos            = 50
 
+        # # control initial size and position with:
+        # self.qt_width           = 1200
+        # self.qt_height          = 500
+        # self.qt_xpos            = 50
+        # self.qt_ypos            = 50
+
+        # sizes for the wat-inspector in qt
+        self.wat_qt_width       = 1300
+        self.wat_qt_height      = 800
+        self.wat_qt_xpos        = 10
+        self.wat_qt_ypos        = 10
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+
+        self.picture_db_sub     = "/test_delete"
+        self.picture_db_sub     = "/99/new_test"
+
+
     # -------
     def new_user_mode( self ):
         """
@@ -75,7 +104,6 @@ class Parameters( ):
         a new user may experiment here.
         """
         self.mode               = "mode new_user"
-
 
     # -------
     def running_on_tweaks(self,  ):
@@ -113,17 +141,13 @@ class Parameters( ):
             #self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
             #self.win_geometry   = '1300x600+20+20'
 
-            self.snip_file_path     = r"./example_snips"
-            self.snip_file_path     = "/home/russ/sync_py_3/_examples/"
-            self.snip_file_fn       = "/home/russ/sync_py_3/_examples/clip_board_snip_files.txt"
-            self.conda_env          = "py_10"
+            pass
 
         # ---- theprof
         elif computer_id == "theprof":
             self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
             self.db_file_name       =  "the_prof_db.db"
-            self.snip_file_path     = r"D:\Russ\0000\python00\python3\_examples"
-            #self.win_geometry       = '1800x700+50+20'      # width x height position
+
 
         # ---- "russ-thinkpad-p72":
         elif computer_id == "russ-thinkpad-p72":
@@ -131,18 +155,11 @@ class Parameters( ):
 
             self.logging_level      = logging.DEBUG
 
-            self.snip_file_sort     = True
-
-            self.snip_file_path     = "/mnt/WIN_D/Russ/0000/python00/python3/_examples/"
-            self.snip_file_fn       = "/mnt/WIN_D/Russ/0000/python00/python3/_examples/clip_board_snip_files.txt"
-
-            self.snip_py_file_cmd   = "idle"
-
 
 
         elif computer_id == "bulldog-mint-russ":
             self.ex_editor          =  r"xed"
-            self.db_file_name       =  "bulldog_db.db"
+
 
         else:
             print( f"In parameters: no special settings for computer_id {computer_id}" )
@@ -165,11 +182,7 @@ class Parameters( ):
                 #  looks same as clipboard_b_red_gimp.ico
             self.icon               = r"./images/clipboard_b_red_gimp.ico"    # pretty visible -- make black version -- cannot get gimp to do it
 
-            #self.icon              = None                    #  default gui icon
 
-            # self.gui_style          = "none"  # or None
-            #self.gui_style          = None  #"windows"
-            #self.gui_style          = "windows"
         else:
             pass
             #self.gui_style          = "linux"
@@ -182,10 +195,21 @@ class Parameters( ):
         ( if any )... but use plus_test_mode()
         may be down in listing because it should not be messed with.
         """
-        AppGlobal.parameters       = self   # register as a global
+        AppGlobal.parameters       = self   # register as a global -- phase out
         self.mode_default()
         self.running_on_tweaks()
         self.choose_mode()
+
+
+        # next lets you use  parameters.PARAMETERS as a global
+        global PARAMETERS
+        if not PARAMETERS:
+            print( "creating global parameters.PARAMETERS")
+            PARAMETERS    = self
+        else:
+            print( "__init__ probably an error unless a restart")
+            PARAMETERS    = self
+            # 1/0
 
         #rint( self ) # for debugging
 
@@ -233,101 +257,94 @@ class Parameters( ):
         self.platform           = self.our_os           #  redundant
 
         # ---- appearance -- remove all old gui_style soon?
-        # self.win_geometry       = '1500x800+20+20'     # width x height position  x, y
-        # self.win_geometry       = '1200x800+40+40'     # width x height position  x, y
 
-        # but do they use the same units ?
+        # control initial size and position with:
         self.qt_width           = 1200
         self.qt_height          = 500
         self.qt_xpos            = 50
         self.qt_ypos            = 50
 
-        # self.tk_win_geo         = f"{self.qt_width}x{self.qt_height}+{self.qt_xpos}+{self.qt_ypos}"
-        # print( f"parameters.py:  self.tk_win_geo {self.tk_win_geo}")
+        # sizes for the wat-inspector in qt
+        self.wat_qt_width       = 1300
+        self.wat_qt_height      = 800
+        self.wat_qt_xpos        = 10
+        self.wat_qt_ypos        = 10
 
-        self.icon               = r"./images/icon_red.png"    # icon for running app
-
-
-        # self.gui_theme_type     = "ttk"   # valid values see gui_with_tabs
-        # self.gui_ttk_theme      = "alt"       # anything valid for above see gui_with_tabs
-        # for none or ttk
-        #style.theme_use("clam")  # clam   10
-        # style.theme_use("alt")  # clam    5
-        #style.theme_use("classic")  # clam   15
-        #style.theme_use("xpnative")  # clam   15
-
-        # self.id_color           = "blue"                # to id the app - not implemented yet
-
-        # # some of this may be moved to style_types or just not used tk only
-        # self.bn_color_active    = "gray"
-        #     # color for buttons -- may not be implemented -- use bn to match tkinter api
-        # self.bn_color_active    = "#E1E1E1"   # color for buttons --
-        #     # may not be implemented -- use bn to match tkinter api
-
-        # self.bg_color_frame     = "yellow"   # "black"  # "#F0F0F0"
-            #    "#F0F0F0" seems to be a default light gray "gray" is darker
+        # icon for running app
+        self.icon               = r"./images/icon_red.png"
+        self.icon               = r"./data/binocular.png"
 
         # ---- logging
         self.pylogging_fn       = "./logs/app.py_log"   # file name for the python logging
         self.logging_level      = logging.DEBUG         # may be very verbose
         self.logging_level      = logging.INFO
-        #self.logging_level      = logging.INFO
+        self.logging_level      = logging.DEBUG
+            # logging level used by app logger
 
-        self.logger_id          = "clip_board"         # id of app in logging file
+        self.logger_id          = "stuffdb"         # id of app in logging file
 
         self.gui_text_log_fn    = None   # for edit window if None then no logging
         self.gui_text_log_fn    = "./logs/gui_log.log"
 
-        self.log_gui_text            = False # this is for gui_ext message area
+        self.log_gui_text       = False # this is for gui_ext message area
                                              # goes to normal log file  not special one
 
-        # ---- file names
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/PhotosRaw/2024/pixel4a/july4"
+            # browsing starts from here
+
+        # picture to use when not found
+        self.pic_nf_file_name   = "./data/404.png"
+
+        self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
+            # all pictures should be under this directory
+
+        self.picture_db_sub = "/test_delete"
+            # subdir for above
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support sqllite
 
         self.db_fn              = "./data/appdb.db"
-        self.db_type            = "QSQLITE"
+        #self.db_fn              = "/tmp/ramdisk/help_info.db"
+        self.db_fn              = "/mnt/WIN_D/Russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db"
+        self.db_fn              = "/tmp/ramdisk/sept_28.db"
+        self.db_fn              = "/tmp/ramdisk/sept_35.db"
 
-        self.load_channel_fn    = "./data/channel_data.csv"
+        # next is for qt..... various examples
 
-        # self.snip_editor       = r"C:\apps\Anaconda3\Scripts\thonny.exe"
-        self.snip_editor        = "l3afpad"
-            # editor used for opening snip files pick one that ->
-            # will open file form command line
+
+        self.db_file_name      = ":memory:"
+
+        #
+            # the type of database, so far we only support sqllite
+        self.db_file_name        = "sample.db"   #  = "sample.db"   =  ":memory:"
+        self.db_file_name        = ":memory:"     #  = "sample.db"   =  ":memory:"
+        #self.db_file_name        = "/tmp/ramdisk/qt_sql.db"
 
         # this is the name of a program: its executable with path info.
         # to be used in opening an external editor
         self.ex_editor         =  r"D:\apps\Notepad++\notepad++.exe"    # russ win 10
+        self.text_editor       = "gedit"
 
-        # if we are writing scratch files to run in a shell or similar.
-        self.scratch_bat       =  r"scratch.bat"   # rel filename
-        self.scratch_py        =  r"scratch.py"    # rel filename
 
         # control button for editing the readme file
         self.readme_fn          = "readme_rsh.txt"   # or None to suppress in gui
-
-        self.run_py            =  r"python.exe"
-            # program to run *>py commands  !! not yet implemented
+            # a readme file accessible from the main menu
 
 
         # or anything else ( will try to shell out may or may not work )
         self.help_fn       =  "./docs/help.txt"   #  >>. this is the path to our main .py file self.py_path + "/" +
+        self.help_path     =  "./docs"
+            # path leading to all docs and help
+
         #self.help_file       =  "http://www.opencircuits.com/Python_Smart_ClipBoard"
 
-        #... not all may be named see gui.py
-        #self.include_wiki_buttons  = True    # experimental flag, leave True
-
-
-        #---------------------------------------------------
         self.poll_delta_t      = 200      # 200 ok at least on win longer does not fix linux prob
         self.poll_delta_t      = 100
             # how often we poll for clip changes, in ms,
             # think my computer works well as low as 10ms
-
-        # ---- Mostly redundant but one matters from tk and qt versions now dropped
-        self.gui_style          = "gui_with_tabs"       # "gui_with_qt":   "gui_with_tabs,   see clip_board.py
-        self.gui_module         = "gui_with_tabs"       #  gui_with_tabs  "gui_qt"
-
-
-        self.logging_level      = logging.DEBUG
 
     # ---------------------
     def to_columns( self, current_str, item_list, format_list = [ "{: <30}", "{:<30}" ], indent = "    "  ):
@@ -358,30 +375,12 @@ class Parameters( ):
         a_str   = string_util.to_columns( a_str, ["pylogging_fn",    f"{self.pylogging_fn}" ] )
         a_str   = string_util.to_columns( a_str, ["gui_text_log_fn", f"{self.gui_text_log_fn}" ] )
 
-        a_str   = string_util.to_columns( a_str, ["search_many_list", f"{self.search_many_list}" ] )
-        a_str   = string_util.to_columns( a_str, ["snippets_fn",    f"{self.snippets_fn}" ] )
-        a_str   = string_util.to_columns( a_str, ["snippets_sort", f"{self.snippets_sort}" ] )
-
-        a_str   = string_util.to_columns( a_str, ["snip_file_fn", f"{self.snip_file_fn}" ] )
-        a_str   = string_util.to_columns( a_str, ["snip_file_sort",    f"{self.snip_file_sort}" ] )
-        a_str   = string_util.to_columns( a_str, ["snip_file_command", f"{self.snip_file_command}" ] )
-
         a_str   = string_util.to_columns( a_str, ["readme_fn", f"{self.readme_fn}" ] )
-        a_str   = string_util.to_columns( a_str, ["help_file",    f"{self.help_file}" ] )
-        a_str   = string_util.to_columns( a_str, ["snip_editor", f"{self.snip_editor}" ] )
+       # a_str   = string_util.to_columns( a_str, ["help_file",    f"{self.help_file}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["scratch_bat", f"{self.scratch_bat}" ] )
-        a_str   = string_util.to_columns( a_str, ["scratch_py",    f"{self.scratch_py}" ] )
-        a_str   = string_util.to_columns( a_str, ["run_py", f"{self.run_py}" ] )
-        a_str   = string_util.to_columns( a_str, ["ex_editor", f"{self.ex_editor}" ] )
-
-
-        a_str   = string_util.to_columns( a_str, ["line_join",    f"{self.line_join}" ] )
-        a_str   = string_util.to_columns( a_str, ["win_geometry", f"{self.win_geometry}" ] )
         a_str   = string_util.to_columns( a_str, ["icon", f"{self.icon}" ] )
-        a_str   = string_util.to_columns( a_str, ["gui_style",    f"{self.gui_style}" ] )
-        a_str   = string_util.to_columns( a_str, ["id_color", f"{self.id_color}" ] )
+
 
         a_str   = string_util.to_columns( a_str, ["computername", f"{self.computername}" ] )
         a_str   = string_util.to_columns( a_str, ["our_os", f"{self.our_os}" ] )
@@ -389,18 +388,38 @@ class Parameters( ):
         a_str   = string_util.to_columns( a_str, ["set_default_path_here", f"{self.set_default_path_here}" ] )
         a_str   = string_util.to_columns( a_str, ["poll_delta_t", f"{self.poll_delta_t}" ] )
 
-        a_str   = string_util.to_columns( a_str, ["clip_save_1_fn", f"{self.clip_save_1_fn}" ] )
-        a_str   = string_util.to_columns( a_str, ["clip_save_2_fn", f"{self.clip_save_2_fn}" ] )
 
+        a_str   = string_util.to_columns( a_str, ["db_fn",
+                                           f"{self.db_fn}" ] )
+        a_str   = string_util.to_columns( a_str, ["db_type",
+                                           f"{self.db_type}" ] )
+        a_str   = string_util.to_columns( a_str, ["help_fn",
+                                           f"{self.help_fn}" ] )
+        a_str   = string_util.to_columns( a_str, ["help_path",
+                                           f"{self.help_path}" ] )
 
-        # a_str   = string_util.to_columns( a_str, ["icon", f"{self.icon}" ] )
-        # a_str   = string_util.to_columns( a_str, ["icon", f"{self.icon}" ] )
-        # a_str   = string_util.to_columns( a_str, ["icon", f"{self.icon}" ] )
-        # a_str   = string_util.to_columns( a_str, ["icon", f"{self.icon}" ] )
-        # a_str   = string_util.to_columns( a_str, ["icon", f"{self.icon}" ] )
-        # a_str   = string_util.to_columns( a_str, ["icon", f"{self.icon}" ] )
-        #a_str   = string_util.to_columns( a_str, ["icon", f"{self.icon}" ] )
+        a_str   = string_util.to_columns( a_str, ["log_gui_text",
+                                           f"{self.log_gui_text}" ] )
+        a_str   = string_util.to_columns( a_str, ["opening_dir",
+                                           f"{self.opening_dir}" ] )
+        a_str   = string_util.to_columns( a_str, ["os_win",
+                                           f"{self.os_win}" ] )
+        a_str   = string_util.to_columns( a_str, ["picture_browse",
+                                           f"{self.picture_browse}" ] )
+        a_str   = string_util.to_columns( a_str, ["platform",
+                                           f"{self.platform}" ] )
+        a_str   = string_util.to_columns( a_str, ["qt_height",
+                                           f"{self.qt_height}" ] )
+        a_str   = string_util.to_columns( a_str, ["qt_width",
+                                           f"{self.qt_width}" ] )
+        a_str   = string_util.to_columns( a_str, ["qt_xpos",
+                                           f"{self.qt_xpos}" ] )
+        a_str   = string_util.to_columns( a_str, ["qt_ypos",
+                                           f"{self.qt_ypos}" ] )
+        a_str   = string_util.to_columns( a_str, ["running_on",
+                                           f"{self.running_on}" ] )
 
+        return a_str
 
         #---- sort into above
 

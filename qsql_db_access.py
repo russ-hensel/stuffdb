@@ -13,7 +13,7 @@ my reference list of qt imports comes from import_qt.py
 
 PyQt5.QtSql.QSqlError
 
-
+qsql_db_access.QsqlDbAcess()
 
 """
 
@@ -25,110 +25,49 @@ if __name__ == "__main__":
 # --------------------
 
 
-
-
-
-# ---- begin pyqt from import_qt.py
-# ---- QtGui
-from PyQt5.QtGui import (
-    QStandardItemModel,
-    QStandardItem,
-    QIcon,
-           )
-# ---- QtCore
-from PyQt5.QtCore  import  (
-    QDate,
-    QModelIndex,
-    QTimer,
-    Qt,
-    pyqtSlot,
-    )
-
-# ----QtWidgets
-from PyQt5.QtWidgets import (
-    QWidget,
-    QPushButton,
-    QAction,
-    QDateEdit,
-    QMenu,
-    QAction,
-    QLineEdit,
-    QActionGroup,
-    QApplication,
-    QDockWidget,
-    QTabWidget,
-    QLabel,
-    QListWidget,
-    QMainWindow,
-    QMessageBox,
-    QSpinBox,
-    QMdiSubWindow,
-    QTextEdit,
-    QButtonGroup,
-    )
-
-
-
-# ----QtWidgets big
-from PyQt5.QtWidgets import (
-    QAction,
-    QMenu,
-    QApplication,
-    QMainWindow,
-    QToolBar,
-    QTableView,
-    QFrame,
-    QMainWindow,
-    QMdiArea,
-    QMdiSubWindow,
-    QMdiArea,
-    QMdiSubWindow,
-    )
-
-# ----QtWidgets layouts
-from PyQt5.QtWidgets import (
-    QGridLayout,
-    QVBoxLayout
-    )
-
-# ----QtWidgets Boxs, Dialogs
-from PyQt5.QtWidgets  import (
-    QAction,
-    QActionGroup,
-    QDockWidget,
-    QFileDialog,
-    QInputDialog,
-
-    QLabel,
-    QListWidget,
-    QMenu,
-    QMessageBox,
-    QPushButton,
-    QSpinBox,
-    QTextEdit,
-    QVBoxLayout,
-    QCheckBox,
-    QComboBox,
-    )
-
-from PyQt5.QtGui import (
-    QIntValidator,
-    )
-
-# ---- QtSql
-from PyQt5.QtSql import (
-    QSqlDatabase,
-    QSqlTableModel,
-    QSqlQuery,
-    QSqlError
-    )
-
 import sqlite3
 
 # ---- imports local
-from   app_global import AppGlobal
-import ia_qt
-
+from app_global import AppGlobal
+# ---- QtCore
+from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+# ---- begin pyqt from import_qt.py
+# ---- QtGui
+from PyQt5.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
+# ---- QtSql
+from PyQt5.QtSql import QSqlDatabase, QSqlError, QSqlQuery, QSqlTableModel
+# ----QtWidgets Boxs, Dialogs
+# ----QtWidgets layouts
+# ----QtWidgets big
+# ----QtWidgets
+from PyQt5.QtWidgets import (QAction,
+                             QActionGroup,
+                             QApplication,
+                             QButtonGroup,
+                             QCheckBox,
+                             QComboBox,
+                             QDateEdit,
+                             QDockWidget,
+                             QFileDialog,
+                             QFrame,
+                             QGridLayout,
+                             QInputDialog,
+                             QLabel,
+                             QLineEdit,
+                             QListWidget,
+                             QMainWindow,
+                             QMdiArea,
+                             QMdiSubWindow,
+                             QMenu,
+                             QMessageBox,
+                             QPushButton,
+                             QSpinBox,
+                             QTableView,
+                             QTabWidget,
+                             QTextEdit,
+                             QToolBar,
+                             QVBoxLayout,
+                             QWidget)
 
 
 # ----------------------------------------
@@ -141,12 +80,13 @@ class QsqlDbAccess(   ):
 
 
         """
-
         self.connection   = None
         self.db           = None   # use as interface
 
-
         self.init_db()
+
+        print( "")
+
 
     # --------------------------------
     def init_db( self, ):
@@ -162,12 +102,11 @@ class QsqlDbAccess(   ):
         db = AppGlobal.qsql_db_access.db
         xxxAppGlobal.db    = self.db   # globla avail
         db appears to be the connection
-
+        russ is still confused try using AppGlobal.qsql_db_access.db   = a_qsql_db_access.db
         """
         print( "QsqlDbAccess  init_db()" )
         self.db = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type  )
         self.db.setDatabaseName(            AppGlobal.parameters.db_fn   )
-
 
         if not self.db.open():
             msg    = "Database Error: {self.db.lastError().databaseText()}"
@@ -175,10 +114,44 @@ class QsqlDbAccess(   ):
                 None,
                 "databasenot open - Error!", msg
                                 )
+        connection_name = self.db.connectionName()
+        print( "{connection_name = }")
 
-        print(  ia_qt.q_sql_database( self.db,
-                                      msg           = "in init_db()",
-                                      include_dir    = False) )
+        # Use the sqlite3 module to connect to the same database
+        sqlite_conn = sqlite3.connect( AppGlobal.parameters.db_fn )
+
+        # this is a chat lie
+        #assert sqlite_conn == self.db.nativeHandle(), "Connections are not the same!"
+
+        # Set the trace callback
+        #sqlite_conn.set_trace_callback(log_sql_callback)
+
+        # this is for usual callback in python api
+        # Register the callback function with sqlite3_trace()
+        sqlite_conn.set_trace_callback( self.log_sql_callback )
+
+
+        """
+        # Define a callback function to log SQL statements
+        def log_sql_callback(statement):
+            print("Executing SQL statement:", statement)
+
+        # Create a SQLite database connection
+        conn = sqlite3.connect('example.db')
+
+        # Register the callback function with sqlite3_trace()
+        conn.set_trace_callback(log_sql_callback)
+
+        """
+
+        # # ia_qt.q_sql_database( self.db,
+        #                               msg           = "in init_db()",
+        #                               include_dir    = False) )
+
+    # --------------------------------
+    def log_sql_callback( self, statement ):
+        msg      = f"log_sql_callback {statement}"
+        print( msg )
 
     # --------------------------------
     def get_connectionxxx( self, ):
@@ -195,7 +168,6 @@ class QsqlDbAccess(   ):
             self.connection = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type  )
             self.connection.setDatabaseName( AppGlobal.parameters.db_fn   )
 
-
         if not self.connection.open():
             QMessageBox.critical(
                 None,
@@ -210,48 +182,35 @@ class QsqlDbAccess(   ):
         return self.connection
 
 
-    # --------------------------------
-    def get_dbxx( self, ):
+
+    # -------------------------------------------
+    def query_exec_model(self, query, model,  msg = None ):
         """
-        consider in an object of its own
-        is this how we connect it is unclear how this works, just a stab in dark
-        uncleare where this needs to be located ...
+        exec queries with some error checking
+        return ok   = True if now error
+
+        is_ok  = AppGlobal.qsql_db_access.query_exec_model( query,
+                                                  model,
+                                                  msg = None )
         """
-        self.db = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type  )
-        self.db.setDatabaseName(            AppGlobal.parameters.db_fn   )
+        msg      = f"Executing SQL query:  {query.executedQuery() = }"
+        AppGlobal.logger.debug( msg )
 
+        if query.exec():
+            model.setQuery( query )
+            if model.lastError().isValid():
+                msg     = f"Query Error: {model.lastError().text() = }"
+                print(  msg )
+                AppGlobal.logger.error( msg )
+                return False
 
-        print(  ia_qt.q_sql_database( self.db,
-                                      msg           = "in get_db()",
-                                     include_dir    = True ) )
+        else:
+            print( "Query Execution Error:", query.lastError().text())
+            print(  msg )
+            AppGlobal.logger.error( msg )
+            print( query.executedQuery()   )
+            return False
 
+        return True
 
-        if not self.db.open():
-            msg    = "Database Error: {self.db.lastError().databaseText()}"
-            QMessageBox.critical(
-                None,
-                "databasenot open - Error!", msg
-                                )
-
-
-    def get_additional_connectionxxx(self):
-        """
-        you better remember to close
-        can I make a context thing for it?
-
-        Returns:
-            connection (TYPE): DESCRIPTION.
-        connection    = AppGlobal.qsul_db_access.get_additional_connection()
-        """
-        # Use the same SQLite connection for additional operations
-        db              = QSqlDatabase.database()
-        connection      = sqlite3.connect(db.databaseName())
-
-        return connection
-
-
-        # cursor = connection.cursor()
-        # cursor.execute("SELECT * FROM records WHERE id = ?", (1,))
-        # result = cursor.fetchall()
-        # print(result)
-        # connection.close()import sqlite3
+# ---- eof

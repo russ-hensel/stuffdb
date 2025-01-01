@@ -2,6 +2,17 @@
 ====Environment/Tools
 ====Adding Documents
 ====First
+====Standards
+====Crud cycle
+===== How things work
+    ..... see topics under
+
+
+====Importing
+
+====stuff_events  ====
+====ramdisk
+
 ====
 ====
 
@@ -36,11 +47,6 @@ The database has a structure to match the GUI  For stuff the tables of interest 
 
 
 
-
-
-
-
-
 ==== Standards
 
 see Photo win and tab
@@ -56,8 +62,8 @@ see Photo win and tab
 
 
 
+==== Tech
 
-====Tech
 main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
 
 sub_windows are documents are QMdiSubWindow
@@ -70,11 +76,12 @@ stuff-sub_window.py
 QMdiSubWindow  -->
 
 
-====Adding Documents
+==== Adding Documents
 
 * create new tables           db_create.py     old   stuffdb_def.py
 * make entry in key_gen       table  under table name
-* add to document maker
+* add to document maker    mdi_management ...
+* add to menu              stuffdb_main_window
 * copy template
         class Stuff   --> class Photo
         no this caused problems perhaps do manually  or make case sens stuff         --> photo
@@ -87,6 +94,395 @@ QMdiSubWindow  -->
     * change table
     * change list tab
 
+            self.photos_tab.select_by_id( id )
+* use the code gen for _build_gui   record_to_history  field_to_record, recodd to field
+
+* detail tab
+    ** can use field_to_record and record to field or
+    ** can use mapper, for now mapper seems easiet
+
+    build_gui
+        code gen for some
+        build_gui()
+            code gen sql to fields
+        build mapper()
+            code gen:
+            disable field-to_record an record_to_field
+
+==== Importing
+
+    Alway look at the quasi constants/parms
+
+    create dir by copying one of existing of similar type
+         primary table
+         text
+         one to many sub records
+    rename files above
+
+    export from pb
+        copy to dir
+        rename files to keep
+        delete rest of files
+
+    edit  code_gen_create_sql    -- may rename .sql file to make create for table
+        add create to code_gen_sql_create
+        some python reserved words create problems
+            type
+            class     rename to table_name_type.....
+         bind var for id should be a_id
+
+
+
+
+    create new import file as required
+        in its own directory
+
+
+    edit import file to change file name everywhere ... be careful
+        .dat file seem to have correct cap for file names --- do no lower
+        begin code gen, do in order at bottom of file
+            when have create sql FUNCTION       = to_sql_create
+            run import plant to create table, check to make rue created
+
+     see /mnt/WIN_D/Russ/0000/python00/python3/_projects/stuffdb/sql/update_old_id_and_related.py
+
+        to try to fix old to new id, not sure is right and may be a .py somewhere else
+
+        gen code for splits
+           change id to a_id   type to a_type
+           fix MAX_SPLITS
+
+        !! think this comes later
+        code gen for insert and bind
+            change id to a_id   type to a_type
+
+    -- for photo, not currently using for other tables
+    Need to transform the .dat file , delimited to a .csv file
+    tab delimited
+
+        do this on ram disk for speed
+        when setup delete old csv -- it would be appended
+        delete issues unless need
+        run the
+            misname   do_convert_splits which write out various
+            tab delimited files
+            some for tuning the code
+            the final one
+                do_convert_splits( mode    =  "one_file_out" )    out with a z or whateve
+                check parms prior to run
+
+
+    ready to running
+        check the parms limit lines to say 10
+        may need to copy from ram disk if built there
+        run
+        look at db, did the table get created
+        does the table have data
+        look at issues txt file
+        run with large  MAX_LINES
+
+
+
+===== How things work
+
+----App
+----MainWindow
+----SubWindows
+----Critera tab
+----Detail tab
+----List tab
+----List tab
+----TextTab
+----PhotoTab
+----HistoryTab
+---- What Triggers a Save/Update
+
+---- The selection process
+
+
+----key_gen
+----database structure
+
+................................
+
+---- The selection process
+
+    Selection can go in one of several ways
+
+        .... New records
+                we should do a save, then create a new key and default
+                all the fields on the form....
+
+        .... From Critera
+                We construct a query and then execute code on the CriteriaTab.
+                this populates a list on the ListTab.
+
+        .... From the List tab
+                When we click on the list tab.....
+                -----------
+                Document   on_list_clicked( self, index: QModelIndex )  ( promote this ??)
+                -->    self.fetch_row_by_id( db_key )  ( delete this )
+                -->    self.select_record
+                            calls down to
+                                    detail
+                                    text
+                                    picture   using select_record
+
+
+
+
+
+        .... From the history tab
+                When we click on the list  .....
+                        history_tab   on_cell_clicked
+                        self.parent_window.select_record( a_id )
+
+
+        .... From the menu/toolbar, prior next for list
+                main window
+                     self.go_active_sub_window_func,
+                                      "next_list_to_detail"     )
+
+                     -->  Document next_list_to_detail(   )
+
+                          perhaps prior next in here as a partial
+                          self.set_list_to_detail_ix( new_list_ix )
+
+                          ...... maybe should use prior next .... no this is what prior next uses
+
+                          eventually
+
+                              detail_tab.select_record( id_data ) ===> changed to self.select_record as bug fix
+
+                              but it looks like it should have done this at document
+                              level and perhaps thru prior next
+
+
+
+        .... From the menu/toolbar, prior next for history
+                    "next_history_to_detail"
+
+                        # -----------------------------
+                        def next_history_to_detail( self ):
+
+                            --> self.set_history_to_detail_ix( list_ix + 1 )
+
+
+
+                            look into on_history clicked everywhere  --- may be ok goes thru cell clicke on history tab
+                                not clear if called at all --- still needs investigate
+
+
+---- Critera tab
+
+    fields to caputre the users desired criteria
+    later conveerted to a dict for the select
+    which is done by
+    criteria_select()
+
+
+
+---- List tab
+
+
+    when a row is clicked on the id of the table is sent to the detail tab ( and parent? ) and
+    records are selected   select_record across all tabs and sub tabsl
+
+    clicked on --
+        build gui sets up clicked on to go to on_list_clicked ( parent_window  )
+
+
+    next/prior --
+
+
+
+----Detail tab
+
+
+
+
+    select_recod in the parent gets the data which is then
+    moved to the fields using either a mapper or field_to_record/record to field
+
+
+    add    ---
+        toolbar --
+             "new_record"
+                    to document base
+            or
+              "copy_prior_row"
+                        to document
+       go_active_sub_window_func
+
+        document base
+            new_row
+                send new record on to tabs together with the new key
+
+
+----HistoryTab
+    should recieve notice of fetch, updat ore delete
+    right now code is in StuffDbTab select_record  where it calls
+        something like record to history table this should be only select location
+        save and delete should be added, probably with a different function for
+        the delete
+
+    still issuse of the column names and headers in the history display
+
+
+
+----SubTab Many to Many
+----SubTab One to Many
+----stuff_events
+
+    one to many with stuf  stuff.id
+
+---- stuff photos
+
+    many to many a lot like albums -- but no update
+    comes from the photo_subject file
+    this is not an updatable tab, just a view
+    photos are added from the picturedocument
+    relational widget should work never send insert update....
+
+----key_gen
+        define table
+        update table
+
+
+--database structure
+    see data_dict.py for basic def
+        also code_gen.py
+       .....
+        update_key_gen.py
+
+
+---- What Triggers a Save/Update
+
+    In general we do not want the user to have to concously ask the
+    system to save data, not saving is the exception.
+    There are also technical reasons for saving, for example to
+    do a reselect to refresh the gui.
+
+    All saves should be preceeded by a verify cycle, which
+    will throw an exception ( later caucht ) if validation fails
+
+
+
+    Here I will try to summarize the events that trigger saves.
+
+        Changing tabs
+            when we shift between tabs the detail and text data plus
+            any sub tabs are saved.
+
+
+
+
+
+         Selecting a new record
+
+                 DocumentBase.on_list_clicked
+                search DocumentBase for self.validate()
+                    self.update_db()
+
+
+         Adding a record
+
+
+
+==== Crud cycle
+
+
+action          = QAction(  "Add", self )
+connect_to      = functools.partial(  self.go_active_sub_window_func,
+                                      "new_record"     )
+action.triggered.connect( connect_to )
+toolbar.addAction(action)
+
+action          = QAction(  "Add/Copy", self )
+connect_to      = functools.partial(  self.go_active_sub_window_func,
+                                      "copy_prior_row"     )
+action.triggered.connect( connect_to )
+toolbar.addAction( action )
+
+action          = QAction(  "Save", self )
+connect_to      = functools.partial(  self.go_active_sub_window_func,
+                                      "update_db"     )
+
+
+
+        select
+
+
+
+        update/save
+
+            -- starts in menu
+                update_db    in document window
+                    should call update_db in all the sub-documents
+                    but first we call validate
+
+                validate loops thru the fields calling validate
+                validate returns is_bad truthy if validate is bad
+                        still not sure how to manage this
+                              will need a message and a location
+                              may want to activate tab ( no should try to save on tab change )
+                              position to field
+                                what are return args, how passed back ( consider custom excpetion )
+
+
+                if validate is ok then
+
+                update_db at document level loops thru sub_documents
+                        calls
+
+                        this update needs to branch based on record status
+
+                        for self.update_record_fetched()
+                             this can use mapper or field_to_record]
+                                  think now useing field_to_record for detail tabs
+                                          get_data_for_record  in field widget
+
+                        now we have all the data so about time to submit
+
+
+
+
+
+
+# ---- photo_subject
+# ------------ok ----------------
+SELECT
+
+             photo.id,
+             photo.name,
+             photo.photo_fn
+
+
+    from     photo
+
+    JOIN   photo_subject
+    ON     photo_subject.photo_id = photo.id
+
+    WHERE  photo_subject.table_joined = "stuff"
+           and photo_subject.table_id = 9;
+
+
+# ---- photo_subject 2
+# ------------ ok ----------------
+SELECT
+
+             photo.id,
+             photo.name,
+             photo.photo_fn
+
+
+    from     photo_subject
+
+    JOIN   photo
+    ON     photo_subject.photo_id = photo.id
+
+    WHERE  photo_subject.table_joined = "stuff"
+           and photo_subject.table_id = 9;
 
 
 ====Environment/Tools
@@ -106,4 +502,42 @@ id   key
 sql
 
 
-click or clicked   .... be consistent
+click or clicked   .... be consistent
+
+
+
+====ramdisk
+
+in bulldog linux cheatsheet and parameters
+     sudo mkdir /tmp/ramdisk #
+
+    >> sudo chmod 777 /tmp/ramdisk # all users can use
+
+    >> sudo mount -t tmpfs -o size=1024m myramdisk /tmp/ramdisk #
+
+    >> sudo mount -t tmpfs -o size=5G myramdisk /tmp/ramdisk # nG for the RAM disk,
+
+    >> mount | tail -n 1 # to see if it is mounted
+
+
+====Import DB from scratch
+
+use ramdisk so much faster
+
+go to import photo
+
+may want to check sql gen stuff, still in flux
+
+then
+
+drop table
+create table
+import table
+
+may have to move files to ramdisk
+
+seemed to go ok oct 14 --- but still some import adj to make
+
+think I skipped som steps to get the tabldelimited version
+and test versions see some commented out stuff higher in import_photo
+think now enough for some gui testing

@@ -1,0 +1,825 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+extracted from readme_rsh.txt
+"""
+
+
+
+---- ver35
+    why:
+        cleanup and checkpoint after good progress
+
+        ** planting not added to picture subjects nor stuff think i have broken it
+                controlled by a variable in init now fixed
+
+        !! stuff get event add, delete save working
+                ** select by row  for event and picture
+                ** select by row in list and history, disable edit
+                !! look more at edit
+                !! look at buttons  ---
+                !! integrate save delete to entire window
+
+                ** QTableWidget   --- add to qt widgets and add editable and select rows like sql table widget
+
+        *! work on delete  -- pretty good on pictures
+                !! delete
+                !! subtabs
+
+        *! picture save on topics  -- but not all topic functions -- now test
+                --- ready to test
+                ** photo get added to photo other
+                ** notice of items open is now broken fixed
+                      !! but exclude photo and album -- may be fixed test
+
+
+        !! review save   new/save   for all documents on detail and text
+
+            ** picture ok
+    more
+        ** fix help for docs location
+        !! hide undesired columns in list and history
+        !! hide other stuff ,,, have a parameter to control hiding
+        !! fix timestamp
+
+
+
+--- ver34
+
+    why:
+        cleanup and checkpoint
+
+        !! get whole picture to do an update, prehaps get a planting to work first
+            main window
+                 action          = QAction(  "Save", self )
+                 connect_to      = functools.partial(  self.go_active_sub_window_func,
+                                                       "save"     )
+
+            # ---------------------------------------
+            def go_active_sub_window_func( self, a_function_name  ):
+                """
+                allows calling sub window functions by name in a string
+
+                a_function_name should exist in active subwindow
+                use name as string not function
+                function should not take args ( remove this restriction later ?? )
+                this should go to the subwindow not the tab
+
+                """
+                active_window   = self.get_active_subwindow()
+                a_function      = getattr( active_window, a_function_name, None )
+                #rint( f"{a_function_name = } {a_function = }")
+                ## add a test for none
+                try:
+                    a_function( )
+
+                 now in stuffdb_tabed... update_db....   for self.subwindow_name = 'PlantingSubWindow'
+                       # --------------------------submitAll StuffdbTab
+                       def update_db( self,   ):
+
+
+                 ..... thin all go to
+                         if self.detail_tab is not None:
+                             self.detail_tab.update_db()
+
+                         if self.text_tab is not None:
+                             self.text_tab.update_db()
+
+                    so work on the two tabs
+
+                            for the detail it is in stuffDbTab
+                                    where it gos to cases
+
+                     !!  RECORD_NULL
+                                    ** not much to do here so far
+
+
+                     *!  RECORD_NEW   --- "new_record"    did not exist add to planting then see
+                                *! --- ?? to work in planting_detail   -- SEE IF GETS TO  new_record( self ):
+                                             add begins to work but the id is not right need to go over in detail
+                                             ** detail new save works
+                                             ** text does work for new/save
+                                **  --- ?? to work in stuff_detail  -- new/save
+
+                                !! picture new/save  --- also test update
+
+                                ** album new/save   -- ok
+
+                     **  RECORD_FETCHED
+                             --- seem to work in planting_detail
+                             --- seems to work in stuff_detail
+                             ---- album_detail record update sucessfully message ---
+                                             should not see but update worked
+                                             message removed
+                             ---- picture_detail works
+
+                     !!  RECORD_DELETE
+
+
+        make sure example and iaqt works for QSqlTableModel
+
+        *! more work on subjects
+            ** changed a bunch of stuff in mdi management, rename in Topics... more to come
+            model that will not update  = was model, confused with model_subject ! yeiks
+            still nees more works but does update with button
+
+        model              = QSqlTableModel( self, self.db )
+        #model              = qt_with_logging.QSqlTableModelWithLogging(  self, self.db    )
+
+        self.model         = model
+
+        model.setTable( self.table_name )
+        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+
+
+--- ver33
+
+    why:
+        good progress checkpoint
+        !! consider version backup to ver34
+
+        !! looks like some indexing and off by 1 errors in subjects,  check out indexing
+           and the add
+
+        ** in subject may need to recover self.add_record  done will come out when double click
+        !! make subject of photos show up in the join at bottom
+
+        !!!! select by id   --- good progress now loop tru subject and collect subjects
+
+        !! write sql to eliminate dup picture subject rows
+
+        !! need to clear some subject lists on select
+        ** add subject partly working but resistes save
+
+        ** get menu for activationg a window based on window_id
+                mostly working with bugs in window name and in coding names
+                action vs menu and window_id vs sub_window vs perhaps best document_id
+
+--- ver32
+
+    why:
+        good progress checkpoint
+        *! picture tab work on subject subtab
+                ** now getting some info from subject selects
+                ** add subject to table
+        !! browse, add file to the main record and check on update
+
+        *! make planting from stuff
+
+            steps:
+                db   make and populate with test data
+                copy stuff_document and carefully change stuff to planting
+                go thru code and using db structure as a guide edit
+                run test and fix.
+
+             ** planting now runs just a little worse than stuff, has
+                pictures and events, and similar bugs
+
+        more:
+            !!  add app icon for qt
+            !!  picture for albums relational model does not seem to do the read only fetch ??
+            **  picture browse behaviour needs work
+                ** initial dir from parms
+                ** preview clicke don
+                !! want more file details
+            !!  subject subtab has pretty much no code.
+
+--- ver31
+
+    why:
+        good progress checkpoint
+
+        some of below belongs to 32
+        !!  picture for albums relational model does not seem to do the read only fetch ??
+        **  picture browse behaviour needs work
+            ** initial dir from parms
+            ** preview clicke don
+            !! want more file details
+        !!  subject subtab has pretty much no code.
+
+
+--- ver30
+
+    why:
+        good progress checkpoint
+
+        ** rename phots to pictures, not db  make document
+
+        more:
+            ** picture sub tab browse and subjects -- just look behaviour later
+            !! picture browse, behaviour
+            !! picture subject behaviour
+            ** start tab for albums
+            ** think more work on topics and a custom dialog for them
+
+--- ver 28 and 29
+
+    why:
+        good progress checkpoint
+
+    more:
+        ** photo list promoted and working better
+        *!! stuff critera select seems off  --- photo seems to work however, compare
+                bad column name, but app did not report error, still missing lower
+
+        **  album select and tab change ng    .strip().lower()    this throws error  Query Execution Error: Parameter count mismatch
+                column name error, reported as mismatch
+
+        **  help select not working    Query Execution Error: Parameter count mismatch
+                more column name errors
+
+        !!  help save on key word not working
+
+        !! list of docs no longer shows
+        *! begin pub sub  for photo topics and for deletes  -- see midi_management
+            doe the window send all the data or just its id,
+            just the id if it is closing
+            for topics a dict with the data
+
+
+--- ver 27
+    notes if any lost
+
+--- ver 26
+
+    why:
+        good progress checkpoint
+        *! add stuff events --  now seems to work
+        ** edit stuff events seems to work but add ??
+        *! check photo and photoshow for code to promote
+       !!! stuff photo sub tab and tab ..... subtab close to working give it some data
+
+        ** stuff events does not have its select in place
+        !! stuff photo very messed up, just copied from album I think
+        ** add some photos with subject in stuff, maybe clean up stuff as well
+        !! stuff critera select seems off
+        *! loose the save ok messages box --- update record fetched ??
+        !! make the save save events as well as main guy
+        *! check all for ok     = stuffdb_tabbed_sub_window.model_submit_all( model,  "we are here" ) # submitAll
+        ** stuff pictures to the side in gui
+
+
+-- ver25
+    why:
+        good progress checkpoint
+        !! add stuff events
+        *! check photo and photoshow for code to promote
+        !! stuff photo sub tab and tab
+
+        !! stuff events does not have its select in place
+
+        more
+            the bit rename
+        !! is a sub_window a document -- or even a doc could shorten names a whole lot
+        *!    photo         -> picture
+        *!    photoshow     -> album
+        *!    subwindow     - document
+
+             !!  photoshow_sub_window    AlbumDocument                3300   --> 2800   --> 2300 --> 2300
+            ** stuff_document                                         3100   -->
+        ** album picture tab, with prior next mostly works
+
+
+-- ver24
+    why:
+        good progress checkpoint  photo photoshow good
+        !! add stuff erents
+        check photo and photoshow for code to promote
+
+        more
+            the bit rename
+        !! is a sub_window a document -- or even a doc could shorten names a whole lot
+        !!    photo         -> picture
+        !!    photoshow     -> album
+        !!    subwindow     - document
+
+             !!  photoshow_sub_window    AlbumDocument                3300   --> 2800   --> 2300
+
+-- ver23
+    and break:
+
+
+        !! QRM
+            !!  photoshow_sub_window    3500 lines -->  3000  -> 3300
+            **  fix squenece no in add_model_test ... or whaever
+
+        ** photoshow add, check for 1 and only 1 photoshow
+        !! make sure photosho has been selected, think about state
+
+        ** get rid of document_maker, improve midi_management
+        !! window management has lost windos by title fix
+
+
+        !! photo
+            *! add little photo to detail tab
+
+            ** detail tab add button to add to show
+            ** add to show from photo needs better data perhaps inc file name ( or maybe a submit is needed )
+            ** work on midi management put document_make int there
+
+            !! is a sub_window a document -- or even a doc could shorten names a whole lot
+            !!    photo         -> picture
+            !!    photoshow     -> album
+            !!    subwindow     - document
+
+
+
+-- ver22
+    and break:
+        lab
+        backup
+            see cheat sheet
+
+        !! QRM
+            ** now opens, but nothing to see
+            ** click now displays photos -- time to clean up
+
+      !! make document and or app launch app
+
+
+    why:
+        history everywhere  >>  checkpoint
+        polish up old stuff inc debug
+
+        more
+            details  -- now pretty much ok, pick a big stuff
+                ** history in stuff  -- seems ok now
+                ** history in help
+                           ** needed on list clicked replaced
+                           ** help not displaying its id
+                           ** not getting correct fields in history so history to detail does not work
+                                problem in record to history fixed
+
+                ** history in photo_show     --- dead dead dead -- replaced on list clicked
+                        replace on list clicke seemed to work
+
+                ** titles for docs -- ok now in stuff ... and all
+
+
+            big items
+               !! stuff events is pretty much read only
+               !!!! photo in photo show need a lot of work
+                        old code there think need testing buttons back
+
+
+
+               !! prior_history_to_detail  is probably a mess  -- out of date  -- may not be that much of a deal
+
+
+====Vocab
+    sub_window     = document in mdi sense
+    mdi            = multiple document interface
+    stuffdb        the whole application
+    stuff          the part of the app consnserned with the stuf and related tables
+
+
+
+
+
+
+
+
+-- ver21
+    why:
+        because alot has been done, new history, code_gen  >>  checkpoint
+
+    *! make to_history work better -- say on fetch of fetched  and save new
+         first round done in photo, need to update the others
+         a checkpoint first might be a good idea
+        help          -- almost ok history _> detail broken
+        stuff         -- seem ok    but   history _> detail broken   needs to change tabs
+        photo_show    --- wip  :22  39  works with bugs...
+
+        conversion
+            history tab      --- fix ancestor
+            replace __init__
+            change to _build_gui
+                copy code
+
+            add method to history  field_to_history
+                copy top of code and
+                do a new gen_code
+
+
+            in detail tab
+                change field to record and record to field by adding line
+
+             . add_row_history seems to be called but dead put in return at top
+
+             select record needs
+                           self.main_notebook.setCurrentIndex( self.detail_tab_index )
+                           and detai to history --- out and promote the whole thing ??
+
+                           photo show missing select record must do some othere way
+                           may be fetch by id, find and fix
+
+            the text tabs need to be checked to see if they are like the detail tabs, i think they
+            should be
+
+    !! add sub window title
+    *! refine and apply code gen from sql
+    !! dead code and promote sweep
+
+
+-- ver20
+    why:
+        because alot has been done, checkpoint
+
+    more to do:
+        ** make detail to history transmitted via a dict -- start on photo app
+            but if we just send the record it is pretty much the same thing
+            right
+            put a sequence no on the history
+
+        *! make to_history work better -- say on fetch of fetched  and save new
+             first round done in photo, need to update the others
+             a checkpoint first might be a good idea
+            help
+            stuff
+            photo_show
+
+        ** clean up a lot of print chatter
+
+        ** made example QTableWidget for the history stuff
+        ** make main stufdb
+        !! add sub window title
+        ** make code gen from sql
+
+--- ver19    ----- move on do a big delete
+    why:
+        help beginning to work, do some more delete
+
+     more
+        ** delete the dead again including channel -- stuff in stuff
+        *! get help on one tab, make second tab have no fields, then do not place
+                just have to remove tab, pretty much comment out a few lines
+
+        ** history messed up, filter at end of select removed, now seems ok
+        ** photo fails to show photo, this seems to be missing in select
+           self.parent_window.display_photo( self.photo_fn_field.text( ) )
+           we can add this may need override ant extend or not
+           >>>> this is it, photo a sort of field record to field  may be place in descandant
+
+        !! history update on click on row, but not on prior next perhaps move all to
+              record_to_field -- but history would update it self, maybe that is ok
+              or ok for now
+
+        !! prior next no good in photo_show throwing an error, fix this
+
+        *! stuff sub tab may need or not need an anceston but not the tab one
+           this should wait
+
+        *! stuff add - save not working, is any add-save working, look around
+            and fix  -- but new test below says ok
+
+        *! testing add - save
+            photos   3003    -- is ok
+            stuff     10     -- is ok
+            help      id missing on window -- fix first -- now there but id does not show
+            photo_show  bunch of issues, keep working on it
+
+        ** put on github -- need more git ignore -- rshlib sub with git ignore ??
+            change root dir to stuffdb
+
+        !! look into rework of add to history base on passing a dict.
+
+
+        ** update spyder  --- did not work in py_10 went to py_12_base
+
+            conda activate py_10_qt_sql   #
+            conda install spyder=5.5.1
+            conda install spyder=5.5.1 # install an possibly upgrade or down grade
+
+         ** move to python12  -- now in envoronment py_12_base,  make additions to a clone
+
+        !! start moving old version notes to ./docs/version_notes.txt
+
+
+--- ver18    ----- move on do a big delete
+    why:
+        move on, do a big delete
+
+     more
+        ** delete the dead
+        ** spell check
+        !! add ancestor for the text_tab --- move code to it
+        ?? is it key words or add_key.....
+        !! do a real help document = subwindow
+            ** copy rename stuff
+            ** finish db tables and 3 rows in each
+            ** already had a key_gen entry
+            !! help table missing timstamp fields, need to add and redo data
+            ** remove stuff sub tabs
+            ** stuff had some dead code already out of help but still in stuff
+            ** looks like no change to document_maker because opens in same way as channel versigon
+
+            4:50 first trial
+            4:55 basically runs, with mucho bugs -- history not right -- go see if stuff history is ok
+
+        *! review stuff document to new standards
+                ** basics working other stuff still needs checking
+                !! select from criteria not working
+        !! also for photo show
+
+
+--- ver17   ----- move on do a big delete
+    why:
+        most of crud works on photo --- less some important details
+        and much promoted, backup and delete stuff
+
+
+        **  saved fetched seems good, factoring out seems good
+        *!  get saved new..... working --- ok but timestamp issues
+        *!  promote save new to ancestor
+        !!  next prior for list seems to not work on text
+
+
+--- ver16
+    why:
+        lots of progress on photo ( and a bit on photo show )
+        promote some to ancestors, clean up and
+        continue to get save and new .... working on photo
+
+        **  saved fetched seems good, factoring out seems good
+        *!  get saved new..... working --- ok but timestamp issues
+        !!  promote save new to ancestor
+        !!  next prior for list seems to not work on text
+
+    more
+
+--- ver15
+    why:
+        stuff events works on fetch so a checkpoint
+
+    more
+        ^^ add -> save works on photo_text but not photo so convert photo to crud
+        !! a key or id or a_id or a mix it is the key gen key might be value id column name
+        !! add seems to add but will not save....
+        !! add should on save add to history
+        !! add in text if missing -- working on in photo_sub_window
+        !! add labels to photo_sub window  detail
+        get a criteria select working for $like$  may be some code around
+        fill in from below:
+        *! add a tab for one photo at a time -- add the prior next buttons to it
+        *! some update code in place, second model one that updates
+        *! get basics of photo show working
+            !! select from criteria  just for %like%
+            *! single photo tab
+            *! better layout
+        !! updates to detail -- may be some code from copy
+
+        !! photoshow photos subtab basics working
+            ** add from photo window
+            !! delete from self
+
+        ** remove channel and youtube stuff
+
+--- ver14
+    why:
+        big struggle getting photos read only working, prior code thouth good
+        was not AI cold not fix until along cam black_box.
+        not finished the conversion but too much dead and dying code so
+        a checkpoint
+
+    more
+        ** stuff events works on select
+        *! add a tab for one photo at a time
+        *! some update code in place, second model one that updates
+        *! get basics of photo show working
+            !! select from criteria
+            *! single photo tab
+            *! better layout
+        !! updates to detail -- may be some code from copy
+
+        !! photoshow photos subtab basics working
+            ** add from photo window
+            !! delete from self
+
+        ** remove channel and youtube stuff
+
+
+        just make model_
+        self.query_model_read.addRow( row_list )
+        self.query_model_read.layoutChanged.emit()
+
+
+--- ver13
+    why:
+        photoshows now in existing but functionally incomplete, so checkpoint
+        as we add features.
+
+    more
+        *! add a tab for one photo at a time
+        *! some update code in place, second model one that updates
+        *! get basics of photo show working
+            !! select from criteria
+            *! single photo tab
+            !! better layout
+        !! updates to detail -- may be some code from copy
+
+        !! photoshow photos subtab basics working
+            !! add from photo window
+            !! delete from self
+
+        !! remove channel and youtube stuff
+
+
+        just make model_
+        self.query_model_read.addRow( row_list )
+        self.query_model_read.layoutChanged.emit()
+
+--- ver12
+    why:
+        photoshows now in existing but functionally incomplete, so checkpoint
+        as we add features.
+
+    more:
+        *! get basics of photo show working
+            !! select from criteria
+            ** photoshow photos subtab started
+            *! single photo tab
+                    !! better layout
+                    ** display when clicked
+                    ** display first if exists when show selected
+
+            !! updates to detail -- may be some code from copy
+
+
+
+        !! photoshow photos subtab basics working
+            ** select
+            !! add from photo window
+            !! delete from self
+            ** display clicked on photo
+
+
+        !! remove channel and youtube stuff
+
+
+
+
+--- ver11
+    why:
+        photo sort of works except for text ... so checkpoint
+        and begin to work on shows a one to many -- inter document communication
+        ** begin on photo show
+            ** hand enter a bit of photoshow data
+            ** define photoshow schema
+
+    more:
+
+        *! get basics of photo show working
+            !! select from criteria
+            ** photoshow photos subtab started
+            !! single photo tab
+            !! updates to detail -- may be some code from copy
+
+
+
+        !! photoshow photos subtab basics working
+            ** select
+            !! add from photo window
+            !! delete from self
+            !! display clicked on photo
+
+
+        ** stuff_db --- to stuffdb for main name of app
+
+
+--- ver10
+    why:
+        lots of progress so a checkpoint
+        ** lets add some photo stuff even though there is a lot to fix in old stuff
+    more:
+        ** get define db queries working
+        ** move to __version__
+
+--- ver09
+    why:
+        lots of progress so a checkpoint
+        ** start adding stuff -- have windows with wrong table....
+    more:
+        *! have some of stuff and stuff_text defined and populated need more
+        ** make list and detail work some
+        !! get text working
+        ** update -- now save on toolbar
+        *! get menu caught up to toolbar
+        !! get define db queries working
+        !! make a select using link %%
+        !* create_tab to _create_gui
+
+        *! convert to stuff tables
+
+
+--- ver08
+    why:
+        lots of progress so a checkpoint
+        ** basic key gen seems to work
+    and more:
+        !! lots of dead to prune, but kept in ver07
+        ** list -> detail basically works
+        ** detail -> history basically works
+        ** default and copy prior of detail basically works
+        ** history -> detail basically works
+
+    ** add text table and select..... on text tab
+        ** channel_text say
+        ** text_data
+        default to blank if missing on detail fetch
+        make sure saved
+        ** create tab
+        ** create database
+
+--- ver07
+    why:
+        lots of progress so a checkpoint
+
+    ** list and history navigation basically works
+        !! do detail saves
+        !! auto add to history on fetch of new id
+        !! make sure prior and next select their rows
+
+    !! start on timestamps
+        add to db's
+        add add_ts '
+
+    !! add text table and select..... on text tab
+        channel_text say
+        text_data
+        default to blank if missing on detail fetch
+        make sure saved
+        ** create tab
+        ** create database
+
+
+    !! improve about box
+    ** size pos from parameters
+    *! clean up dead and dying
+
+    *! help is still channel, but has been broken
+        into object that should be generalizerable
+
+    ** add and implement toolbar with forward back, placeholders for some other
+        ** forward in list -- and promoted, and simpler call method
+        ** back
+            !! forwarded and back do not fix history or save
+
+--- ver06
+    why:
+        lots of progress a checkpoi9nt
+        *! start help with text on second tab
+        ** lots of test to call to active sub window
+
+
+    *! help is still channel, but has been broken
+        into object that should be generalizerable
+
+    *! add and implement toolbar
+        ** forward in list -- and promoted, and simpler call method
+        ** back
+        !! forwarded and back do not fix history or save
+
+
+    ** get history working again
+    ** click on history to detail
+
+
+
+--- ver05  more
+    why:
+        !! start help with text on second tab
+    ** get history working again
+    ** click on history to detail
+
+
+----ver05
+    why: rename in channel model
+        *!rename in channel model
+
+    *! many prints to logging
+
+        msg      = f"{ = }"
+        AppGlobal.logger.debug( msg )
+            #.error
+
+
+
+    *! prior next for list
+            !! need save
+            !! needs init from click on list
+
+    !! prior next on history
+        !! shorten history, or do via max history in parms
+
+
+    ** add history
+    *! clean up dead and dying
+
+
+----ver04
+    ** add history
+    *! clean up dead and dying
+
+----ver03
+
+    got some basic st
