@@ -14,16 +14,17 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver 55: 2024 12 22.01"
-
-# ---- imports
+__version__   = "Ver 63: 2025 02 25.01"
 
 import datetime
+import inspect
 import logging
 import os
 import random
 import sys
 import time
+# ---- imports
+import traceback
 
 
 from PyQt5 import QtWidgets, uic
@@ -67,20 +68,48 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
-#import   stuffdb_def
+import parameters
 import key_gen
 #import   mdi_management
 import main_window
-import parameters
+
 import qsql_db_access
 import sql_util
+import app_logging
+import data_dict
+#import   stuffdb_def
+import dict_main
 import wat_inspector
 from app_global import AppGlobal
+import text_edit_ext
 
 
+# ---- end imports
+
+# or put in app_global ? "That is a No Go",
 
 # ---------------
 # from stuff_main_window import MainWindow
+
+# -----------------------------
+def delete_file( file_name ):
+    """
+    will delete any file, but intended for db file
+    """
+    exists    = str( os.path.isfile( file_name ) )
+    # print( f"{file_name} exists {exists}" )
+
+    if exists:
+        try:
+            os.remove( file_name )   # error if file not found
+            print(f"delete_file removed {file_name} "  )
+
+        except OSError as error:
+            print( error )
+            print( f"delete_file os.remove threw error on file {file_name} file probably does not exist this should be ok?")
+
+    # else:
+    #     print( f"file already gone  {file_name}                ")
 
 
 # ============================================
@@ -102,6 +131,7 @@ class App( ):
         self.app_url           = "www.where"
         # clean out dead
         AppGlobal.controller   = self
+        text_edit_ext.STUFF_DB = self
         self.gui               = None
 
         # ---- wat inspector
@@ -123,75 +153,40 @@ class App( ):
         self.parameters         = parameters.Parameters( )
         AppGlobal.parameters    = self.parameters
 
-        #dialog                  = wat_inspector.DisplayWat( self.q_app )
+        app_logging.init()
 
         a_qsql_db_access        = qsql_db_access.QsqlDbAccess( )
 
         AppGlobal.qsql_db_access  = a_qsql_db_access
 
-        self.sql_runner         = sql_util.SqlRunner( self.parameters.db_fn )
+        self.sql_runner         = sql_util.SqlRunner( self.parameters.db_file_name )
         AppGlobal.sql_runner    = self.sql_runner
 
         a_key_gen               = key_gen.KeyGenerator( a_qsql_db_access.db  )  #  AppGlobal.qsql_db_access.db
         AppGlobal.key_gen       = a_key_gen
+
+        data_dict.build_it( "stuffdb" )    # access as data_dict.DATA_DICT
+
+        table_name_list  = data_dict.DATA_DICT.get_table_name_list()
+        if len( table_name_list ) < 10:
+            msg     = f"we seem to be short on data_dict items {len( table_name_list )}"
+            logging.error( msg )
+            for i_table in table_name_list:
+                print( f"{i_table}")
+            ValueError()
 
         self.main_window        = main_window.StuffdbMainWindow()
         AppGlobal.main_window   = self.main_window
         self.main_window.show()
 
         print( f"{AppGlobal.logger = }")
-        self.config_logger()
+
         self.prog_info()
         print( f"{AppGlobal.logger = }")
         AppGlobal.logger.debug( "self.q_app.exec_() next" )
         a_wat_inspector  = wat_inspector.WatInspector( self.q_app )
         # dialog       = wat_inspector.DisplayWat( self.q_app )
         self.q_app.exec_()   # perhaps move to run method
-
-    # ------------------------------------------
-    def config_logger( self, ):
-        """
-        configure the python logger
-        return change of state
-        !! consider putting in app global, include close
-        """
-        AppGlobal.logger_id     = "App"
-        logger                  = logging.getLogger( AppGlobal.logger_id )
-        logger.handlers         = []  # get stuff to close from here
-
-        logger.setLevel( self.parameters.logging_level )
-
-        # create the logging file handler
-        file_handler = logging.FileHandler( self.parameters.pylogging_fn )
-
-        formatter    = logging.Formatter( '%(asctime)s - %(name)s - %(levelname)s - %(message)s' )
-        file_handler.setFormatter( formatter )
-
-        # add handler to logger object -- want only one add may be a problem
-        logger.addHandler( file_handler )
-        msg  = "pre logger debug -- did it work"
-        AppGlobal.logger.debug( msg )
-
-        logger.info( "Done config_logger .. next AppGlobal msg" )
-        #rint( "configured logger", flush = True )
-        self.logger      = logger   # for access in rest of class?
-        AppGlobal.set_logger( logger )
-
-        msg  = ( f"Message from AppGlobal.print_debug >> logger level in App = "
-                 f"{self.logger.level} will show at level 10"
-                )
-        AppGlobal.print_debug( msg )
-
-    # ------------------------------------------
-    def close_logger( self, ):
-        """
-        configure the python logger
-        return change of state
-        !! consider putting in app global, include close
-        """
-        logger  = AppGlobal.logger
-        for a_handler in logger.handlers:
-            a_handler.close()
 
     # --------------------------------------------
     def prog_info( self,  ):
@@ -200,7 +195,8 @@ class App( ):
         """
         #logger_level( "until_foo.prog_info"  )
         fll         = AppGlobal.force_log_level
-        logger      = self.logger
+        logger      = logging.getLogger( )
+        # logger      = self.logger
         logger.log( fll, "" )
         logger.log( fll, "============================" )
         logger.log( fll, "" )
@@ -235,17 +231,20 @@ class App( ):
         """
         AppGlobal.os_open_help_file( AppGlobal.parameters.help_file )
 
-    # # ----------------------------------------------
-    # def os_open_document_help( self,  ):
-    #     """
-    #     what it says, read  --- in main windows
-    #     determines document with focus and gives help on it.
-    #     """
-    #     #document    = AppGlobal.mdi_management.get_active_document()
-    #     document    = AppGlobal.main_window.get_active_subwindow()
-    #     name        = document.subwindow_name
-    #     print( f"os_open_document_help active document name {name = }]")
-    #     #AppGlobal.os_open_help_file( AppGlobal.parameters.help_file )
+    # ----------------------------------------------
+    def os_open_log( self,  ):
+        """
+        have function since want flush
+
+        """
+        my_logging   = app_logging.APP_LOGGING
+        my_logging.os_open_log_file
+        return
+
+        1/0
+        self.log_file_handler.flush()  # Manually flushing
+
+        AppGlobal.os_open_txt_file( self.parameters.pylogging_fn)
 
     # ----------------------------------------------
     def os_open_parmfile( self,  ):
@@ -265,7 +264,6 @@ class App( ):
         AppGlobal.os_open_txt_file(  self.parameters.gui_text_log_fn )
 
 def main():
-    pass
     app         = App(   )
     # mainWin     = stuff_db_main_window.StuffDbMainWindow()
     # mainWin.show()

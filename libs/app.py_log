@@ -1,0 +1,111 @@
+2024-03-22 16:08:26,651 - App - INFO - Done config_logger .. next AppGlobal msg
+2024-03-22 16:08:26,651 - App - DEBUG - pre logger debug -- did it work
+2024-03-22 16:08:26,652 - App - DEBUG - Message from AppGlobal.print_debug >> logger level in App = 10 will show at level 10
+2024-03-22 16:08:26,652 - App - Notice - 
+2024-03-22 16:08:26,652 - App - Notice - ============================
+2024-03-22 16:08:26,652 - App - Notice - 
+2024-03-22 16:08:26,652 - App - Notice - Application: GeoTrack in mode defaultand version  Ver 10: 2024 02 25.01
+2024-03-22 16:08:26,652 - App - Notice - 
+2024-03-22 16:08:26,652 - App - Notice - command line arg + 0  =  /mnt/WIN_D/Russ/0000/python00/python3/_projects/rshlib/photo_file_utils.py)
+2024-03-22 16:08:26,653 - App - Notice - current directory /mnt/WIN_D/Russ/0000/python00/python3/_projects/rshlib
+2024-03-22 16:08:26,653 - App - Notice - Time now: 2024-03-22 20:08:26
+2024-03-22 16:08:26,653 - App.gui - INFO - in class GUI init for the clip_board gui_with_tabs
+2024-03-22 16:08:27,207 - App - DEBUG - Error messages may be in log file, check it if problems -- check parameters.py for logging level 
+2024-03-22 16:08:27,207 - App - Notice - Error messages may be in log file, check it if problems -- check parameters.py for logging level 
+2024-03-22 16:08:33,022 - App - DEBUG - for file /mnt/WIN_D/Russ/0000/python00/python3/_projects/geo_track/test/karen_photos/20230616_105938.jpg there was no datetime info 
+2024-03-22 16:09:00,451 - App - DEBUG - for file /mnt/WIN_D/Russ/0000/python00/python3/_projects/geo_track/test/karen_photos/20230616_105938.jpg there was no datetime info 
+2024-03-22 16:09:00,471 - App - DEBUG - Filtered photo_points on dates: len = 29
+2024-03-22 16:09:00,473 - App - DEBUG - Sorted photo_points now len = 29
+2024-03-22 16:09:00,474 - App - DEBUG - Starting _gpx_to_map... unknown points
+2024-03-22 16:09:00,474 - App - DEBUG - gpx.tracks len  = 1
+2024-03-22 16:09:00,474 - App - DEBUG - len(track.segments)  = 1
+2024-03-22 16:09:00,474 - App - DEBUG - segment.points  = 29
+2024-03-22 16:09:00,476 - App - DEBUG - add a polyline to map len( gpx.tracks )  1
+2024-03-22 16:10:38,135 - App - DEBUG - for file /mnt/WIN_D/Russ/0000/python00/python3/_projects/geo_track/test/karen_photos/20230616_105938.jpg there was no datetime info 
+2024-03-22 16:10:38,172 - App - DEBUG - Sorted photo_points now len = 29
+2024-03-22 16:10:38,173 - App - DEBUG - Starting _gpx_to_map... unknown points
+2024-03-22 16:10:38,173 - App - DEBUG - gpx.tracks len  = 1
+2024-03-22 16:10:38,173 - App - DEBUG - len(track.segments)  = 1
+2024-03-22 16:10:38,173 - App - DEBUG - segment.points  = 29
+2024-03-22 16:10:38,174 - App - DEBUG - add a polyline to map len( gpx.tracks )  1
+2024-03-22 16:11:13,345 - App - DEBUG - for file /mnt/WIN_D/Russ/0000/python00/python3/_projects/geo_track/test/karen_photos/20230616_105938.jpg there was no datetime info 
+2024-03-22 16:11:13,369 - App - DEBUG - Filtered photo_points on dates: len = 29
+2024-03-22 16:11:13,371 - App - DEBUG - Sorted photo_points now len = 29
+2024-03-22 16:11:13,371 - App - DEBUG - Starting _gpx_to_map... unknown points
+2024-03-22 16:11:13,371 - App - DEBUG - gpx.tracks len  = 1
+2024-03-22 16:11:13,371 - App - DEBUG - len(track.segments)  = 1
+2024-03-22 16:11:13,371 - App - DEBUG - segment.points  = 29
+2024-03-22 16:11:13,372 - App - DEBUG - add a polyline to map len( gpx.tracks )  1
+2024-03-22 16:13:16,481 - App - DEBUG - for file /mnt/WIN_D/Russ/0000/python00/python3/_projects/geo_track/test/karen_photos/20230616_105938.jpg there was no datetime info 
+2024-03-22 16:13:16,501 - App - DEBUG - Filtered photo_points on dates: len = 29
+2024-03-22 16:13:16,502 - App - DEBUG - Sorted photo_points now len = 29
+2024-03-22 16:13:16,503 - App - DEBUG - Starting _gpx_to_map... unknown points
+2024-03-22 16:13:16,503 - App - DEBUG - gpx.tracks len  = 1
+2024-03-22 16:13:16,503 - App - DEBUG - len(track.segments)  = 1
+2024-03-22 16:13:16,503 - App - DEBUG - segment.points  = 29
+2024-03-22 16:13:16,504 - App - DEBUG - add a polyline to map len( gpx.tracks )  1
+2024-03-23 21:39:07,680 - App - INFO - Done config_logger .. next AppGlobal msg
+2024-03-23 21:39:07,680 - App - DEBUG - pre logger debug -- did it work
+2024-03-23 21:39:07,681 - App - DEBUG - Message from AppGlobal.print_debug >> logger level in App = 10 will show at level 10
+2024-03-23 21:39:07,681 - App - Notice - 
+2024-03-23 21:39:07,681 - App - Notice - ============================
+2024-03-23 21:39:07,681 - App - Notice - 
+2024-03-23 21:39:07,681 - App - Notice - Application: GeoTrack in mode defaultand version  Ver 10: 2024 02 25.01
+2024-03-23 21:39:07,681 - App - Notice - 
+2024-03-23 21:39:07,681 - App - Notice - command line arg + 0  =  /mnt/WIN_D/Russ/0000/python00/python3/_projects/rshlib/photo_file_utils.py)
+2024-03-23 21:39:07,682 - App - Notice - current directory /mnt/WIN_D/Russ/0000/python00/python3/_projects/rshlib
+2024-03-23 21:39:07,682 - App - Notice - Time now: 2024-03-24 01:39:07
+2024-03-23 21:39:07,682 - App.gui - INFO - in class GUI init for the clip_board gui_with_tabs
+2024-03-23 21:39:08,185 - App - DEBUG - Error messages may be in log file, check it if problems -- check parameters.py for logging level 
+2024-03-23 21:39:08,185 - App - Notice - Error messages may be in log file, check it if problems -- check parameters.py for logging level 
+2024-03-23 21:39:13,475 - App - DEBUG - for file /mnt/WIN_D/Russ/0000/python00/python3/_projects/geo_track/test/karen_photos/20230616_105938.jpg there was no datetime info 
+2024-03-23 21:39:13,511 - App - DEBUG - Write out photo points to file default_photo_points.csv
+2024-03-23 21:39:13,515 - App - DEBUG - Sorted photo_points now len = 29
+2024-03-23 21:39:13,516 - App - DEBUG - Starting _gpx_to_map... unknown points
+2024-03-23 21:39:13,516 - App - DEBUG - gpx.tracks len  = 1
+2024-03-23 21:39:13,516 - App - DEBUG - len(track.segments)  = 1
+2024-03-23 21:39:13,516 - App - DEBUG - segment.points  = 29
+2024-03-23 21:39:13,518 - App - DEBUG - add a polyline to map len( gpx.tracks )  1
+2024-03-23 21:39:48,036 - App - DEBUG - for file /mnt/WIN_D/Russ/0000/python00/python3/_projects/geo_track/test/karen_photos/20230616_105938.jpg there was no datetime info 
+2024-03-23 21:39:48,095 - App - DEBUG - for file /mnt/WIN_D/Russ/0000/python00/python3/_projects/geo_track/test/karen_photos/20230616_105938.jpg there was no datetime info 
+2024-03-23 21:39:48,114 - App - DEBUG - Write out photo points to file default_photo_points.csv
+2024-03-23 21:39:48,117 - App - DEBUG - Sorted photo_points now len = 58
+2024-03-23 21:39:48,118 - App - DEBUG - Starting _gpx_to_map... unknown points
+2024-03-23 21:39:48,118 - App - DEBUG - gpx.tracks len  = 1
+2024-03-23 21:39:48,118 - App - DEBUG - len(track.segments)  = 1
+2024-03-23 21:39:48,118 - App - DEBUG - segment.points  = 58
+2024-03-23 21:39:48,119 - App - DEBUG - add a polyline to map len( gpx.tracks )  1
+2024-03-23 21:40:04,227 - App - DEBUG - Sorted photo_points now len = 58
+2024-03-23 21:40:04,228 - App - DEBUG - Starting _gpx_to_map... unknown points
+2024-03-23 21:40:04,228 - App - DEBUG - gpx.tracks len  = 1
+2024-03-23 21:40:04,228 - App - DEBUG - len(track.segments)  = 1
+2024-03-23 21:40:04,228 - App - DEBUG - segment.points  = 58
+2024-03-23 21:40:04,230 - App - DEBUG - add a polyline to map len( gpx.tracks )  1
+2024-03-23 21:43:04,241 - App - INFO - Done config_logger .. next AppGlobal msg
+2024-03-23 21:43:04,242 - App - DEBUG - pre logger debug -- did it work
+2024-03-23 21:43:04,242 - App - DEBUG - Message from AppGlobal.print_debug >> logger level in App = 10 will show at level 10
+2024-03-23 21:43:04,242 - App - Notice - 
+2024-03-23 21:43:04,242 - App - Notice - ============================
+2024-03-23 21:43:04,242 - App - Notice - 
+2024-03-23 21:43:04,242 - App - Notice - Application: GeoTrack in mode defaultand version  Ver 10: 2024 02 25.01
+2024-03-23 21:43:04,242 - App - Notice - 
+2024-03-23 21:43:04,243 - App - Notice - command line arg + 0  =  /mnt/WIN_D/Russ/0000/python00/python3/_projects/rshlib/photo_file_utils.py)
+2024-03-23 21:43:04,243 - App - Notice - current directory /mnt/WIN_D/Russ/0000/python00/python3/_projects/rshlib
+2024-03-23 21:43:04,243 - App - Notice - Time now: 2024-03-24 01:43:04
+2024-03-23 21:43:04,243 - App.gui - INFO - in class GUI init for the clip_board gui_with_tabs
+2024-03-23 21:43:04,725 - App - DEBUG - Error messages may be in log file, check it if problems -- check parameters.py for logging level 
+2024-03-23 21:43:04,726 - App - Notice - Error messages may be in log file, check it if problems -- check parameters.py for logging level 
+2024-03-23 21:43:09,583 - App - DEBUG - for file /mnt/WIN_D/Russ/0000/python00/python3/_projects/geo_track/test/karen_photos/20230616_105938.jpg there was no datetime info 
+2024-03-23 21:43:09,607 - App - DEBUG - Write out photo points to file default_photo_points.csv
+2024-03-23 21:43:09,610 - App - DEBUG - Sorted photo_points now len = 29
+2024-03-23 21:43:09,611 - App - DEBUG - Starting _gpx_to_map... unknown points
+2024-03-23 21:43:09,611 - App - DEBUG - gpx.tracks len  = 1
+2024-03-23 21:43:09,611 - App - DEBUG - len(track.segments)  = 1
+2024-03-23 21:43:09,611 - App - DEBUG - segment.points  = 29
+2024-03-23 21:43:09,612 - App - DEBUG - add a polyline to map len( gpx.tracks )  1
+2024-03-23 21:43:40,013 - App - DEBUG - Sorted photo_points now len = 29
+2024-03-23 21:43:40,013 - App - DEBUG - Starting _gpx_to_map... unknown points
+2024-03-23 21:43:40,013 - App - DEBUG - gpx.tracks len  = 1
+2024-03-23 21:43:40,013 - App - DEBUG - len(track.segments)  = 1
+2024-03-23 21:43:40,013 - App - DEBUG - segment.points  = 0
+2024-03-23 21:43:40,014 - App - DEBUG - add a polyline to map len( gpx.tracks )  1

@@ -2,6 +2,13 @@
 # -*- coding: utf-8 -*-
 """
 
+>>Py a_python_template
+
+print( f"a_python_template { 0 = }" )
+
+>>Py a_python_template
+
+print( f"a_python_template { 0 = }" )
 
 
 """
@@ -13,18 +20,25 @@ if __name__ == "__main__":
     main.main()
 # --------------------
 
+# ---- imports
 import functools
+import inspect
+import logging
 import pprint
+import subprocess
+from functools import partial
 from pathlib import Path
 
-# ---- imports
 
 from app_global import AppGlobal
-# ---- Qt
 
+from PyQt5.QtGui  import QFont
 from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
 # ---- begin pyqt from import_qt.py
-from PyQt5.QtGui import QIntValidator, QStandardItem, QStandardItemModel, QTextCursor
+from PyQt5.QtGui import (QIntValidator,
+                         QStandardItem,
+                         QStandardItemModel,
+                         QTextCursor)
 # ---- QtSql
 from PyQt5.QtSql import (QSqlDatabase,
                          QSqlQuery,
@@ -33,7 +47,6 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
                              QApplication,
@@ -46,6 +59,7 @@ from PyQt5.QtWidgets import (QAction,
                              QFrame,
                              QGridLayout,
                              QHBoxLayout,
+                             QHeaderView,
                              QInputDialog,
                              QLabel,
                              QLineEdit,
@@ -58,71 +72,44 @@ from PyQt5.QtWidgets import (QAction,
                              QPushButton,
                              QSpinBox,
                              QTableView,
+                             QTableWidget,
+                             QTableWidgetItem,
                              QTabWidget,
                              QTextEdit,
                              QVBoxLayout,
                              QWidget)
 
-import custom_widgets
-#import mdi_management
-import picture_viewer
+import data_dict
+import gui_qt_ext
+import info_about
+#import key_words
+import string_util
+import text_edit_ext
 #import table_model
 import wat_inspector
-import subprocess
-import key_words
-import string_util
-import info_about
+import custom_widgets
 import data_manager
+#import ex_qt
+#import exec_qt
+#import mdi_management
+import picture_viewer
+import parameters
 
-FIF       = info_about.INFO_ABOUT.find_info_for
+# ---- inport end
 
-# -----------------------
-def open_in_idle_string( python_filename, venv_name ):
-    """
-    taken from clipboard dec 2024
-    Purpose:
-        create a string for a .sh file to open
-        a python file in a conda virtual env
-        using idle
+FIF                 = info_about.INFO_ABOUT.find_info_for
 
-    Args:
-        python_filename (TYPE): DESCRIPTION.
-        venv_name (TYPE): DESCRIPTION.
+EXEC_RUNNER         = None  # setup below
+MARKER              = ">snip"
 
-    Returns:
-        the string
 
-    """
-    python_path        = Path( python_filename )
-    python_path_dir    = python_path.parent
+LOG_LEVEL  = 10    # higher is more
 
-    long_f_string      = (   # yes string is comming outdented in following lines
-f"""
-#!/bin/bash
+logger          = logging.getLogger( )
 
-# Run python in a conda environment
-# Print Hello message
-echo "Run idle with python in a conda environment"
-
-# Activate conda environment
-source /home/russ/anaconda3/etc/profile.d/conda.sh
-conda activate {venv_name}
-
-#activate myenv
-python  -m idlelib  {python_filename}
-
-# Deactivate the conda environment -- process my die so so what
-conda deactivate
-
-# here just wait for a keystroke ( or comment out )
-read RESPONSE
-"""  ).strip()
-
-    #rint( f"here is the open in idle_string: \n>>{long_f_string}<<"  )
-    return long_f_string
 
 # ---- open in idle
-def open_python_file_in_idle(  python_filename, ): # conda_env ):
+def open_python_file_in_idle_may_need_move(  python_filename, ): # conda_env ):
     """
     taken from clipboard dec 2024
     we write and execute a shell script to do this
@@ -161,16 +148,16 @@ def model_submit_all( model, msg ):
     #      a_locals       = locals(),
     #      a_globals      = globals(), )
 
-
+    debug_loc        = f"model_submit_all"
     if model.submitAll():
-        print( f"submitAll {msg}")
+        debug_msg        = f"{debug_loc} >>> {msg = }  "
+        logging.error( debug_msg )   #         logging.log( LOG_LEVEL,  debug_msg, )
         ok   = True
+
     else:
         error = model.lastError()
-        error_msg     = f"submitAll error: {msg}"
-        print( error_msg )
-        print( f"error text: {error.text()}")
-        AppGlobal.logger.error( error_msg )
+        error_msg     = f"{debug_loc}  error: {msg = }\n {error.text() = } "
+        logging.error( error_msg )
         ok   = False
 
     # wat_inspector.go(
@@ -185,6 +172,8 @@ RECORD_NULL         = 0
 RECORD_FETCHED      = 1
 RECORD_NEW          = 2
 RECORD_DELETE       = 3
+
+WIDTH_MULP          = 8 # for some column widths
 
 #   stuffdb_tabbed_sub_window.
 
@@ -206,7 +195,13 @@ def build_pic_filename( file_name, sub_dir    ):
     # for debugging may need this
     if type( sub_dir ) != str:
         msg    = "build_pic_filename bad subdir look at self.ix_sub_dir"
-        print( msg )
+        logging.error( msg )
+        # import inspect  # for debug i
+        # mport logging
+        debug_loc       = f"build_pic_filename"
+        debug_msg       = f"{debug_loc} >>> bad subdir look at self.ix_sub_dir  {sub_dir = }"
+        logging.error( debug_msg )
+
         return None
 
     root         = AppGlobal.parameters.picture_db_root
@@ -219,10 +214,11 @@ def build_pic_filename( file_name, sub_dir    ):
     sub_dir          = sub_dir.strip()
 
     full_file_name   = f"{root}/{sub_dir}/{file_name}".replace( "\\", "/" )
-    full_file_name   = full_file_name.replace( "///", "/" )  # just in case we have dups
+    full_file_name   = full_file_name.replace( "///", "/" )  # just in case we have dups !! this is crude
     full_file_name   = full_file_name.replace( "//", "/" )   # just in case we have dups
 
-    print( f"build_pic_filename {full_file_name}")
+    debug_msg       = f"build_pic_filename {full_file_name = }"
+    logging.debug( debug_msg )
 
     return full_file_name
 
@@ -293,6 +289,8 @@ def table_widget_no_edit( table_widget  ):
                 if item is not None:
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
 
+
+
 # -----------------------------------
 class ReadOnlySqlTableModel( QSqlTableModel ):
     """
@@ -319,7 +317,7 @@ class DocumentBase( QMdiSubWindow ):
         """
         This is the parent for the document
         It holds our tabs
-
+        whne a document is created it registers itself
         """
         super().__init__()
 
@@ -327,17 +325,43 @@ class DocumentBase( QMdiSubWindow ):
         # may never be referenced, remove?
         ## move to module level
 
-        self.subwindow_name      = "DocumentBase -- subwindow failed to set"
+        self.subwindow_name     = "DocumentBase -- subwindow failed to set"
+
+        mdi_area                = AppGlobal.main_window.mdi_area
+            #we could return the subwindow for parent to addS
+        sub_window              = self
+            # sub_window.setWindowTitle( "this title may be replaced " )
+        self.db                 = AppGlobal.qsql_db_access.db
+
+        self.prior_tab          = 0
+        self.current_tab        = 0
+
+        self.prior_criteria     = None
+        self.current_criteria   = None    # init just after criteria tab created
 
         # for testing, generalization and ability not to create -- promoted
         self.criteria_tab       = None
         self.list_tab           = None
         self.detail_tab         = None
         self.text_tab           = None
+        # self.pseodo_text_tab    = None   # for a non visual text tab with a data manager
+        #                                     # is just the data_manager
+        #                                     # may be created in the detail tab
         self.history_tab        = None
         self.picture_tab        = None
         self.criteria_tab_index = None
-        self.mapper             = None
+
+        # these and tab references should be created by the particular document
+        # this works only for non movable tabs
+        self.criteria_tab_index     = None
+        self.list_tab_index         = None
+        self.detail_tab_index       = None
+        self.text_tab_index         = None
+        self.history_tab_index      = None
+        self.picture_tab_index      = None   # does this evere exist
+
+        self.mapper                 = None    # !! delete when sage
+        self.help_filename          = "help_file_not_set.txt"
 
         # # get -- set items for a window -- expose as instance var use @property if not
         # # instance var
@@ -358,16 +382,45 @@ class DocumentBase( QMdiSubWindow ):
 
         self.tab_folder                = QTabWidget() # create for descandants
 
+        # later becomes .... !! todo this should be eliminated
+        # main_notebook           = self.tab_folder   # create in parent   get rid of
+        # self.main_notebook      = main_notebook
+
         # may want to keep at end of this init
         AppGlobal.mdi_management.register_document(  self )
         self.tab_folder.currentChanged.connect( self.on_tab_changed )
+        self.set_size_pos()
 
     def __init_2__xxx( self ):
         """finish off init after desceanant has run its init"""
         self.tab_folder.currentChanged.connect( self.on_tab_changed )
         1/0  # not in current use
-    # --------------------------------
 
+    # --------------------------------
+    def set_size_pos( self ):
+        """
+        run after tab is added??
+        """
+        debug_msg = ( "set_size_pos--------------------------------------  " )
+        logging.debug( debug_msg )
+        # # --- works but window is hidden
+        # self.showMaximized()
+        # self.show()
+
+        # ---- next partly works
+        # this is a bit curde a kluge for now
+        my_parameters       = AppGlobal.parameters
+        qt_xpos             = my_parameters.doc_qt_xpos
+        qt_ypos             = my_parameters.doc_qt_ypos
+        qt_width            = my_parameters.doc_qt_width
+        qt_height           = my_parameters.doc_qt_height
+
+        self.setGeometry(  qt_xpos,
+                            qt_ypos ,
+                            qt_width,
+                            qt_height  )
+
+    # --------------------------------
     def get_topic( self ):
         """
         of the detail record -- implemented in stuff in people not working
@@ -384,6 +437,16 @@ class DocumentBase( QMdiSubWindow ):
         """
         debug_self_detail_tab   = self.detail_tab
         return self.detail_tab.record_state
+
+    # --------------------------------
+    def have_updatable_edits( self ):
+        """
+        for debug
+        think meaningless
+        """
+        have_updatable_edits  = self.detail_tab.data_manager.have_updatable_edits( log_it = True )
+        # logging shold just happen
+
 
     # --------------------------------
     @property
@@ -406,44 +469,35 @@ class DocumentBase( QMdiSubWindow ):
     # ------------------------------------------
     def on_list_clicked( self, index: QModelIndex ):
         """
+        this opeins a detail item for the criteria list clicked
         Args:
             index (QModelIndex): DESCRIPTION.
 
         !! promote the whole thing from stuff removed there and rest
         might be functioalize if we use an argumen for self.list.tab
         """
-        print( f"on_list_clicked  save first if necessary and looks promotable ")
         row                     = index.row()
         column                  = index.column()
 
-        self.list_tab.list_ix   = row
+        debug_msg  = ( f"DocumentBase.on_list_clicked Stuff Clicked on list row {row}, column { column}  save first ??" )  # " value: {value}" )
+        logging.debug( debug_msg )
+        self.list_tab.list_ix   = row  # do !! we need this ??
 
-        id_index                = self.list_tab.list_model.index(
-            index.row( ), 0 )
-        db_key                  = self.list_tab.list_model.data(
-            id_index, Qt.DisplayRole )
-        print( f"Stuff Clicked on list row {row}, column {
-            column}, {db_key=}" )  # " value: {value}" )
-
-        # self.detail_tab.fetch_detail_row_by_id( db_key )
-        self.fetch_row_by_id( db_key )
-
-        self.main_notebook.setCurrentIndex( self.detail_tab_index )
-        # self.detail_tab.id_field.setText( str( db_key )  ) # fetch currently does not include the id
+        self.set_list_to_detail_ix( row )
 
     #----------------------------
     def on_tab_changed(self, index):
         """
         will kick off criteria select if ...
         what it says, read it
-        """
-        print( "on_tab_changed need validate update db but may be redundant in some cases so perhaps provide a mechanism to skip" )
+        !!
 
-        self.validate()
-        self.update_db()
+        """
+        # debug_msg   = ( "on_tab_changed need validate update db but may be"
+        #                " redundant in some cases so perhaps provide a mechanism to skip" )
+        # logging.debug( debug_msg )
 
         old_index                = self.current_tab_index
-        #rint(f"stuf_tabbed_sub_window on_tab_changed from { self.current_tab_index = } to {index = }")
         self.current_tab_index   = index
         #self.tab_page_info()
         if old_index == 0 and index != 0:  # !=0 happens at construct
@@ -463,7 +517,8 @@ class DocumentBase( QMdiSubWindow ):
     def on_close( self ):
         """
         """
-        print(f"{self.windowTitle()} has been closed")
+        debug_msg  = (f"{self.windowTitle()} has been closed")
+        logging.debug( debug_msg )
 
     # ---- subwindow interactions
     # -----------------------------
@@ -490,8 +545,11 @@ class DocumentBase( QMdiSubWindow ):
     # ------------------------------------------
     def set_list_to_detail_ix( self, new_list_ix   ):
         """
+        navigate the list for prior and next and ....
         go to absolute index from the list tab
-        consider second arg a delta
+            update before moving
+        consider second arg a delta -- that might eliminat the prior next but
+        working now
         """
         self.update_db()
 
@@ -499,21 +557,20 @@ class DocumentBase( QMdiSubWindow ):
         no_rows                  = tab.list_model.rowCount()
 
         if no_rows < 1:
-            print( "set_list_to_detail_ix  may need to clear some stuff" )
+            debug_msg  = ( "set_list_to_detail_ix  may need to clear some stuff" )
+            logging.debug( debug_msg )
 
         list_ix                  = tab.list_ix
 
         if new_list_ix >= no_rows:
             new_list_ix  =  no_rows -1
-            msg     = f"new_list_ix {no_rows = } {new_list_ix = } tried to index past end"
-            print( msg )
-            AppGlobal.logger.error( msg )
+            # debug_msg     = f"set_list_to_detail_ix new_list_ix {no_rows = } {new_list_ix = } tried to index past end"
+            # logging.debug( debug_msg )
 
         elif new_list_ix < 0:
             new_list_ix  =  0
-            msg     = f"new_list_ix {no_rows = } {new_list_ix = } tired to index before start"
-            print( msg )
-
+            # debug_msg     = f"set_list_to_detail_ix new_list_ix {no_rows = } {new_list_ix = } tired to index before start"
+            # logging.debug( debug_msg )
         # else in range
 
         tab.list_ix     = new_list_ix
@@ -522,11 +579,13 @@ class DocumentBase( QMdiSubWindow ):
         id_data         = record.value( "id")
         #rint( f"next_list_to_detail {id_data = } {record = } " )
 
-        print( "set_list_to_detail_ix may be a function for this" )
+        # debug_msg   = ( "set_list_to_detail_ix may be a function for this" )
+        # logging.debug( debug_msg )
+
         self.select_record( id_data )
-        # self.detail_tab.select_record( id_data )
-        # if self.text_tab:
-        #     self.text_tab.select_record( id_data )
+
+        record    = self.detail_tab.data_manager.current_record
+        self.record_to_history_table( record )
 
     # -----------------------------
     def prior_history_to_detail( self ):
@@ -543,7 +602,7 @@ class DocumentBase( QMdiSubWindow ):
     # -----------------------------
     def next_history_to_detail( self ):
         """
-
+        see prior_history_to_detail
         """
         history_tab    = self.history_tab
         list_ix        = history_tab.list_ix
@@ -552,8 +611,13 @@ class DocumentBase( QMdiSubWindow ):
     # ------------------------------------------
     def set_history_to_detail_ix( self, new_list_ix   ):
         """
-
+        see  set_list_to_detail_ix
         """
+        # !! think about comment_in
+        #self.update_db()
+        msg     = f"set_history_to_detail_ix  {new_list_ix = } "
+        logging.debug( msg )
+
         self.update_db()
 
         history_tab         = self.history_tab
@@ -561,32 +625,30 @@ class DocumentBase( QMdiSubWindow ):
         history_table       = history_tab.history_table
         no_rows             = history_table.rowCount()
 
-
         if new_list_ix >= no_rows:
             new_list_ix  =  no_rows -1
             msg     = f"new_history_ix {no_rows = } {new_list_ix = } tried to index past end"
-            print( msg )
-            AppGlobal.logger.error( msg )
+            logging.error( msg )
 
         elif new_list_ix < 0:
             new_list_ix  =  0
-            msg     = f"new_history_ix {no_rows = } {new_list_ix = } tired to index before start"
-            print( msg )
+            debug_msg     = f"new_history_ix {no_rows = } {new_list_ix = } tired to index before start"
+            logging.debug( debug_msg )
 
         # else in range
-        ID_COL                  = 1
+        ID_COL                  = 0
         history_tab.list_ix     = new_list_ix
 
         item                    = history_table.item( new_list_ix, ID_COL )
         id_data                 = int( item.text() )
         # id_index                =  history_table.index( new_list_ix, 0 )
         # id_data                 =  history_table.data( id_index, Qt.DisplayRole )
-        msg                     = ( f"next_history_to_detail  try to get db_key { new_list_ix = },  {id_data = }" )
-        AppGlobal.logger.debug( msg )
+        debug_msg               = ( f"next_history_to_detail  try to get db_key { new_list_ix = },  {id_data = }" )
+        logging.debug( debug_msg )
+
         history_tab.select_row( new_list_ix )
 
         self.select_record( id_data )
-
 
     # -----------------------------
     def add_copy( self,  ):
@@ -614,7 +676,6 @@ class DocumentBase( QMdiSubWindow ):
         """
         self.new_record( option = "default" )
 
-
     #-------------------------------------
     def new_record( self, option = "default" ):
         """
@@ -631,22 +692,29 @@ class DocumentBase( QMdiSubWindow ):
                         "prior   use prior on edits
 
         """
-
-        print( "new_record first validate, then save, wait for except then go on ")
-
-        self.validate()
-
         self.update_db()
+        debug_msg   = ( "DocumentBase new_record first validate, then save, "
+                        "wait for except then go on save removed ")
+        logging.log( LOG_LEVEL,  debug_msg, )
+        # self.validate()
+        # self.update_db()
+
+        # next key should come from the detail data_manager  we can let the
+        # detail windows do this then get the key
+        # next_key      = AppGlobal.key_gen.get_next_key( self.detail_table_name )
+        debug_msg   = ( f"new_record change self.detail_tab.default_new_row( next_key ) " )
+        logging.log( LOG_LEVEL,  debug_msg, )
 
 
-        next_key      = AppGlobal.key_gen.get_next_key( self.detail_table_name )
-        print( f"new_record change self.detail_tab.default_new_row( next_key ) " )
         # was self.detail_tab.default_new_row( next_key )
 
-        if  self.detail_tab is not None:
-            self.detail_tab.new_record( next_key, option = option )
+        # if  self.detail_tab is not None:
+        #     pass
 
-        if  self.text_tab is not None:
+        self.detail_tab.new_record( next_key = None, option = option )
+        next_key  = self.detail_tab.data_manager.current_id
+
+        if  self.text_tab is not None:  # using next key from above
             self.text_tab.new_record( next_key, option = option  )
 
     # ------------------------------------------
@@ -671,8 +739,11 @@ class DocumentBase( QMdiSubWindow ):
         if not is_delete_ok():
             return
 
-        print( "delete.... the detail items and all that depend on it need to complete and route to update_db ")
-        print( "convert to loop?? !! may need to check record state ")
+        debug_msg    = ( "delete.... the detail items and all that depend on it need to complete and route to update_db ")
+        logging.debug( debug_msg )
+
+        debug_msg    = ( "convert to loop?? !! may need to check record state ")
+        logging.debug( debug_msg )
 
         if self.detail_tab is not None:
             self.detail_tab.delete_all()
@@ -685,8 +756,8 @@ class DocumentBase( QMdiSubWindow ):
         # self.record_state   = RECORD_DELETE   # this is in detail tab not here
         #self.record_state   = RECORD_NULL
 
-        msg     = f"sUB wINDOE.delete...  ....   for {self.subwindow_name = }"
-        print( msg )
+        debug_msg     = f"sUB wINDOE.delete...  ....   for {self.subwindow_name = }"
+        logging.debug( debug_msg )
 
     # --------------------------
     def update_db( self,   ):
@@ -711,8 +782,7 @@ class DocumentBase( QMdiSubWindow ):
             msg_box.setModal( True )
             msg_box.exec_()
 
-            return
-
+            return  #
 
         if self.detail_tab is not None:
             self.detail_tab.update_db()
@@ -720,9 +790,10 @@ class DocumentBase( QMdiSubWindow ):
         if self.text_tab is not None:
             self.text_tab.update_db()
 
-        msg     = f"now in stuffdb_tabbed... update_db....   for {self.subwindow_name = }"
-        AppGlobal.logger.info( msg )
-        print( msg )
+        loc        = f"{self.__class__.__name__}.{inspect.currentframe().f_code.co_name} "
+        debug_msg  = f"{loc} >>> for {self.subwindow_name = }"
+        logging.debug( debug_msg )
+
 
     # ---------------------------------------
     def validate( self, ):
@@ -769,12 +840,9 @@ class DocumentBase( QMdiSubWindow ):
         no the tabs have their own method this is ok
         what about photo --- well things do not have one photo except photo itself
         """
-        print( "select_record  first validate, then save, wait for except then go on ")
-
-        self.validate()
-
-        self.update_db()
-
+        debug_msg   = ( "base document select_record  first validate, "
+                        "then save, wait for except then go on ?? ")
+        logging.debug( debug_msg )
 
         self.detail_table_id     = a_id     # also need in new and delete
         self.detail_tab.select_record(  a_id )
@@ -783,11 +851,20 @@ class DocumentBase( QMdiSubWindow ):
         if self.text_tab is not None:
             self.text_tab.select_record(  a_id )
 
+        # # print is this right can it be in detail
+        # if self.pseodo_text_tab is not None:
+        #     self.pseodo_text_tab.select_record(  a_id )
+
+
         if self.picture_tab is not None:
             self.picture_tab.select_record(  a_id )
 
         # self.detail_to_history()
-        self.main_notebook.setCurrentIndex( self.detail_tab_index )
+
+        tab_folder     = self.tab_folder  #  QTabWidget
+        current_ix     = tab_folder.currentIndex()
+        if current_ix not in [ self.detail_tab_index, self.text_tab_index, self.picture_tab_index, ]:
+            tab_folder.setCurrentIndex( self.detail_tab_index )
 
     # --------
     def popup_delete_question(self):
@@ -816,6 +893,18 @@ class DocumentBase( QMdiSubWindow ):
         """
         self.history_tab.record_to_table( record )
 
+        # record    = self.detail_tab.data_manager.current_record
+        # self.history_tab.record_to_table( record )
+    # ---------------------------------------
+    def search_me( self, criteria ):
+        """
+        externally driven search perhaps from text
+        need to add what type of document
+        """
+        msg     = ( f"base document search_me {criteria = }")
+        logging.debug( msg )
+        self.criteria_tab.search_me( criteria )
+
     # ------------------------
     def prior_next_picture( self, delta ):
         """
@@ -826,43 +915,105 @@ class DocumentBase( QMdiSubWindow ):
         #     return self.photos_tab.prior_next( delta )
         return   self.detail_tab.prior_next_picture( delta )
 
+    # ------------------------------------------
+    def doc_str( self, ):
+        """
+        links to main menu bar
+
+        """
+        print( f"self = {self}")
+
+    # ------------------------------------------
+    def tab_str( self, ):
+        """
+        links to main menu bar
+
+        """
+        msg     = ( f"tab_str not implemented yet {self}")
+        logging.error( msg )
+
+    # ------------------------------------------
+    def data_manager_inspect( self, ):
+        """
+        links to main menu bar for debug
+        """
+        debug_msg   = ( f"data_manager_inspect will call debug_to_log  ")
+        logging.debug( debug_msg )
+        # make some locals for inspection
+        # self_detail_tab         = self.detail_tab
+        # self_text_tab           = self.text_tab
+        # self_detail_table_name  = self.detail_table_name
+        # parent_window = self.parent( ).parent( ).parent().parent()
+
+        self.detail_tab.data_manager.debug_to_log()
+
+    # ------------------------------------------
+    def doc_wat_inspect( self, ):
+        """
+        links to main menu bar for debug
+        """
+        debug_msg    = ( f"doc_inspect may want to add to  {self}")
+        logging.debug( debug_msg )
+        # make some locals for inspection
+        self_detail_tab         = self.detail_tab
+        self_text_tab           = self.text_tab
+        self_detail_table_name  = self.detail_table_name
+        # parent_window = self.parent( ).parent( ).parent().parent()
+
+
+        todo = """
+        self.criteria_tab       = None
+        self.list_tab           = None
+        self.detail_tab         = None
+        self.text_tab           = None
+        self.history_tab        = None
+        self.picture_tab        = None
+        self.criteria_tab_index = None
+        self.mapper             = None"""
+
+        wat_inspector.go(
+             msg            = "inspect !! more locals would be nice ",
+             # inspect_me     = self.people_model,
+             a_locals       = locals(),
+             a_globals      = globals(), )
+
+
     # -----------------------
     def __str__( self ):
 
         a_str   = ""
-        a_str   = ">>>>>>>>>>* DocumentBase  *<<<<<<<<<<<<"
-
+        a_str   = "\n>>>>>>>>>>* DocumentBase  *<<<<<<<<<<<<"
 
         a_str   = string_util.to_columns( a_str, ["criteria_tab",
-                                           f"{self.criteria_tab}" ] )
-        a_str   = string_util.to_columns( a_str, ["criteria_tab_index",
-                                           f"{self.criteria_tab_index}" ] )
-        a_str   = string_util.to_columns( a_str, ["current_id",
-                                           f"{self.current_id}" ] )
-        a_str   = string_util.to_columns( a_str, ["current_tab_index",
-                                           f"{self.current_tab_index}" ] )
+                                            f"{self.criteria_tab}" ] )
+        # a_str   = string_util.to_columns( a_str, ["criteria_tab_index",
+        #                                    f"{self.criteria_tab_index}" ] )
+        # a_str   = string_util.to_columns( a_str, ["current_id",
+        #                                    f"{self.current_id}" ] )
+        # a_str   = string_util.to_columns( a_str, ["current_tab_index",
+        #                                    f"{self.current_tab_index}" ] )
         a_str   = string_util.to_columns( a_str, ["detail_tab",
-                                           f"{self.detail_tab}" ] )
-        a_str   = string_util.to_columns( a_str, ["detail_table_id",
-                                           f"{self.detail_table_id}" ] )
-        a_str   = string_util.to_columns( a_str, ["detail_table_name",
-                                           f"{self.detail_table_name}" ] )
-        a_str   = string_util.to_columns( a_str, ["history_tab",
-                                           f"{self.history_tab}" ] )
-        a_str   = string_util.to_columns( a_str, ["list_tab",
-                                           f"{self.list_tab}" ] )
-        # a_str   = string_util.to_columns( a_str, ["mapper",
-        #                                    f"{self.mapper}" ] )
-        a_str   = string_util.to_columns( a_str, ["menu_action_id",
-                                           f"{self.menu_action_id}" ] )
-        a_str   = string_util.to_columns( a_str, ["picture_tab",
-                                           f"{self.picture_tab}" ] )
-        a_str   = string_util.to_columns( a_str, ["subwindow_name",
-                                           f"{self.subwindow_name}" ] )
-        a_str   = string_util.to_columns( a_str, ["tab_folder",
-                                           f"{self.tab_folder}" ] )
+                                            f"{self.detail_tab}" ] )
+        # a_str   = string_util.to_columns( a_str, ["detail_table_id",
+        #                                    f"{self.detail_table_id}" ] )
+        # a_str   = string_util.to_columns( a_str, ["detail_table_name",
+        #                                    f"{self.detail_table_name}" ] )
+        # a_str   = string_util.to_columns( a_str, ["history_tab",
+        #                                    f"{self.history_tab}" ] )
+        # a_str   = string_util.to_columns( a_str, ["list_tab",
+        #                                    f"{self.list_tab}" ] )
+        # # a_str   = string_util.to_columns( a_str, ["mapper",
+        # #                                    f"{self.mapper}" ] )
+        # a_str   = string_util.to_columns( a_str, ["menu_action_id",
+        #                                    f"{self.menu_action_id}" ] )
+        # a_str   = string_util.to_columns( a_str, ["picture_tab",
+        #                                    f"{self.picture_tab}" ] )
+        # a_str   = string_util.to_columns( a_str, ["subwindow_name",
+        #                                    f"{self.subwindow_name}" ] )
+        # a_str   = string_util.to_columns( a_str, ["tab_folder",
+        #                                    f"{self.tab_folder}" ] )
         a_str   = string_util.to_columns( a_str, ["text_tab",
-                                           f"{self.text_tab}" ] )
+                                            f"{self.text_tab}" ] )
 
 
 
@@ -870,7 +1021,6 @@ class DocumentBase( QMdiSubWindow ):
         # a_str   = a_str + "\n" + b_str
 
         return a_str
-
 
 
 # ---- for detail tab probably  Picture List Tab PicturePictureTab used for text tab base ----------------------------------
@@ -884,7 +1034,9 @@ class DetailTabBase( QWidget ):
         """
         lots of variable may not be used .... clean up later
         """
-        print( "init  DetailTabBase  " )
+        debug_msg  = ( "init  DetailTabBase  " )
+        logging.log( LOG_LEVEL,  debug_msg, )
+
         super().__init__( parent_window )
 
         self.parent_window       = parent_window
@@ -916,44 +1068,87 @@ class DetailTabBase( QWidget ):
         # self.picture_sub_tab     = None
 
         # ----
-
-        # next not right for text windows
+        # next not right for text windows -- is not need there onw in init
         self.table              = parent_window.detail_table_name
         self.table_name         = self.table   # !! eliminate one or other
-        self.sub_tab_list        =  []
+        self.sub_tab_list       = []
+        self.topic_edits        = []    # the edits use for topics  probably tuples that need sorting
 
-        print( "init end DetailTabBase  " )
+        self.pseodo_text_tab    = None    # may create, a data_manager in place of text_tab
 
+        debug_msg    = ( f"init end DetailTabBase {self.tab_name}  " )
+        logging.debug( debug_msg )
 
+    # ---------
     def post_init(self, ):
         """
         call from child at the end of its init
         __init__ continued
         self.key_word_table_name: set to "" to suppress
         better text have own tab ?
+
+        this build the standard detail db interface prior to
+        building the gui which is next
+
         """
-        print( "post_init   DetailTabBase  {self.tab_name  }" )
+        debug_msg   = ( f"post_init DetailTabBase  {self.tab_name}  " )
+        logging.debug( debug_msg )
 
         model                   = QSqlTableModel(
-                            self, AppGlobal.qsql_db_access.db )
+                                      self, AppGlobal.qsql_db_access.db )
 
         self.model              = model
         self.tab_model          = model  # !! ogase iyt
 
-        #self.table              = self.parent_window.detail_table_name
-
         model.setTable( self.table )
 
         # ---- data maanager
-        self.data_manager      = data_manager.DataManager( self.model )
-        #self.data_manager.next_key_function = self.key_gen     # some_function( table_name )
+        self.data_manager                       = data_manager.DataManager( self.model )
+        self.data_manager.next_key_function     = AppGlobal.key_gen.get_next_key
+                # a_key_gen               = key_gen.KeyGenerator( a_qsql_db_access.db  )  #  AppGlobal.qsql_db_access.db
+                # AppGlobal.key_gen       = a_key_gen.key_gen     # some_function( table_name )
         if self.key_word_table_name != "":
             self.data_manager.enable_key_words(  self.key_word_table_name  )
 
-        print( f"post_init  end off to self._build_gui() DetailTabBase  {self.tab_name  }" )
+        #rint( f"post_init  end off to self._build_gui() DetailTabBase  {self.tab_name  }" )
+        #rint( f"my data manager for {self.tab_name} \n{self.data_manager}")
 
         self._build_gui()
 
+
+    #---------------------------------
+    def _build_fields_from_dict( self, layout ):
+        """
+        What it says, read
+            this is data dict driven code
+        """
+
+        # ---- id
+        edit_field                  = custom_widgets.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "id",
+                                                db_type        = "integer",
+                                                display_type   = "string" )
+        self.id_field               = edit_field
+        edit_field.setPlaceholderText( "id" )
+        # edit_field.default_value    = 999 does not work
+        default_func               = partial( edit_field.do_ct_value, -99 )
+        edit_field.ct_default      = default_func
+        self.data_manager.add_field( edit_field )
+        layout.addWidget( edit_field )
+
+        column_list    = data_dict.DATA_DICT.get_table( self.table_name ).get_detail_columns(    )
+        for i_column in column_list:
+            pass
+            edit_field               = i_column.detail_edit_class(
+                                                            parent         = None,
+                                                            field_name     = i_column.column_name,
+                                                            db_type        = i_column.edit_in_type,
+                                                            display_type   = i_column.display_type,  )
+
+            edit_field.setPlaceholderText( i_column.column_name )
+            self.data_manager.add_field( edit_field )
+            layout.addWidget( edit_field )
 
     # -----------------------------------------
     def update_db( self, ):
@@ -963,114 +1158,10 @@ class DetailTabBase( QWidget ):
         """
         self.data_manager.update_db()
 
+        if self.pseodo_text_tab is not None:  #( a data_manager )
+            self.pseodo_text_tab.update_db()
 
-        # if   self.record_state   == RECORD_NULL:
-        #     print( "update_db record null no action, return ")
-        #     return
-        #     # if self.key_word_table_name:
-        #     #     self.key_word_obj.string_to_new(( self.get_kw_string()) )
-
-        # elif  self.record_state   == RECORD_NEW:
-        #     self.update_new_record()
-        #     if self.key_word_table_name:
-        #         self.key_word_obj.string_to_new(( self.get_kw_string()) )
-
-        # elif  self.record_state   == RECORD_FETCHED:
-        #     self.update_record_fetched()
-        #     if self.key_word_table_name:
-        #         self.key_word_obj.string_to_new(( self.get_kw_string()) )
-
-        # elif  self.record_state   == RECORD_DELETE:
-        #     self.delete_record_update()
-        #     if self.key_word_table_name:
-        #         self.key_word_obj.string_to_new( "" )
-
-        # else:
-        #     print( f"update_db wtf  {self.record_state = } ")
-        # if self.key_word_table_name:
-        #     self.key_word_obj.compute_add_delete( self.current_id  )
-        # #rint( f"update_db record state now:  {self.record_state = } ")
-        # #rint( "what about other tabs and subtabs")
-
-    # ---------------------------
-    def update_record_fetchedxxxx(self):
-        """
-        from russ crud  -- copied from PictureTextTab -- now promoted
-        what are the fields
-        """
-        msg    = ( f"update_record_fetched  {self.record_state  = }")
-        print( msg )
-        AppGlobal.logger.error( msg )
-        # model    = self.detail_text_model
-        model    = self.tab_model      # QSqlTableModel(
-        if not self.record_state  == RECORD_FETCHED:
-
-            msg   = ( f"update_record_fetched bad state, return  {self.record_state  = }")
-            print( msg )
-            AppGlobal.logger.error( msg )
-            return
-
-        id_value = self.id_field.text()
-        if id_value:
-            # why should we need this
-            print( "some save commented out ")
-            #model.setFilter(f"id = {id_value}")
-            #model.select()
-            if model.rowCount() > 0:
-
-                # use mapper or field to record
-                if self.mapper:
-                    self.mapper.submit()
-                else:
-                    record = model.record(0)
-                    self.field_to_record(  record )
-                    model.setRecord(0, record)
-                # # ---- timestamps
-                # record.setValue( "add_ts",   self.add_ts_field.text()) # should have already been set
-                # record.setValue( "edit_ts",  self.edit_ts_field.text())
-
-                #model.submitAll()
-                ok   = model_submit_all( model, f"DetailTabBase.update_record_fetched {id_value =}")
-                # msg            = f"update_record_fetched Record ( fetched ) saved! {id_value =} fix error check "
-                # rint( msg )
-                #QMessageBox.information(self, "Save",  msg )
-
-            model.setFilter("")
-
-    # ---------------------------
-    def update_new_recordxxxx( self ):
-        """
-        from russ crud worked   --- from photo_text -- worked
-        photo-detal ng need edit trying worked --- move to ancestor
-
-        """
-        print( f"DetailTabBase update_new_record  {self.record_state  = }")
-        model   = self.tab_model     # QSqlTableModel(
-        if not self.record_state  == RECORD_NEW:
-            msg       = ( f"save_new_record bad state, return  {self.record_state  = }")
-            print( msg )
-            return
-
-        record  = model.record()
-
-        self.field_to_record( record )
-
-        model.insertRecord( model.rowCount(), record )
-
-        #model.submitAll()
-        if self.mapper:
-            self.mapper.submit()
-        else:
-            record = model.record(0)
-            self.field_to_record(  record )
-            model.setRecord(0, record)
-
-        ok   = model_submit_all( model, f"DetailTabBase.update_new_record { self.current_id = } ")
-
-        self.record_state    = RECORD_FETCHED
-        # msg      =  f"New record saved! { self.current_id = } "
-        # rint( msg )
-        #QMessageBox.information(self, "Save New", msg )
+        #if may want to loop thru subtabs
 
     # ---------------------------------------
     def validate( self, ):
@@ -1079,31 +1170,6 @@ class DetailTabBase( QWidget ):
         validations cause exceptions so return is not really required
         """
         self.data_manager.validate()
-        # is_bad   = False
-        # for i_field in  self.field_list:
-        #     is_bad    = i_field.validate(   )
-        #     if is_bad:
-        #         break
-
-        # msg     = f" do we need sub_tabs now in stuffdb_tabbed... validate.... {is_bad = }   for {self.tab_name = }"
-        # AppGlobal.logger.info( msg )
-        # print( msg )
-        # return is_bad
-
-    # -------------------------------------
-    def get_kw_stringxxx( self,   ):
-        """
-        get the fields contaning key words
-        and concatinate into one string
-        self.data_manager.add_field( edit_field )
-        """
-        print( "in stuffdb tab get_kw_string" )
-        a_str  = " "
-        for i_edit in self.key_word_edit_list:
-            a_str    = a_str + i_edit.get_raw_data()
-
-        print( f" {a_str = }")
-        return a_str
 
     # -------------------------------------
     def delete_all( self,   ):
@@ -1111,7 +1177,8 @@ class DetailTabBase( QWidget ):
         delete all under this id   current_id
 
         """
-        print( "in stuffdb tab delete all ")
+        debug_msg   = ( "in stuffdb tab delete all ")
+        logging.debug( debug_msg )
 
         self.data_manager.delete_all()
         # model  = self.tab_model
@@ -1139,27 +1206,27 @@ class DetailTabBase( QWidget ):
         args
             next_key
             option       "default",
-                "prior   use prior on edits
+                         "prior   use prior on edits
+            normally next_key = None so data manager generates it
 
         """
-        self.data_manager.new_record( next_key, option = "default" )
+        debug_msg = ( f"Detail_Tab_Base new_record {next_key = }   {option =} update.db")
+        logging.log( LOG_LEVEL,  debug_msg, )
+        # self.update.db()
+        self.data_manager.new_record( next_key, option = option )
 
+        next_key     = self.data_manager.current_id
+        if self.pseodo_text_tab is not None:
+            # self.pseodo_text_tab.clear_fields( option = "default" )
+            self.pseodo_text_tab.new_record( next_key, option = "default" )
 
+        debug_msg = ( f"Detail_Tab_Base clear out sub tabs?? !!")
+        logging.log( LOG_LEVEL,  debug_msg, )
 
-        # print( f"DetailTabBase new_record  {self.tab_name} {self.table_name} {next_key} do we do again ?")
-        # self.clear_fields( option   = option  )
-        # self.record_state           = RECORD_NEW
-
-        # # think we need to use custon_widget
-        # #self.id_field.setText( str( next_key ) )
-        # self.id_field.set_data( next_key, "integer" )
-
-        # self.current_id             = next_key
-        # if self.key_word_table_name:
-        #     self.key_word_obj.string_to_old( "" )
-        # print( "new_record time stuff may be lost ")
-
-        # print( "new_recordneed to fix up the picture tab if any or does document do it ??")
+        # on an add we can select by id to clear them out and perhaps set a filter
+        # use one of self.picture_i_tabsub_tabself.sub_tab_list       = []
+        for i_tab in self.sub_tab_list:
+            i_tab.select_by_id( next_key )  # key will not exist
 
     # ---------------------------
     def select_record( self, id_value  ):
@@ -1170,78 +1237,15 @@ class DetailTabBase( QWidget ):
         promoted   seems ok to be here
         """
         self.data_manager.select_record( id_value )
-        # record   = None
-        # model    = self.tab_model
 
-        #         # consider get rid of thirt if
-        # if id_value:
-        #     #ia_qt.q_sql_query_model( model, "select_record 1" )
-        #     model.setFilter( f"id = {id_value}" )
-        #     model.select()
-
-        #     #ia_qt.q_sql_query_model( model, "select_record 2" )
-        #     if model.rowCount() > 0:
-        #         record                  = model.record(0)
-        #         self.id_field.setText( str(record.value("id")) )
-        #         self.record_to_field( record )
-        #         #self.textField.setText(record.value("text_data"))
-        #         self.record_state       = RECORD_FETCHED
-        #         self.current_id         = id_value
-        #     else:
-        #         msg    = f"Record not found! {self.tab_name } {id_value = }"
-        #         print( msg )
-        #         AppGlobal.logger.error( msg )
-        #         #QMessageBox.warning(self, "Select",  msg )
-        #     #ia_qt.q_sql_query_model( model, "select_record 3 ancestor " )
-        #     # model.setFilter("")  # why what happens if we leave alone
-        #           # comment out here seems to fix history should be ok across all tabs
-        #     #ia_qt.q_sql_query_model( model, "select_record 4  ancestor" )
-
-        # # may be more like events plantings....  remove Picture soon ? or keep as special
-
-        # if record:
-        #     #rint( "in DetailTabBase, now dowing history probably only place should be done on select look for other calls  ")
-        #     self.parent_window.record_to_history_table( record )
-
-        # # if self.pictures_tab:
-        # #     self.pictures_tab.select_by_id( id_value )
+        if self.pseodo_text_tab is not None:
+            self.pseodo_text_tab.select_record( id_value )
 
         for i_sub_tab in self.sub_tab_list:
             if i_sub_tab:
                 i_sub_tab.select_by_id( id_value )
 
-        # if self.mapper:
-        #     self.mapper.setCurrentIndex( 0 )
-
-        #     msg = "set mapper to index 0"
-        #     print( msg )
-        #     AppGlobal.logger.debug( msg )
-
-        # if self.key_word_table_name:
-        #     self.key_word_obj.string_to_old(( self.get_kw_string()) )
         self.send_topic_update()
-
-    # # ------------------------
-    # def record_to_field(self, record ):
-    #     """
-    #     promoted
-    #     mov data from fetched record into the correct fields
-    #     """
-    #     # ---- code_gen: detail_tab -- _record_to_field -- begin code
-    #     for i_field in  self.field_list:
-    #         i_field.set_data_from_record( record )
-
-    #     # next might be better in select_record but does that have the record
-    #     self.parent_window.record_to_history_table( record )
-
-    # # ------------------------
-    # def field_to_record( self, record ):
-    #     """
-    #     trying promote, for new edits
-
-    #     """
-    #     for i_field in  self.field_list:
-    #         i_field.get_data_for_record( record, self.record_state  )
 
     # ------------------------
     def clear_fields( self, option ):
@@ -1258,6 +1262,10 @@ class DetailTabBase( QWidget ):
         move option inside control with argument
         """
         self.data_manager.clear_fields( option = option)
+
+        if self.pseodo_text_tab is not None:
+            self.pseodo_text_tab.clear_fields( option = option)
+
 
         # if option == "default":
         #     for i_field in self.field_list:
@@ -1276,10 +1284,12 @@ class DetailTabBase( QWidget ):
         override,  detail tab
         """
         msg     = ( "send_topic_update needs fixing !! just reenabled ")
-        print( msg )
-        AppGlobal.logger.error( msg )
+        logging.error( msg )
         # return
-        print( f" send_topic_update  <<<<<<<<<{ self.tab_name = } <<<<<<<<<<<<<<<<<<<< { self.enable_send_topic_update = } " )
+        debug_msg   = ( f" send_topic_update  <<<<<<<<<{ self.tab_name = } "
+                         f" <<<<<<<<<<<<<<<<<<<< { self.enable_send_topic_update = } " )
+        logging.debug( debug_msg )
+
         # AppGlobal.mdi_management.send_topic_update(
         #      table = self.table_name,  table_id = self.current_id, info = self.parent_window.topic )
         if self.enable_send_topic_update:
@@ -1305,34 +1315,34 @@ class DetailTabBase( QWidget ):
     def __str__( self ):
 
         a_str   = ""
-        a_str   = ">>>>>>>>>>* DetailTabBase *<<<<<<<<<<<<"
+        a_str   = "\n>>>>>>>>>>* DetailTabBase *<<<<<<<<<<<<"
 
         # a_str   = string_util.to_columns( a_str, ["add_ts",
         #                                    f"{self.add_ts}" ] )
-        a_str   = string_util.to_columns( a_str, ["current_id",
-                                           f"{self.current_id}" ] )
-        a_str   = string_util.to_columns( a_str, ["deleted_record_id",
-                                           f"{self.deleted_record_id}" ] )
+        # a_str   = string_util.to_columns( a_str, ["current_id",
+        #                                    f"{self.current_id}" ] )
+        # a_str   = string_util.to_columns( a_str, ["deleted_record_id",
+        #                                    f"{self.deleted_record_id}" ] )
         a_str   = string_util.to_columns( a_str, ["enable_send_topic_update",
                                            f"{self.enable_send_topic_update}" ] )
         # a_str   = string_util.to_columns( a_str, ["field_list",
         #                                    f"{self.field_list}" ] )
-        a_str   = string_util.to_columns( a_str, ["key_word_edit_list",
-                                           f"{self.key_word_edit_list}" ] )
-        a_str   = string_util.to_columns( a_str, ["key_word_obj",
-                                           f"{self.key_word_obj}" ] )
-        a_str   = string_util.to_columns( a_str, ["key_word_table_name",
-                                           f"{self.key_word_table_name}" ] )
-        a_str   = string_util.to_columns( a_str, ["mapper",
-                                           f"{self.mapper}" ] )
+        # a_str   = string_util.to_columns( a_str, ["key_word_edit_list",
+        #                                    f"{self.key_word_edit_list}" ] )
+        # a_str   = string_util.to_columns( a_str, ["key_word_obj",
+        #                                    f"{self.key_word_obj}" ] )
+        # a_str   = string_util.to_columns( a_str, ["key_word_table_name",
+        #                                    f"{self.key_word_table_name}" ] )
+        # a_str   = string_util.to_columns( a_str, ["mapper",
+        #                                    f"{self.mapper}" ] )
         a_str   = string_util.to_columns( a_str, ["parent_window",
                                            f"{self.parent_window}" ] )
         a_str   = string_util.to_columns( a_str, ["picture_sub_tab",
                                            f"{self.picture_sub_tab}" ] )
         a_str   = string_util.to_columns( a_str, ["pictures_sub_tab",
                                            f"{self.pictures_sub_tab}" ] )
-        a_str   = string_util.to_columns( a_str, ["record_state",
-                                           f"{self.record_state}" ] )
+        # a_str   = string_util.to_columns( a_str, ["record_state",
+        #                                    f"{self.record_state}" ] )
         a_str   = string_util.to_columns( a_str, ["sub_tab_list",
                                            f"{self.sub_tab_list}" ] )
         a_str   = string_util.to_columns( a_str, ["tab_name",
@@ -1340,6 +1350,89 @@ class DetailTabBase( QWidget ):
         a_str   = string_util.to_columns( a_str, ["viewer",
                                            f"{self.viewer}" ] )
         return a_str
+
+# ----------------------------------------
+class ListTabBase( DetailTabBase ):
+    """
+    parent for list tabs
+    how much of DetailTabBase is used perhaps go back to widget
+
+    """
+    def __init__(self, parent_window ):
+        """
+        use in
+            list tab for almost anything
+
+        """
+        super().__init__( parent_window  )
+        self.list_ix            = 5
+
+    # ------------------------------------------
+    def _build_gui( self, ):
+        """
+        what it says, read
+        !! initial query should come out
+            except for table seems promotobable, but then extend to set the table
+            or get table from parent
+        """
+        page            = self
+        tab             = page
+        # a_notebook.addTab( page, 'Channels ' )
+        placer          = gui_qt_ext.PlaceInGrid(
+            central_widget=page,
+            a_max=0,
+            by_rows=False  )
+
+        # Set up the model
+        model_class         = QSqlTableModel
+        model_class         = ReadOnlySqlTableModel
+        model               = model_class(
+                                 self, self.parent_window.db )  # perhaps a global
+        self.list_model     = model        # but changed by the criteria_tab
+
+        model.setTable( self.parent_window.detail_table_name )
+
+        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+
+        # COMMENT  out to default headers
+        # model.setHeaderData( 0, Qt.Horizontal, "ID")
+        # model.setHeaderData( 1, Qt.Horizontal, "TEXT DATA"  )
+
+        # ----view
+        view                 = QTableView()
+
+        view.horizontalHeader().setSectionResizeMode( QHeaderView.Interactive )
+
+        # Use QHeaderView.Interactive to allow manual column width adjustments.
+        # Avoid using QHeaderView.Stretch or QHeaderView.ResizeToContents fo
+
+        self.list_view       = view     # consider change to just self.view\
+        view.setSelectionBehavior( QTableView.SelectRows )
+        view.setModel( model )
+        placer.place(  view )
+        view.clicked.connect( self.parent_window.on_list_clicked )
+
+        # !! next is too much  col_head_order
+        columns          = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
+        col_head_texts   = [  ]  # plus one for sequence
+        col_names        = [  ]
+        col_head_widths  = [  ]
+        for i_column in columns:
+            col_names.append(        i_column.column_name  )
+            col_head_texts.append(   i_column.col_head_text  )
+            col_head_widths.append(  i_column.col_head_width  )
+
+        # !! better done in on loop over columns, do not need the lists
+        for ix_col, i_text in enumerate( col_head_texts ):
+            #rint( f" {ix_col = } { i_text = }")
+            model.setHeaderData( ix_col, Qt.Horizontal,  i_text )
+
+        # ?? look around fro redundancy
+        for ix_col, i_width in enumerate( col_head_widths ):
+            #rint( f" {ix_col = } { i_width = }")
+            view.setColumnWidth( ix_col, i_width * WIDTH_MULP )
+
+
 
 # ----------------------------------------
 class SubTabBase( QWidget ):
@@ -1363,9 +1456,10 @@ class SubTabBase( QWidget ):
 
         self.current_id     = None
 
-        print( "in SubTabBase  tab appendsin to a window list is this correct?? -- maybe ")
-        self.parent_window.sub_tab_list.append( self )    # a function might be better
+        debug_msg  = ( "in SubTabBase  tab appendsin to a window list is this correct?? -- maybe ")
+        logging.debug( debug_msg )
 
+        self.parent_window.sub_tab_list.append( self )    # a function might be better
 
     # -----------------------
     def update_db( self,    ):
@@ -1380,7 +1474,9 @@ class SubTabBase( QWidget ):
         self.model_subject  = model
 
         """
-        print( "update_db  stsw.StuffdbSubSubTab this simple? db commit here??  ")
+        debug_msg   = ( "update_db  stsw.StuffdbSubSubTab this simple? db commit here??  ")
+        logging.debug( debug_msg )
+
         model       =  self.model    # QSqlTableModel( self, self.db )
         model.submitAll()
         self.db.commit()
@@ -1486,6 +1582,7 @@ class CriteriaTabBase( QWidget ):
     # -------------------------------
     def add_buttons( self, placer ):
         """
+        debug
         this should be called add_debug_widgets
         """
         placer.new_row()
@@ -1543,17 +1640,19 @@ class CriteriaTabBase( QWidget ):
         if self.critera_is_changed:
             self.criteria_select()
         else:
-            print( "no select !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            debug_msg  = ( "criteria_select_if no select !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            logging.debug( debug_msg )
         # put in criteria_select  !! self.critera_is_changed = False
         self.critera_is_changed = False
 
+    #---------------------------
     def criteria_changed( self, is_changed ):
         """
         What it says, read
             note: strip the strings
         """
         self.critera_is_changed  = is_changed
-        self.criteria_changed_widget.setText( f"criteria changed {is_changed = }" )
+        self.criteria_changed_widget.setText( f"criteria_changed {is_changed = }" )
 
     # -----------------------------
     def get_criteria( self ):
@@ -1582,6 +1681,14 @@ class CriteriaTabBase( QWidget ):
             i_criteria.set_data_default()
 
     # -----------------------------
+    def search_me(self, criteria ):
+        """
+        external search should be overridden in each document type
+        """
+        1/0
+
+
+    # -----------------------------
     def get_date_criteria(self,  ):
         """
         gets as timestamps
@@ -1606,8 +1713,16 @@ class CriteriaTabBase( QWidget ):
         print( f"show_criteria {criteria}")
         pprint.pprint( criteria )
 
+    # -----------------------
+    def __str__( self ):
+
+        a_str   = ""
+        a_str   = "\n>>>>>>>>>>* CriteriaTabBase *<<<<<<<<<<<<"
+
+        return a_str
+
 # ----------------------------------------
-class StuffdbHistoryTab( QWidget ):
+class HistoryTabBase( QWidget ):
 
     def __init__(self, parent_window  ):
 
@@ -1617,9 +1732,99 @@ class StuffdbHistoryTab( QWidget ):
         self.list_ix         = 0    # should be active and selected
         self.ix_seq          = 0    # may be obsolete
         self.ix_col_seq      = 0
-        self.ix_col_id       = 1
+        self.ix_col_id       = 0
         self._build_gui()
         self.tab_name        = "StuffdbHistoryTab -- tab failed to set"
+
+
+    # -------------------------------------
+    def _build_gui( self ):
+        """
+        what it says read
+        update ver 21 to picture_sub_window
+        some, all promotable??
+        Returns:
+            none
+        """
+        tab                     = self
+        table                   = QTableWidget(
+                                    0, 10, self )  # row column third arg parent
+        self.history_table      = table
+
+        ix_col                  = 1
+
+        #table.setColumnWidth( ix_col, 22 )
+        # ---- column headder and width
+        columns             = data_dict.DATA_DICT.get_list_columns(  self.parent_window.detail_table_name )
+        for ix_col, i_column in enumerate( columns):
+            #rint( f" {ix_col = } { i_width = }")
+
+            table.setHorizontalHeaderItem( ix_col, QTableWidgetItem( i_column.col_head_text )  )
+            table.setColumnWidth(          ix_col, i_column.col_head_width * WIDTH_MULP )
+
+        table.setSelectionBehavior( QTableWidget.SelectRows )  # Select entire rows
+
+        table_widget_no_edit( table )
+
+        # table.clicked.connect( self.parent_window.on_history_clicked )
+        # table.clicked.connect( self.on_list_clicked )
+        table.cellClicked.connect( self.on_cell_clicked )
+
+        layout2     = QVBoxLayout()
+        layout2.addWidget( table )
+        tab.setLayout( layout2 )
+
+
+    # -------------------------------------
+    def _build_gui_old( self ):
+        """
+        what it says read
+        update ver 21 to picture_sub_window
+        some, all promotable??
+        Returns:
+            none
+        """
+        tab                     = self
+        table                   = QTableWidget(
+                                    0, 10, self )  # row column third arg parent
+        self.history_table      = table
+
+        ix_col                  = 1
+        table.setColumnWidth( ix_col, 22 )
+
+        columns             = data_dict.DATA_DICT.get_list_columns(  self.parent_window.detail_table_name )
+        headers             = []  # use comp instead
+
+        col_head_widths     = []
+        # for i_column in columns:
+        #     col_names.append(        i_column.column_name  )
+        #     col_head_texts.append(   i_column.col_head_text  )
+        #     col_head_widths.append(  i_column.col_head_width  )
+
+
+        for i_column in columns:
+            headers.append(         i_column.col_head_text  )
+            col_head_widths.append( i_column.col_head_width )
+
+        for ix_col, i_width in enumerate( col_head_widths ):
+            #rint( f" {ix_col = } { i_width = }")
+            table.setColumnWidth( ix_col, i_width * WIDTH_MULP )
+
+
+        table.setHorizontalHeaderLabels( headers )
+
+
+        table.setSelectionBehavior( QTableWidget.SelectRows )  # Select entire rows
+
+        table_widget_no_edit( table )
+
+        # table.clicked.connect( self.parent_window.on_history_clicked )
+        # table.clicked.connect( self.on_list_clicked )
+        table.cellClicked.connect( self.on_cell_clicked )
+
+        layout2     = QVBoxLayout()
+        layout2.addWidget( table )
+        tab.setLayout( layout2 )
 
     # ------------------------
     def find_id_in_table( self, a_id  ):
@@ -1636,9 +1841,10 @@ class StuffdbHistoryTab( QWidget ):
         for row in range( table.rowCount() ):
             item    = table.item( row, self.ix_col_id )
             if item is None:
-                pass    # problem in item or talbe >>
-                #import pbd
-                print( "find_id_in_table error !!")
+
+                msg   = ( "find_id_in_table error !!")
+                logging.error( msg )
+
                 #breakpoint()     # pdb.set_trace()  # Start the debugger here
 
                 return - 1
@@ -1650,15 +1856,18 @@ class StuffdbHistoryTab( QWidget ):
 
         #rint( f">>>>>>>>>>>>find_row_with_text {str_id = } {ix_found = }")
 
-        return ix_found
+        return ix_found   # check the caller for -1
 
     # ----------------------------
     def on_cell_clicked( self, ix_row, ix_col  ):
         """
         what it says read
         call to self.parent_window so the detail tab selects the id
-        probably promote
+        does not use prior next but could
+
         """
+        self.parent_window.update_db()
+
         table           = self.history_table
 
         item            = table.item( ix_row, self.ix_col_id  )
@@ -1677,6 +1886,61 @@ class StuffdbHistoryTab( QWidget ):
          #rint( "StuffdbHistoryTabselect_row {row_index = }" )
          self.history_table.selectRow( row_index )
 
+    # -------------------------------------
+    def record_to_table( self, record ):
+        """
+        what it says read
+        from stuff history tab
+
+        """
+        table           = self.history_table  # QTableWidget(
+
+        a_id            = record.value( "id" )
+        str_id          = str( a_id )
+
+        ix_row          = self.find_id_in_table( a_id )
+        if ix_row >=0:
+            debug_msg   = ( f"frecord_to_table found row {ix_row} in future update maybe for now skip adding by return ")
+            logging.debug( debug_msg )
+            return
+
+        columns    = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
+        col_head_texts   = [ "seq" ]  # plus one for sequence
+        col_names        = [ "seq" ]
+        col_head_widths  = [ "10"  ]
+
+        # this works with the wrong column headings, they may be defined elsewhere like in build gui
+        # but this is at least better
+        col_head_texts   = [  ]  # we were off so
+        col_names        = [  ]
+        col_head_widths  = [  ]
+
+        for i_column in columns:
+            col_names.append(        i_column.column_name  )
+            col_head_texts.append(   i_column.col_head_text  )
+            col_head_widths.append(  i_column.col_head_width  )
+
+        # ---- insert
+        self.ix_seq     += 1
+        row_position    = table.rowCount()
+        table.insertRow( row_position )
+        ix_col          = -1
+        ix_row          = row_position   # or off by 1
+
+        ix_col          += 1
+        item             = QTableWidgetItem( str( self.ix_seq  ) )
+        table.setItem( ix_row, ix_col, item   )
+
+        for i_col_name in col_names:
+
+            # # begin code gen ?  --- no drive from data dict
+            #ix_col          += 1
+            #rint( f"base record_to_tablerecord-to_table {ix_col}, {i_col_name}" )
+
+            item             = QTableWidgetItem( str( record.value( i_col_name ) ) )
+            table.setItem( ix_row, ix_col, item   )
+            ix_col          += 1
+
 # ==================================
 class TextTabBase( DetailTabBase  ):
     """
@@ -1693,8 +1957,9 @@ class TextTabBase( DetailTabBase  ):
         super().__init__( parent_window )
         #self.parent_window       = parent_window
         #self._create_gui()
-        self.tab_name            = "TextTabBase should be redefined"
-        self.key_word_table_name = ""   # supress key word processing
+        self.tab_name               = "TextTabBase should be redefined"
+        self.table                  = parent_window.text_table_name
+        self.key_word_table_name    = ""   # supress key word processing
         # def in child
         # self.table_name          = "stuff"
         # self.tab_name            = "StuffTextTab"
@@ -1712,10 +1977,14 @@ class TextTabBase( DetailTabBase  ):
         what it says read
         Returns:
             none
+
+        !!!!!!!!!!! a lot like the help_document text
+            now copy method from there and tweak
+
         """
         tab                 = self
-        #tab_layout          = QVBoxLayout(tab)
-        tab_layout          = QGridLayout(tab)
+
+        tab_layout          = QVBoxLayout( tab )
             # widget: The widget you want to add to the grid.
             # row: The row number where the widget should appear (starting from 0).
             # column: The column number where the widget should appear (starting from 0).
@@ -1724,22 +1993,32 @@ class TextTabBase( DetailTabBase  ):
             # alignment (optional): The ali
         # could have a button layout down one side ??
 
+        self._build_text_gui( tab_layout )
+        return
+
         # ---- id
-        edit_field            =  custom_widgets.CQLineEdit(
+        edit_field                  =  custom_widgets.CQLineEdit(
                                      parent         = None,
                                      field_name     = "id",
                                      db_type        = "integer",
                                      display_type   = "string" )
 
-        self.id_field        = edit_field
-        # self.id_field.setValidator( QIntValidator() )
-        edit_field.setPlaceholderText("Enter ID")
+        self.id_field               = edit_field
+        edit_field.setReadOnly( True )
+        #edit_field.default_value    = 999
+        # ------
+        # default_func                        = partial( edit_field.do_ct_value, -99 )
+        # edit_field.set_data_to_default      = default_func
+        # # self.id_field.setValidator( QIntValidator() )
+        # edit_field.setPlaceholderText("Enter ID")
+        # -------------------
+
         self.data_manager.add_field( edit_field, ) # is_key_word = True )
         tab_layout.addWidget( edit_field, 0, 1  )
 
         ix_row      = 1
         label       = "b1"
-        widget = QPushButton( label )
+        widget      = QPushButton( label )
         # widget.clicked.connect( self.combo_reload )
         tab_layout.addWidget ( widget, 1, 0,   )
 
@@ -1750,10 +2029,9 @@ class TextTabBase( DetailTabBase  ):
                                     db_type        = "string",   # or text ??
                                     display_type   = "string" )
         entry_widget         = edit_field
-        self.text_data_field = edit_field
+        self.text_data_field = edit_field    # may be used for editing
         edit_field.setPlaceholderText( "Some Long \n   text on a new line " )
         self.data_manager.add_field( edit_field, )
-        self.data_manager.add_field( edit_field )
         tab_layout.addWidget( edit_field, 1, 1, 5, 5 )
 
         ix_row      += 1
@@ -1764,218 +2042,166 @@ class TextTabBase( DetailTabBase  ):
         tab_layout.addWidget ( widget, ix_row, 0,   )
 
         ix_row   += 1
-        label       = "run\npython"
-        widget = QPushButton( label )
-        connect_to  =  functools.partial( self.run_python, entry_widget )
+        label       = "run\npython idle"
+        widget      = QPushButton( label )
+        connect_to  =  functools.partial( self.run_python_idle, entry_widget )
         widget.clicked.connect( connect_to )
         #widget.clicked.connect( self.do_python )
         tab_layout.addWidget ( widget, ix_row, 0,   )
 
         ix_row   += 1
-        label       = "b4"
-        widget = QPushButton( label )
-        # widget.clicked.connect( self.combo_reload )
+        label       = "qt_exec"
+        widget      = QPushButton( label )
+        #connect_to  =  functools.partial( qt_exec, entry_widget )
+        connect_to  =  functools.partial( text_edit_ext.qt_exec, entry_widget )
+        widget.clicked.connect( connect_to )
         tab_layout.addWidget ( widget, ix_row, 0,   )
 
-        # self.name_field = QLineEdit()
-        # self.name_field.setPlaceholderText("Name")
-        # tab_layout.addWidget(self.name_field)
+        ix_row   += 1
+        label       = ">>"
+        widget      = QPushButton( label )
+        connect_to  =  functools.partial( text_edit_ext.cmd_exec, entry_widget )
+        widget.clicked.connect( connect_to )
+        tab_layout.addWidget ( widget, ix_row, 0,   )
 
-        button_layout = QHBoxLayout()
 
-
-    # # -----------------------------
-    # def add_copy( self, next_key ):
-    #     """
-    #     could use create default_new_row
-    #     what it says
-    #         this is for a new row on the window -- no save
-    #         fill with default
-    #     Returns:
-    #         None.
-    #     compare to   new_record
-    #     """
-    #     # capture needed fields
-    #     # yt_id    = self.yt_id_field.text()
-    #     text_data       = self.text_data_field.text()
-
-    #     self.default_new_row( next_key )
-
-    #     self.text_data_field.setTtext( f"{text_data} \n ------ \n {text_data}")
-
-    # # -----------------------------
-    # def add_copy( self, next_key ):
-    #     """
-    #     could use create default_new_row
-    #     what it says
-    #         this is for a new row on the window -- no save
-    #         fill with default
-    #     Returns:
-    #         None.
-    #     compare to   new_record
-    #     """
-    #     # capture needed fields
-    #     # yt_id    = self.yt_id_field.text()
-    #     text_data       = self.text_data_field.text()
-
-    #     self.default_new_row( next_key )
-
-    #     self.text_data_field.setTtext( f"{text_data} \n ------ \n {text_data}")
-
-    # -----------------------------
-    def default_new_row_hide(self, next_key ):
+    # -------------------------------------
+    def _build_text_gui( self, a_layout ):
         """
-        what it says
-            this is for a new row on the window -- no save
-            needs key but timestamp stuff from detail not text
-        arg:
-            next_key for table, just trow out if not used
-        Returns:
-            None.
+        we may be able to make this a method in base see help document ??
+        now in base  what changes
+            change data_manager to
+                data_manager    = self.data_manager
 
+
+            like to build gui on text tabs borrowed here
+            in help_document, try to make copy over to base document text tab
         """
-        self.clear_detail_fields()
 
-        self.text_data_field.setText(
-            f"this is the default text for id { next_key=}" )
+        tab_layout      = QGridLayout( )
+        a_layout.addLayout( tab_layout )
 
-        # # ---- ??redef add_ts
-        # a_ts   = str( time.time() ) + "sec"
-        # # record.setValue( "add_ts",  a_ts    )
-        # self.add_ts_field.setText(  a_ts )
-        # self.edit_ts_field.setText( a_ts )
+        data_manager    = self.data_manager
 
-        self.id_field.setText( str( next_key ) )
+        ix_row          = 0
+        ix_col          = 0
 
-    # ----------------------------
-    def fetch_detail_row_hide( self, id=None ):
-        """
-        Args:
-            id can be external or as chat has it fetched
+        # tab                 = self
 
-        Returns:
-            None.
-        !! could be promoted
-        """
-        id      = self.id_field.text()
-        print( f"stuff text tab fetch_row { id=}")
-        self.fetch_detail_row_by_id( id )
+        # tab_layout          = QGridLayout(tab)
+        #     # widget: The widget you want to add to the grid.
+        #     # row: The row number where the widget should appear (starting from 0).
+        #     # column: The column number where the widget should appear (starting from 0).
+        #     # rowSpan (optional): The number of rows the widget should span (default is 1).
+        #     # columnSpan (optional): The number of columns the widget should span (default is 1).
+        #     # alignment (optional): The ali
+        # # could have a button layout down one side ??
 
-    # -----------------------------
-    def fetch_text_row_by_id_hide( self, id   ):
-        """
-        what it says, read
-        or is is not a fetch, a copy over, not what I want
-        !! need to fix -- updates may no         t work
-        also need to check for more id errors, perhaps
-        Args:
-            id (TYPE): DESCRIPTION.
-
-        """
-        model     = self.detail_text_model
-        model.setFilter( (f"id = {id}") )
-        model.select()
-        if model.rowCount() > 0:
-            record = model.record(0)
-            self.text_data_field.setText(  record.value(    "text_data"     ))
-            # self.name_field.setText(   record.value(    "name"      ))
-            # self.url_field.setText(    record.value(     "url"       ))
-            # self.mypref_field.setText(str(record.value(  "mypref")   ))
-            # self.mygroup_field.setText(record.value(     "mygroup"   ))
-        else:
-
-            msg     = f"Fetch Error: No record tor text_data found with the given ID. {
-                id = }"
-            QMessageBox.warning(self, "Error", msg )
-            AppGlobal.logger.error( msg )
-
-        # else:
-        #     QMessageBox.warning(self, "Input Error", f"Please enter a valid ID. { id = }")
-
-    # -----------------------------
-    def delete_detail_row_hide(self):
-        """
-        looks like could be promoted -- dbkey needs to stay id
-              but need to delete detail_cildren as well
-              but need to delete key words as well
-        what it says read
-         delete_detail_row delete_detail_row
-        Returns:
-            None.
-        """
-        model       = self.detail_text_model
-        id          = self.id_field.text()
-        if id:
-            model.setFilter( f"id = {id}" )
-            model.select()
-            if model.rowCount() > 0:
-                model.removeRow(0)
-
-                ok     = model_submit_all( model,  f"StuffTextTab.delete_detail_row {id = }" )
-                # QMessageBox.information(
-                #     self, "Delete Success", "detail_text_model Record deleted successfully.")
-                self.clear_detail_fields()
-            else:
-                msg   = "Delete Error: No record found with the given ID. { id = } "
-                QMessageBox.warning(self, "Error", msg )
-                AppGlobal.logger.error( msg )
-        else:
-            msg  = f"Please enter a valid ID. { id = }"
-            QMessageBox.warning(self, "Input Error",
-                                "Please enter a valid ID.")
-            AppGlobal.logger.error( msg )
-
-    # -------------------------
-    def update_text_row_hide(self):
-        """
-        are we calling i do not see the message box
-        what it says, read
-        row is the model   detail.model ??
-        !! change to update_detail_row
-        Returns:
-            None.
-        update_detail_row update_detail_row
-        table name in:
-        primary key is     id
-        text in            text_data
-
-        """
-        model   = self.detail_model
-        id      = self.id_field.text()
-        if id:
-            model.setFilter(f"id = {id}")
-            model.select()
-            if model.rowCount() > 0:
-                record = model.record(0)
-                record.setValue( "text_data", self.text_data_field.text() )
-                # record.setValue("name",     self.name_field.text())
+        # ---- id
+        ix_row      += 1
+        ix_col       = 0
+        widget                  =  custom_widgets.CQLineEdit(
+                                     parent         = None,
+                                     field_name     = "id",
+                                     db_type        = "integer",
+                                     display_type   = "string" )
+        self.id_field               = widget
+        widget.setReadOnly( True )
+        #edit_field.default_value    = 999
+        data_manager.add_field( widget, ) # is_key_word = True )
+        tab_layout.addWidget( widget, ix_row, ix_col )
 
 
-                if model.setRecord( 0, record ):
-                    #model.submitAll()
-                    ok     = model_submit_all(
-                               model,  f"StuffTextTab.update_text_row {id = }" )
-                    msg    = "Text data Record updated successfully. text_data ... wrong error check "
-                    AppGlobal.logger.debug( msg )
-                    #QMessageBox.information(self, "Update Success", msg )
-                else:
-                    msg    = f"text data Update Error Failed to update record. text_data {
-                        id = }"
-                    AppGlobal.logger.error( msg )
-                    QMessageBox.warning(self, "Error", msg )
-            else:
-                msg    = f"No record found with the given ID.text_data {
-                    id = } "
-                AppGlobal.logger.error( msg )
-                QMessageBox.warning(self, "Update Error", msg )
-        else:
-            msg    = f"Input Error", "Please enter a valid ID.text_data  {id = } "
-            AppGlobal.logger.debug( msg )
+        # ---- textedit   entry_widget         = QTextEdit()
+        ix_row          += 1
+        ix_col          = 1
 
-            QMessageBox.warning(self, "Input Error", msg )
+        edit_field         = custom_widgets.CQTextEdit(
+                                    parent         = None,
+                                    field_name     = "text_data",
+                                    db_type        = "string",   # or text ??
+                                    display_type   = "string" )
+        entry_widget            = edit_field  # !! redundant
+        text_entry_widget       = edit_field
+        self.text_data_field    = edit_field    # may be used for editing
+        font                    = QFont( * parameters.PARAMETERS.text_edit_font ) # ("Arial", 12)
+        edit_field.setFont(font)
+
+        edit_field.setPlaceholderText( "Some Long \n   text on a new line " )
+        data_manager.add_field( edit_field, )
+
+        tab_layout.addWidget( edit_field, ix_row, ix_col,  5, 5 )
+
+        #--------------- !! not sure about these think we need as monkey patch but may have moved ineo TextEditExt
+        text_edit_ext_obj         = text_edit_ext.TextEditExt( AppGlobal.parameters, text_entry_widget)
+        self.text_edit_ext_obj    = text_edit_ext_obj
+
+        ix_row          += 1
+        ix_col          = 0
+        label           = "Copy\nLine"
+        widget = QPushButton( label )
+        # connect_to  =  functools.partial( self.copy_line_of_text, entry_widget )
+        # widget.clicked.connect( connect_to )
+        tab_layout.addWidget( widget, ix_row, ix_col )
+
+        ix_row          += 1
+        ix_col          = 0
+        label           = "run\npython idle"
+        widget          = QPushButton( label )
+        # connect_to  =  functools.partial( self.run_python_idle, entry_widget )
+        # widget.clicked.connect( connect_to )
+        #widget.clicked.connect( self.do_python )
+        tab_layout.addWidget( widget, ix_row, ix_col )
+
+        # ---- qt_exec
+        ix_row          += 1
+        ix_col          = 0
+        label           = "qt_exec"
+        widget          = QPushButton( label )
+        #connect_to      = functools.partial( text_edit_ext.search_down, search_line_edit , entry_widget  )
+        #down_button.clicked.connect( connect_to )
+        connect_to  =  functools.partial( text_edit_ext.qt_exec, entry_widget )
+        widget.clicked.connect( connect_to )
+        # # widget.clicked.connect( self.qt_exec )
+        tab_layout.addWidget( widget, ix_row, ix_col )
+
+        ix_row   += 1
+        label       = ">>"
+        widget      = QPushButton( label )
+        connect_to  =  functools.partial( text_edit_ext.cmd_exec, entry_widget )
+        widget.clicked.connect( connect_to )
+        tab_layout.addWidget ( widget, ix_row, 0,   )
+
+        # ---- search text
+        ix_col          += 1
+        widget                  = QLineEdit()
+        search_line_edit        = widget
+        widget.setPlaceholderText("Enter search text")
+        tab_layout.addWidget( widget, ix_row, ix_col )
+
+        # ---- up down Buttons
+        ix_col          += 1
+        widget                  = QPushButton("Down")
+        down_button             = widget
+        # connect below
+        tab_layout.addWidget( widget, ix_row, ix_col )
+
+        ix_col          += 1
+        widget           = QPushButton("Up")
+        up_button        = widget
+        # connect below
+        tab_layout.addWidget( widget, ix_row, ix_col )
+
+        # connect_to              = functools.partial( text_edit_ext.search_down, search_line_edit , entry_widget  )
+        connect_to      = functools.partial( self.text_edit_ext_obj.search_down, search_line_edit ,)
+        down_button.clicked.connect( connect_to )
+
+        connect_to              = functools.partial( self.text_edit_ext_obj.search_up, search_line_edit , entry_widget  )
+        up_button.clicked.connect( connect_to )
+
 
     # ------------------------
-    def run_python(self, text_edit ):
+    def run_python_idle( self, text_edit ):
         """
         now an experiment to do python esp for now examples
         assume starts from line we are on
@@ -1999,112 +2225,23 @@ print( "good by")
 breakpoint()
 
         """
-        lines                   = []
-        cursor                  = text_edit.textCursor()
+        code_lines       = self.get_snippet_lines(   )
+        #rint( code_lines )
+        code_lines       = self.undent_code_lines(code_lines)
+        code_lines[0]    = "# " + code_lines[0]
+        code_lines       = [i_line + "\n" for i_line in code_lines ]
 
-        original_position       = cursor.position()
-        cursor.movePosition( cursor.StartOfLine )
-        prior_start_of_line     = cursor.position()
+        debug_msg  = ( f"run_python_idle {code_lines = }")
+        logging.debug( debug_msg )
 
-        # wat_inspector.go(
-        #      msg            = "inspect ",
-        #      a_locals       = locals(),
-        #      a_globals      = globals(), )
-
-        for ix in range( 20 ):
-
-            cursor.movePosition(cursor.EndOfLine, cursor.KeepAnchor )
-            selected_text = cursor.selectedText()
-
-            selected_text   = selected_text.strip()
-            if selected_text == "":
-                break
-            else:
-                pass
-            lines.append( selected_text + "\n" )
-
-            # Move to the start of the next line 2 steps
-            cursor.movePosition(cursor.Down)
-            cursor.movePosition(QTextCursor.StartOfLine)
-            position       = cursor.position()
-            if position == prior_start_of_line:
-                print( "hit the end of text")
-                break
-            else:
-                pass
-
-        # print()
-        # print()
-        # full_text   = "\n".join( lines )
-        # print( f"full text\n {full_text}" )
-
-        # lets write a file and try to run it
         file_name  = "temp_stuff.py"
         with open( file_name, 'w') as a_file:
             # this may not have \n at end of line
-            a_file.writelines( lines  )
+            a_file.writelines( code_lines   )
 
         open_python_file_in_idle(file_name )
 
 
-    # ------------------------
-    def clear_fields_hide(self, to_prior ):
-        """
-        what it says, read
-        what fields, need a bunch of rename here
-        clear_detail_fields  clear_detail_fields  !! do differntly for custom controls >>
-        """
-        self.id_field.clear()
-        self.text_data_field.clear()
-        # self.name_field.clear()
-
-    # ------------------------
-    def field_to_record_hide( self, record ):        # self.url_field.clear()
-        # self.mypref_field.clear()
-        # self.mygroup_field.clear()
-        """
-        in photo may be promotable --- need new ancestor
-        for the updates, get the gui data into the record
-        assume for new add time and id are already there?? or in a self.xxx
-        since not sure how works put in instance
-        """
-        # if self.record_state    == self.RECORD_NEW:  # may be needed
-        #     # self.record_id
-        #     self.id_field.setText(  str( self.record_id     ) )
-        #     pass
-
-        if self.record_state    == RECORD_NEW:  # may be needed
-            record.setValue("id", int( self.current_id ) )
-
-        # record.setValue( "add_kw",     self.add_kw_field.text())
-
-        record.setValue( "text_data", self.text_data_field.toPlainText())
-
-        # ---- timestamps
-        # record.setValue( "add_ts",   self.add_ts_field.text()) # should have already been set
-        # record.setValue( "edit_ts",  self.edit_ts_field.text())
-
-        # new_id     = sexxxxlf.id_field.text()
-        # new_text   = self.text_data_field.toPlainText()
-        # if new_id and new_text:
-        #     record = model.record()
-        #     record.setValue("id", int( new_id) )
-        #     record.setValue("text_data", new_text)
-        #     model.insertRecord( model.rowCount(), record
-
-    # ------------------------
-    def record_to_field_hide(self, record ):
-        """
-        in photo may be promotable
-        should be for fetch
-        """
-        if self.record_state    ==  RECORD_NEW:  # may be needed
-            # self.record_id
-            self.id_field.setText(  str( self.current_id     ) )
-
-        self.id_field.setText(str(record.value( "id" )))
-        # self.textField.setText(record.value("text_data"))
-        self.text_data_field.setText(  record.value( "text_data"     ))
     # ---- Text manipulation ------------------------------------------------------
     #----------------------
     def copy_line_of_text(self, text_edit ):
@@ -2116,7 +2253,8 @@ breakpoint()
 
         Note text goes into clipboard we should add an argument for that !!
         """
-        print( "TextEditTab.copy_line_of_text"   )
+        debug_msg   = ( "TextEditTab.copy_line_of_text"   )
+        logging.debug( debug_msg )
 
         cursor              = text_edit.textCursor()
         # Save the original cursor position
@@ -2136,10 +2274,16 @@ breakpoint()
         cursor.setPosition(original_position)
         text_edit.setTextCursor(cursor)
 
-        print(f"Copied text: {selected_text = }")
+        #rint(f"Copied text: {selected_text = }")
 
-        #rint( "copied text is {1 = } "   )
         return selected_text
+
+    # -----------------------
+    def __str__( self ):
+
+        a_str   = ""
+        a_str   = "\n>>>>>>>>>>* TextTabBase *<<<<<<<<<<<<"
+        return a_str
 
 # ==================================
 class StuffdbPictureTab(  DetailTabBase   ):
@@ -2235,7 +2379,9 @@ class StuffdbPictureTab(  DetailTabBase   ):
         """
         try to get one that works
         """
-        print( f"picture picture tab select_by_id, do I get called ................................select_by_id")
+        debug_msg    = ( f"picture picture tab select_by_id, do I get called"
+                           " ................................select_by_id")
+        logging.debug( debug_msg )
 
     # ---- zooms, may also be in context map, may want buttons for these
     #          or delete
@@ -2282,7 +2428,9 @@ class StuffdbPictureTab_not_photo( QWidget ):
         flip thru pictures
         """
         file_name   = self.parent_window.prior_next_picture( delta )
-        print( f"prior_next {file_name = }")
+        debug_msg   = ( f"prior_next {file_name = }")
+        logging.debug( debug_msg )
+
         if file_name:
             #self.viewer.display_file( file_name )
             self.display_file( file_name )
@@ -2340,8 +2488,10 @@ class StuffdbPictureTab_not_photo( QWidget ):
         file_path       = Path( file_name )
         if not file_path.exists():
             msg         = f"display_file, file not found {file_name} "
-            print( msg )
+            logging.error( msg )
+
             file_name   = AppGlobal.parameters.pic_nf_file_name
+
         self.viewer.display_file( file_name )
         self.filename_widget.setText( file_name )
         self.fit_in_view()
@@ -2612,24 +2762,22 @@ class PictureListSubTabBase( QWidget  ):
         new_list_ix              = picture_ix
         # self.list_ix           = row
         if no_rows <= 0:
-            msg     = f"set_picture_ix {no_rows = }  should clear display or no pic pic "
-            print( msg )
+            debug_msg     = f"set_picture_ix {no_rows = }  should clear display or no pic pic "
+            logging.debug( debug_msg )
             file_name        = fix_pic_filename( None   )
             self._display_picture( file_name )
-            AppGlobal.logger.debug( msg )
             return file_name
 
         if new_list_ix >= no_rows:
             new_list_ix  =  no_rows -1
-            msg     = f"set_picture_ix {no_rows = } {new_list_ix = } tried to index past end"
-            print( msg )
-            AppGlobal.logger.debug( msg )
+            debug_msg     = f"set_picture_ix {no_rows = } {new_list_ix = } tried to index past end"
+            logging.debug( debug_msg )
+
 
         elif new_list_ix < 0:
             new_list_ix  =  0
-            msg     = f"set_picture_ix {no_rows = } {new_list_ix = } tired to index before start"
-            print( msg )
-            AppGlobal.logger.debug( msg )
+            debug_msg     = f"set_picture_ix {no_rows = } {new_list_ix = } tired to index before start"
+            logging.debug( debug_msg )
         # else in range
 
         self.list_ix        = new_list_ix
@@ -2659,16 +2807,9 @@ class PictureListSubTabBase( QWidget  ):
         self.view.scrollTo( index )
 
         #file_name  = fn_item.text() if fn_item is not None else ""
-        file_name               = fn_item
-        msg     = ( f"set_picture_ix { file_name  = }")
-        print( msg )
-        AppGlobal.logger.debug( msg )
-
-        #rint( f"change to prior next 0 {file_name = }" )
-        #self._display_picture_by_fn( file_name )
-
-        #self.picture_tab.display_file( file_name )  # the other tab in sub window
-        #rint( "above bad because hard to find self.picture_tab.display_file( file_name )"  )
+        file_name       = fn_item
+        debug_msg       = ( f"set_picture_ix { file_name  = }")
+        logging.debug( debug_msg )
 
         self._display_picture( file_name )
         return file_name
@@ -2679,7 +2820,7 @@ class PictureListSubTabBase( QWidget  ):
         usually from set_picture_ix
         """
         self.picture_viewer.display_file( file_name )
-        print( "really...." )
+
         other_picture_tab   =  self.parent_window.parent_window.picture_tab
         if other_picture_tab:
             other_picture_tab.display_file( file_name )

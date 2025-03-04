@@ -1,0 +1,68 @@
+
+
+
+
+
+----------------------- Table of Contents -----------------
+ 
+
+---- Purpose/Functionality
+---- User interaction
+---- Discussion
+---- Ask a ChatBot
+---- Ideas for Improvement
+
+ 
+
+------------------------- Contents -------------------------------
+
+----Purpose/Functionality--------------------------------------------------------------------------
+
+
+
+
+
+the text fields ( rectangles capable of holding many lines of text )
+have been enhanced with a variety of special capabliites
+
+
+    key board shortcuts
+        the usual ctrl_x ....
+        
+    context menu
+        right click to see
+        
+    !! file export 
+    
+    !! executable text 
+
+
+
+tabs is that the text may contain "executable text"
+"executable text" is specially marked text in the body of the
+edit contrrl that can be executed in one of several ways.
+
+        as python code
+        as search intstustions within the application
+        as a link to a url
+        as a command to open a file
+        
+        code to be executed is marked by a line beginning with ">>"
+        and may extend for several addtional lines.
+        
+        right after the ">>" is a "tab" for the type of execution
+        desired:  tabs are
+        
+                    py for python
+                    url to open a url
+                    search_xxx for a search ( in the stuff system )
+                    open to open a file ( using the system defaults )
+                    txt to opena a file with a text ecitor
+                    idle to open some text in the idle ide 
+                    
+                    
+                    
+
+        !! = comming  soon maybe
+        text may be used to search for other documents in other widows
+        ( or the current window )

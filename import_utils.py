@@ -30,9 +30,10 @@ import traceback
 from datetime import datetime
 from pathlib import Path
 
+import db_create
 import ex_helpers
 import ex_helpers as ex_h
-import ia_qt
+#import ia_qt
 # ---- QtCore
 from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
 from PyQt5.QtGui import QIntValidator, QStandardItem, QStandardItemModel
@@ -72,8 +73,6 @@ from PyQt5.QtWidgets import (QAction,
                              QTextEdit,
                              QVBoxLayout,
                              QWidget)
-
-import db_create
 
 # ---- Imports
 
@@ -230,7 +229,7 @@ def get_new_key ( query, sql, id_old ):
     # Bind the id_old value (replace 'some_old_id' with the actual id_old you're looking for)
     #old_id  = 'old_id'
     query.bindValue(":id_old", id_old )
-    ia_qt.q_sql_query( query )
+    print( "fix ia_qt.q_sql_query( query )" )
     # Execute the query
     if not query.exec_():
         print(f"Query failed: {query.lastError().text()}")

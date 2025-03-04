@@ -1,10 +1,38 @@
 
+SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info
+    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id
+    WHERE  lower(help_info.system = "powerbuilder"  AND   key_word IN ( "testxxx" )
+    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words
+    HAVING  count(*) = 1
+     ORDER BY  lower(help_info.title) ASC
+
+these all work
+
+SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info
+    WHERE   help_info.system = "Java"
+     ORDER BY  lower(help_info.title) ASC
 
 
+SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info
+    WHERE  lower( help_info.system ) = "java"
+     ORDER BY  lower(help_info.title) ASC
 
+SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info
+    WHERE  lower( help_info.system ) = "powerbuilder"
+     ORDER BY  lower(help_info.title) ASC
 
+SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info
+    WHERE  lower( help_info.system ) = "powerbuilder"
+     ORDER BY  lower(help_info.title) ASC
 
+--- seemed not to work
+SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info
+    WHERE  lower(help_info.system = "powerbuilder"
+     ORDER BY  lower(help_info.title) ASC
 
+    WHERE  lower(help_info.system = "powerbuilder"
+    WHERE  lower( help_info.system ) = "powerbuilder"
+---------------
 SELECT   people.id,  people.l_name,  people.f_name, people.add_kw    FROM people
     WHERE lower( f_name )  like "%ru%"
 

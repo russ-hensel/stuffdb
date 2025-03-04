@@ -10,6 +10,7 @@ deletes all the old entries
 
 """
 # ---- tof
+import logging
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import (QDate,
@@ -26,7 +27,6 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-
 from PyQt5.QtWidgets import (QAbstractItemView,
                              QAction,
                              QApplication,
@@ -61,13 +61,12 @@ from PyQt5.QtWidgets import (QAbstractItemView,
                              QVBoxLayout,
                              QWidget)
 
-import adjust_path
-import db_create
+#import adjust_path
+#import db_create
 import key_words
 
 # ---- end imports
-
-
+LOG_LEVEL  = 20
 
 # ------------------------------------------
 class KeyWordIndexer(   ):
@@ -207,25 +206,8 @@ class KeyWordIndexer(   ):
         """
         key_words     = None
         key_words     = " ".join( row_data )
-        # if   table_name == "stuff":
-        #     key_words     = " ".join( row_data )
-
-        # elif table_name == "helpxxx":
-        #     # net yet accurate more fields required
-        #     # just select the ones needed for key words
-        #     key_word_data   = [   row_data[3], row_data[4], row_data[5], row_data[13], ]
-        #     key_words       = " ".join( key_word_data )
-
-        # elif table_name == "helpxxx":
-        #     # net yet accurate more fields required
-        #     # just select the ones needed for key words
-        #     key_word_data   = [   row_data[3], row_data[4], row_data[5], row_data[13], ]
-        #     key_words       = " ".join( key_word_data )
-
-
-        # else:
-        #     1/0
-
+        debug_msg     = f"get_key_words just got key words {key_words = }"
+        logging.log( LOG_LEVEL,  debug_msg, )
         return key_words
 
     # ---------------------------
@@ -239,9 +221,9 @@ class KeyWordIndexer(   ):
 
         if not query.exec_( sql ):
             error = query.lastError()
-            print(f"Error executing query: {error.text()}")
-            print(f"Driver error: {error.driverText()}")
-            print(f"Database error: {error.databaseText()}")
+            print( f"Error executing query: {error.text()}")
+            print( f"Driver error: {error.driverText()}")
+            print( f"Database error: {error.databaseText()}")
 
         ix    = 0
         #rint( "query loop ")
@@ -272,31 +254,33 @@ class KeyWordIndexer(   ):
             akwp.compute_add_delete( table_id  )
 
 
-#--------------------------
-def run_indexer_on_help( ):
-    """
-    --- now in seperater file/dir
-    seems to work
-    """
-    db_fn       = "/tmp/ramdisk/help_info.db"
-    db          =  db_create.create_connection( db_fn )
-    db_create.delete_table_help_key_word( db )
-    db_create.create_table_help_key_word( db )
-    a_kwi     = KeyWordIndexer( db = db, table_name =  "help_info", kw_table_name = "help_key_word"   )
-    a_kwi.loop_thru()
+# #--------------------------
+# def run_indexer_on_help( ):
+#     """
+#     --- now in seperater file/dir
+#     seems to work
+#     """
+#     1/0 # phase out use from some other file
+#     db_fn       = "/tmp/ramdisk/help_info.db"
+#     db          =  db_create.create_connection( db_fn )
+#     db_create.delete_table_help_key_word( db )
+#     db_create.create_table_help_key_word( db )
+#     a_kwi     = KeyWordIndexer( db = db, table_name =  "help_info", kw_table_name = "help_key_word"   )
+#     a_kwi.loop_thru()
 
-# ---------------------
-def run_indexer_on_stuff( ):
-    """
-    close to working but not quite  --- now in seperater file/dir
-    """
-    db_fn       = ""
-    1/0
-    db          =  db_create.create_connection( db_fn )
-    db_create.delete_table_stuff_key_word( db )
-    db_create.create_table_stuff_key_word( db )
-    a_kwi     = KeyWordIndexer( db = db, table_name =  "stuff"   )
-    a_kwi.loop_thru()
+# # ---------------------
+# def run_indexer_on_stuff( ):
+#     """
+#     close to working but not quite  --- now in seperater file/dir
+#     """
+#     1/0 # phase out use from some other file
+#     db_fn       = ""
+#     1/0
+#     db          =  db_create.create_connection( db_fn )
+#     db_create.delete_table_stuff_key_word( db )
+#     db_create.create_table_stuff_key_word( db )
+#     a_kwi     = KeyWordIndexer( db = db, table_name =  "stuff"   )
+#     a_kwi.loop_thru()
 
 # --------------------
 if __name__ == "__main__":

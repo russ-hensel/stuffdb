@@ -1,17 +1,23 @@
 
 ====Environment/Tools
-====Adding Documents
-====First
-====Standards
-====Crud cycle
+==== Adding Documents
+==== First
+==== Standards
+==== Crud cycle
 ===== How things work
     ..... see topics under
 
+==== Manual operations
+        code gen
+        integerity check
+        key word indexing
+
+==== Doc Structure
 
 ====Importing
 
 ====stuff_events  ====
-====ramdisk
+==== ramdisk
 
 ====
 ====
@@ -109,6 +115,60 @@ QMdiSubWindow  -->
             code gen:
             disable field-to_record an record_to_field
 
+
+==== Doc Structure
+
+    Document consist of tabs, not all of which may be present for any given document
+    Criteria tab
+        criteria for listing records on the list tab
+            qwidgets     Custom widgets  called criteria widgets see custon_widgets.py
+
+
+    List tab
+        list of records meeting the criteria on the criteria tab
+        when you click on one it is opened in the Detail tab and focus is moved there.
+            from
+                base_document_tabs.ListTabBase
+            qwidgets
+                model_class         = QSqlTableModel
+                 view               = QTableView()
+
+
+    Detail Tab
+        record selected or in process of being added
+           from
+               base_document_tabs.DetailTabBase
+                    but also has sub tabs .....
+            qwidgets
+                custom edit widgets
+                a data_manager which contains
+                    a model QSqlTableModel  created by the detail tab base
+
+
+    Text Tab
+
+        text for selected record
+        from
+            DetailTabBase
+        rest think
+            think same a detail tab with its own data maagmer
+
+
+    Picture Tab
+
+
+    History Tab
+        a list of viewed records -- currently only partialy working
+        some records may be missing, some present in the list but deleted from the
+        db
+
+
+
+
+
+
+
+
 ==== Importing
 
     Alway look at the quasi constants/parms
@@ -198,6 +258,7 @@ QMdiSubWindow  -->
 ---- What Triggers a Save/Update
 
 ---- The selection process
+---- logging
 
 
 ----key_gen
@@ -216,6 +277,10 @@ QMdiSubWindow  -->
         .... From Critera
                 We construct a query and then execute code on the CriteriaTab.
                 this populates a list on the ListTab.
+                        criteria_select in the criteria tab
+                        linked to model in list tab thru
+                                 model                           = parent_document.list_tab.list_model
+
 
         .... From the List tab
                 When we click on the list tab.....
@@ -284,6 +349,9 @@ QMdiSubWindow  -->
 
 ---- List tab
 
+        # Set up the model
+        model_class         = QSqlTableModel
+        model_class         = ReadOnlySqlTableModel
 
     when a row is clicked on the id of the table is sent to the detail tab ( and parent? ) and
     records are selected   select_record across all tabs and sub tabsl
@@ -298,7 +366,7 @@ QMdiSubWindow  -->
 
 ----Detail tab
 
-
+    model     QSqlTableModel
 
 
     select_recod in the parent gets the data which is then
@@ -343,6 +411,14 @@ QMdiSubWindow  -->
     this is not an updatable tab, just a view
     photos are added from the picturedocument
     relational widget should work never send insert update....
+
+-- loggging
+
+    set up in stuffdb.py using the
+    logging module
+    code may be in snips somewher
+
+
 
 ----key_gen
         define table
@@ -449,40 +525,6 @@ connect_to      = functools.partial(  self.go_active_sub_window_func,
 
 
 
-# ---- photo_subject
-# ------------ok ----------------
-SELECT
-
-             photo.id,
-             photo.name,
-             photo.photo_fn
-
-
-    from     photo
-
-    JOIN   photo_subject
-    ON     photo_subject.photo_id = photo.id
-
-    WHERE  photo_subject.table_joined = "stuff"
-           and photo_subject.table_id = 9;
-
-
-# ---- photo_subject 2
-# ------------ ok ----------------
-SELECT
-
-             photo.id,
-             photo.name,
-             photo.photo_fn
-
-
-    from     photo_subject
-
-    JOIN   photo
-    ON     photo_subject.photo_id = photo.id
-
-    WHERE  photo_subject.table_joined = "stuff"
-           and photo_subject.table_id = 9;
 
 
 ====Environment/Tools
@@ -506,8 +548,10 @@ click or clicked   .... be consistent
 
 
 
-====ramdisk
+==== ramdisk
 
+
+there is now a .sh file for this
 in bulldog linux cheatsheet and parameters
      sudo mkdir /tmp/ramdisk #
 
@@ -541,3 +585,31 @@ seemed to go ok oct 14 --- but still some import adj to make
 think I skipped som steps to get the tabldelimited version
 and test versions see some commented out stuff higher in import_photo
 think now enough for some gui testing
+
+
+
+==== Manual operations
+
+        * set up ram disk
+            some notes above and a shell script
+
+
+        * edit data dict for a table
+
+                edit for example
+
+                    /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_dict_src/data_dict_help.py
+
+                data dict reports
+                    /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_dict_src/rpt_data_dict.py
+
+                    field ordre ( draft code gen )
+
+
+
+        * rebuild key words for a table
+                have code may need work around key word indexer
+
+
+        * check for key word duplicates
+                lets add to ./sql/perhaps_useful_sql

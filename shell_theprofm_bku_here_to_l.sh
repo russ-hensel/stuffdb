@@ -42,7 +42,7 @@ echo "Script location basedir: ${BASEDIR}"
 #python /mnt/WIN_D/Russ/0000/python00/python3/_projects/backup/backup_for_linux.py  $SOURCE_DIR  to_l_data_for_mint
 # python /mnt/WIN_D/Russ/0000/python00/python3/_projects/backup/backup_for_linux.py  $SOURCE_DIR  usb_lsg_smallcase
 # getting error on pwd   = \ try this july 2024
-python /mnt/WIN_D/Russ/0000/python00/python3/_projects/backup/backup_for_linux.py  $BASEDIR  usb_lsg_smallcase
+python /mnt/WIN_D/russ/0000/python00/python3/_projects/backup/backup_for_linux.py  $BASEDIR  usb_lsg_smallcase
 
 
 # Deactivate the conda environment
@@ -50,5 +50,3 @@ conda deactivate
 
 # here just wait for a keystroke ( or comment out )
 read RESPONSE
-
-

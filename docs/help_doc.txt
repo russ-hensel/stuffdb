@@ -1,0 +1,122 @@
+
+
+thi help document is in some ways a simplified version   of our documents
+
+is puprose is maily to give textual information or help about some topic -- topics are 
+found using the criteria and search features.
+
+---- draft missing and wrong stuff 
+
+
+
+
+======== Table of Contents ========
+
+    ---- Purpose of Document
+    ---- Status
+    ---- Tabs 
+
+ 
+======== Contents ========
+
+
+---- Purpose of Document
+
+        Store information to give you help about some topic: like how to write some
+        cod in Python.
+        
+        How this document is special
+            Text is merged onto the detail tab, there is no
+            Text Tab
+
+ 
+
+---- Status
+
+        fetch           was working
+        add             was working
+        update          was working
+        delete          not implemented
+        key words       working  
+        
+        database        basic       imported
+                        text        imported 
+                       
+                         
+                        
+---- Tabs  
+
+    Criteria
+        The usual 
+    
+    List
+        The usual   
+          
+    Detail
+        Detailed information about the stuff item that has been selected.
+        this includes textual information, in fact Help Documents are 
+        Mostly about Text
+        
+        >> Search Multiline Text in the Stuff DB
+        
+        Sub Tabs
+ 
+            Picture -- think missing on purpose may add in future
+                 
+     
+    
+    History                     
+        The usual   
+
+
+ 
+
+
+Some of the deviations from other documents:
+
+    the detail and text are on the same tab
+    details do not have sub tabs
+    no pictures -- so far we may want to add 
+         but then more like stuff
+         
+        
+         
+A feature  that has its home on this tab, but has been extended
+to other text tabs is that the text may contain "executable text"
+"executable text" is specially marked text in the body of the
+edit contrrl that can be executed in one of several ways.
+
+        as python code
+        as search intstustions within the application
+        as a link to a url
+        as a command to open a file
+        
+        code to be executed is marked by a line beginning with ">>"
+        and may extend for several addtional lines.
+        
+        right after the ">>" is a "tab" for the type of execution
+        desired:  tabs are
+        
+                    py for python
+                    url to open a url
+                    search_xxx for a search ( in the stuff system )
+                    open to open a file ( using the system defaults )
+                    txt to opena a file with a text ecitor
+                    idle to open some text in the idle ide 
+                    
+                     
+
+        !! = comming  soon maybe
+        text may be used to search for other documents in other widows
+        ( or the current window )
+        
+        python code may be run -- useful for example code
+        
+        --- we may add the ablity to run other types of code, say shell scripts
+        
+        !! we can open a url in our web browser 
+        
+        
+
+
+

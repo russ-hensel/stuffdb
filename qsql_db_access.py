@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+# ---- tof
 """
 Created on Mon Jul  8 16:41:23 2024
 
-@author: russ
-"""
-# ---- imports
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
+
+
 my reference list of qt imports comes from import_qt.py
 
 PyQt5.QtSql.QSqlError
@@ -27,19 +25,14 @@ if __name__ == "__main__":
 
 import sqlite3
 
-# ---- imports local
-from app_global import AppGlobal
-# ---- QtCore
+
+
 from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-# ---- begin pyqt from import_qt.py
-# ---- QtGui
+
 from PyQt5.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
-# ---- QtSql
+
 from PyQt5.QtSql import QSqlDatabase, QSqlError, QSqlQuery, QSqlTableModel
-# ----QtWidgets Boxs, Dialogs
-# ----QtWidgets layouts
-# ----QtWidgets big
-# ----QtWidgets
+
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
                              QApplication,
@@ -69,24 +62,29 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
+import logging
+
+LOG_LEVEL   =   10
+
+# ---- imports local
+from app_global import AppGlobal
+
 
 # ----------------------------------------
 class QsqlDbAccess(   ):
     """
-
+    for connections to the db
     """
     def __init__( self,   ):
         """
-
-
+        usual
         """
         self.connection   = None
         self.db           = None   # use as interface
 
         self.init_db()
 
-        print( "")
-
+        #rint( "")
 
     # --------------------------------
     def init_db( self, ):
@@ -104,21 +102,28 @@ class QsqlDbAccess(   ):
         db appears to be the connection
         russ is still confused try using AppGlobal.qsql_db_access.db   = a_qsql_db_access.db
         """
-        print( "QsqlDbAccess  init_db()" )
+
+        debug_msg   = ( "QsqlDbAccess  init_db()" )
+        logging.log( LOG_LEVEL,  debug_msg, )
+
+        db_file_name = AppGlobal.parameters.db_file_name
         self.db = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type  )
-        self.db.setDatabaseName(            AppGlobal.parameters.db_fn   )
+        self.db.setDatabaseName(            db_file_name   )
 
         if not self.db.open():
-            msg    = "Database Error: {self.db.lastError().databaseText()}"
+            msg    = f"Database Error: {self.db.lastError().databaseText()} {db_file_name =} "
+            logging.error( msg, )
             QMessageBox.critical(
                 None,
                 "databasenot open - Error!", msg
-                                )
+                )
+
         connection_name = self.db.connectionName()
-        print( "{connection_name = }")
+        debug_msg     = ( f"{connection_name = }")
+        logging.log( LOG_LEVEL,  debug_msg, )
 
         # Use the sqlite3 module to connect to the same database
-        sqlite_conn = sqlite3.connect( AppGlobal.parameters.db_fn )
+        sqlite_conn = sqlite3.connect( db_file_name )
 
         # this is a chat lie
         #assert sqlite_conn == self.db.nativeHandle(), "Connections are not the same!"
@@ -151,7 +156,7 @@ class QsqlDbAccess(   ):
     # --------------------------------
     def log_sql_callback( self, statement ):
         msg      = f"log_sql_callback {statement}"
-        print( msg )
+        logging.log( LOG_LEVEL,  msg, )
 
     # --------------------------------
     def get_connectionxxx( self, ):
@@ -182,7 +187,6 @@ class QsqlDbAccess(   ):
         return self.connection
 
 
-
     # -------------------------------------------
     def query_exec_model(self, query, model,  msg = None ):
         """
@@ -193,22 +197,24 @@ class QsqlDbAccess(   ):
                                                   model,
                                                   msg = None )
         """
-        msg      = f"Executing SQL query:  {query.executedQuery() = }"
-        AppGlobal.logger.debug( msg )
+        debug_msg      = f"Executing SQL query: query_exec_model {query.executedQuery() = }"
+        logging.log( LOG_LEVEL,  debug_msg, )
 
         if query.exec():
             model.setQuery( query )
             if model.lastError().isValid():
-                msg     = f"Query Error: {model.lastError().text() = }"
-                print(  msg )
-                AppGlobal.logger.error( msg )
+                msg     = f"Query Error: query_exec_model {model.lastError().text() = }"
+                logging.error( msg, )
+
                 return False
 
-        else:
-            print( "Query Execution Error:", query.lastError().text())
-            print(  msg )
-            AppGlobal.logger.error( msg )
-            print( query.executedQuery()   )
+        else:  # fail
+            msg    =  ( f"Query Execution Error:query_exec_model {query.lastError().text()}" )
+            logging.error( msg, )
+
+            msg    =  ( f"( {query.executedQuery()} "  )
+            logging.error( msg, )
+
             return False
 
         return True

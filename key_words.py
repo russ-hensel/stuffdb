@@ -5,13 +5,13 @@ Created on Sun Jun 30 16:13:31 2024
 
 @author: russ
 """
-
+# ----tof
 # ---- imports
 
 
+import logging
 import re
 
-import string_util
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import (QDate,
@@ -28,7 +28,6 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-
 from PyQt5.QtWidgets import (QAbstractItemView,
                              QAction,
                              QApplication,
@@ -63,7 +62,13 @@ from PyQt5.QtWidgets import (QAbstractItemView,
                              QVBoxLayout,
                              QWidget)
 
-VERBOSE    = False
+# ---- local imports
+import string_util
+import qsql_utils
+
+VERBOSE    = False   # phase out
+LOG_LEVEL  = 5            # higher is more ??
+
 
 # ------------------------------------------
 class KeyWords(   ):
@@ -94,8 +99,8 @@ class KeyWords(   ):
         self.add_key_words          = None   # will be a set
         self.delete_key_words       = None   # will be a set
 
-        self.key_words_for_delete   = None     # see:
-        self.key_words_for_add      = None     # see:
+        self.key_words_for_delete   = None   # see:
+        self.key_words_for_add      = None   # see:
 
     #----------------------------------
     def string_to_key_words( self,  a_string, caps_split = True ):
@@ -109,11 +114,14 @@ class KeyWords(   ):
         set   of key words
 
         split up camel case
-        remove and split on dirt   !! durt might remain
+        remove and split on dirt   !! dirt might remain
         lower case
         remove terminal s on over 2 characters
         make list
         lower
+        numbers   ?? survive
+        ?? eliminat a an the .... or not
+        ?? single letters ?
         return
             a set of the key words
 
@@ -123,7 +131,6 @@ class KeyWords(   ):
             a_string = a_string + " " + a_string.lower() # suppress cap split
         else:
             a_string = a_string.lower() # suppress cap split
-
 
         key_word_list    = self.split_on_caps_and_whitespace( a_string )
         key_word_list    = [ a_word.lower( ) for a_word in key_word_list ]
@@ -151,7 +158,7 @@ class KeyWords(   ):
         self.old_key_words      = self.string_to_key_words( a_string )
         debug_key_words         = self.old_key_words
 
-    def move_new_to_old():
+    def move_new_to_oldxxx():
         """for use at end of compute and delete """
         1/0
 
@@ -163,7 +170,7 @@ class KeyWords(   ):
         self.is_done            = False
         self.new_string         = a_string
         self.new_key_words      = self.string_to_key_words( a_string )
-        debug_key_words         = self.new_key_words
+        #debug_key_words         = self.new_key_words
 
     #----------------------------------
     def compute_add_delete( self, table_id  ):
@@ -186,11 +193,19 @@ class KeyWords(   ):
         self.old_string                 = self.new_string
         self.old_key_words              = self.new_key_words
 
+        self.check_id_for_error( table_id )
+
+        # debug_msg    = f"compute_add_delete   {self.key_words_for_delete}"
+        # logging.debug( debug_msg )
+
     # --------------------------------------
     def delete_rows( self, table_id, words ):
         """
         Delete rows from a table where a column matches a value in the list.
         """
+        debug_msg    = f"delete_rows for key words {table_id}   {words}"
+        logging.log( LOG_LEVEL,  debug_msg, )
+
         #rint( self )
         query = QSqlQuery( self.db )
         # Prepare the DELETE statement with a placeholder (bind variable)
@@ -204,23 +219,32 @@ class KeyWords(   ):
             # Execute the DELETE statement
             if not query.exec_():
                 error = query.lastError()
-                print(f"Error deleting word {word}: {error.text()}")
+                msg   = (f"Error deleting word {word}: {error.text()}")
+                logging.error( msg )
+
             else:
                 if VERBOSE:
-                    print(f"Successfully deleted rows where word = {word}")
+                    debug_msg   = (f"Successfully deleted rows where word = {word}")
+                    logging.log( LOG_LEVEL,  debug_msg, )
 
     # --------------------------------------
     def insert_rows( self, table_id, words ):
         """
         Insert rows into a table where a column matches a value table_id, words
         """
+        # debug_msg    = f"insert_rows for key words {table_id}   {words}"
+        # logging.log( LOG_LEVEL,  debug_msg, )
+
         query = QSqlQuery( self.db )
 
-        sql            = ( f"INSERT INTO {self.table_name}"
+        sql         = ( f"INSERT INTO {self.table_name}"
                            f"  (id, key_word ) VALUES ( :id, :key_word )")
 
-        msg            = f"insert_rows sql = {sql}"
-        print( msg )
+        debug_msg   = f"insert_rows for key words {table_id} {words} {sql}"
+        logging.log( LOG_LEVEL,  debug_msg, )
+
+        # msg            = f"insert_rows sql = {sql}"
+        #rint( msg )
         query.prepare( sql )
 
         # Insert each record
@@ -229,21 +253,20 @@ class KeyWords(   ):
             query.bindValue( ":key_word",  i_key_word )
 
             if not query.exec_():
-                print( f"Error inserting record {i_key_word}: {query.lastError().text()}" )
+                msg   = ( f"Error inserting record {i_key_word}: {query.lastError().text()}" )
+                logging.error( msg )
                 1/0
             else:
                 if VERBOSE:
                     print( f"Record {i_key_word} inserted successfully!" )
 
     # --------------------------------------
-    def split_on_caps_and_whitespace( self, a_string ):
+    def split_on_caps_and_whitespace_bak_1( self, a_string ):
         """
         chat says
             chat_cammel_split.py
-
         Returns:
             split_words in a list
-
         """
         # Split based on whitespace
         words = re.split( r'\s+', a_string )
@@ -254,6 +277,66 @@ class KeyWords(   ):
             split_words.extend(re.findall(r'[a-z]+|[A-Z]+(?![a-z])|[A-Z][a-z]*', word))
 
         return split_words
+
+    # --------------------------------------
+    def split_on_caps_and_whitespace( self, s ):
+        """
+        a result from deep seek
+        could use a cleanup
+        """
+        """
+        :param s: DESCRIPTION
+        :type s: TYPE
+        :return: DESCRIPTION
+        :rtype: TYPE
+
+        """
+        # Step 0: Preprocess the string to replace punctuation with spaces
+        s = re.sub(r'[^\w\s]', ' ', s)
+
+        # Step 1: Split on whitespace
+        parts = re.split(r'\s+', s)
+
+        # Step 2: Further split each part based on embedded capitals and numbers
+        result = []
+        for part in parts:
+            if part:  # Skip empty strings caused by multiple spaces
+                # Split on embedded capitals and numbers
+                sub_parts = re.findall(r'\d+|[A-Z]{2,}(?=[A-Z][a-z]|\d|\W|$)|[A-Z]?[a-z]+|[A-Z]{2,}', part)
+                result.extend(sub_parts)
+
+        return result
+
+    # --------------------------------------
+    def check_id_for_error ( self, id ):
+        """
+        what it says, bad way to use argument id
+        new jan 20 does it work ?
+
+        """
+        is_ok       = True
+        query       = QSqlQuery( self.db )
+
+        sql    = f"""
+        SELECT id, key_word, COUNT(*) AS count
+        FROM {self.table_name}
+        WHERE id = {id}
+        GROUP BY id, key_word
+        HAVING COUNT(*) > 1  ; """
+
+        qsql_utils.query_exec_error_check(  query = query, sql = sql, raise_except = True )
+
+        while query.next():
+            is_ok       = False
+            a_id        = query.value(0)
+            name        = query.value(1)
+            frequency   = query.value(2)
+
+            msg  = (f"ID: {a_id = }  { name = }  {frequency = }  ")
+            logging.error( msg )
+
+        if not is_ok:
+            1/0
 
     # --------------------------------------
     def __str__( self,   ):
@@ -293,3 +376,6 @@ class KeyWords(   ):
 
 # print( a_string )
 # print( a_key_words.string_to_key_words( a_string) )
+
+
+# ---- eof

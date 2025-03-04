@@ -81,13 +81,7 @@ The detail tab often has some sub tabs:
             
          
         
-        
-        
-            
-
-
-
-
+     
 
   
       

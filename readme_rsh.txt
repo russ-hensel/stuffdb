@@ -7,7 +7,9 @@ Use the next for search:
 ====stuff
 ====Tech
 ====Versions
-====Scratch
+==== Scratch
+==== Snips
+
 ====Vocab
 ====Environment
 ===========ORM
@@ -20,8 +22,8 @@ for clipboard
 
     ?? strip list of file names does to base name
 
-    when a window closes make sure it is unregistered and destroyed
 
+PythonCookbook
 
 ====Tech
 main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
@@ -29,32 +31,549 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
                              midi_management
 
 ====stuff
-    for next prior
-    # ------------------------------------------
-    def on_list_clicked( self, index: QModelIndex ):
 
 
-        self.fetch_row_by_id( db_key )
->>QLineEdit use setText to set value disabled? on second line?<<
+
 
 ====Versions   old version info in  ./docs/version_notes.txt
 
 
                 also see tech_notes.txt
 
-                for a CQTextEdit what arguments are sent with textChanged.connect  ??
+----
+---- ver63
+
+    why
+        -- just another checkpoint
+                help working quite well, mostly saves when it should
+                hyper commans work at base level
+                improved layout and data dict
+
+        !! paste prior is broken again
+        ** add snippet command
+
+    ** fix close and distruction of window and perhaps the titles
+
+    !! check add copy in picture and fix
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/WIN_D/temp_photo/99/new_test/9903_004.jpg'
+
+        >>---- multiple add to picture
+                ** began work
+                **  need to update add_copy thru data dict then good enough for now
+                    regenerate fileds, test
+                    why not fix picture detail layout a bit  -- done better but not all  working
+                                                                is good in help
+        add picture and album tables to examples/help
+
+        -- quiet down the logging
+        -- fix
+            ** history prior next broken -- click on list works
+                    seems to work but did not really change, continue to watch
+                    did add some save
+            ** copy add  --- pretty good for now
+                add data dict item -- fix up dict and regen code and test
+                        try on help and stuff
+                        then pictures
+                add in add as option ?
+                    clear_add
+                    clear_clear   via agument
+                        clear but_keep_if
+                        some work in custom_widgets
+
+            ** text search is broken
+            *! quiet down some logging
+
+
+
+move to debug and or delete
+doc->str
+tab->str
+
+
+
+---- ver62
+
+        why
+                -- just another checkpoint
+                     add works
+                     save bug fixed
+                     a few more docs working
+                     db build from scratch much improved
+                     logging much improved and prints removed
+
+        ** selects seem broken for everyting but help -- no files are missing
+
+        *! need data dict work for editable and columnspan
+        ** history is broken cannot select from list
+        ** prior-next should save
+
+
+
+        *! save and tab switching  -- put note in ex_python.db
+            where is tab switching tracked
+                    document base   on_tab_changed
+
+                need some sort of guid base  -- look in help
+
+        *! executable help
+            ?? idle command
+            ** Python      use qt_exec
+            ** url         use webbrowser
+            ** Bash        use terminal
+            ** text        use text editor
+            ** shell       like double click
+            ** search      just in help for key words now
+
+        !! doc to str and tab to str  get off menu bar ??
+        !! load a lot of photos to pictures and to an album
+
+        !! run out of github ??
+        !! look at  links in text exp in help
+
+                save if
+        ** test do save on add  -- works on help
+        ** rebuild help form with new fields
+
+         ** rebuild help column headers -- enter in how to do it howto as word
+
+            !! add an end or commen thing  >>ignore  >>comment to keep out of code
+
+          !! review pictures albums subjects
+             !! picture tab not changed if no pic in detail picture on detail tab ok
+             !! subject add does not seem to come across from stuff
+                     think fixed to come across but not always triggered -- use data_manager
+
+              File /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/stuff_document.py:144 in get_topic
+                if self.record_state:
+
+                AttributeError: 'StuffDocument' object has no attribute 'record_state'
+
+                !! brose when empy still has a pic look at what to trigger create and move
+
+            !! subject from plant  -- look in data_manager
+
+  File /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/picture_document.py:2706 in populate_model_other
+    open_topics_list    = AppGlobal.mdi_management.open_topics    # list of dicts
+
+  File /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/mdi_management.py:415 in open_topics
+    topic_dict[ "topic"]      = i_window.get_topic()
+
+  File /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/plant_document.py:174 in get_topic
+    a_id        = self.detail_tab.id_field.get_raw_data()
+
+AttributeError: 'PlantDetailTab' object has no attribute 'id_field'
+
+
+          !! plantsubwindow should be Plant Document and so on
+          *! automate some save
+          !! validate an int
+          !! trim the line edict
+          !! trim text after end of line
+
+
+---- ver61
+
+        why
+                -- just another checkpoint after a few things fixed
+                     add new may finally work so help works, now see
+                     if we can get photos to work  -- add then update
+
+        ** add at detail seems to work
+        ** try to add a picode_timercture --- seems to work, but needs clean up on details
+        ** does add work for photo show ??  = album
+                redo_photoshow_tables
+
+                how to gen code
+                    dict_main     --- seems to gen the field ok, lets look at more
+                                        now going with dict_main for fields
+                    code_gen
+                    rpt_data_dict
+        lets gen the fields for the photoshow
+                    got the fields put into album_document
+        ** new fields, add seems to work
+        ** criteria_select is broke
+        ** put new logging in album at least a few places
+        **    cleaned up criter gui a bit
+
+        ** time for add to album  -- we can add an album and add a picture to it
+            add an album does not reset photos in album  -- the 404 param was wrong but can uw clear
+
+        !! is there a clear for pictures other than 404 ?? in code as .clear but does it work
+
+        ** in help text first update works second fails fixed
+
+        ** review stuff for select add update
+            ** redo tables
+            ** redo build gui
+
+            ** fixed  text not getting saved --- what about picture text -- seems to be saved
+
+        ** review plant for select add update
+            ** update plant criteria
+                         self._build_top_widgets(  placer ) was missing
+                    ** key words seem to work
+            ** new tables
+            ** key word table name corrected, key words work
+            ** text not saved --- table name was wrong -- seems fixed
+
+get_topic   --- record state in data manager why do we need it
+  File /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/base_document_tabs.py:1128 in post_init
+    self._build_gui()
+
+  File /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/picture_document.py:708 in _build_gui
+    sub_tab      = PictureSubjectSubTab( self )
+
+  File /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/picture_document.py:2297 in __init__
+    open_topics         = AppGlobal.mdi_management.open_topics
+
+  File /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/mdi_management.py:415 in open_topics
+    topic_dict[ "topic"]      = i_window.get_topic()
+
+  File /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/plant_document.py:170 in get_topic
+    if self.record_state:
+
+AttributeError: 'PlantDocument' object has no attribute 'record_state'
+
+        !! tried to fix with record_state   =          self.detail_tab.data_manager.record_state
+                did it work
+        also thid needed fix in plant doc   self.enable_send_topic_update  = True
+
+
+Change Log:
+            newest at bottom
+
+
+            import stuff_text
+                    code_gen.... is sort of gone, make use of data_dict_....
+                    convert to use parameters
+                    updated adjust_path
+
+                    lots of update but the sql --- bind is still bad
+
+                    wrote util to insert fake text see stuff_util_sql.py
+
+            ** fix undesired tab switch on select
+                            in base document .... looks like list not set up correctly
+                            if current_ix not in [ self.detail_tab_index, self.text_tab_index, self.picture_tab_index, ]:
+                                tab_folder.setCurrentIndex( self.detail_tab_index )
+
+                            picture ok but not text
+                            this may be fix in _build_gui
+                                  self.text_tab_index      = ix
+            ** check that this is used when it should be in all documents
+                    self.picture_tab             = base_document_tabs.StuffdbPictureTab( self )
+
+
+            ** improved data_dict including a bootstrap from sql
+
+            ** fixed list and  history on plant planting
+
+                   !!look at list and history on album and.....
+
+            ** help save seems ok but not sure
+
+            !! build table for pictures  = photos   not sure if want photo text
+                    stuff_util_sql.py   --- uses parameters
+
+                    bootstrap    in rpt_....
+
+            !! picture document
+                !! list of what works
+                    add
+                        failed on 1005  but the text go in -- look in log
+                         added some debug to new record, but need more
+
+
+
+                        2025-01-30 11:25:25,139 - DEBUG - document_manager update_new_record  self.table_name  = 'photo'
+                        2025-01-30 11:25:25,140 - DEBUG - CQEditBase get_data_for_record     id
+                        2025-01-30 11:25:30,176 - ERROR - submitAll error: DataManager.update_new_record  self.current_id = 1005 self.table_name = 'photo'
+                        2025-01-30 11:25:30,182 - ERROR - error text: No Fields to update
+                        2025-01-30 11:25:30,188 - DEBUG - delete_rows for key words 1005   set()
+
+                        so does add not set fields to changed = true\
+
+                        add message for model dirty .... need more now just in add new record
+
+                    update  failed on key word after add
+
+
+                    add picture file
+                    display picture file
+
+
+                    browse  one pic
+                        moved ok but old pic still displayed -- seems ok when multiple files
+                        move when already there  -- got message ok
+
+                    looks like edit.is_changed shold largely be changed as invalid not reset not clear we really use it
+
+                    need to get info_about into better shape add some tests
+
+                    get rid of whole universal convert instead have pair of functions
+                    rec    record
+                    str    string
+                    format default to None
+                    in the data dict name the functions, and the edit_format
+
+
+                    in the data dict
+
+                    self.rec_to_edit        =  rec_to_edit   # default None will use str to str
+                    self.edit_to_rec        =  edit_to_rec   # default None will use str to str
+                    self.edit_format        =                # default to none no special formatting
+
+
+                    rec_to_edit( )
+                    edit_to_rec( )
+
+                    for most fields, just string to string
+                    value   = rec_to_edit_str_to_str( rec_val, format = None )      # use partial closure to set format a string
+                    value   = edit_to_record str_str( rec_val, format = None  )
+
+
+                    value   = rec_to_edit_int_to_str( rec_val, format )
+                    value   = edit_to_record string_to_int( rec_val, format )
+
+                    value   = rec_to_edit_int_to_qdate( rec_val, format )
+                    value   = edit_to_record qdate_to_int( rec_val, format )
+
+
+                some is working
+                !! add sub dir  = or check on its function think it should auto fill
+                *! change print to logging   -- got tired, still more to do
+                changed print to dialog for already have a picture
+
+            ** broke help, fixed help  probably broke all docs as I changed custom edits
+            !! continue breaking custom edits
+
+            !! fix picture for new custom edits
+                    fetch update may work
+                    add fails -- why  self.id_field.set_preped_data( str(next_key ),  )
+                        remove old function and convert all id's to strings
+
+                            # looks like a du whab about setRecord what does it do ?
+                            # record = model.record(0)
+                            # self.field_to_record(  record )
+                            # model.setRecord( 0, record)'
+
+            ** change parameter to clear log file exch time
+
+            ** add model state ( data_manager ) to the toolbar getting rid of xxxx
+
+            ** prints removed from custom widgets
+                        msg         = ( f"get_rec_data Field {field_name} "
+                                        f"does not exist in the record.")
+                        logging.error( msg )
+                        logging.debug( msg )
+                        a_str   = ( f"{a_str}\nRow {row}: {row_data}")
+
+
+            ** so much trouble with logging move into own object
+
+            ** add easy rebuild of help files, key gen, later other areas
+
+            !! highlight does not work correctly on some custom edits why
+
+            ** add manual add to log functionality for debugging  in main window
+
+            ** save on help is finally working on new records
+
+            ** make db just for help examples of python
+            ** improve button placement
+            ** get auto run working on python examples
+
+            !! fix run in idle
+
+            !! quite down prints and logging even more
+
+            !! time for a version update ?? soon in any case
+
+
 
 self.model_display
+
+---- ver60
+
+        why
+                -- just another checkpoint after a few things fixed
+                !! work on logging and prints and debug and code gen
+
+ ----ver59
+
+        why
+                -- just another checkpoint after a few things fixed
+                    not a big backup
+
+
+                    *! start adding templates to help  may want real list not ddl
+                    *! implement print to logging -- that is redo logging
+
+                    *! fix initial window size kluge ok for now
+                    *! make enter on criteria caluse select -- for line edist only in help so far
+                    *! test save on add
+                    *! continue with qt exe
+                    ** set the number of characters for a tab in the text area
+                    *! fix the history heading and functionalityt
+                    ** get title on help and lengthen at least key words
+
+        logger = logging.getLogger()
+        logger.log(22, "This is a 22 message from my_logger.")
+        logging.debug( "call was: logging.debug" )
+        logging.debug( msg )
+        logger.log( logging.CRITICAL, msg )
+
+
+
+what are the arguments to QApplication( []  ) and what do they do?
+Please explain.
+
+
+
+>> debugt
+self.tab_name
+print( self.data_manager )
+
+in widget
+
+print( self )
+in data manager
+self.table_name
+
+---
+        #rint( f"set_data_from_record {debug_fn}")
+        data       = record.value( self.field_name  )
+        can we error check above
+        i have a   PyQt5.QtSql.QSqlRecord i can get the data for a field
+        with record.value( "some_name"  )
+        but how can i be sure the field some_name is in the
+        record
+
+# Check if the field exists
+if record.indexOf(field_name) != -1:
+    value = record.value(field_name)
+    print(f"Value for '{field_name}': {value}")
+else:
+    print(f"Field '{field_name}' does not exist in the record.")
+
+
+
+----
+
+        need some more buttons.... on the text field of stuff and.....
+
+
+
+ ----ver58
+
+        why
+                -- back from key west
+                -- text in general and esp help working fairly well
+                fetch add save working fairly well
+
+                next
+                    -->
+                    some rough edges
+                        ** move text search to bottom
+                        * continue on executable text ?? or done for now
+                        *! remove some dead stuff
+                        ** get text code out of base documents
+                        *! column headers on list and history
+                        ** minimize text id and make read only
+                        *! helps if you feel like it
+                        *! quiet down prints no longer useful
+
+
+
+
+                big    !! get picture document running again
+                        !! album document
+
+
+
+
+
+
 
  ----ver56
 
         why
+
+            !! get picture fetch to work again
+                      a bit of a pain without a picture db so wait till home ??
+
+            !! instead of code gen look at using data dict at runtime as arguments
+               perhaps start with history
+
+            --->   *! get history going again  -- still need an update function
+                    when to add to history
+                    save of a new
+                    selection from the criteria list
+                         both clicked and prior next  --- clicke call prior next
+                         not from selection from history -- history does not change history
+                          # want to update on save
+
+
+            *!  next help key word update on fetched or add record.
+                for add go back to the qt5_by_example
+
+            !! get all docs running
+
+            !! define text tables for all docs
+
             lots of progress good save point --
             custom edit progress
 
-            !! put in update manager for detail like tabsl
+            !! add record count to fetch ( but think self limiting )
+            !! too much space in sql for order by
+
+            !! put in update manager for detail like check update in stuff
+               and help -- not auto update yet
+                        but some auto update is left in base  Document
+            stuff
+                !! update
+                !! add
+                        detail does not get key
+                        text   does not change
+
+ --->>     help
+
+                ** fetch
+                            seem ok now, plus enhances, may still not work in all combo
+                            use fully qualified proof carefully
+                            fails without notice as far as i can tell  -- if an error
+                            can we clear a control  -- yes with bad query
+                            so if it fails we at least have nothing
+                            in list the control is
 
 
+
+                ** update   detail      seems to work on fetched records will it survive key word fix
+                            text        seems to work on fetched records will it survive key word fix
+                            key words
+                                        fetched ng  -- they were not added to the data manager search on is_key_word
+
+
+                ** add
+                            does it save
+                            are key words ok
+
+                ** test the build of fields from data dict
+
+
+
+
+
+            perhaps go back to controls and
+                redo set_to_default
+                set_to_default_function
+
+                set_to
+
+
+                set_as_pass
+                set_as_value
+                set_as_changed
 
 
  ----ver55
@@ -65,7 +584,7 @@ self.model_display
             key words implementing  in base and stuf
                 stuff some fields added
 
-            !! finish detai move to parent, stuff is the model
+            ** finish detail move to parent, stuff is the model
 
 
 
@@ -748,15 +1267,86 @@ sybase_central\win32 one of the exe's     stuff2000  dba   sql
         !! may be time again to remove some print statements
         !! and to put in a global dev_mode esp for the ui
 
+==== Snips
+
+        debug_msg     = f"get_key_words just got key words {key_words = }"
+        logging.debug( debug_msg )
+
+        object_type = self.__class__.__name__
+
+        # Get the method name using the inspect module
+        method_name = inspect.currentframe().f_code.co_name
+
+        print(f"Object Type: {object_type}")
+        print(f"Method Name: {method_name}")
+
+        -----------------
+        # import inspect  # for debug i
+        # mport logging
+        loc        = f"{self.__class__.__name__}.{inspect.currentframe().f_code.co_name} "
+        debug_msg  = f"{loc} >>> {column_name = }  {order_by_dir = }"
+        logging.debug( debug_msg )
+        logging.error( msg )
+
+
+        logging.log( level, msg )
+        LOG_LEVEL  = 20
+
+        logging.log( LOG_LEVEL,  debug_msg, )
+
+        ------------- info about
+
+        model       = self.model
+        msg         = ( f"model_record_info {self.table_name = }" )
+        log_msg     = info_about.INFO_ABOUT.find_info_for(
+                            model,
+                            msg         = msg,
+                            print_it    = False
+                           )
+        logging.debug( log_msg )
 
 
 
-====Scratch
+==== Scratch  see snippets.ppy
+
+
+        stuff
+            field order and key words
+
+                    name
+                    descr
+                    add kw
+
+                    move dates together
+
+
+             add topic in title deleteme
+
+
+
+------------------------
+
+            addd   title deleteme    100024    -- addd is in once
+
+            then look in key words after save    -- addd is in once
+
+            reselect it  try addd   --- ok
+
+            copy over to key words and save and check
+
+            still seems ok
+                 select on deleteme
+
+
+==== Scratch Old
 Determine the transaction state of a database
 
     int sqlite3_txn_state(sqlite3*,const char *zSchema);
 
-The sqlite3_txn_state(D,S) interface returns the current transaction state of schema S in database connection D. If S is NULL, then the highest transaction state of any schema on database connection D is returned. Transaction states are (in order of lowest to highest):
+The sqlite3_txn_state(D,S) interface returns the current transaction state of ASC
+
+schema S in database connection D. If S is NULL, then the highest transaction state of
+any schema on database connection D is returned. Transaction states are (in order of lowest to highest):
 
     SQLITE_TXN_NONE
     SQLITE_TXN_READ

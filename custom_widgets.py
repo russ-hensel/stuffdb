@@ -5,6 +5,10 @@ custom versions oa QWidgets
 
 see  qt_by_example for these widgets -- run this deom_custom_widgets.py
 
+coupling
+    to logging
+
+
 """
 # ---- tof
 
@@ -12,55 +16,12 @@ see  qt_by_example for these widgets -- run this deom_custom_widgets.py
 if __name__ == "__main__":
     #----- run the full app
     import main_qt
+
     #main.main()
 # --------------------
 
-
-from PyQt5 import QtGui
-from PyQt5.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
-from PyQt5.QtGui import QTextCursor, QCursor
-# sql
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
-
-from PyQt5.QtWidgets import (QAction,
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
-                             QGridLayout,
-                             QGroupBox,
-                             QHBoxLayout,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QListWidgetItem,
-                             QMainWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QRadioButton,
-                             QSizePolicy,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
-
-# ---- imports
-import adjust_path
-
-# ---- imports neq qt
-
-
-# ---- begin pyqt from import_qt.py
-
-#import sqlite3
-#from   functools import partial
-#import collections
 import functools
+import logging
 import pdb
 import traceback
 #import subprocess
@@ -70,22 +31,29 @@ import traceback
 from datetime import datetime
 from functools import partial
 
-#import  gui_qt_ext
-
-# ---- QtCore
+# ---- imports local
+import string_util
+import wat_inspector
+from app_global import AppGlobal
+from PyQt5 import QtGui
+# ---- Qt
 from PyQt5.QtCore import (QAbstractTableModel,
                           QDate,
+                          QDateTime,
                           QModelIndex,
                           QRectF,
                           Qt,
                           QTimer,
                           pyqtSlot)
-from PyQt5.QtGui import (QIntValidator,
+from PyQt5.QtGui import (QCursor,
+                         QIntValidator,
                          QPainter,
                          QPixmap,
                          QStandardItem,
-                         QStandardItemModel)
-# ---- QtSql
+                         QStandardItemModel,
+                         QTextCursor)
+
+
 from PyQt5.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
@@ -94,11 +62,8 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-# ---- not in standard imports
-# ----QtWidgets Boxes, Dialogs
-# ----QtWidgets layouts
-# ----QtWidgets big
-# ----QtWidgets
+
+
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
                              QApplication,
@@ -114,17 +79,21 @@ from PyQt5.QtWidgets import (QAction,
                              QGraphicsScene,
                              QGraphicsView,
                              QGridLayout,
+                             QGroupBox,
                              QHBoxLayout,
                              QInputDialog,
                              QLabel,
                              QLineEdit,
                              QListWidget,
+                             QListWidgetItem,
                              QMainWindow,
                              QMdiArea,
                              QMdiSubWindow,
                              QMenu,
                              QMessageBox,
                              QPushButton,
+                             QRadioButton,
+                             QSizePolicy,
                              QSpinBox,
                              QTableView,
                              QTableWidget,
@@ -134,14 +103,18 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
-# ---- imports local
-import string_util
-from app_global import AppGlobal
-import wat_inspector
+# ---- imports
+
 import convert_db_display
-#import  picture_viewer
-#import  qt_with_logging
-import file_browse
+
+
+
+
+
+LOG_LEVEL   = 10    # higher is more
+
+logger      = logging.getLogger( )
+
 
 #
 
@@ -223,6 +196,9 @@ import file_browse
 
 #     raise ValueError( f"Unsupported type {a_type = }")
 
+MY_LL     = 9 # custom logging level
+            # logging.error( msg )   # logger.log  ERROR  DEBUG  ogging.debug  .error
+
 class ValidationIssue(  Exception ):
     """
     see __init__
@@ -265,8 +241,69 @@ def validate_no_z( a_string   ):
     msg      = None
     if "z" in a_string:
         msg   = "validate_no_z no zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
-        print( msg )
+        logging.debug( msg )
     return msg
+
+# -----------------------
+def get_rec_data( record, field_name  ):
+    """
+    get data from the record unless record is the data
+    rec = record
+    field_name ignored of record is the data
+    but to aid in debugging assume rec is the data if not a qrecord
+    data      = get_rec_data( record, field_name )
+    """
+    if  isinstance( record, QSqlRecord ):
+
+        if record.indexOf( field_name ) == -1:
+            msg         = ( f"get_rec_data Field {field_name} "
+                            f"does not exist in the record.")
+            logging.error( msg )
+            raise ValueError( msg )
+            #rint( f"set_data_from_record {debug_fn}")
+            #data       = record.value( field_name  )
+            # msg        =  ( f"set_data_from_record {field_name} {data = }"
+            #                 f" {self.db_type = }")
+            # logging.debug( msg )
+        # still need None !!
+    else:
+        return record    # take as value field_name does not matter
+
+    # if here have a record with valid field_name
+    raw_data        = record.value( field_name  )
+
+    return raw_data
+
+# -----------------------
+def set_rec_data( record, field_name, data   ):
+    """
+    data goes into the record
+    but if record is not a record just skip ( debug log ? )
+    rec = record
+    but to aid in debugging assume record is the data if not a QSqlRecord
+
+    """
+    if  not isinstance( record, QSqlRecord ):
+        msg         = ( f"set_rec_data Field {field_name} "
+                        f"record is not a QSqlRecord Assume testing else ERROR")
+        logging.error( msg )
+        return
+
+
+    if record.indexOf( field_name ) == -1:
+        msg         = ( f"set_rec_data Field {field_name} "
+                        f"does not exist in the record. Assume testing else ERROR ")
+        logging.error( msg )
+        return
+        #raise ValueError( msg )
+        #rint( f"set_data_from_record {debug_fn}")
+        #data       = record.value( field_name  )
+        # msg        =  ( f"set_data_from_record {field_name} {data = }"
+        #                 f" {self.db_type = }")
+        # logging.debug( msg )
+    # still need None !!
+    record.setValue( field_name, data )
+
 
 # -----------------------
 def model_dump(  model, msg = "model dump msg" ):
@@ -274,14 +311,14 @@ def model_dump(  model, msg = "model dump msg" ):
     a debug thing
     what type need models be?
     """
-    print( "model_dump begin may want to add back for infomation about  not ia any more ")
-
+    msg     = ( "model_dump begin may want to add back for infomation about  not ia any more ")
+    logging.debug( msg )
     # ia_qt.q_abstract_table_model( model )
     # ia_qt.q_sql_table_model( model )
 
     row_count    = model.rowCount()
     column_count = model.columnCount()
-    print( f"model_dump begin {row_count = } ")
+    a_str   = ( f"model_dump begin {row_count = } ")
 
     for row in range( row_count ):
         row_data = []
@@ -297,12 +334,12 @@ def model_dump(  model, msg = "model dump msg" ):
             elif column == 1:
                 table_id = data
 
-        print(f"Row {row}: {row_data}")
-    print( "model_dump end")
-
+    a_str   = ( f"{a_str}\nRow {row}: {row_data}")
+    a_str   = ( f"{a_str}\nmodel_dump end")
+    logging.debug( a_str )
 
 # -----------------------------------
-class CQGridLayout( QGridLayout ):
+class CQGridLayout_in_extension_now( QGridLayout ):
     """
     !! to do --- whold thing make go across only -- at least for now
 
@@ -426,7 +463,9 @@ class CQGridLayout( QGridLayout ):
         ix_col_stretch  = self.ix_col + 1
 
         self.layout.setColumnStretch( ix_col_stretch, stretch )
-        print( f"-------- end place filler  ----- col >{ix_col_stretch}<  row >{self.ix_row}< ---- {stretch}-----")
+        msg     = ( f"-------- end place filler  ----- col >{ix_col_stretch}<"
+                    f"   row >{self.ix_row}< ---- {stretch}-----")
+        logging.debug( msg )
         # seems keywords not allowed in addWidget, just by position
         self.layout.addWidget(  widget,
                                 self.ix_row,
@@ -602,7 +641,7 @@ class CQGridLayout( QGridLayout ):
         return a_str
 
 # --------------------------------------
-class ModelIndexer( object ):
+class ModelIndexer(   ):
     """
     so we can do a find inside same sort of model ... later
     make an extension to the model..
@@ -720,6 +759,7 @@ class TableModel( QAbstractTableModel ):
         return len(self._headers)
 
     def data(self, index, role=Qt.DisplayRole):
+        """ !! FIX RETURN """
         if role == Qt.DisplayRole:
             return self._data[index.row()][index.column()]
 
@@ -785,11 +825,158 @@ class TableModel( QAbstractTableModel ):
         self._data.clear()
         self.endResetModel()
 
+
+#-------------------------------
+class CQComboBoxEditCriteria2( QComboBox ):
+    """
+    make this like a line edit with a memory
+    based on what chat suggested
+    lots of junk from old edit criteria
+        try to clean up
+    read it
+    custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
+
+    custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
+    custon_widgets.CQComboBoxEditCriteria2( )
+
+    """
+    def __init__(self,
+                 parent             = None,
+                 #data_field_name    = None,
+                 get_type       = "string",
+                 set_type       = "string" ):
+        """
+        read it
+        in   -- into the widget
+        out  -- out to the record
+
+        work to do
+            check context menu
+
+            document formatting
+
+
+        """
+        super(   ).__init__( parent  )
+        max_items    = 10
+        self.setEditable( True )  # Allow user input
+        self.max_items = max_items  # Set max item limit
+
+        # Connect signals
+        self.editTextChanged.connect(self.handle_edit_text)
+        self.activated.connect(self.add_current_text)
+        self.focusOutEvent = self.create_focus_out_event()
+
+
+
+
+        # if not data_field_name:
+        #     1/0
+        # self.data_field_name       = data_field_name
+
+        print( "CQComboBoxEditCriteria2 next look like junk ")
+        self.get_type             = get_type
+        self.set_type             = set_type
+
+        self.default_type          = "value"    # value will be a string
+        self.default_value         = ""
+
+        self.default_type          = "index"    # value will be an Int
+        self.default_value         = 0
+        self.criteria_name         = "not set"
+
+    #-----------------------------
+    def get_data( self ):
+        """
+        read it
+        later will have type conversion
+        """
+        data     = self.currentText()
+        # if self.data_out_type == "integer":
+        #     ret    = int( data )
+        #     return ret
+
+        ret    = data
+        return ret
+
+    #--------------------------------
+    def build_criteria( self, a_dict ):
+        """
+        mutate the dict for criterial
+        think this is how we build criteria for criteria select
+        """
+        msg   = ( f"CQComboBoxEditCriteria {self.get_data()}")
+        logging.debug( msg )
+
+        a_dict[ self.critera_name ] = self.get_data()
+
+    #-----------------------------
+    def set_data( self, data ):
+        """
+        read it
+        not checking in_type for now only string
+        for now convert to string
+        """
+        #if self.r_type == "integer":
+        data    = str( data )
+        self.setCurrentText( data )
+
+    #----------------------------
+    def set_data_default( self ):
+        """
+        might want to route thru set_data
+        """
+        if   self.default_type  == "index":
+            self.setCurrentIndex( self.default_value )
+
+        elif self.default_type  == "value":
+            self.setText( self.default_value )
+            #self.default_value
+
+        else:
+            msg    = f"CQLineEditCriteria  this_is_an_exception_message {self.default_type = }"
+
+            logging.error( msg )
+            raise ValueError( msg, )
+
+    def handle_edit_text(self, text):
+        """Handles when user types into the box"""
+        self.current_text = text
+
+    def add_current_text(self):
+        """Adds the current text to the list with max_items limit"""
+        text = self.currentText().strip()
+        if text and text not in [self.itemText(i) for i in range(self.count())]:  # Avoid duplicates
+            self.addItem(text)
+
+            # Keep only the last 'max_items' items
+            if self.count() > self.max_items:
+                self.removeItem(0)  # Remove the oldest entry
+
+    #---------------------------
+    def keyPressEvent(self, event):
+        """Capture Enter key to add item"""
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            self.add_current_text()
+        super().keyPressEvent(event)
+
+    #----------------------
+    def create_focus_out_event(self):
+        """Handles when focus leaves the widget"""
+        def focus_out_event(event):
+            self.add_current_text()
+            super(CQComboBoxEditCriteria2, self).focusOutEvent(event)
+        return focus_out_event
+
+
+
 #-------------------------------
 class CQComboBoxEditCriteria( QComboBox ):
     """
     read it
     custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
+    custon_widgets.CQComboBoxEditCriteria( )
+
     """
     def __init__(self,
                  parent             = None,
@@ -838,8 +1025,13 @@ class CQComboBoxEditCriteria( QComboBox ):
 
     #--------------------------------
     def build_criteria( self, a_dict ):
-        """mutate the dict for criterial  """
-        print( f"CQComboBoxEditCriteria {self.get_data()}")
+        """
+        mutate the dict for criterial
+        think this is how we build criteria for criteria select
+        """
+        msg   = ( f"CQComboBoxEditCriteria {self.get_data()}")
+        logging.debug( msg )
+
         a_dict[ self.critera_name ] = self.get_data()
 
     #-----------------------------
@@ -853,36 +1045,13 @@ class CQComboBoxEditCriteria( QComboBox ):
         data    = str( data )
         self.setCurrentText( data )
 
-    # #-----------------------------
-    # def set_data_default( self, data = None ):
-    #     """
-    #     read it
-    #     """
-    #     if data is None:
-    #         data = ""
-    #     self.setText( data )
-
-    # @property
-    # def data_value( self ):
-    #     #rint( "@property datagetter" )
-    #     ret   = self.get_data_out()
-    #     #rint( ret )
-    #     return ret
-    #     #return "joe"
-
-    # # ---------------------------------
-    # @data_value.setter
-    # def data_value(self,  arg ):
-    #     #rint( "@data.setter" )
-    #     self.set_data_in( arg )
-
     #----------------------------
     def set_data_default( self ):
         """
         might want to route thru set_data
         """
         if   self.default_type  == "index":
-             self.setCurrentIndex( self.default_value )
+            self.setCurrentIndex( self.default_value )
 
         elif self.default_type  == "value":
             self.setText( self.default_value )
@@ -891,8 +1060,7 @@ class CQComboBoxEditCriteria( QComboBox ):
         else:
             msg    = f"CQLineEditCriteria  this_is_an_exception_message {self.default_type = }"
 
-            print( msg )
-            AppGlobal.logger.error( msg )    # debug info warning, error critical
+            logging.error( msg )
             raise ValueError( msg, )
 
 
@@ -903,9 +1071,9 @@ class CQLineEditCriteria( QLineEdit ):
     custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
     """
     def __init__(self,
-                 parent             = None,
+                 parent         = None,
                  #data_field_name    = None,
-                 get_type      = "string",
+                 get_type       = "string",
                  set_type       = "string" ):
         """
         read it
@@ -924,8 +1092,19 @@ class CQLineEditCriteria( QLineEdit ):
         # self.data_field_name       = data_field_name
         self.get_type              = get_type
         self.set_type              = set_type
-        self.default_type              = "value"    # value will be a string
+        self.default_type          = "value"    # value will be a string
         self.default_value         = ""
+        self.functon_on_return     = None
+        self.returnPressed.connect( self.on_return_pressed )
+
+    #-----------------------------
+    def on_return_pressed( self ):
+        """
+        read it
+
+        """
+        if self.functon_on_return is not None:
+            self.functon_on_return( )   # consider passing the edit
 
     #-----------------------------
     def get_data( self ):
@@ -945,6 +1124,7 @@ class CQLineEditCriteria( QLineEdit ):
     def build_criteria( self, a_dict ):
         """mutate the dict for criterial  """
         a_dict[ self.critera_name ] = self.get_data()
+
     #-----------------------------
     def set_data( self, data ):
         """
@@ -983,7 +1163,6 @@ class CQLineEditCriteria( QLineEdit ):
     def set_data_default( self ):
         """
         """
-
         if   self.default_type  == "xxxx":
              self.setDate(QDate.currentDate() )
 
@@ -993,9 +1172,8 @@ class CQLineEditCriteria( QLineEdit ):
 
         else:
             msg    = f"CQLineEditCriteria  this_is_an_exception_message {self.default_type = }"
+            logging.error( msg )
 
-            print( msg )
-            AppGlobal.logger.error( msg )    # debug info warning, error critical
             raise ValueError( msg, )
 
 # --------------------------------
@@ -1075,7 +1253,8 @@ class CQDateCriteria( QWidget,  ):
 
         if date is None:
             self.ignore_cb_widget.setChecked( True )
-            print( "CQDateCriteria set_date still need self.setsomething" )
+            msg     = ( "CQDateCriteria set_date still need self.setsomething" )
+            logging.error( msg )
             return
 
         try:
@@ -1084,24 +1263,22 @@ class CQDateCriteria( QWidget,  ):
         except Exception as an_except:   #  or( E1, E2 )
 
             msg     = f"a_except         >>{an_except}<<  type  >>{type( an_except)}<<"
-            print( msg )
-            AppGlobal.logger.error( msg )
+            logging.error( msg )
 
             msg     = f"an_except.args   >>{an_except.args}<<  {self.field_name = } "
-            print( msg )
-            AppGlobal.logger.error( msg )
+            logging.error( msg )
 
             s_trace = traceback.format_exc()
             msg     = f"format-exc       >>{s_trace}<<"
-            print( msg )
-            AppGlobal.logger.error( msg )
+            logging.error( msg )
 
             raise
 
         self.setDate( qdate )
 
         self.ignore_cb_widget.setChecked( False )
-        print( "CQDateCriteria set_date still need self.setsomething" )
+        msg      = ( "CQDateCriteria set_date still need self.setsomething" )
+        logging.debug( msg )
 
     # ----------------------------
     def get_date( self, get_type = None   ):
@@ -1121,37 +1298,30 @@ class CQDateCriteria( QWidget,  ):
         try:    # can we factor all into our parent?
             data    = convert_db_display.date_criteria_from_to( qdate, "qdate", get_type )
 
-
         except Exception as an_except:   #  or( E1, E2 )
 
             msg     = f"a_except         >>{an_except}<<  type  >>{type( an_except)}<<"
-            print( msg )
-            AppGlobal.logger.error( msg )
+            logging.error( msg )
 
             msg     = f"an_except.args   >>{an_except.args}<<  {self.field_name = } "
-            print( msg )
-            AppGlobal.logger.error( msg )
+            logging.error( msg )
 
             s_trace = traceback.format_exc()
             msg     = f"format-exc       >>{s_trace}<<"
-            print( msg )
-            AppGlobal.logger.error( msg )
+            logging.error( msg )
 
             raise
 
-
-
-        #rint( "get_date alway a timestamp untill fixed ")
-        # data   = self.get_data_as_timestamp()
 
         return data
 
     #--------------------------------
     def build_criteria( self, a_dict ):
         """mutate the dict for criterial  """
-        print( "CQDateCriteria build_criteria dates not yet right " )
-        a_dict[ self.critera_name ] = self.get_date()
+        msg    = ( "CQDateCriteria build_criteria dates not yet right " )
+        logging.debug( msg )
 
+        a_dict[ self.critera_name ] = self.get_date()
 
     # --------------------------------
     def contextMenuEvent(self, event):
@@ -1183,7 +1353,8 @@ class CQDateCriteria( QWidget,  ):
         """
         data not date to agree with other criteria widgets
         """
-        print( "date_criteria  set_data_default need more")
+        msg     = ( "date_criteria  set_data_default need more")
+        logging.debug( msg )
         #self.set_date( None )
         self.ignore_cb_widget.setChecked( True )
 
@@ -1195,30 +1366,7 @@ class CQDateCriteria( QWidget,  ):
         """
         self.date_edit_widget.setDate(QDate.currentDate())  # Sets date to today
 
-    # # --------------------------------
-    # @property
-    # def data_value( self ):
-    #     """
-    #     beware4 date is a function of the widget
-    #     """
-    #     #rint( "@property datagetter" )
-    #     ret   = self.get_date()
-    #     #rint( ret )
-    #     return ret
-
-    # # ---------------------------------
-    # @date_value.setter
-    # def data_value(self,  arg ):
-    #     """
-    #     beware4 date is a function of the widget
-    #     """
-    #     #rint( "@data.setter" )
-    #     self.set_date( arg )
-
-
-# ---- Edits not Critria ------------------------------------
-
-
+# ---- Edits not Criteria ------------------------------------
 # ---------------------------------
 class CQEditBase(   ):
     """
@@ -1228,12 +1376,34 @@ class CQEditBase(   ):
     set_to_default
     clear_data
 
+    do not need prior value it is just sitting in the control
+
+
+    --- default, prior
+            reset
+            change_to
+            * ct_default   ct_prior
+            clear
+            new
+    ---
+            set
+            set_data
+            set_to
+            make
+            * do_ct    do_ct_value   do_ct_today   do_ct_prior
+            do_data_to_
+
+    get rid of is_changed
+                prior_data
+                events for above
+
     """
     def __init__(self,
                  parent             = None,
                  field_name         = None,
                  display_type       = "qdate",
-                 db_type            = "timestamp" ):
+                 db_type            = "timestamp",
+                 is_keep_prior_enabled = False):
         """
         read it
         timestammp is an int
@@ -1254,22 +1424,27 @@ class CQEditBase(   ):
             # for this control I think dispaly type must alsway be qdate
             # for edit I think must alsways be string
         #self.is_constant           = False
-        is_editable                 = True  #  --- by the user   may be built in
-                                        # will nee a configur for it
-        self.validate               = self.validate_all_ok
 
+        self.is_keep_prior_enabled  = is_keep_prior_enabled
+
+        self.null_surogate          = None   # find a value to use as null surrogate
 
         # ---- these are private change to _
         # prior value, prior_type -- likely already in edit
-        self.prior_value           = None     # value last set from a record ot to record
+        self.prior_value            = None     # value last set from a record ot to record
                                                 # set to something balid for edit in its init
             # in db_type
+        self.is_field_valid         = self.validate_all_ok
 
-        self.is_changed             = False    # by user or default
+        self.debug_format           = "not_set"
+
+        # looks liek a bad idea, when is reset
+        self.is_changed             = False    # by user or default -- is this !! useful or a problem
 
         # next probably in closure for the function
-        self.default_value                = "value_of_self_default_value"  # may or may not be used
-        self.clear_value                  = "value_of_self_clear_value"    # may or may not be used
+        self.default_value          = "value_of_self_default_value"  # may or may not be used
+        self.clear_value            = "value_of_self_clear_value"    # may or may not be used
+        self.default_type           = None
         # Set an initial date (optional)
         #self.setDate( QDate.currentDate() )
 
@@ -1278,24 +1453,49 @@ class CQEditBase(   ):
         # self.default_value         = None     # if used make a qdate
 
         # print( "        end init CQEditBase")
+        # next is to deal with issues of bad inheritance for th date Edit
+        self.bad_calls              = 0
 
+        if self.ct_prior is None:
+            msg     = f"__init__ Error {self.ct_default = } { self.ct_prior = }"
+            logging.error( msg )
 
-    #----------------------------
-    def show_context_menu(self, global_pos):
-        """ chat code, modified a bit """
-        self.context_menu.exec( global_pos )
-
-    #----------------------------
-    def handle_right_click(self, event):
-        """ chat code, modified a bit """
-        if event.button() == Qt.RightButton:
-            self.show_context_menu(event.globalPos())
-        # else:
-        #     # Call the parent class method for other events
-        #     super(QLineEdit, self.line_edit).mousePressEvent(event)
+        # msg     = f"__init__ {self.ct_default = } { self.ct_prior = }"
+        # logging.debug( msg )
 
     #----------------------------
-    def set_data( self, in_data, in_type ):
+    def rec_to_edit( self, record, format = None ):
+        """
+        convert from record format to edit format
+        this is mor or less a prototype
+        note that I know my own field_name
+        """
+        self.debug_format   = format   # unhide the closure
+        converted_data      = None
+        msg                 = f"rec_to_edit This function is not implemented yet. \n {str( self ) = }"
+        logging.error( msg )
+        raise NotImplementedError( msg )
+
+        return converted_data
+
+    #----------------------------
+    def edit_to_rec( self, record, format = None ):
+        """
+        convert from edit format to record format
+        this is more or less a prototype
+        will use field name, if record is not a record skip placing in
+        record for debug
+        """
+        self.debug_format    = format
+        converted_data       = None
+        msg         = f"edit_to_rec This function is not implemented yet. \n {str( self ) = }"
+        logging.error( msg )
+        raise NotImplementedError( msg )
+
+        return converted_data
+
+    #----------------------------
+    def set_data_deprocate_with_new_inoutfunctions( self, in_data, in_type ):
         """
         what it says read
             takes the in_data in the type in_type and puts it
@@ -1311,7 +1511,17 @@ class CQEditBase(   ):
         convert_db_display.convert_from_to( )
 
         .set_data( 22, "integer" )
+
+        new   -- assume type convert done by function same as
+        self.set_preped_data( out_data  )
+        !! delete for set_prepped data
         """
+        # !! log its use to get rid of it
+        msg     = ( f"set_data obsolete for {self.field_name}" )
+        logging.debug( msg )
+        self.set_preped_data( in_data  )
+
+
         # out data is output of coversion, needs to be put into the display field
 
         debug_display_type    = self.display_type
@@ -1319,7 +1529,10 @@ class CQEditBase(   ):
         # !! not sure this should be in in long term
         if self.field_name == "id":
             msg   = f"set_data {id = } {self.is_changed = }"
-            print( msg )
+            logging.debug( msg )
+            # logger.log( MY_LL, "This is a 22 message from my_logger.")
+            # logging.debug( "call was: logging.debug" )
+
             # breakpoint( )
             pass
 
@@ -1329,18 +1542,21 @@ class CQEditBase(   ):
 
         except Exception as an_except:   #  or( E1, E2 )
 
-            msg     = f"a_except         >>{an_except}<<  type  >>{type( an_except)}<<"
-            print( msg )
-            AppGlobal.logger.error( msg )
+            msg     = f"set_data a_except         >>{an_except}<<  type  >>{type( an_except)}<<"
+            logging.error( msg )
+            # logger.log( MY_LL, "This is a 22 message from my_logger.")
+            # print( msg )
+            # AppGlobal.logger.error( msg )
 
             msg     = f"an_except.args   >>{an_except.args}<<  {self.field_name = } "
-            print( msg )
-            AppGlobal.logger.error( msg )
+            logging.error( msg )
+
+            msg     = f"an_except self =  >>{self}<<  "
+            logging.error( msg )
 
             s_trace = traceback.format_exc()
             msg     = f"format-exc       >>{s_trace}<<"
-            print( msg )
-            AppGlobal.logger.error( msg )
+            logging.error( msg )
 
             raise
 
@@ -1356,200 +1572,77 @@ class CQEditBase(   ):
             except Exception as an_except:   #  or( E1, E2 )
 
                 msg     = f"a_except         >>{an_except}<<  type  >>{type( an_except)}<<"
-                print( msg )
-                AppGlobal.logger.error( msg )
+                logging.error( msg )
 
                 msg     = f"an_except.args   >>{an_except.args}<<  {self.field_name = } "
-                print( msg )
-                AppGlobal.logger.error( msg )
+                logging.error( msg )
 
                 s_trace = traceback.format_exc()
                 msg     = f"format-exc       >>{s_trace}<<"
-                print( msg )
-                AppGlobal.logger.error( msg )
+                logging.error( msg )
 
                 raise
 
         if out_data is None:
-            self.is_changed = False
-            print( f"CQEditBase set_data  is_changed set to false {self.field_name}")
+            #self.is_changed = False
+            msg       = f"CQEditBase set_data  is_changed set to false {self.field_name =}"
+            logging.error( msg )
             return
         self.is_changed      = True
         self.set_preped_data( out_data  )
         # doe we set is_changed here
 
     #----------------------------
-    def set_preped_data( self, data,   ):
+    def set_preped_data( self, data, is_changed = None ):
         """'
         final step from set_data should alway be qdate for a date edit....
-        is it generally overriden?
+        is it generally overriden?\
+        no think should be ok here too
         """
-        1/0  # should be in descandant
+        msg         = f"get_raw_data This function is not implemented yet. \n {str( self ) = }"
+        logging.error( msg )
+        raise NotImplementedError( msg )
+
         # ex:
-        self.setDate( data  )
-
-    #----------------------------
-    def get_raw_data( self, ):
-        """'
-        may be intended to get data in typed format
-        comment is wrong  -- final step from set_data should alway be qdate
-        """
-        1/0 # should be in descandant
-        qdate   = self.date()
-        return qdate
-
+        #     self.set_preped_data    = partial( )
     #-----------------------------
-    def set_data_to_defaultxxxx( self,   ):
+    def set_data_from_record_depricated ( self, record ):
         """
-        prior value will be reset
-        is_change will be true
-        data will be in display
-        record is not changed
-
-        looks like it is being overriden in all descandnts
-        why is ther date stuff here
-        """
-        print( "CQEditBase set_data_to_default should override in child")
-        return
+        replaced by rec_to_edit
 
 
-        # if from_prior_value:
-        #     # !! what if none
-        #     #self.clear()  # Clears the QDateEdit
-        #     self.set_data( self.prior_value, self.db_type )
-
-        # elif   self.default_type  == "today":
-        #      value   = QDate.currentDate()
-        #      self.set_data( value, "qdate" )
-
-        # elif self.default_type  == "qdate":
-        #     # sets a fixed qdate stored in default value
-        #     self.set_data( self.default_value, "qdate"  )
-
-        # else:
-        #     1/0
-
-        # self.is_changed   = True
-
-    # -----------------------
-    def set_data_to_prior( self   ):
-        """
-        often replaced with ... set_data_to_prior_value( self   )
-        but could be clear or default or pass
-        """
-        1/0
-        self.set_preped_data( self.prior_value, is_changed = True )
-        pass # debug
-
-    # -----------------------
-    def set_data_to_clear( self   ):
-        """
-        often replaced with ... set_data_to_prior_value( self   )
-        but could be clear or default or pass
-        """
-        print( "set_data_to_clear should have been overridden " )
-        pass # debug
-
-    # ---- do_data_to are implenentations for some of the sets, see comments
-    # -----------------------
-    def do_data_to_keep_prior_what( self   ):
-        """
-        often replaced with ... set_data_to_prior_value( self   )
-        but could be clear or default or pass
-        for default just indicate that it is changed
-        """
-        self.on_data_changed()
-        pass # debug
-
-    # -----------------------
-    def do_data_to_prior_value( self   ):
-        """
-        function to set the default to the prior value
-        uses prior value so should be correct type without
-        conversion
-        for testing to zzzz
-        or could make instance ov base class ?
-        """
-        self.set_preped_data( self.prior_value, is_changed = True )
-        pass # debug
-
-
-    # -----------------------
-    def do_data_to_default_value( self, default_value  ):
-        """
-        complete this code:
-            set_data_to_default    = partial( set_data_to_default, "")
-        function to set the default to a value
-        should be correct type without  conversion
-
-        """
-        print( "set_data_to_default_value" )
-        self.set_preped_data( default_value, is_changed = True )
-        pass # debug
-
-    # -----------------------
-    def do_data_to_self_default( self   ):
-        """
-        depricte
-        function to set the default to the prior value
-        uses prior value so should be correct type without
-        conversion
-        for testing to zzzz
-        or could make instance ov base class ?
-        set_data_default
-        better to keep value in a closure
-        """
-        self.set_preped_data( self.default_value, is_changed = True )
-        pass # debug
-
-
-    # -----------------------
-    def set_data_to_default( self   ):
-        """
-        function to set the default to the prior value
-        uses prior value so should be correct type without
-        conversion
-        for testing to zzzz
-        or could make instance ov base class ?
-        set_data_default
-        better to keep value in a closure
-        """
-        print( "set_data_to_default should be replaced ")
-        1/0
-        #self.set_preped_data( self.default_value, is_changed = True )
-        pass # debug
-
-
-    # -----------------------
-    def set_data_to_pass( self   ):
-        """
-        a nop function for other set datas
-        but   sets is_changed
-        """
-        pass
-        self.is_changed   = True
-
-
-    # def set_data_to_default( self   ):
-    #     """slot for a function to be plugged in else does nothing
-    #     which is probably wrong"""
-    #     print( "set_data_to_default" )
-
-    #-----------------------------
-    def set_data_from_record( self, record ):
-        """
         read it
         !! need prior_data -- done in set_data
         !! utc?
         """
-        debug_fn   =  self.field_name
-        #rint( f"set_data_from_record {debug_fn}")
-        data       = record.value(  self.field_name  )
-        #rint( f"{data = } {self.db_type = }")
+
+        field_name = self.field_name
+        # conditional break
+        # if field_name == "text_data":
+        #     pass
+        #     #breakpoint( )
+        if record.indexOf( field_name ) != -1:
+            # msg = record.value( field_name )
+            data        = record.value( field_name  )
+            # msg         = (  f"set_data_from_record Value for "
+            #                  f"{field_name}: {data}" )
+            # logger.log( logging.DEBUG, msg )
+        else:
+            data        = None
+            msg         = ( f"set_data_from_record Field {field_name} "
+                            f"does not exist in the record.")
+            logging.error( msg )
+            #rint( f"set_data_from_record {debug_fn}")
+            #data       = record.value( field_name  )
+            # msg        =  ( f"set_data_from_record {field_name} {data = }"
+            #                 f" {self.db_type = }")
+            # logging.debug( msg )
 
         if data is None:
-            self.is_changed    = False
-            print( f"CQEditBase set_data_from_record None in display think this is ok {self.field_name}")
+            #self.is_changed    = False
+            msg       = ( f"!!!!!!CQEditBase set_data_from_record "
+                          f"None in display think this is ok {self.field_name}")
+            logger.log( logging.ERROR, msg )   # ERROR
             return
 
         self.set_data( data, self.db_type, )
@@ -1557,9 +1650,61 @@ class CQEditBase(   ):
         #     # should alway get some kind of qdate
         # self.setDate( qdate )
         # self.prior_value   = data
-        self.is_changed    = False
+        #self.is_changed    = False
         if self.field_name == "id":
-            print( f"CQEditBase set_data_from_record 2    {self.field_name}")
+            msg     = f"CQEditBase set_data_from_record 2    {self.field_name}"
+            logger.log( logging.DEBUG, msg )   # ERROR  DEBUG
+
+    #-----------------------------
+    def get_data_for_record_depricated( self, record, record_state ):
+        """
+        read it
+        self.id_field.set_r_type(    record.value(    "id"       ))
+        record.setValue( "add_kw",     self.add_kw_field.text())
+        """
+        # --- do we need othr status checks
+        # --- do we need othr status checks
+
+        #rint( f"get_data_for_record {self.field_name = }")
+        if self.field_name == "id":
+            #breakpoint( )
+            debug_is_changed   = self.is_changed
+            pass
+
+        #debug_break   = 1
+
+
+        raw_data    = self.get_raw_data( )
+        #qdate       = self.date()
+        debug_var   = ( raw_data, self.display_type, self.db_type )
+
+        try:
+            data        = convert_db_display.convert_from_to( raw_data, self.display_type, self.db_type )
+
+        except Exception as an_except:   #  or( E1, E2 )
+
+            msg     = f"a_except         >>{an_except}<<  type  >>{type( an_except)}<<"
+            logging.error( msg )   # logger.log  ERROR  DEBUG  ogging.debug  .error
+
+            msg     = f"an_except.args   >>{an_except.args}<<  {self.field_name = } "
+            logging.error( msg )   # logger.log  ERROR  DEBUG  ogging.debug  .error
+
+            s_trace = traceback.format_exc()
+            msg     = f"format-exc       >>{s_trace}<<"
+            logging.error( msg )   # logger.log  ERROR  DEBUG  ogging.debug  .error
+
+            raise
+
+        # conversions here or in get_data_out   --- save prior value
+        record.setValue( self.field_name, data )
+        self.prior_value  = data
+        #self.is_changed   = False
+        if self.field_name == "id":
+            msg     =  ( f"CQEditBase get_data_for_record     "
+                         f"{self.field_name}")
+            logging.debug( msg )   # logger.log  ERROR  DEBUG  ogging.debug  .error
+
+
 
     # #-----------------------------
     # def raise_validate_issue( self, msg ):
@@ -1567,12 +1712,144 @@ class CQEditBase(   ):
     #     ??
     #     """
     #     raise ValidationIssue( msg , self )
+    #----------------------------
+    def get_raw_data( self, ):
+        """'
+        implemented in child
+        may be intended to get data in typed format
+        comment is wrong  -- final step from set_data should alway be qdate
+        because getting data depens on type of underlying edit
+        """
+        msg         = f"get_raw_data This function is not implemented yet. \n {str( self ) = }"
+        raise NotImplementedError( msg )
+
+
+    # -----------------------
+    def ct_default( self   ):
+        """
+        should be replaced
+        set_data_to_prior_value( self   )
+        but could be clear or default or pass
+        often replaced with
+
+            a_partial           = partial( self.do_ct_value, "" )
+
+
+        really want three variations, clear, clear_default ( if a default value ) clear_or_prior, clear_or_default clear  all from clear_or
+        """
+        msg         = f"ct_default  is not implemented yet. \n self = {self}"
+        logging.error( msg )
+        raise NotImplementedError( msg )
+
+    # -----------------------
+    def ct_prior( self   ):
+        """
+        should be replaced  ... set_data_to_prior_value( self   )
+        but could be clear or default or pass
+        might be repaced with
+            a_partial           = partial( self.do_ct_value, "" )
+
+        """
+        msg         = f"ct_prior  is not implemented yet. \n self = {self}"
+        logging.error( msg )
+        raise NotImplementedError( msg )
+
+        return
+        # now moved to do
+        msg         = f"ct_prior in test {self.is_keep_prior_enabled = }"
+        logging.debug( msg )
+
+        if self.is_keep_prior_enabled:
+            pass # leave the value there
+        else:
+            self.ct_default()
+
+
+        #raise NotImplementedError( msg )
+
+    # -----------------------
+    def do_ct_prior( self,  ):
+        """
+        complete this code:
+            set_data_to_default    = partial( set_data_to_default, "" )
+        function to set the default to a value
+        should be correct type without  conversion
+
+        """
+        #self.on_data_changed()
+        if self.is_keep_prior_enabled:
+            pass # leave the value there
+        else:
+            self.ct_default()
+
+    # -----------------------
+    def do_ct_value( self, a_value  ):
+        """
+        complete this code:
+            set_data_to_default    = partial( set_data_to_default, "" )
+        function to set the default to a value
+        should be correct type without  conversion
+        look for
+             a_partial           = partial( self.do_ct_value, "" )
+
+        """
+        #rint( "set_data_to_default_value {a_value = }" )
+        self.set_preped_data( a_value, is_changed = True )
+        pass # debug
+
+    # # -----------------------
+    # def do_data_to_self_default( self   ):
+    #     """
+    #     depricte
+    #     function to set the default to the prior value
+    #     uses prior value so should be correct type without
+    #     conversion
+    #     for testing to zzzz
+    #     or could make instance ov base class ?
+    #     set_data_default
+    #     better to keep value in a closure
+    #     """
+    #     self.set_preped_data( self.default_value, is_changed = True )
+    #     pass # debug
+
+
+
+
+
     #-----------------------------
-    def validate_all_ok( self ):
+    # def validate( self ):
+    #-----------------------------
+    def is_field_valid( self ):   # seems to help keep and test
+        """
+        change validate to is_field_valid
+        need to return a message could be thru and exception or just
+        a return value for now None or "" means ok else
+        contain an error message
+        this needs work for now just checking it it called
+        !! look in descendant
+        plug in this function
+        """
+        msg         = f"is_field_valid not implemented yet. \n self = {self }"
+        logging.error( msg )
+        raise NotImplementedError( msg )
+        return
+
+    # ---- validate implementations -----------------------
+    #-----------------------------
+    def validate_all_ok( self, arg_ng_1 =  "arg_ng_1",   arg_ng_2 = "arg_ng_2" ):
         """
         pretty much a no op, just do not throw an exception
         default for the base class
+        getting called instead of setDate by the date edit hense a bunch of work arounds
+        what should CQDateEdit.setDate( ) return It updates the displayed date but does not return anything.
+            after TypeError: invalid result from CQDateEdit.validate_all_ok()
         """
+        if not arg_ng_1 ==  "arg_ng_1":
+            self.bad_calls              += 1
+            msg  =  (    f"validate_all_ok seems to be called incorrectly "
+                         f" {arg_ng_1 =} {self.bad_calls = } {self.field_name = }" )
+            logging.error( msg )
+            #breakpoint( )
         return
 
     #-----------------------------
@@ -1580,12 +1857,36 @@ class CQEditBase(   ):
         """
         could make class an argument to the function
         may raise exception
+
         """
         data   = self.get_raw_data().strip()
         if data == "":
             return
         # just thro for now
-        int_maybe   = int( data )
+        try:
+            int_maybe   = int( data )
+
+        except Exception as an_except:   #  or( E1, E2 )
+
+            msg     = f"a_except         >>{an_except}<<  type  >>{type( an_except)}<<"
+            logging.error( msg )   # logger.log  ERROR  DEBUG  ogging.debug  .error
+
+            msg     = f"an_except.args   >>{an_except.args}<<"
+            logging.error( msg )   # logger.log  ERROR  DEBUG  ogging.debug  .error
+
+            msg     = f"self = {self}"
+            logging.error( msg )   # logger.log  ERROR  DEBUG  ogging.debug  .error
+
+            s_trace = traceback.format_exc()
+            msg     = f"format-exc       >>{s_trace}<<"
+            logging.error( msg )   # logger.log  ERROR  DEBUG  ogging.debug  .error
+            #AppGlobal.logger.error( msg )   #    AppGlobal.logger.debug( msg )
+            raise
+        #     #raise  # to reraise same
+        # finally:
+        #     msg     = f"in finally  {1}"
+        #     print( msg )
+        return
 
     #-----------------------------
     def validate_max_int( self, max_int ):
@@ -1597,7 +1898,9 @@ class CQEditBase(   ):
         data   = self.get_raw_data().strip()
         if data == "":
             return
+
         # just thro for now
+        self.validate_is_int()
         int_maybe   = int( data )
         if int_maybe > max_int:
             raise ValueError( "int too big ")
@@ -1615,81 +1918,241 @@ class CQEditBase(   ):
             msg     = f"validate_max_length need a good message {max_len = }"
             raise ValueError( msg )
 
-    #-----------------------------
-    def validate( self ):
+
+        # 1/0   # in descendant -- or move here ??
+        # print( f"CQEditBase get_data_for_record {self.field_name = }")
+
+        # if self.field_name == "add_kw":
+        #      pdb.set_trace()
+
+        # if self.validate_function:
+        #     return self.validate_function( self.get_raw_data )
+        # return None  #
+
+
+    #----------------------------
+    def show_context_menu(self, global_pos):
+        """ chat code, modified a bit """
+        self.context_menu.exec( global_pos )
+
+    #----------------------------
+    def handle_right_click(self, event):
+        """ chat code, modified a bit """
+        if event.button() == Qt.RightButton:
+            self.show_context_menu(event.globalPos())
+        # else:
+        #     # Call the parent class method for other events
+        #     super(QLineEdit, self.line_edit).mousePressEvent(event)
+
+    #----------------------------
+    def edit_to_rec_str_to_str( self, record, format = None  ):
         """
-        need to return a message could be thru and exception or just
-        a return value for now None or "" means ok else
-        contain an error message
-        this needs work for now just checking it it called
-        !! look in descendant
-        plug in this function
+        pretty much nothing format just ignored
+        self.edit_to_rec    =self.edit_to_record_str_str             # partial to set format
+        if record is not record it is data
+        could have special for None
         """
-        1/0   # in descendant -- or move here ??
-        print( f"CQEditBase get_data_for_record {self.field_name = }")
+        # raw_data    = self.get_raw_data()
+        # set_rec_data( record, raw_data )
+        raw_data            = self.get_raw_data()
+        converted_data      = raw_data
 
-        if self.field_name == "add_kw":
-             pdb.set_trace()
+        # might want conditions for formating, but for now now support
+        if format is not None:
+            msg         = ( f"rec_to_edit_int_to_str Field {self.field_name} "
+                            f"format other than None not supported ")
+            logging.error( msg )
+            raise ValueError( msg )
 
-        if self.validate_function:
-            return self.validate_function( self.get_raw_data )
-        return None  #
 
-    #-----------------------------
-    def get_data_for_record( self, record, record_state ):
+        set_rec_data( record, self.field_name, converted_data )
+
+        return converted_data # for debug
+
+
+    #----------------------------
+    def edit_to_rec_str_to_int( self, record, format = None  ):
         """
-        read it
-        self.id_field.set_r_type(    record.value(    "id"       ))
-        record.setValue( "add_kw",     self.add_kw_field.text())
+        pretty much nothing format just ignored
+        self.edit_to_rec    =self.edit_to_record_str_str             # partial to set format
+        if record is not record it is data
+        could have special for None
         """
-        # --- do we need othr status checks
-        # --- do we need othr status checks
+        # raw_data    = self.get_raw_data()
+        # set_rec_data( record, raw_data )
+        raw_data            = self.get_raw_data()
+        raw_data            = raw_data.rstrip( )
+        if raw_data ==  "":
+            msg   = ( f"!!edit_to_rec_str_to_int consider empty to Null/None {self.field_name =}")
+            logging.error( msg )
+            converted_data      = None # is this valid or do i need to use some special value
+        else:
+            converted_data      = int( raw_data )
 
-        #rint( f"get_data_for_record {self.field_name = }")
-        if self.field_name == "id":
-            #breakpoint( )
-            debug_is_changed   = self.is_changed
-            pass
+        # might want conditions for formating, but for now now support
+        if format is not None:
+            msg         = ( f"rec_to_edit_int_to_str Field {self.field_name} "
+                            f"format other than None not supported ")
+            logging.error( msg )
+            raise ValueError( msg )
 
-        #debug_break   = 1
+        set_rec_data( record, self.field_name, converted_data )
 
-        if not self.is_changed:
-            # we just do not bring anyting back
-            return
+        return converted_data # for debug
 
-        raw_data    = self.get_raw_data( )
-        #qdate       = self.date()
-        debug_var   = ( raw_data, self.display_type, self.db_type )
 
-        try:
-            data        = convert_db_display.convert_from_to( raw_data, self.display_type, self.db_type )
+    #----------------------------
+    def edit_to_rec_qdate_to_int( self, record, format = None  ):
+        """
+        date is a qdate -- change name of function, int is a timestamp
+        note that our timestamps are ints
 
-        except Exception as an_except:   #  or( E1, E2 )
+        """
+        qdate        = self.get_raw_data()
 
-            msg     = f"a_except         >>{an_except}<<  type  >>{type( an_except)}<<"
-            print( msg )
-            AppGlobal.logger.error( msg )
+        # could check for qdate
+        py_datetime  = datetime( qdate.year(), qdate.month(), qdate.day())
+        timestamp    = int( py_datetime.timestamp() )
 
-            msg     = f"an_except.args   >>{an_except.args}<<  {self.field_name = } "
-            print( msg )
-            AppGlobal.logger.error( msg )
+        if format is not None:
+            msg         = ( f"rec_to_edit_int_to_str Field {self.field_name} "
+                            f"format other than None not supported ")
+            logging.error( msg )
+            raise ValueError( msg )
 
-            s_trace = traceback.format_exc()
-            msg     = f"format-exc       >>{s_trace}<<"
-            print( msg )
-            AppGlobal.logger.error( msg )
+        set_rec_data( record, self.field_name, timestamp )
 
-            raise
+        return timestamp
 
-        # conversions here or in get_data_out   --- save prior value
-        record.setValue( self.field_name, data )
-        self.prior_value  = data
-        self.is_changed   = False
-        if self.field_name == "id":
-            print( f"CQEditBase get_data_for_record     {self.field_name}")
+    #----------------------------
+    def rec_to_edit_str_to_str( self, record, format = None ):
+        """
+        special case
+            None   -> ""
+
+        else:
+
+        """
+        self.debug_format   = format   # unhide the closure
+        field_name          = self.field_name
+
+        raw_data            = get_rec_data( record, field_name )
+        converted_data      = raw_data
+
+        if converted_data is None:
+            converted_data      = ""
+
+        # conditional break
+        # if field_name == "text_data":
+        #     pass
+        #     #breakpoint( )
+
+
+        # might want conditions for formating, but for now now support
+        if format is not None:
+            msg         = ( f"rec_to_edit_str_to_str Field {field_name} "
+                            f"format other than None not supported ")
+            logging.error( msg )
+            raise ValueError( msg )
+
+         # put in record
+
+        self.set_preped_data( converted_data   )
+        return converted_data  # retun for test data has been set
+
+    #----------------------------
+    def rec_to_edit_int_to_str( self, record, format = None ):
+        """
+        special case
+            None   -> ""
+        for debug or testing do test on isinstance of record
+
+            # msg = record.value( field_name )
+            data        = record.value( field_name  )
+            # msg         = (  f"set_data_from_record Value for "
+            #                  f"{field_name}: {data}" )
+            # logger.log( logging.DEBUG, msg )
+        else:
+
+
+        """
+        self.debug_format   = format   # unhide the closure
+        field_name          = self.field_name
+        # conditional break
+        # if field_name == "text_data":
+        #     pass
+        #     #breakpoint( )
+
+        self.debug_format   = format   # unhide the closure
+        field_name          = self.field_name
+
+        raw_data            = get_rec_data( record, field_name  ) # may raise...
+
+        if raw_data is None:
+            converted_data  = ""
+        else:
+            # for now assume correct type
+            converted_data  = str( raw_data )
+
+        # might want conditions for formating, but for now now support
+        if format is not None:
+            msg         = ( f"rec_to_edit_int_to_str Field {field_name} "
+                            f"format other than None not supported ")
+            logging.error( msg )
+            raise ValueError( msg )
+
+        self.set_preped_data( converted_data  )
+
+        return converted_data  # retun for test data has been set
+
+    #----------------------------
+    def rec_to_edit_int_to_qdate( self, record, format = None ):
+        """
+        special case
+            None   -> see code
+
+
+
+        """
+        self.debug_format   = format   # unhide the closure
+        field_name          = self.field_name
+        # conditional break
+        # if field_name == "text_data":
+        #     pass
+        #     #breakpoint( )
+
+        raw_data            = get_rec_data( record, field_name  ) # may raise...
+
+        if raw_data is None:
+            converted_data  = QDate( 1900, 1, 1 ) # surrogate for None
+            msg         = ( f"rec_to_edit_int_to_qdate Field {field_name} "
+                            f"got data of None used surrogate None ")
+
+            raise ValueError( msg )
+
+        else:
+            if not isinstance( raw_data, int ):
+                msg   = ( f"Data is not instnace of int = timestamp {raw_data = } {type(raw_data) = }  " )
+                logging.error( msg )
+                raise ValueError( msg )
+
+            a_datetime          = datetime.fromtimestamp( raw_data )
+
+            converted_data      = QDate( a_datetime.year, a_datetime.month, a_datetime.day )
+
+        # might want conditions for formating, but for now now support
+        if format is not None:
+            msg         = ( f"rec_to_edit_int_to_qdate Field {field_name} "
+                            f"format other than None not supported ")
+            logging.error( msg )
+            raise ValueError( msg )
+
+        self.set_preped_data( converted_data  )
+
+        return converted_data  # retun for test data has been set
 
     # ------------------------------------
-    def on_data_changed( self, ): # new_text):
+    def on_data_changedxxx( self, ): # new_text):
         """
         on_data_changed( self, new_text):  xxx no new_text sent for text changed
         data may be sent for textEdited
@@ -1697,30 +2160,21 @@ class CQEditBase(   ):
         """
         self.is_changed   = True
 
-    # ------------------------------------
-    def clear_data( self, to_prior ):
-        """
-        may be edited or messed with
-        on data change for each drop the new data
-        think the set_data_to_clear is what should be used
-        """
-        1/0
-        print( "need implementation zzzz clear_data ")
 
     # ------------------------------------
     def print_str( self,   ):
         """
-        may be edited or messed with
-        on data change for each drop the new data
+        for debug
         """
         print( self )
+        #logging.debug( msg )
 
     def __str__( self ):
         a_str   = ""
         a_str   = ">>>>>>>>>>* CQEditBase *<<<<<<<<<<<<"
 
-        a_str   = string_util.to_columns( a_str, ["clear_value",
-                                           f"{self.clear_value}" ] )
+        # a_str   = string_util.to_columns( a_str, ["clear_value",
+        #                                    f"{self.clear_value}" ] )
         a_str   = string_util.to_columns( a_str, ["context_menu",
                                            f"{self.context_menu}" ] )
         a_str   = string_util.to_columns( a_str, ["db_type",
@@ -1733,16 +2187,21 @@ class CQEditBase(   ):
                                            f"{self.display_type}" ] )
         a_str   = string_util.to_columns( a_str, ["field_name",
                                            f"{self.field_name}" ] )
-        a_str   = string_util.to_columns( a_str, ["is_changed",
-                                           f"{self.is_changed}" ] )
-        a_str   = string_util.to_columns( a_str, ["prior_value",
-                                           f"{self.prior_value}" ] )
-        a_str   = string_util.to_columns( a_str, ["set_data_to_default",
-                                           f"{self.set_data_to_default}" ] )
-        a_str   = string_util.to_columns( a_str, ["set_data_to_prior",
-                                           f"{self.set_data_to_prior}" ] )
+        # a_str   = string_util.to_columns( a_str, ["is_changed",
+        #                                    f"{self.is_changed}" ] )
+        # a_str   = string_util.to_columns( a_str, ["prior_value",
+        #                                    f"{self.prior_value}" ] )
+        # a_str   = string_util.to_columns( a_str, ["set_data_to_default",
+        #                                    f"{self.set_data_to_default}" ] )
+        # a_str   = string_util.to_columns( a_str, ["set_data_to_prior",
+        #                                    f"{self.set_data_to_prior}" ] )
         a_str   = string_util.to_columns( a_str, ["validate",
                                            f"{self.validate}" ] )
+
+        a_str   = string_util.to_columns( a_str, ["get_raw_data()",
+                                           f"{str(self.get_raw_data()) } " ] )
+
+
         return a_str
 
 
@@ -1765,6 +2224,7 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         """
         #super(   ).__init__(   )   # seems to go to CQEditBase ???
 
+
         QLineEdit.__init__( self, None  )     # need arg ?
 
         CQEditBase.__init__( self,
@@ -1773,22 +2233,110 @@ class CQLineEdit( QLineEdit, CQEditBase ):
                         display_type       = display_type,
                         db_type            = db_type )
 
-
         self.default_type          = "string"          # depricate
-        self.default_value         = "default-value"     # depricate
+        #self.default_value         = "default-value"     # depricate
         self.prior_value           = ""  # something of a valid type
-        self.textEdited.connect(self.on_text_changed )  #  text is sent new_text
+        #self.textEdited.connect(self.on_text_changed )  #  text is sent new_text
         #self.textChanged.connect(self.on_text_changed)
             #-----------------------------
+        self.null_surogate          = ""
+        # ---- set functions
+        #a_partial           = partial( self.do_ct_value, "do_ct_value!!" )
+        a_partial           = partial( self.do_ct_value, "" )
+        self.ct_default     = a_partial
 
-        # should have default, prior ....
+        self.ct_prior       = self.do_ct_prior
+        self.validate       = self.validate_all_ok
 
-        a_partial                    = partial( self.do_data_to_default_value, "to default" )
-        self.set_data_to_default     = a_partial
+        # in out conversion
+        self.rec_to_edit      =  self.rec_to_edit_str_to_str
+        self.edit_to_rec      =  self.edit_to_rec_str_to_str
 
-        self.set_data_to_prior       = self.set_data_to_prior
 
+        self.setPlaceholderText( self.field_name )
         self._build_context_menu()
+
+    # ---- required implementations
+    #----------------------------
+    def set_preped_data( self, a_string,   is_changed = None ):
+        """
+        specialize for this edit
+        what about prior value
+
+        a prepped data is data in the format for the edit and
+        formatted and ready for the edit.
+
+        arg
+            is_changed     None      leave is_changed as it was
+                           True        is_changed set to True
+                           False        is_changed set to False
+                           other       undefined behaviour
+        mutates
+
+            changes contents of edit
+            may change self.is_changed
+            self.prior_value  -- so far unchanged, this is probably wrong
+
+
+        """
+        # next !! debug
+        if a_string == None:
+            a_string   = self.null_surogate
+            msg        = f"line edit using null_surrogate for {self.field_name}"
+
+            logging.debug( msg )
+        elif not isinstance( a_string, str ):
+            self_field_name   = self.field_name
+            msg = f"set_preped_data error a_string, not a string {self.field_name = }  return for now inspect then break"
+            logging.debug( msg )
+            return
+            wat_inspector.go(
+                msg            = msg,
+                # inspect_me     = self.people_model,
+                a_locals       = locals(),
+                a_globals      = globals(), )
+            breakpoint()
+
+        self.setText( a_string  )   #
+            # with prior there ? depending on is_changed ??
+        self.prior_value  = a_string
+        if is_changed is not None:
+            self.is_changed = is_changed
+
+    #----------------------------
+    def get_raw_data( self, ):
+        """'
+        make get edit data in futuere
+        final step from set_data should alway be a string for
+        this edit
+        """
+        data  = self.text()
+        return data
+
+    # ---- crud cycle -------------------------------
+
+    # -----------------------
+    def set_data_to_clear( self   ):
+        """
+        often replaced with ... set_data_to_....
+        but could be clear or default or pass
+        """
+        self.set_preped_data( "", is_changed = True )
+        pass # debug
+
+
+    # ------------------------------------
+    def on_text_changed( self, new_data ):
+        """
+        !! probably phase out
+        may be edited or messed with
+        on data change for each drop the new data
+        this is probably a bit messed up but also not needed??
+        """
+        #self.is_changed  = True
+        self.on_data_changed( )
+        self.prior_value   = new_data
+        #rint(f"line edit on_data_changed: {new_data} saved to prior_value ")  !!
 
     # -------------------------
     def _build_context_menu( self ):
@@ -1828,15 +2376,105 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         # Disable the default context menu
         self.setContextMenuPolicy(Qt.NoContextMenu)
 
-    #----------------------------
-    def get_raw_data( self, ):
-        """'
-        final step from set_data should alway be a string for
-        this edit
-        """
-        data  = self.text()
-        return data
+    # -------------------------------
+    def __str__( self ):
 
+        a_str   = ""
+
+        a_str   = f"{a_str}{CQEditBase.__str__( self, )    }"
+
+        a_str   = f"{a_str}\n>>>>>>>>>>* CQLineEdit *<<<<<<<<<<<<"
+
+        a_str   = string_util.to_columns( a_str, ["default_type",
+                                           f"{self.default_type}" ] )
+        # a_str   = string_util.to_columns( a_str, ["default_value",
+        #                                    f"{self.default_value}" ] )
+        a_str   = string_util.to_columns( a_str, ["is_changed",
+                                           f"{self.is_changed}" ] )
+        a_str   = string_util.to_columns( a_str, ["field_name",
+                                           f"{self.field_name}" ] )
+        a_str   = string_util.to_columns( a_str, ["prior_value",
+                                           f"{self.prior_value}" ] )
+        a_str   = string_util.to_columns( a_str, ["get_raw_data()",
+                                           f"{self.get_raw_data()}" ] )
+
+        # more    = CQEditBase.__str__( self, )
+        # a_str   = f"{a_str}\n{more}"
+        return a_str
+
+    # @property
+    # def data_value( self ):
+    #     #rint( "@property datagetter" )
+    #     ret   = self.get_data_out()
+    #     #rint( ret )
+    #     return ret
+
+
+    # # ---------------------------------
+    # @data_value.setter
+    # def data_value(self,  arg ):
+    #     #rint( "@data.setter" )
+    #     self.set_data_in( arg )
+#-------------------------------
+
+
+#-------------------------------
+class CQComboBox( QComboBox, CQEditBase ):
+    """
+    read it
+    custom_widgets.CQComboBoxEdit
+        from the line edit
+        lets see what we can get rid of
+        start with non editable
+
+
+    """
+    def __init__(self,
+                 parent             = None,
+                 field_name         = None,
+                 display_type       = "string",
+                 db_type            = "string" ):
+
+        """
+        read it
+        in   -- into the widget
+        out  -- out to the record
+        """
+        #super(   ).__init__(   )   # seems to go to CQEditBase ???
+
+        QLineEdit.__init__( self, None  )     # need arg ?
+
+        CQEditBase.__init__( self,
+                        parent             = parent,
+                        field_name         = field_name,
+                        display_type       = display_type,
+                        db_type            = db_type )
+
+        self.default_type          = "string"          # depricate
+        #self.default_value         = "default-value"     # depricate
+        self.prior_value           = ""  # something of a valid type
+        #self.textEdited.connect(self.on_text_changed )  #  text is sent new_text
+        #self.textChanged.connect(self.on_text_changed)
+            #-----------------------------
+        self.null_surogate          = ""
+        # ---- set functions
+        #a_partial           = partial( self.do_ct_value, "do_ct_value!!" )
+        a_partial           = partial( self.do_ct_value, "" )
+        self.ct_default     = a_partial
+
+        self.ct_prior       = self.do_ct_prior
+        self.validate       = self.validate_all_ok
+
+        # in out conversion
+        self.rec_to_edit      =  self.rec_to_edit_str_to_str
+        self.edit_to_rec      =  self.edit_to_rec_str_to_str
+
+        self.setPlaceholderText( self.field_name )
+        self.addItems( [ "", "atest", "bbbbbb", "cccccc", ] )
+
+        #self._build_context_menu()
+
+    # ---- required implementations
     #----------------------------
     def set_preped_data( self, a_string,   is_changed = None ):
         """
@@ -1860,10 +2498,15 @@ class CQLineEdit( QLineEdit, CQEditBase ):
 
         """
         # next !! debug
+        if a_string == None:
+            a_string   = self.null_surogate
+            msg        = f"line edit using null_surrogate for {self.field_name}"
 
-        if not isinstance( a_string, str ):
+            logging.debug( msg )
+        elif not isinstance( a_string, str ):
             self_field_name   = self.field_name
-            msg = f"set_preped_data a_string, not a string {self.field_name = }  return for now inspect then break"
+            msg = f"set_preped_data error a_string, not a string {self.field_name = }  return for now inspect then break"
+            logging.debug( msg )
             return
             wat_inspector.go(
                 msg            = msg,
@@ -1872,37 +2515,37 @@ class CQLineEdit( QLineEdit, CQEditBase ):
                 a_globals      = globals(), )
             breakpoint()
 
-        self.setText( a_string  )   #
+        # self.setText( a_string  )   #
+        self.setCurrentText( a_string )
             # with prior there ? depending on is_changed ??
         self.prior_value  = a_string
         if is_changed is not None:
             self.is_changed = is_changed
+
+    #----------------------------
+    def get_raw_data( self, ):
+        """'
+        make get edit data in futuere
+        final step from set_data should alway be a string for
+        this edit
+        """
+        #data  = self.text()
+        data  = self.currentText()
+        return data
+
+    #----------------------------
+    def add_items( self, a_list ):
+        """'
+        probably use addItems directly
+        a_list is a list of strings
+        """
+        self.addItems( a_list  )
+
+
     # ---- crud cycle -------------------------------
-    #-----------------------------
-    def set_data_to_defaultzzz( self,  ):
-        """
-        read it
-        should it not set the prior value as well
-        """
-        print( "should be replace by function from base ")
-        return
-        # if data is None:
-        #     data = ""
-        # if from_prior_value:
-        #     # !! what if none
-        #     #self.clear()  # Clears the QDateEdit
-        #     self.set_data( self.prior_value, self.db_type )
 
-        # if self.default_type  == "string":
-        #     # clear will be empty string
-        #     self.set_data( self.default_value, "string"  )
-
-        # else:
-        #     1/0
-
-        # self.is_changed   = True
     # -----------------------
-    def set_data_to_clear( self   ):
+    def set_data_to_clearxxxx( self   ):
         """
         often replaced with ... set_data_to_....
         but could be clear or default or pass
@@ -1910,42 +2553,11 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         self.set_preped_data( "", is_changed = True )
         pass # debug
 
-    #-----------------------------
-    def validate( self ):
-        """
-        this is dead will be over written by
-
-            validate       = widget.some_validate_function see init
-        need to return a message could be thru and exception or just
-        a return value for now None or "" means ok else
-        contain an error message -- possibly promotable??
-
-        """
-        #rint( f"CQLineEdit validate get_data_for_record {self.field_name = }")
-
-        # # custom debug
-        # if self.field_name == "add_kw":
-        #      pdb.set_trace()
-
-        if self.validate_function:
-            validate_issue   =  self.validate_function( self.get_raw_data() )
-            if validate_issue:
-
-                raise ValidationIssue( validate_issue , self )
-
-        return None
 
     # ------------------------------------
-    def clear_data( self, to_prior ):
+    def on_text_changedxxxx( self, new_data ):
         """
-        what cleare data is depends on function plugged in here
-        """
-        #rint( f"need implementation o  !! { to_prior =} ")
-        self.set_preped_data( "" )
-
-    # ------------------------------------
-    def on_text_changed( self, new_data ):
-        """
+        !! probably phase out
         may be edited or messed with
         on data change for each drop the new data
         this is probably a bit messed up but also not needed??
@@ -1955,24 +2567,68 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         self.prior_value   = new_data
         #rint(f"line edit on_data_changed: {new_data} saved to prior_value ")  !!
 
+    # -------------------------
+    def _build_context_menu_hide_no_delete( self ):
+        """ """
+
+        context_menu        = QMenu(self)
+        self.context_menu   = context_menu
+
+        # Add actions for common operations
+        undo_action     = context_menu.addAction("Undo")
+        undo_action.triggered.connect(self.undo)
+
+        redo_action     = context_menu.addAction("Redoxx")
+        context_menu.addSeparator()
+        cut_action = context_menu.addAction("Cutxx")
+        copy_action = context_menu.addAction("Copy")
+        paste_action = context_menu.addAction("Paste")
+        context_menu.addSeparator()
+        select_all_action = context_menu.addAction("Select All")
+        select_all_action.triggered.connect(self.selectAll)
+
+        select_all_action = context_menu.addAction("PrintStr")
+        select_all_action.triggered.connect(self.print_str )
+
+        # Connect actions to QLineEdit methods
+
+        redo_action.triggered.connect(self.redo)
+        cut_action.triggered.connect(self.cut)
+        copy_action.triggered.connect(self.copy)
+        paste_action.triggered.connect(self.paste)
+
+
+        # Show the context menu at the cursor position
+        # context_menu.exec(QCursor.pos())
+
+        self.mousePressEvent = self.handle_right_click
+        # Disable the default context menu
+        self.setContextMenuPolicy(Qt.NoContextMenu)
+
     # -------------------------------
     def __str__( self ):
 
         a_str   = ""
-        a_str   = ">>>>>>>>>>* CQLineEdit *<<<<<<<<<<<<"
+
+        a_str   = f"{a_str}{CQEditBase.__str__( self, )    }"
+
+        a_str   = f"{a_str}\n>>>>>>>>>>* CQLineEdit *<<<<<<<<<<<<"
+
         a_str   = string_util.to_columns( a_str, ["default_type",
                                            f"{self.default_type}" ] )
         # a_str   = string_util.to_columns( a_str, ["default_value",
         #                                    f"{self.default_value}" ] )
         a_str   = string_util.to_columns( a_str, ["is_changed",
                                            f"{self.is_changed}" ] )
+        a_str   = string_util.to_columns( a_str, ["field_name",
+                                           f"{self.field_name}" ] )
         a_str   = string_util.to_columns( a_str, ["prior_value",
                                            f"{self.prior_value}" ] )
         a_str   = string_util.to_columns( a_str, ["get_raw_data()",
                                            f"{self.get_raw_data()}" ] )
 
-        more    = CQEditBase.__str__( self, )
-        a_str   = f"{a_str}\n{more}"
+        # more    = CQEditBase.__str__( self, )
+        # a_str   = f"{a_str}\n{more}"
         return a_str
 
     # @property
@@ -1989,6 +2645,9 @@ class CQLineEdit( QLineEdit, CQEditBase ):
     #     #rint( "@data.setter" )
     #     self.set_data_in( arg )
 #-------------------------------
+
+
+
 # -------------------------------
 class CQTextEdit(QTextEdit, CQEditBase):
     """
@@ -2006,36 +2665,50 @@ class CQTextEdit(QTextEdit, CQEditBase):
         # Initialize CQEditBase properly
         CQEditBase.__init__(self, parent, field_name, display_type, db_type)
 
-        #rint("finish init CQTextEdit")
-        self.default_type           = "string"
+        # ---- set functions
+        a_partial           = partial( self.do_ct_value, "\n\nnew default text" )
+        self.ct_default     = a_partial                  # interface, clear text default --- set for python code
+        self.ct_prior       = self.do_ct_prior
+        self.validate       = self.validate_all_ok      # interface, a function for validation
+        self.null_surogate  = ""
+        self.tab_width      = 4                         # also for interface
 
-        # # !! this is wrong
-        # self.default_value          = "this is my default_value CQTextEdit"
-        # self.set_data_to_default    = self.set_data_to_self_default
+        # in out conversion
+        self.rec_to_edit      =  self.rec_to_edit_str_to_str
+        self.edit_to_rec      =  self.edit_to_rec_str_to_str
 
-        a_partial                    = partial( self.do_data_to_default_value, "text default" )
-        self.set_data_to_default     = a_partial
-
-
-        #print( "!! change this default soon ")
-        # a_partial                    = partial( self.set_data_to_default_value, "" )
-        # self.set_data_to_default     = a_partial
-
-        # this also needs fixing
-        self.set_data_to_prior       = self.do_data_to_prior_value
-
-
-
+        self.text_edit_ext_obj  = None # may be set externally
 
         # Connect the textEdited signal to on_data_changed method -- not here for line edit
-        self.textChanged.connect( self.on_data_changed )  # no argument sent
+        #self.textChanged.connect( self.on_data_changed )  # no argument sent
         #self.textEdited.connect(self.on_text_changed )  # no data sent
         # cursor        = self.textCursor()
         # debug_cursor  = self.textCursor()
 
-    def on_data_changedxxxxx(self):
-        print("Text has been changed should is_changed be set ")
+    # def on_data_changedxxxxx(self):
+    #     print("Text has been changed should is_changed be set ")
 
+    #----------------------------
+    def set_preped_data( self, a_string, is_changed = None ):
+        """ specialize for this edit
+        might hav second argument for is changed
+        add to rest of group
+        """
+        # next !! debug
+        if a_string == None:
+            a_string   = self.null_surogate
+            msg        = f"text edit using null_surrogate for {self.field_name}"
+            logging.debug( msg )
+
+        elif not isinstance( a_string, str ):
+            debug    = self.field_name
+            msg      = f"set_preped_data error a_string, not a string {self.field_name = }"
+            wat_inspector.go( self, globals( ), msg = msg )
+
+        self.setText( a_string  )
+        self.prior_value  = a_string
+        if is_changed is not None:
+            self.is_changed = is_changed
 
     #----------------------------
     def get_raw_data( self, ):
@@ -2046,76 +2719,42 @@ class CQTextEdit(QTextEdit, CQEditBase):
         data  = self.toPlainText()
         return data
 
-    #----------------------------
-    def set_preped_data( self, a_string, is_changed = None ):
-        """ specialize for this edit
-        might hav second argument for is changed
-        add to rest of group
-        """
-        # next !! debug
 
-        if not isinstance( a_string, str ):
-            debug    = self.field_name
-            msg      = f"set_preped_data error a_string, not a string {self.field_name = }"
-            wat_inspector.go( self, globals( ), msg = msg )
-        self.setText( a_string  )
-        self.prior_value  = a_string
-        if is_changed is not None:
-            self.is_changed = is_changed
+    #-----------------------------
+    def get_data_for_record_debug( self, record, record_state ):
+        """a debug trick to try other than that consider an if  """
+        msg    = ( "get_data_for_record_debug this for debug only ")
+        logging.debug( msg )
+        CQEditBase.get_data_for_record( self, record, record_state )
+
+
 
     # ---- crud cycle -------------------------------
-    #-----------------------------
-    def set_data_to_default_comment_out( self, from_prior_value = False ):
-        """
-        read it
-        """
 
-        return
-        # if data is None:
-        #     data = ""
-        if from_prior_value:
-            # !! what if none
-            #self.clear()  # Clears the QDateEdit
-            self.set_data( self.prior_value, self.db_type )
 
-        if self.default_type  == "string":
-            # clear will be empty string
-            self.set_data( self.default_value, "string"  )
+    # def __init__(self, tab_width=4, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.tab_width = tab_width  # Number of spaces for a tab
 
+    def keyPressEvent(self, event):   # automatically called? no setup
+        if event.key() == 0x01000001:  # Qt.Key_Tab
+            cursor = self.textCursor()
+            cursor.insertText( ' ' * self.tab_width )
         else:
-            1/0
+            super().keyPressEvent(event)
 
-        self.is_changed   = True
 
     #-----------------------------
-    def validate( self ):
-        """
-        need to return a message could be thru and exception or just
-        a return value for now None or "" means ok else
-        contain an error message -- possibly promotable??
 
-        """
-        #rint( f"CQLineEdit validate get_data_for_record {self.field_name = }")
 
-        # # custom debug
-        # if self.field_name == "add_kw":
-        #      pdb.set_trace()
-
-        if self.validate_function:
-            validate_issue   =  self.validate_function( self.get_raw_data() )
-            if validate_issue:
-                raise ValidationIssue( validate_issue , self )
-
-        return None
-
-    # ------------------------------------
-    def clear_data( self, to_prior ):
-        """
-        may be edited or messed with
-        on data change for each drop the new data
-        """
-        print( "need implementation of { to_prior =} ")
-        self.set_preped_data( "" )
+    # # ------------------------------------
+    # def clear_data( self, to_prior ):
+    #     """
+    #     may be edited or messed with
+    #     on data change for each drop the new data
+    #     """
+    #     print( "need implementation of { to_prior =} ")
+    #     self.set_preped_data( "" )
 
 
     # ------------------------------------
@@ -2127,7 +2766,12 @@ class CQTextEdit(QTextEdit, CQEditBase):
         #self.is_changed  = True
         self.on_data_changed( )
         self.prior_value   = self.toPlainText()
-        print(f"text edit on_text_changed ")
+        msg        = (f"CQTextEdit text edit on_text_changed ")
+        logging.debug( msg )
+
+    def insertFromMimeData(self, source):
+        """from a chatbot is it ok?? """
+        self.insertPlainText(source.text())  #  removes formatting
 
 
     # --------------------------------------------------
@@ -2135,34 +2779,23 @@ class CQTextEdit(QTextEdit, CQEditBase):
 
         a_str   = ""
         a_str   = ">>>>>>>>>>* QTextEdit *<<<<<<<<<<<<"
-        a_str   = string_util.to_columns( a_str, ["default_type",
-                                           f"{self.default_type}" ] )
-        a_str   = string_util.to_columns( a_str, ["default_value",
-                                           f"{self.default_value}" ] )
-        a_str   = string_util.to_columns( a_str, ["is_changed",
-                                           f"{self.is_changed}" ] )
-        a_str   = string_util.to_columns( a_str, ["prior_value",
-                                           f"{self.prior_value}" ] )
+        # a_str   = string_util.to_columns( a_str, ["default_type",
+        #                                    f"{self.default_type}" ] )
+        # a_str   = string_util.to_columns( a_str, ["default_value",
+        #                                    f"{self.default_value}" ] )
+        # a_str   = string_util.to_columns( a_str, ["is_changed",
+        #                                    f"{self.is_changed}" ] )
+        # a_str   = string_util.to_columns( a_str, ["prior_value",
+        #                                    f"{self.prior_value}" ] )
         more    = CQEditBase.__str__( self, )
         a_str   = f"{a_str}\n{more}"
         return a_str
 
-    # @property
-    # def data_value( self ):
-    #     #rint( "@property datagetter" )
-    #     ret   = self.get_data_out()
-    #     #rint( ret )
-    #     return ret
 
-
-    # # ---------------------------------
-    # @data_value.setter
-    # def data_value(self,  arg ):
-    #     #rint( "@data.setter" )
-    #     self.set_data_in( arg )
 
 # ---------------------------------
 class CQDateEdit( QDateEdit,  CQEditBase ):
+# class CQDateEdit( CQEditBase, QDateEdit,   ):  # reverse does not help
     """
     move a version to stuffdb
     custom_widget.pb   as CQDateEdit
@@ -2190,12 +2823,43 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
                         display_type       = display_type,
                         db_type            = db_type )
 
+        # ---- set functions
+        # a_partial           = partial( self.do_ct_value, "do_ct_value!!" )
+        # self.ct_default     = a_partial
+        self.ct_default     = self.do_ct_prior
+        self.ct_prior       = self.do_ct_prior
+        #self.is_valid       = self.validate_all_ok
+        self.null_surogate  = QDate( 1980, 1, 1 )
+
+
         self.default_type          = "today"   # need begin of day, endo of day ??
         self.default_value         = None     # if used make a qdate
         self.config_calender_popup( True )
         # prior value, prior_type
-        is_editable                 = True  #  --- by the user   may be built in
+        self.is_editable            = True  #  --- by the user   may be built in
                                         # will nee a configur for it
+
+
+        raw_data      = self.get_raw_data()
+        msg      = ( f"raw_data = {raw_data}")    # PyQt5.QtCore.QDate(2000, 1, 1)
+        logging.debug( msg )
+
+
+        try:
+            msg   = ( "__init__ start try")
+            logging.debug( msg )
+
+            self.set_preped_data( None )
+            # output has start and stop but still this in output
+            # TypeError: invalid result from CQDateEdit.validate_all_ok()
+            msg   = ( "__init__stop try")
+            logging.debug( msg )
+        except:
+            msg   = ( "__init__pass on except")
+            logging.error( msg )
+            pass
+
+
     # -------------------
     def config_calender_popup( self, is_popup ):
         """ """
@@ -2243,8 +2907,37 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         final step from set_data should alway be qdate
         specialized by name of function call
         """
+        if qdate == None:
+            qdate   = self.null_surogate
+            msg        = f"date edit using null_surrogate for {self.field_name}"
+            logging.debug( msg )
+
+        elif not isinstance( qdate,  QDate ):
+            self_field_name   = self.field_name
+            msg = f"set_preped_data error qdate, not a QDate {self.field_name = }  return ??for now inspect then break"
+            logging.error( msg )
+            return
+            wat_inspector.go(
+                msg            = msg,
+                # inspect_me     = self.people_model,
+                a_locals       = locals(),
+                a_globals      = globals(), )
+            breakpoint()
+
+        #elif not isinstance(
+
+
+
         # self.setDate( qdate  )  # was going to validate next seems to fix
-        super( QDateEdit, self).setDate(qdate )  # Ensure QDateEdit.setDate() is called
+        #super( QDateEdit, self).setDate( qdate )  # Ensure QDateEdit.setDate() is called
+            # above still going to to self.validate sometimes
+        xxx= """
+        i am in a control that inherits from QDateEdit as well as others.
+        i want to call the method setDate in the control, but it seems to
+        be going thew wrong place.  any fixes for this?
+        here is another try at it
+        """
+        QDateEdit.setDate( self, qdate )
 
     #-----------------------------
     def set_data_to_default_comment_out( self, is_changei = False ):
@@ -2262,8 +2955,8 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
             self.set_data( self.prior_value, self.db_type )
 
         elif   self.default_type  == "today":
-             value   = QDate.currentDate()
-             self.set_data( value, "qdate" )
+            value   = QDate.currentDate()
+            self.set_data( value, "qdate" )
 
         elif self.default_type  == "qdate":
             # sets a fixed qdate stored in default value
@@ -2274,9 +2967,8 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
 
         self.is_changed   = True
 
-
     #-----------------------------
-    def validate( self, ignore_for_debug_1 = None , ignore_for_debug_2 = None ):
+    def validatexxxx( self, ignore_for_debug_1 = None , ignore_for_debug_2 = None ):
         """
         need to return a message could be thru and exception or just
         a return value for now None or "" means ok else
@@ -2288,6 +2980,31 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
             raise ValidationIssue( msg , self )
         return None
 
+    # -------------------------------
+    def __str__( self ):
+
+        a_str   = ""
+
+        a_str   = f"{a_str}{CQEditBase.__str__( self, )    }"
+
+        a_str   = f"{a_str}\n>>>>>>>>>>* CQDateEdit ( nothing so far ) *<<<<<<<<<<<<"
+
+        # a_str   = string_util.to_columns( a_str, ["default_type",
+        #                                    f"{self.default_type}" ] )
+        # # a_str   = string_util.to_columns( a_str, ["default_value",
+        # #                                    f"{self.default_value}" ] )
+        # a_str   = string_util.to_columns( a_str, ["is_changed",
+        #                                    f"{self.is_changed}" ] )
+        # a_str   = string_util.to_columns( a_str, ["field_name",
+        #                                    f"{self.field_name}" ] )
+        # a_str   = string_util.to_columns( a_str, ["prior_value",
+        #                                    f"{self.prior_value}" ] )
+        # a_str   = string_util.to_columns( a_str, ["get_raw_data()",
+        #                                    f"{self.get_raw_data()}" ] )
+
+        # more    = CQEditBase.__str__( self, )
+        # a_str   = f"{a_str}\n{more}"
+        return a_str
 
 
     # # ---- do we want the next, why, for debug or...

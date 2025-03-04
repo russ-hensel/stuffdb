@@ -15,25 +15,24 @@ if __name__ == "__main__":
 # ---- imports
 
 import functools
+import logging
 import os
 import traceback
 
+import app_logging
 # ------- local
 import gui_qt_ext
 import psutil
+import show_parameters
 #import    document_maker
 #import    help_sub_window
 # import   db_create
 from app_global import AppGlobal
-# -------- QtCore
+
 from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-# ---- begin pyqt from import_qt.py
-# ---- QT
-# ---- QtGui
+
 from PyQt5.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
-
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
-
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
                              QApplication,
@@ -64,13 +63,11 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
+
+# ---- local imports
 import mdi_management
-import show_parameters
 import stuffdb
-
-# ---- imports more
-#import random
-
+import parameters
 
 # ------------------------------------------
 class StuffdbMainWindow( QMainWindow ):
@@ -116,6 +113,9 @@ class StuffdbMainWindow( QMainWindow ):
 
         self.build_menu()
         a_mdi_management.window_menu    = self.window_menu
+
+        icon    = QIcon(  parameters.PARAMETERS.icon  )
+        self.setWindowIcon(icon)
 
         self.build_toolbar()
 
@@ -197,18 +197,66 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( a_function )
         toolbar.addAction(action)
 
+        # ---- go-previous
         action          = QAction( QIcon.fromTheme( "go-previous" ), "Previous", self )
         a_function      = functools.partial(  self.go_active_sub_window_func,
                                               "prior_history_to_detail"     )
         action.triggered.connect( a_function )
         toolbar.addAction(action)
 
-        action          = QAction(   "Test Next Key", self )
-        a_function      = functools.partial(  AppGlobal.key_gen.get_next_key,
-                                              "channel"     )
-        action.triggered.connect( a_function )
+        # # ---- got_deail_updates
+        # action          = QAction(  "have_updatable_edits", self )
+        # a_function      = functools.partial(  self.go_active_sub_window_func,
+        #                                       "have_updatable_edits"     )
+        # action.triggered.connect( a_function )
+        # toolbar.addAction(action)
+
+
+        # action          = QAction(   "Test Next Key", self )
+        # a_function      = functools.partial(  AppGlobal.key_gen.get_next_key,
+        #                                       "channel"     )
+        # action.triggered.connect( a_function )
+        # toolbar.addAction(action)
+
+        action          = QAction(   "break...", self )
+        # a_function      = functools.partial(  AppGlobal.key_gen.get_next_key,
+        #                                       "channel"     )
+        action.triggered.connect( breakpoint )
         toolbar.addAction(action)
 
+        # ---- "add_to_log"
+        action          = QAction( "add_to_log", self )
+        connect_to      = app_logging.add_to_log
+        action.triggered.connect( connect_to )
+        toolbar.addAction( action )
+
+        # ---- DocInspect
+        action          = QAction( "doc_wat_inspect", self )
+        connect_to      = functools.partial(  self.go_active_sub_window_func,
+                                              "doc_wat_inspect"     )
+        action.triggered.connect( connect_to )
+        toolbar.addAction( action )
+
+        # ---- "data_manager_inspect"
+        action          = QAction( "data_manager_inspect", self )
+        connect_to      = functools.partial(  self.go_active_sub_window_func,
+                                              "data_manager_inspect"     )
+        action.triggered.connect( connect_to )
+        toolbar.addAction( action )
+
+        # ---- doc -->str
+        action          = QAction( "Doc->Str", self )
+        connect_to      = functools.partial(  self.go_active_sub_window_func,
+                                              "doc_str"     )
+        action.triggered.connect( connect_to )
+        toolbar.addAction( action )
+
+        # ---- "Tab->Str"
+        action          = QAction( "Tab->Str", self )
+        connect_to      = functools.partial(  self.go_active_sub_window_func,
+                                              "tab_str"     )
+        action.triggered.connect( connect_to )
+        toolbar.addAction( action )
 
         # # ---- tests
         # action          = QAction(   "fetch id test", self )
@@ -229,7 +277,6 @@ class StuffdbMainWindow( QMainWindow ):
         what it says read:
 
         """
-
         menubar         = self.menuBar()
         self.menubar    = menubar
 
@@ -273,12 +320,36 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         menu.addAction( action )
 
+        # ---- delete
         action          = QAction( "Delete", self )
         connect_to      = functools.partial(  self.go_active_sub_window_func,
                                               "delete"     )
         action.triggered.connect( connect_to )
         menu.addAction( action )
 
+        # ----
+        action          = QAction( "Doc->Str", self )
+        connect_to      = functools.partial(  self.go_active_sub_window_func,
+                                              "doc_str"     )
+        action.triggered.connect( connect_to )
+        menu.addAction( action )
+
+        # ----
+        action          = QAction( "Tab->Str", self )
+        connect_to      = functools.partial(  self.go_active_sub_window_func,
+                                              "tab_str"     )
+        action.triggered.connect( connect_to )
+        menu.addAction( action )
+
+        # ---- "set size o"
+        action          = QAction( "set size", self )
+        #connect_to      = functools.partial( self.add_subwindow, window_type = "channel" )
+        connect_to      = functools.partial(  self.go_active_sub_window_func,
+                                              "set_size_pos"     )
+        action.triggered.connect( connect_to )
+        menu.addAction( action )
+
+        # ---- "Mdi Info"
         action          = QAction( "Mdi Info", self )
         #connect_to      = functools.partial( self.add_subwindow, window_type = "channel" )
         connect_to      = AppGlobal.mdi_management.show_mdi_info
@@ -350,24 +421,7 @@ class StuffdbMainWindow( QMainWindow ):
 
         a_menu.addSeparator()
 
-        # # -------- key gen
-        # open_action     = QAction( "Define table key_gen", self )
-        # connect_to      = functools.partial( AppGlobal.stuff_db_db.define_table_key_gen,
-        #                                      allow_drop = False    )
-        # open_action.triggered.connect( connect_to )
-        # a_menu.addAction( open_action )
 
-
-        # open_action.triggered.connect( connect_to )
-        # a_menu.addAction( open_action )
-
-        #---------------
-        open_action     = QAction( "test next key", self )
-        connect_to      = self.test_create_next_key
-        open_action.triggered.connect( connect_to )
-        a_menu.addAction( open_action )
-
-        a_menu.addSeparator()
 
         # #---------------
         # open_action     = QAction( "Define table channel", self )
@@ -422,6 +476,13 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         menu_help.addAction( action )
 
+        action          = QAction( "Help on Text", self )
+        doc_name        = f"{AppGlobal.parameters.help_path}/text_help.txt"
+        connect_to      = functools.partial( AppGlobal.os_open_txt_file,
+                                             doc_name          )
+        action.triggered.connect( connect_to )
+        menu_help.addAction( action )
+
         action          = QAction( "General Document Help...", self )
 
         connect_to      = self.open_general_document_help
@@ -456,29 +517,35 @@ class StuffdbMainWindow( QMainWindow ):
         doc_name        = f"{AppGlobal.parameters.help_path}/general_doc.txt"
         AppGlobal.os_open_txt_file( doc_name  )
 
+
     #-------
     def open_document_help( self,   ):
         """
         what it says read:
             still needs work
         """
-        document_help_dict = { "pictu": "picture_doc.txt",
-                               "stuff":  "stuff_doc.txt",
-                               "plain":  "plant_doc.txt",
-                               "album":  "album_doc.txt",
-                               "help_":  "help_doc.txt",
-                               }
+        # document_help_dict = { "pictu": "picture_doc.txt",
+        #                        "StuffSubWindow":  "stuff_doc.txt",
+        #                        "plain":  "plant_doc.txt",
+        #                        "album":  "album_doc.txt",
+        #                        "HelpSubWindow":  "help_doc.txt",
+        #                        }
 
         asw        = self.get_active_subwindow()
         if not asw:
-            print( "document is none ")
+            print( "document is none why not add a help here")
             return
         # asw        = self.mdi_area.activeSubWindow()
-        name       = asw.subwindow_name.lower()[0:5]
+        # name       = asw.subwindow_name.lower()[0:5]
+        # name       = asw.subwindow_name
+        # msg        = f"want help for {name = }"
+        # print( msg )
         #rint( f"open_document_help active document name {name = }]")
-        doc_name        = document_help_dict.get( name, "what_document.txt" )
+        #doc_name        = document_help_dict.get( name, "what_document.txt" )
+        doc_name        = asw.help_filename
         doc_name        = f"{AppGlobal.parameters.help_path}/{doc_name}"
         #rint( f"open_document_help active document name {doc_name = }]")
+
 
         AppGlobal.os_open_txt_file( doc_name  )
 
@@ -533,15 +600,14 @@ class StuffdbMainWindow( QMainWindow ):
                      f"\n{repo}"
                      )
 
-
         QMessageBox.about(self, "About", msg )
+
 
     # -----------------------
     def show_parameters(self):
         """
         what it says,
         """
-
         dialog     = show_parameters.DisplayParameters( parent = self )
         if dialog.exec_() == QDialog.Accepted:
             #self.model.submitAll()
@@ -550,15 +616,25 @@ class StuffdbMainWindow( QMainWindow ):
             # model.select()
             pass
 
-
     # ---------------------------------------
     def add_subwindow( self, window_type = None ):
         """
         indirect because of order of creation
         might otherwise be circular
-
         """
         AppGlobal.mdi_management.make_document( window_type = window_type )
+
+    # ---------------------------------------
+    def search_me( self, criteria = None ):
+        """
+        for now search comming from text widget
+        """
+        #AppGlobal.mdi_management.make_document( window_type = window_type )
+        print( "here we are in search_me )))))))))))))))))))))))))))))))))))))))))))))))")
+        asw     = self.get_active_subwindow(  )
+        asw.search_me( criteria )
+
+
 
     # ---------------------------------------
     def go_active_sub_window_func( self, a_function_name  ):
@@ -569,12 +645,14 @@ class StuffdbMainWindow( QMainWindow ):
         use name as string not function
         function should not take args ( remove this restriction later ?? )
         this should go to the subwindow not the tab
-
         """
         active_window   = self.get_active_subwindow()
         if active_window is None:
-            print( f"no active window for {a_function_name}")
+            msg   = ( f"no active window for {a_function_name}")
+            logging.error( msg )
+
             return
+
         a_function      = getattr( active_window, a_function_name, None )
         #rint( f"{a_function_name = } {a_function = }")
         ## add a test for none
@@ -584,18 +662,17 @@ class StuffdbMainWindow( QMainWindow ):
         except Exception as an_except:   #  or( E1, E2 )
 
             msg     = f"a_except         >>{an_except}<<  type  >>{type( an_except)}<<"
-            print( msg )
+            logging.error( msg )
 
             msg     = f"an_except.args   >>{an_except.args}<<"
-            print( msg )
+            logging.error( msg )
 
             s_trace = traceback.format_exc()
             msg     = f"format-exc       >>{s_trace}<<"
-            print( msg )
-            AppGlobal.logger.error( msg )   #    AppGlobal.logger.debug( msg )
+            logging.error( msg )
 
             msg     = f"looking for function     >>{a_function_name = }<< in {active_window = }"
-            print( msg )
+            logging.error( msg )
 
         #     #raise  # to re raise same
         # finally:
@@ -604,14 +681,7 @@ class StuffdbMainWindow( QMainWindow ):
 
     # ---- test actions ----------------------
     # -----------------------------
-    def test_create_next_key(self):
-        """
-        what it says
-            this is for a new row on the window
 
-        """
-        next_key    = AppGlobal.key_gen.get_next_key(  "channel"  )
-        print( f"{ next_key = }")
 
     # -----------------------------
     def show_message1(self):

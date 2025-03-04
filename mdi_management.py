@@ -33,7 +33,7 @@ import functools
 import sys
 
 from app_global import AppGlobal
-from pubsub import pub
+#from pubsub import pub
 from PyQt5.QtCore import (QDate,
                           QModelIndex,
                           QObject,
@@ -68,9 +68,12 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
+import logging
+
+
 import adjust_path
 import album_document
-import base_document_tabs
+#import base_document_tabs
 import help_document
 import mdi_info
 import people_document
@@ -80,6 +83,11 @@ import planting_document
 import stuff_document
 
 # ---- imports
+
+logger          = logging.getLogger( )
+
+# for custom logging level at module
+LOG_LEVEL  = 20   # higher is more
 
 
 #import gui_qt_ext
@@ -185,11 +193,18 @@ class MdiManagement():
         keep a list, or dict.... for now a list
         !! unsubscribe
         """
-        msg     = f"forget_document begin { window_id } !! update closed_topics "
-        print( msg )
+        debug_msg     = f"forget_document begin { window_id } !! update closed_topics "
+        logging.log( LOG_LEVEL,  debug_msg, )
+
         self.remove_menu_item( window_id  )
 
+        window_id.deleteLater()
+        # Remove the reference
+
         del self.window_dict[ window_id ]    # not sure still need window_dict
+        window_id  = None  # this does not matter but all othere reverences do
+
+
         # a_index   =  self.window_list.index( window_id )
         #self.window_dict[ window_id ]    =  WindowData( menu_id = None )
         # msg     = f"forget_document found window at index {a_index = }"
@@ -271,6 +286,7 @@ class MdiManagement():
     def show_document( self, sub_window ):
         """
         what it says, read
+        !! may need more for minimized documents
         """
         sub_window.show()
         sub_window.setFocus()
@@ -289,21 +305,24 @@ class MdiManagement():
     # --------------------------------------
     def remove_menu_item( self, window_id ):
         """
-        from chat not so useful
-        probably needs tweak to work in this context
-        see self.add_new_menu_item
+        chat grok and me may have fixed !! do not need messages in future
         """
         menu_id     = self.window_dict[window_id][ "action_id"]
+        main_window = self.main_window
 
-        actions     = self.file_menu.actions()
+        actions     = main_window.window_menu.actions()  # no file menu here in main window
         if actions:
             for i_action in actions:
                 if menu_id == i_action:
                     #action_to_remove = actions[-1]  # Remove the last item added
-                    self.file_menu.removeAction( menu_id )
-                    QMessageBox.information(self, "Info", f"Removed item: {menu_id}")
+                    #self.file_menu.removeAction( menu_id )
+                    # feb 2025 fix ??
+
+                    main_window.window_menu.removeAction( i_action )
+                    # QMessageBox.information( AppGlobal.main_window, "Info", f"Removed item: {menu_id}??")
         else:
-            QMessageBox.information(self, "Info", "No items to remove")
+            pass
+            QMessageBox.information( AppGlobal.main_window, "Info", "Item to remove not found.")
 
     # --------------------------------------
     def add_new_menu_item( self,  window_id ):
@@ -330,7 +349,43 @@ class MdiManagement():
 
         #action.triggered.connect( lambda: self.menu_item_clicked( title ) )
         action.triggered.connect( activate_window )
+
         main_window.window_menu.addAction( action )
+
+    # -------------------------
+    def get_album_docs(self, ):
+        """
+        album_docs      = AppGlobal.mdi_management..get_album_docs()
+
+        what it says, read
+          may replace !! get_album_doc
+              may generalize even more
+
+         does this matter
+
+         self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
+                                       "action_id":  None }   # title action_id
+         AlbumDocument
+
+        """
+        album_docs    = []
+        for i_doc in  self.window_dict.keys():   # !! better a comp
+            if type( i_doc ) == album_document.AlbumDocument:
+                album_docs.append( i_doc )
+
+        return album_docs
+        # if len( album_docs ) == 1:
+        #     # should have a bit more testing here
+        #     return album_docs[0]
+
+        # elif len( album_docs ) == 0:
+        #     msg   = "You have no albums open, please open one"
+        # #elif len( album_docs ) == 0:
+        # else:
+        #     msg     = "You have more than one album open, please close one."
+
+        # QMessageBox.information( AppGlobal.main_window,   "Info", msg )
+
 
     # -------------------------
     def get_album_doc(self, ):
@@ -349,9 +404,11 @@ class MdiManagement():
         for i_doc in  self.window_dict.keys():
             if type( i_doc ) == album_document.AlbumDocument:
                 album_docs.append( i_doc )
+
         if len( album_docs ) == 1:
             # should have a bit more testing here
             return album_docs[0]
+
         elif len( album_docs ) == 0:
             msg   = "You have no albums open, please open one"
         #elif len( album_docs ) == 0:
@@ -469,8 +526,8 @@ class MdiManagement():
 
             a_str     = f"{a_str}\n    {i_window.topic  = }"
             a_str     = f"{a_str}\n    {i_window.record_state = }"
-            rsn       = base_document_tabs.RECORD_STATE_DICT[ i_window.record_state ]
-            a_str     = f"{a_str}\n    {rsn = }"
+            # rsn       = base_document_tabs.RECORD_STATE_DICT[ i_window.record_state ]
+            # a_str     = f"{a_str}\n    {rsn = }"
             is_for_subject    = type( i_window )  not in NOT_FOR_SUBJECTS
             a_str     = f"{a_str}\n    {is_for_subject = }"
             a_str     = f"{a_str}\n    {i_window.window_title = }"
@@ -490,9 +547,11 @@ class MdiManagement():
         msg              = f"add_subwindow for window_type {window_type }"
         # mdi_area       = self.main_window.mdi_area
 
-
         if    window_type == "help":
             sub_window      = help_document.HelpDocument()
+
+        # elif  window_type == "help0":
+        #     sub_window      = help_document0.HelpDocument()
 
         elif  window_type == "picture":
             sub_window      = picture_document.PictureDocument()

@@ -15,27 +15,31 @@ if __name__ == "__main__":
 
 # --------------------
 
-
+from pathlib import Path
 
 # ---- local imports
 
 
 global PARAMETERS
 PARAMETERS   = None
-
-
+# parameters.PARAMETERS
 
 import logging
 import os
 import sys
 
 import running_on
-# ---- local imports
 import string_util
 from app_global import AppGlobal
 
+VERBOSE   = False
 
-# ========================================
+
+if VERBOSE:
+    print( "parameters from -----  /_projects/stuffdb/parameters.py")
+    print( __file__ )
+
+#===========================
 class Parameters( ):
     """
     manages parameter values: use it like an ini file but it is code
@@ -48,7 +52,18 @@ class Parameters( ):
             if you comment all out all modes you get the default mode which should
             run, perhaps not in the way you want
         """
-        self.mode_russ_on_theprof()
+        #self.mode_new_db()
+        self.mode_python_ex_on_theprof()
+
+        #self.mode_russ_on_theprof()
+        #self.mode_helpdb_on_theprof()
+
+        # self.mode_temp_db_in_ram()
+        # self.mode_add_real_pictures()
+
+
+
+        #self.mode_russ_on_smithers()
         #self.new_user_mode()
         #self.millhouse_1_mode()
 
@@ -63,10 +78,164 @@ class Parameters( ):
 
     # ---- ---->> Methods:  one for each mode
     # -------
+    def mode_new_db( self ):
+        """
+        make directories the real pictures
+        but not the new pictures for testing
+        """
+        self.mode               = "mode_new_db"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support sqllite
+
+        # use full name if calling form a subdirectory of the project at least fo now
+        #self.db_file_name      = ":memory:"
+        self.db_file_name       = "./data/new.db"   #  = "sample.db"   =  ":memory:"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/new.db"
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/99"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        self.logging_level      = logging.DEBUG   # ERROR
+
+    # -------
+    def mode_add_real_pictures( self ):
+        """
+        make directories the real pictures
+        but not the new pictures for testing
+        """
+        self.mode               =  self.mode  + "mode_add_real_pictures"
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/test_delete"
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+    # -------
+    def mode_temp_db_in_ram( self ):
+        """
+        a mode for the help info while still in dev
+        later will export data then reimport and
+        perhaps rekey
+        """
+        self.mode               = "mode_temp_db_in_ram"
+        # but do they use the same units ?
+        self.qt_width           = 1200
+        self.qt_height          = 700    # 700 most of win height
+        self.qt_xpos            = 50
+        self.qt_ypos            = 50
+
+        # sizes for the wat-inspector in qt
+        self.wat_qt_width       = 1300
+        self.wat_qt_height      = 800
+        self.wat_qt_xpos        = 10
+        self.wat_qt_ypos        = 10
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/test_delete"
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support sqllite
+
+        self.db_file_name       = "./data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
+        self.db_file_name       = "/tmp/ramdisk/temp_db.db"
+
+        self.logging_level      = logging.ERROR   # ERROR
+
+
+
+    # -------
+    def mode_helpdb_on_theprof( self ):
+        """
+
+        a mode for the help info while still in dev
+        later will export data then reimport and
+        perhaps rekey
+        """
+        self.mode               = "mode_helpdb_on_theprof"
+        # but do they use the same units ?
+        # self.qt_width           = 1200
+        # self.qt_height          = 700    # 700 most of win height
+        # self.qt_xpos            = 50
+        # self.qt_ypos            = 50
+
+        # # sizes for the wat-inspector in qt
+        # self.wat_qt_width       = 1300
+        # self.wat_qt_height      = 800
+        # self.wat_qt_xpos        = 10
+        # self.wat_qt_ypos        = 10
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/test_delete"
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support sqllite
+
+        self.db_file_name       = "./data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
+        self.db_file_name       = "./data/python_ex.db"
+        #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
+
+        self.logging_level          = logging.INFO
+        self.logging_level          = logging.DEBUG
+    # -------
+    def mode_python_ex_on_theprof( self ):
+        """
+        a mode for the help info while still in dev
+        later will export data then reimport and
+        perhaps rekey
+        """
+        self.mode               = "mode_helpdb_on_theprof"
+        # but do they use the same units ?
+        # self.qt_width           = 1200
+        # self.qt_height          = 700    # 700 most of win height
+        # self.qt_xpos            = 50
+        # self.qt_ypos            = 50
+
+        # # sizes for the wat-inspector in qt
+        # self.wat_qt_width       = 1300
+        # self.wat_qt_height      = 800
+        # self.wat_qt_xpos        = 10
+        # self.wat_qt_ypos        = 10
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/test_delete"
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support sqllite
+
+        self.db_file_name       = "./data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
+        #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
+        self.db_file_name       = "./data/python_ex.db"
+        # self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
+
+    # -------
     def mode_russ_on_theprof( self ):
         """
-        a mode for the new user, pretty much empty,
-        a new user may experiment here.
+        what it say
         """
         self.mode               = "mode_russ_on_theprof"
         # but do they use the same units ?
@@ -95,6 +264,43 @@ class Parameters( ):
 
         self.picture_db_sub     = "/test_delete"
         self.picture_db_sub     = "/99/new_test"
+
+    # -------
+    def mode_russ_on_smithers( self ):
+        """
+        what it says
+        """
+        self.mode               = "mode_russ_on_theprof"
+        # but do they use the same units ?
+        self.qt_width           = 1200
+        self.qt_height          = 700    # 700 most of win height
+        self.qt_xpos            = 50
+        self.qt_ypos            = 50
+
+        # # control initial size and position with:
+        # self.qt_width           = 1200
+        # self.qt_height          = 500
+        # self.qt_xpos            = 50
+        # self.qt_ypos            = 50
+
+        # sizes for the wat-inspector in qt
+        self.wat_qt_width       = 1300
+        self.wat_qt_height      = 800
+        self.wat_qt_xpos        = 10
+        self.wat_qt_ypos        = 10
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+
+        self.picture_db_sub     = "/test_delete"
+        self.picture_db_sub     = "/99/new_test"
+
+        self.db_file_name              = "./data/appdb.db"
+        self.db_file_name              = "./data/sept_35.db"
+
 
 
     # -------
@@ -148,21 +354,37 @@ class Parameters( ):
             self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
             self.db_file_name       =  "the_prof_db.db"
 
-
         # ---- "russ-thinkpad-p72":
         elif computer_id == "russ-thinkpad-p72":
-            self.win_geometry       = '1500x750+20+20'     # width x height position  x, y  good for the prof, mint
+            # ---- appearance -- including sizes
+
+            # control initial size and position with:
+            self.qt_width           = 1500
+            self.qt_height          = 800
+            self.qt_xpos            = 50
+            self.qt_ypos            = 50
+
+            # sizes for the wat-inspector in qt
+            self.wat_qt_width       = 1300
+            self.wat_qt_height      = 800
+            self.wat_qt_xpos        = 10
+            self.wat_qt_ypos        = 10
+
+            # ---- doc is a mdi doc like help_document
+            self.doc_qt_width       = 1300
+            self.doc_qt_height      = 700
+            self.doc_qt_xpos        = 20
+            self.doc_qt_ypos        = 20
 
             self.logging_level      = logging.DEBUG
-
-
 
         elif computer_id == "bulldog-mint-russ":
             self.ex_editor          =  r"xed"
 
-
         else:
-            print( f"In parameters: no special settings for computer_id {computer_id}" )
+            msg    = ( f"In parameters: no special settings for computer_id {computer_id}" )
+            logging.debug( msg )
+            # next should be in os_tweaks not here
             if self.running_on.os_is_win:
                 self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
             else:
@@ -182,12 +404,11 @@ class Parameters( ):
                 #  looks same as clipboard_b_red_gimp.ico
             self.icon               = r"./images/clipboard_b_red_gimp.ico"    # pretty visible -- make black version -- cannot get gimp to do it
 
-
         else:
             pass
             #self.gui_style          = "linux"
 
-    #
+
     # -------
     def __init__( self, ):
         """
@@ -200,16 +421,23 @@ class Parameters( ):
         self.running_on_tweaks()
         self.choose_mode()
 
+        msg     = ( "--------------- PARAMETERS FILE -------------------", __file__ )
+        logging.debug( msg )
+
+        self.parameter_dir   = str( Path( __file__ ).parent )
+        msg     = ( f"parameter_file_from {self.parameter_dir = }")
+        logging.debug( msg )
 
         # next lets you use  parameters.PARAMETERS as a global
         global PARAMETERS
         if not PARAMETERS:
-            print( "creating global parameters.PARAMETERS")
+            msg     = ( "creating global parameters.PARAMETERS")
             PARAMETERS    = self
         else:
-            print( "__init__ probably an error unless a restart")
+            msg     = ( "__init__ probably an error unless a restart")
             PARAMETERS    = self
             # 1/0
+        logging.debug( msg )
 
         #rint( self ) # for debugging
 
@@ -241,9 +469,10 @@ class Parameters( ):
         # no easy way to override this ??
         if  self.set_default_path_here:     # Now change the directory to location of this file
 
-            py_path    = self.running_on.py_path
+            py_path     = self.running_on.py_path
 
-            print( f"Parameters.py: Directory: (  >>{os.getcwd()}<< switch if not '' to >>{py_path}<<")
+            msg         = ( f"Parameters.py: Directory: (  >>{os.getcwd()}<< switch if not '' to >>{py_path}<<")
+            logging.debug( msg )
             if py_path != "":
                 os.chdir( py_path )
 
@@ -256,7 +485,7 @@ class Parameters( ):
 
         self.platform           = self.our_os           #  redundant
 
-        # ---- appearance -- remove all old gui_style soon?
+        # ---- appearance -- including sizes
 
         # control initial size and position with:
         self.qt_width           = 1200
@@ -270,57 +499,65 @@ class Parameters( ):
         self.wat_qt_xpos        = 10
         self.wat_qt_ypos        = 10
 
+        # ---- doc is a mdi doc like help_document
+        self.doc_qt_width       = 900
+        self.doc_qt_height      = 600
+        self.doc_qt_xpos        = 20
+        self.doc_qt_ypos        = 20
+
         # icon for running app
-        self.icon               = r"./images/icon_red.png"
-        self.icon               = r"./data/binocular.png"
+        self.icon               = r"./misc/icon_red.png"
+
+        self.icon               =  "./misc/binocular.png"
+        self.icon               =  "./misc/iconfinder_database_103466.png"
+        self.icon               =  "./misc/db_red_on_yellow.png"
+        #self.icon               =  "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/misc/db_red_on_yellow.png"
+
+        self.text_edit_font     = ("Arial", 12)
 
         # ---- logging
-        self.pylogging_fn       = "./logs/app.py_log"   # file name for the python logging
-        self.logging_level      = logging.DEBUG         # may be very verbose
-        self.logging_level      = logging.INFO
-        self.logging_level      = logging.DEBUG
+        self.pylogging_fn           = "./logs/app.py_log"   # file name for the python logging
+        self.log_mode               = "w"    # "a" append "w" truncate and write
+        self.delete_log_on_start    = True
+        self.logging_level          = logging.DEBUG         # may be very verbose
+        self.logging_level          = logging.INFO
+        self.logging_level          = logging.DEBUG
             # logging level used by app logger
 
-        self.logger_id          = "stuffdb"         # id of app in logging file
+        self.logger_id              = "stuffdb"         # id of app in logging file
 
-        self.gui_text_log_fn    = None   # for edit window if None then no logging
-        self.gui_text_log_fn    = "./logs/gui_log.log"
+        self.gui_text_log_fn        = None   # for edit window if None then no logging
+        self.gui_text_log_fn        = "./logs/gui_log.log"
 
-        self.log_gui_text       = False # this is for gui_ext message area
+        self.log_gui_text           = False # this is for gui_ext message area
                                              # goes to normal log file  not special one
 
         # ---- file  and path names
-        self.picture_browse     = "/mnt/WIN_D/PhotosRaw/2024/pixel4a/july4"
+        self.picture_browse         = "/mnt/WIN_D/PhotosRaw/2024/pixel4a/july4"
             # browsing starts from here
 
         # picture to use when not found
-        self.pic_nf_file_name   = "./data/404.png"
+        self.pic_nf_file_name       = "./misc/404.png"
 
-        self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
+        self.picture_db_root        = "/mnt/WIN_D/PhotoDB/"
             # all pictures should be under this directory
 
-        self.picture_db_sub = "/test_delete"
+        self.picture_db_sub         = "/test_delete"
             # subdir for above
 
         # ---- type and location of the db file
-        self.db_type            = "QSQLITE"
+        self.db_type                = "QSQLITE"
             # the type of database, so far we only support sqllite
 
-        self.db_fn              = "./data/appdb.db"
-        #self.db_fn              = "/tmp/ramdisk/help_info.db"
-        self.db_fn              = "/mnt/WIN_D/Russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db"
-        self.db_fn              = "/tmp/ramdisk/sept_28.db"
-        self.db_fn              = "/tmp/ramdisk/sept_35.db"
+        # self.db_fn              = "./data/appdb.db"
+        # self.db_fn              = "/mnt/WIN_D/Russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db"
+        # self.db_fn              = "/tmp/ramdisk/sept_28.db"
+        # self.db_fn              = "/tmp/ramdisk/sept_35.db"
 
-        # next is for qt..... various examples
-
-
+        # think for qt4_by_ecample not stuff
         self.db_file_name      = ":memory:"
-
-        #
-            # the type of database, so far we only support sqllite
-        self.db_file_name        = "sample.db"   #  = "sample.db"   =  ":memory:"
-        self.db_file_name        = ":memory:"     #  = "sample.db"   =  ":memory:"
+        self.db_file_name      = "sample.db"   #  = "sample.db"   =  ":memory:"
+        self.db_file_name      = ":memory:"     #  = "sample.db"   =  ":memory:"
         #self.db_file_name        = "/tmp/ramdisk/qt_sql.db"
 
         # this is the name of a program: its executable with path info.
@@ -337,6 +574,7 @@ class Parameters( ):
         # or anything else ( will try to shell out may or may not work )
         self.help_fn       =  "./docs/help.txt"   #  >>. this is the path to our main .py file self.py_path + "/" +
         self.help_path     =  "./docs"
+
             # path leading to all docs and help
 
         #self.help_file       =  "http://www.opencircuits.com/Python_Smart_ClipBoard"
@@ -345,6 +583,69 @@ class Parameters( ):
         self.poll_delta_t      = 100
             # how often we poll for clip changes, in ms,
             # think my computer works well as low as 10ms
+
+        self.auto_run           = True  # run code examples
+
+        # ---- templates  a bit odd to control left margin
+        self.text_templates     = {}
+        template_name           = "Python"
+        template_text           = (
+"""
+>>Py a_python_template
+
+print( f"a_python_template { 0 = }" )
+""" )
+        self.text_templates[template_name] = template_text
+
+        #---------------------------------
+        template_name          = "Bash"
+        template_text          = (
+"""
+>>Bash a_shell_template
+
+print( f"bash a_shell_template still needs writing { 0 = }"
+"""  )
+        self.text_templates[template_name] = template_text
+
+        # ---- text
+        template_name          = "Text"
+        template_text          = (
+"""
+>>Text  ./parameters.py
+"""  )
+        self.text_templates[template_name] = template_text
+
+        # ---- url
+        template_name          = "Url"
+        template_text          = (
+"""
+>>url  https://www.youtube.com/feed/subscriptions#on&off&types=uploads
+"""  )
+        self.text_templates[template_name] = template_text
+
+
+
+        # ---- shell
+        template_name          = "Shell"
+        template_text          = (
+"""
+>>Shell  /mnt/WIN_D/PhotoDB/00/00july_06.jpg
+"""  )
+        self.text_templates[template_name] = template_text
+
+        # ---- systems for helpdb ??alpha
+        self.systems_list      =  [    '',
+                        'Python',
+                        'StuffDB',
+                        'Powerbuilder',
+                        'RshPy',              # subsystem the project
+                        'Bash',
+                        'Linux',
+                        'Russ',
+                        "Delete",
+                        "RasPi",
+                        'TBD',  ]
+
 
     # ---------------------
     def to_columns( self, current_str, item_list, format_list = [ "{: <30}", "{:<30}" ], indent = "    "  ):
@@ -366,19 +667,36 @@ class Parameters( ):
         not complete, add as needed -- compare across applications and code above
         """
         # new_indented    = "\n    "   # but it nice to have some whitespace to see ...
-        a_str = "this is the new str\n "
+        a_str = "\n "
         a_str   = f"{a_str}>>>>>>>>>>* Parameters (some) *<<<<<<<<<<<<"
         a_str   = string_util.to_columns( a_str, ["mode",       f"{self.mode}" ] )
         a_str   = string_util.to_columns( a_str, ["computer_id", f"{self.running_on.computer_id}" ] )
+        a_str   = string_util.to_columns( a_str, ["db_file_name",
+                                           f"{self.db_file_name}" ] )
+
+        a_str   = string_util.to_columns( a_str, ["db_type",
+                                           f"{self.db_type}" ] )
+
+
         a_str   = string_util.to_columns( a_str, ["logger_id", f"{self.logger_id}" ] )
         a_str   = string_util.to_columns( a_str, ["logging_level", f"{self.logging_level}" ] )
         a_str   = string_util.to_columns( a_str, ["pylogging_fn",    f"{self.pylogging_fn}" ] )
+
+        a_str   = string_util.to_columns( a_str, [ "log_mode",
+                                                  f"{self.log_mode}" ] )
+
+
+        a_str   = string_util.to_columns( a_str, [ "delete_log_on_start -- depricatef for log_mode",
+                                                  f"{self.delete_log_on_start}" ] )
+
+
         a_str   = string_util.to_columns( a_str, ["gui_text_log_fn", f"{self.gui_text_log_fn}" ] )
 
         a_str   = string_util.to_columns( a_str, ["readme_fn", f"{self.readme_fn}" ] )
        # a_str   = string_util.to_columns( a_str, ["help_file",    f"{self.help_file}" ] )
 
 
+        a_str   = string_util.to_columns( a_str, ["parameter_dir", f"{self.parameter_dir}" ] )
         a_str   = string_util.to_columns( a_str, ["icon", f"{self.icon}" ] )
 
 
@@ -389,10 +707,10 @@ class Parameters( ):
         a_str   = string_util.to_columns( a_str, ["poll_delta_t", f"{self.poll_delta_t}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["db_fn",
-                                           f"{self.db_fn}" ] )
-        a_str   = string_util.to_columns( a_str, ["db_type",
-                                           f"{self.db_type}" ] )
+
+
+
+
         a_str   = string_util.to_columns( a_str, ["help_fn",
                                            f"{self.help_fn}" ] )
         a_str   = string_util.to_columns( a_str, ["help_path",
@@ -406,6 +724,17 @@ class Parameters( ):
                                            f"{self.os_win}" ] )
         a_str   = string_util.to_columns( a_str, ["picture_browse",
                                            f"{self.picture_browse}" ] )
+
+
+        a_str   = string_util.to_columns( a_str, ["picture_db_root",
+                                           f"{self.picture_db_root}" ] )
+        a_str   = string_util.to_columns( a_str, ["picture_db_sub",
+                                           f"{self.picture_db_sub}" ] )
+
+        a_str   = string_util.to_columns( a_str, ["pic_nf_file_name",
+                                           f"{self.pic_nf_file_name}" ] )
+
+
         a_str   = string_util.to_columns( a_str, ["platform",
                                            f"{self.platform}" ] )
         a_str   = string_util.to_columns( a_str, ["qt_height",
@@ -416,6 +745,18 @@ class Parameters( ):
                                            f"{self.qt_xpos}" ] )
         a_str   = string_util.to_columns( a_str, ["qt_ypos",
                                            f"{self.qt_ypos}" ] )
+
+
+        a_str   = string_util.to_columns( a_str, ["wat_qt_height",
+                                           f"{self.wat_qt_height}" ] )
+        a_str   = string_util.to_columns( a_str, ["wat_qt_width",
+                                           f"{self.wat_qt_width}" ] )
+        a_str   = string_util.to_columns( a_str, ["wat_qt_xpos",
+                                           f"{self.wat_qt_xpos}" ] )
+        a_str   = string_util.to_columns( a_str, ["wat_qt_ypos",
+                                           f"{self.wat_qt_ypos}" ] )
+
+
         a_str   = string_util.to_columns( a_str, ["running_on",
                                            f"{self.running_on}" ] )
 
@@ -426,7 +767,19 @@ class Parameters( ):
 
         return a_str
 
+# something like this for creating on import
+# ---------------
+def create_if_needed( ):
+    global PARAMETERS
+    if not PARAMETERS:
 
+          print( "creating global parameters.PARAMETERS")
+          PARAMETERS    = Parameters()
+
+# --------------------
+
+create_if_needed()
 
 
 # =================== eof ==============================
+# ---- eof

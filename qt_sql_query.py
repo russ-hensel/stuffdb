@@ -9,6 +9,7 @@ this code is not part of the wat_inspector but belongs in stuffdb
 # --------------------
 if __name__ == "__main__":
     import main
+
     #main.main()
 # --------------------
 
@@ -30,7 +31,7 @@ from tkinter import messagebox
 #import sql_writers
 import string_util
 from app_global import AppGlobal
-
+import logging
 
 # ----------------------------------------
 class QueryBuilder(    ):
@@ -48,9 +49,8 @@ class QueryBuilder(    ):
         self.write_gui         = None       # function one arg to write to gui9
 
     """
-    def __init__( self,  qt_query, print_it = False, logger = None, write_gui = None  ):
+    def __init__( self,  qt_query, print_it = False, log_level = 5, write_gui = None  ):
         # ---- part of interface
-
 
         # use these when building so little mutating routines  like add_to_where work
 
@@ -62,7 +62,12 @@ class QueryBuilder(    ):
 
         # part of interface populate prior to use
         self.print_it                = print_it
+        self.print_it                = False   # forced deprication
+        self.log_level               = log_level    # higher more logging
         self.qt_query                = qt_query
+
+
+        # ---- not in init
         self.write_gui               = None     # see:
         self.sql_from                = None     # see:
         self.arg_dict                = None     # see:
@@ -77,7 +82,6 @@ class QueryBuilder(    ):
         self.inner_join              = None
 
         self.reset( )
-
 
     #----------        --
     def reset( self, ):
@@ -107,7 +111,6 @@ class QueryBuilder(    ):
 
         # ---- not interface, generally
 
-
         # ---- part of interface
         self.table_name        = ""          # name of table to query
 
@@ -119,7 +122,6 @@ class QueryBuilder(    ):
    # ----------------------------------------------
     def col_list_to_sql( self, col_list, use_table_name = True     ):
         """
-
         return
              string like: (  col_aaa, col_bbb, col_ccc, col_ddd, col_eee, col_fff  )    "
          """
@@ -127,7 +129,7 @@ class QueryBuilder(    ):
 
         prefix          = ""
         if use_table_name:
-            prefix    = f"{self.table_name}."
+            prefix      = f"{self.table_name}."
 
         for i_name in col_list[ : -1]:
             sql_columns = ( f"{sql_columns} {prefix}{i_name}, " )
@@ -154,26 +156,25 @@ class QueryBuilder(    ):
             # msg   = f"prepare_and_bind {i_bind_tuple = }"
             self.qt_query.bindValue(  *i_bind_tuple )
 
-        if self.print_it:
-            print( self.qt_query.executedQuery()   )
-            print( f"{self.print_it = } {sql = }")
+        debug_msg   = ( f"QueryBuilder.prepare_and_bind {sql = }")
+        logging.log( self.log_level,  debug_msg, )
+
+        msg   =   ( self.qt_query.executedQuery()   ) # qt_query passed in
+        logging.log( self.log_level,  debug_msg, )
 
    # ----------------------------------------------
     def get_sql( self,      ):
         """
-
-        this is select sql features not complete
+        gets the final select sql
+            features not complete may be extended
 
         """
-        #sql        =   f"SELECT *  FROM {self.table_name}  "
-
         sql_columns          = self.col_list_to_sql( self.column_list )
         self._sql            = f"SELECT {sql_columns}  FROM {self.table_name}  "
 
         if self.sql_inner_join:
             self._sql        = f"{self._sql}\n    INNER JOIN {self.sql_inner_join} "
-            #rint( self.sql_inner_join  )
-            #rint( self._sql )
+
         # ---- where
         self._sql            = f"{self._sql }\n    {self.sql_where} "
         sql_for_debug        = self._sql
@@ -182,15 +183,14 @@ class QueryBuilder(    ):
             group_columns    = self.col_list_to_sql( self.group_by_c_list )
             self._sql        =  f"{self._sql} \n    GROUP BY { group_columns }"
 
-
         if self.sql_having:
             self._sql        = f"{self._sql}\n    HAVING {self.sql_having} "
 
         if self.sql_order_by:
             self._sql        = f"{self._sql}\n    {self.sql_order_by} "
 
-        if self.print_it:
-            print( self._sql )
+        debug_msg   = ( f"QueryBuilde get_sql {self._sql = }")
+        logging.log( self.log_level,  debug_msg, )
 
         #sql = self._sql # for debug only
 
@@ -205,7 +205,7 @@ class QueryBuilder(    ):
 
         """
         if self.sql_order_by  == "":
-            self.sql_order_by  = "\n ORDER BY "
+            self.sql_order_by  = " ORDER BY "
         else:
             self.sql_order_by += ", "
 

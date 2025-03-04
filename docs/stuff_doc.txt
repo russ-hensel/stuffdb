@@ -1,3 +1,71 @@
 
 
 help for the stuff document 
+
+======== Table of Contents ========
+
+    ---- Purpose of Document
+    ---- Status
+    ---- Tabs 
+
+
+
+
+======== Contents ========
+
+
+---- Purpose of Document
+
+        Store information about stuff: typically physical things that do
+        not fit in the other categories of the system ( like: people, plants
+        pictures.... )
+        
+        How this document is special
+            Not so much, is perhaps typical 
+
+
+---- Status
+
+        fetch           was working
+        add             was working
+        update          was working
+        delete          not implemented
+        key words       working but buggy
+        
+        database        basic       i     mported
+                        text        mocked up
+                        pictures    may work if configured
+                        events      not imported
+                      
+                        
+                        
+---- Tabs  
+
+    Criteria
+        The usual 
+    
+    List
+        The usual     
+    Detail
+        Detailed information about the stuff item that has been selected.
+        
+        Sub Tabs
+            Events
+                Things, events that have taken place for this item
+            Picture
+                Pictures of this item 
+    
+    Picture
+        A larger view of the picture selected on the Detail Tab
+    
+    Text
+            The usual 
+    
+    History                     
+        The usual                         
+
+
+
+
+
+

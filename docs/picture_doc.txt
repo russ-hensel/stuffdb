@@ -17,3 +17,69 @@ There are a couple of special feature of the picture document type:
     * Pictures can be added to one or more albums, or collections of pictures.
     
         ....
+        
+        
+======== Table of Contents ========
+
+    ---- Purpose of Document
+    ---- Status
+    ---- Tabs 
+
+ 
+======== Contents ========
+
+
+---- Purpose of Document
+
+        Store information to give you help about some topic: like how to write some
+        cod in Python.
+        
+        How this document is special
+            Text is merged onto the detail tab, there is no
+            Text Tab
+
+ 
+
+---- Status
+
+        fetch           was working
+        add             was working
+        update          was working
+        delete          not implemented
+        key words       working but buggy??
+        
+        database        basic       imported
+                        text        imported 
+                       
+                         
+                        
+---- Tabs  
+
+    Criteria
+        The usual 
+    
+    List
+        The usual   
+          
+    Detail
+        Detailed information about the stuff item that has been selected.
+        
+        Sub Tabs
+ 
+            Picture -- think missing on purpose may add in future
+                 
+     
+    
+    History                     
+        The usual   
+
+
+ 
+
+
+Some of the deviations from other documents:
+
+    the detail and text are on the same tab
+    details do not have sub tabs
+    no pictures -- so far we may want to add 
+         but then more like stuff        

@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Jan 19 13:44:23 2025
+
+@author: russ
+"""
+
+
+# ---- tof
+
+# ---- imports
+
+# ---- end imports
+
+
+#==== key word issues ===============================================
+
+#---- key word issues
+
+
+              the sql would be
+
+                I would like the sql for finding
+                duplicate rows in a table where the
+                table is created with
+
+                CREATE TABLE help_key_word  (
+                    id  INTEGER,
+                    key_word  TEXT )
+
+        >> find the dups
+                SELECT id, key_word, COUNT(*) AS count
+                FROM help_key_word
+                GROUP BY id, key_word
+                HAVING COUNT(*) > 1;
+
+         >> delete the dups
+
+            WITH CTE AS (
+                SELECT id, key_word, ROW_NUMBER() OVER (PARTITION BY id, key_word ORDER BY id) AS row_num
+                FROM help_key_word
+            )
+            DELETE FROM help_key_word
+            WHERE (id, key_word) IN (
+                SELECT id, key_word FROM CTE WHERE row_num > 1
+            );
+
+            no error but did it work  --- seems to have worked
+
+
+------------ detect the dups for one id
+
+
+        >> find the dups
+                SELECT id, key_word, COUNT(*) AS count
+                FROM help_key_word
+                WHERE id = 1003
+                GROUP BY id, key_word
+                HAVING COUNT(*) > 1  ;
+
+
+SELECT id, key_word, COUNT(*) AS count
+FROM help_key_word
+WHERE id = 1003
+GROUP BY id, key_word
+HAVING COUNT(*) = 1;
+
+
+
+
+
+
+# ---- photo_subject
+# ------------ok ----------------
+SELECT
+
+             photo.id,
+             photo.name,
+             photo.photo_fn
+
+
+    from     photo
+
+    JOIN   photo_subject
+    ON     photo_subject.photo_id = photo.id
+
+    WHERE  photo_subject.table_joined = "stuff"
+           and photo_subject.table_id = 9;
+
+
+# ---- photo_subject 2
+# ------------ ok ----------------
+SELECT
+
+             photo.id,
+             photo.name,
+             photo.photo_fn
+
+
+    from     photo_subject
+
+    JOIN   photo
+    ON     photo_subject.photo_id = photo.id
+
+    WHERE  photo_subject.table_joined = "stuff"
+           and photo_subject.table_id = 9;
+
+
+
+
+
+# ---- eof

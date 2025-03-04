@@ -35,6 +35,7 @@ if __name__ == "__main__":
 #import pprint
 import os
 
+# import adjust_path
 import string_util
 
 #from   app_global import AppGlobal

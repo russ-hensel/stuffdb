@@ -5,9 +5,16 @@
 
 """
 import os
-os.chdir( "/mnt/WIN_D/Russ/0000/python00/python3/_projects/qt_by_example" )
 
+os.chdir( "/mnt/WIN_D/russ/0000/python00/python3/_projects/qt5_by_example" )
+#os.chdir( "/home/russ/Documents/kw25/Russ/0000/python00/python3/_projects/qt5_by_example" )
 import adjust_path
-import qt_by_example
 
-qt_by_example.main()
+import qt5_by_example
+
+
+
+qt5_by_example.main()
+
+
+# ---- eof

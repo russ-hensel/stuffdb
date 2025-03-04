@@ -46,7 +46,6 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
                              QApplication,
@@ -83,8 +82,6 @@ from PyQt5.QtWidgets import (QAction,
                              QWidget)
 
 import file_browse
-
-
 
 # ---- imports local
 
@@ -323,6 +320,15 @@ class TableModel( QAbstractTableModel ):
         #self.layoutChanged.emit()
         #self.datatChanged.emit()
         #return True
+
+    # ---------------------------
+    def get_index_for_row(self, ix_row, column=0):
+        """
+        what it says, read
+        index    = xxxx.get_index_for_row( ix_row )
+        """
+        return self.createIndex(ix_row, column)
+
 
     # ---------------------------
     def clear_data(self):

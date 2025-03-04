@@ -10,6 +10,7 @@ convert_db_display.convert_from_to( )
 """
 
 
+import traceback
 from datetime import datetime
 
 from PyQt5 import QtGui
@@ -56,19 +57,42 @@ import adjust_path
 def string_to( a_string, a_type ):
     """
     """
-    if  not isinstance( a_string, str ):
-        raise ValueError( f"a_string is not instnace of str  {a_string = } {type(a_string) = }" )
+    try:
+        if  not isinstance( a_string, str ):
+            raise ValueError( f"a_string is not instnace of str  {a_string = } {type(a_string) = }" )
 
-    if a_type  in  ( "int", "integer" ):   # looks like int here was a mistake, change to enum??
-        a_int  = int( a_string )
-        return a_int
+        if a_type  in  ( "int", "integer" ):   # looks like int here was a mistake, change to enum??
+            a_int  = int( a_string )
+            return a_int
 
-    if a_type   == "string":
-        # should this not have been caught earlier >
-        return a_string
+        if a_type   == "string":
+            # should this not have been caught earlier >
+            return a_string
 
-    else:
-        raise ValueError( f"string_to Unsupported type {a_type = } {a_string = }")
+        else:
+            raise ValueError( f"string_to Unsupported type {a_type = } {a_string = }" )
+
+    except Exception as an_except:   #  or( E1, E2 )
+
+        msg     = f"a_except         >>{an_except}<<  type  >>{type( an_except)}<<"
+        print( msg )
+
+        msg     = f"an_except.args   >>{an_except.args}<<"
+        print( msg )
+
+        # msg     = f"self = {self} "
+        # print( msg )
+
+        s_trace = traceback.format_exc()
+        msg     = f"format-exc       >>{s_trace}<<"
+        print( msg )
+        #AppGlobal.logger.error( msg )   #    AppGlobal.logger.debug( msg )
+        breakpoint()
+        #raise  # to reraise same
+    # finally:
+    #     msg     = f"in finally  {1}"
+    #     print( msg )
+
 
 # -------------------------------------
 def int_to(   a_int, a_type  ):

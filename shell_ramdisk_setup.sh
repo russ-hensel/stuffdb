@@ -42,7 +42,7 @@ sudo chmod 777 /tmp/ramdisk # all users can use
 sudo mount -t tmpfs -o size=1024m myramdisk /tmp/ramdisk #
 # >> sudo mount -t tmpfs -o size=5G myramdisk /tmp/ramdisk # nG for the RAM disk,
 mount | tail -n 1 # to see if it is mounted
-cp /mnt/WIN_D/Russ/0000/python00/python3/_projects/stuffdb/data/*.db  /tmp/ramdisk/
+cp /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/*.db  /tmp/ramdisk/
 
 
 
