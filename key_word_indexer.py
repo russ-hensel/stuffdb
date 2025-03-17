@@ -72,6 +72,8 @@ LOG_LEVEL  = 20
 class KeyWordIndexer(   ):
     """
     in flux, needs better name move testing
+    does not do the drop or create, could add
+    or call as precondition
     """
     def __init__(self, db, table_name, kw_table_name  ):
         """
@@ -171,6 +173,7 @@ class KeyWordIndexer(   ):
            	add_kw ,
             latin_name
             FROM    plant """
+
         # ---- photoshow  = album
         elif table_name == "photoshow":  # album
             sql        = """SELECT
@@ -229,6 +232,7 @@ class KeyWordIndexer(   ):
         #rint( "query loop ")
         while query.next():
             ix   += 1
+            print( f"on record {ix}" )
 
             row_data = [ str( query.value(i) ) for i in range(query.record().count())]
 

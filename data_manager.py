@@ -1,29 +1,28 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# ---- tof
 """
 bad name
 make manager for a model with fields
-
+    --->>>  detail_data_manager
 """
-# ---- tof
+
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
     import main
     main.main()
-# --------------------
-# ---- import
-from PyQt5.QtSql import QSqlRecord
 import logging
 
 import info_about
 import string_util
+# --------------------
+# ---- import
+from PyQt5.QtSql import QSqlRecord
+
+import custom_widgets
 import key_words
 import qsql_utils
-import custom_widgets
-
-
-
 
 logger              = logging.getLogger( )
 LOG_LEVEL           = 5 # level for more debug    higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
@@ -47,7 +46,7 @@ def get_rec_data( record, field_name  ):
 
         if record.indexOf( field_name ) == -1:
             msg         = ( f"get_rec_data Field {field_name} "
-                            f"does not exist in the record.")
+                            "does not exist in the record.")
             logging.error( msg )
             raise ValueError( msg )
             #rint( f"set_data_from_record {debug_fn}")
@@ -116,11 +115,12 @@ class DataManager(   ):
         """
         what it says may change for different debug tasks
         """
-        msg     = f"DataManager.debug_to_log_ do some error check ..."
+        msg     = "DataManager.debug_to_log_ do some error check ..."
         logging.error( msg )
         for i_field in self.field_list:
             if i_field.ct_prior is None:
-                msg     = f"DataManager.debug_to_log_ Error {i_field.field_name = } {i_field.ct_default = } { i_field.ct_prior = }"
+                msg     = ( f"DataManager.debug_to_log_ Error {i_field.field_name = } "
+                           f"{i_field.ct_default = } { i_field.ct_prior = }" )
                 logging.error( msg )
 
 
@@ -167,8 +167,7 @@ class DataManager(   ):
                             msg         = msg,
                             print_it    = False
                            )
-        logging.debug( log_msg )
-
+        logging.log( LOG_LEVEL,  log_msg, )
         return log_msg
 
     # -------------------------------------
@@ -324,7 +323,8 @@ class DataManager(   ):
 
         model    = self.model      # QSqlTableModel(
         if not self.record_state  == RECORD_FETCHED:
-            msg   = ( f"update_record_fetched_v3 bad_state, return  {self.record_state  = } {self.table_name = }")
+            msg   = ( "update_record_fetched_v3 bad_state, return  "
+                      f"{self.record_state  = } {self.table_name = }")
             logging.error( msg )
             return
 
@@ -380,7 +380,7 @@ class DataManager(   ):
             return
 
         model.setFilter( "" )  # hope does not trigger a fetch
-        msg    = info_about.INFO_ABOUT.find_info_for(
+        log_msg    = info_about.INFO_ABOUT.find_info_for(
                         model,
                         msg             = "update_new_record_v2 after filter to empty",
                         max_len         = None,
@@ -389,7 +389,7 @@ class DataManager(   ):
                         sty             = "",
                         include_dir     = False,  )
 
-        logging.debug( msg )
+        logging.log( LOG_LEVEL,  log_msg, )
 
         record  = model.record()   # type is QSqlRecord
 
@@ -399,13 +399,13 @@ class DataManager(   ):
         record.setValue( "add_kw", "data_for_add_kw" )
 
         msg      = "update_new_record_v2 prior to insertRecord {model.rowCount() = } "
-
+        logging.log( LOG_LEVEL,  msg, )
         # seems key to modify record first then insert -- may want to look into someroe r
         # but seems like that was what id did in ver 1
         model.insertRecord( model.rowCount(), record )  # QSqlTableModel
 
         msg      = "update_new_record_v2 post to insertRecord {model.rowCount() = } "
-
+        logging.log( LOG_LEVEL,  msg, )
 
         msg    = info_about.INFO_ABOUT.find_info_for(
                         record,
@@ -415,9 +415,9 @@ class DataManager(   ):
                         print_it        = False,
                         sty             = "",
                         include_dir     = False,  )
-        logging.debug( f"\n{msg}" )
+        logging.log( LOG_LEVEL,f"\n{msg}" )
 
-        msg    = info_about.INFO_ABOUT.find_info_for(
+        log_msg    = info_about.INFO_ABOUT.find_info_for(
                         model,
                         msg             = "update_new_record_v2 after field_to_record ",
                         max_len         = None,
@@ -426,7 +426,7 @@ class DataManager(   ):
                         sty             = "",
                         include_dir     = False,  )
 
-        logging.debug( msg )
+        logging.log( LOG_LEVEL,  log_msg, )
 
         ok   = self.model_submit_all( model, f"DataManager.update_new_record { self.current_id = } {self.table_name = } {self.record_state = }")
 
@@ -539,9 +539,11 @@ class DataManager(   ):
                             msg         = msg,
                             print_it    = False,
                            )
-        logging.debug( log_msg )
+        logging.log( LOG_LEVEL,  log_msg, )
 
-        ok   = self.model_submit_all( model, f"DataManager.update_new_record { self.current_id = } {self.table_name = } {self.record_state = }")
+        ok   = self.model_submit_all( model,
+                f"DataManager.update_new_record { self.current_id = } "
+                f"{self.table_name = } {self.record_state = }"  )
 
         self.record_state    = RECORD_FETCHED
 
@@ -596,7 +598,7 @@ class DataManager(   ):
                                 msg         = msg,
                                 print_it    = False
                                )
-            logging.debug( log_msg )
+            logging.error( log_msg )
 
             ok   = False
 
@@ -611,7 +613,7 @@ class DataManager(   ):
 
             debug_msg    = info_about.INFO_ABOUT.find_info_for(
                             model,
-                            msg             = f"ndata_manager debug_on model POST to submitAll {self.record_state = }",
+                            msg             = f"data_manager debug_on model POST to submitAll {self.record_state = }",
                             max_len         = None,
                             xin             = "",
                             print_it        = False,
@@ -738,7 +740,9 @@ class DataManager(   ):
         <class 'PyQt5.QtSql.QSqlRecord'>
         """
         for i_field in  self.field_list:
-            if ( i_field.field_name  == "text_data" ) and ( isinstance( i_field, custom_widgets.CQTextEdit ) ):
+            if ( ( i_field.field_name  == "text_data" ) and
+                 ( isinstance( i_field, custom_widgets.CQTextEdit ) ) ):
+
                 debug_msg   = ( f"field_to_record {i_field.field_name = } " )
                 logging.log( LOG_LEVEL,  debug_msg, )
                 if  i_field.text_edit_ext_obj is not None:
@@ -772,8 +776,8 @@ class DataManager(   ):
         """
         if option == "default":
             for i_field in self.field_list:
-               # i_field.clear_data( to_prior = to_prior )
-               i_field.ct_default(  )
+                # i_field.clear_data( to_prior = to_prior )
+                i_field.ct_default(  )
 
         elif option == "prior":
             for i_field in self.field_list:
@@ -832,10 +836,6 @@ class DataManager(   ):
                                            f"{self.key_word_obj}" ] )
         return a_str
 
-        if self.key_word_table_name:
-            a_str   = a_str  + str( self.key_word_obj )
-
-        return a_str
 
 
 # ---- eof

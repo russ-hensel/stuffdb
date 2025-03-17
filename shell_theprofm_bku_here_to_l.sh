@@ -8,6 +8,7 @@
 #
 #      fror now send as arguments the current dir and
 #      a code for the backup destination
+#      _______________> see help db for more info
 #
 move this to a dir where it can run why not clipboard
 

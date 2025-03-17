@@ -28,9 +28,7 @@ import show_parameters
 #import    help_sub_window
 # import   db_create
 from app_global import AppGlobal
-
 from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-
 from PyQt5.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 from PyQt5.QtWidgets import (QAction,
@@ -63,11 +61,11 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
-
 # ---- local imports
 import mdi_management
-import stuffdb
 import parameters
+import stuffdb
+
 
 # ------------------------------------------
 class StuffdbMainWindow( QMainWindow ):
@@ -87,7 +85,7 @@ class StuffdbMainWindow( QMainWindow ):
         parameters                  = AppGlobal.parameters
         self.show()
 
-        self.setWindowTitle( "StuffdbMainWindow" )
+        self.setWindowTitle( "Stuff Database" )
         self.setGeometry( parameters.qt_xpos,
                           parameters.qt_ypos ,
                           parameters.qt_width,
@@ -139,7 +137,7 @@ class StuffdbMainWindow( QMainWindow ):
         # action.triggered.connect( self.show_message1 )
         # toolbar.addAction(action)
 
-        # ---- DB operations
+        # ---- DocOps db operations
         #action          = QAction( QIcon.fromTheme( "go-next" ), "Next", self )
         action          = QAction(  "Add", self )
         connect_to      = functools.partial(  self.go_active_sub_window_func,
@@ -296,14 +294,14 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         a_menu.addAction( action )
 
-        # ---- DocOps
+        # ---- DocOps db operations
         menu            = menubar.addMenu("DocOps")
         self.menu_open  = menu # do we need ref, may want to change the name
 
         action          = QAction( "Add", self )
         # connect_to      = functools.partial( self.add_subwindow, window_type = "help" )
         connect_to      = functools.partial(  self.go_active_sub_window_func,
-                                              "default_new_row"     )
+                                              "add_default"     )
         action.triggered.connect( connect_to )
         menu.addAction( action )
 
@@ -601,7 +599,6 @@ class StuffdbMainWindow( QMainWindow ):
                      )
 
         QMessageBox.about(self, "About", msg )
-
 
     # -----------------------
     def show_parameters(self):

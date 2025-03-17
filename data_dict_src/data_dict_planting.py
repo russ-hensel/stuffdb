@@ -11,12 +11,10 @@ import data_dict
 # ---- build it
 def build_it( a_data_dict ):
     """
+    build the data_dict for these tables
 
 
     """
-
-
-
     # ---- planting ---------------------------------------------
     a_table_dict   = data_dict.TableDict( "planting" )
     a_data_dict.add_table ( a_table_dict )
@@ -26,7 +24,12 @@ def build_it( a_data_dict ):
                                              db_type        = "INTEGER",
                                              display_type   = "string",
                                              max_len        = None,
-                                             default_func   = None,   )
+                                             default_func   = None,
+                                             col_head_text      = "ID",
+                                             col_head_width     = 10,
+                                             col_head_order     = 0,
+                                             form_col_span      = 1,
+                                             form_read_only     = True, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- id_old
@@ -34,7 +37,12 @@ def build_it( a_data_dict ):
                                              db_type        = "VARCHAR(15)",
                                              display_type   = "string",
                                              max_len        = None,
-                                             default_func= None,   )
+                                             default_func= None,
+                                             col_head_text      = "ID Old",
+                                              col_head_width     = 10,
+                                              col_head_order     = 1,
+                                              form_col_span      = 1,
+                                              form_read_only     = True, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- name
@@ -43,7 +51,13 @@ def build_it( a_data_dict ):
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
-                                             is_key_word        = True,)
+                                             is_key_word    = True,
+                                             is_keep_prior_enabled  = True,
+
+                                             col_head_text      = "Name",
+                                             col_head_width     = 40,
+                                             col_head_order     = 10,
+                                             form_col_span      = 4,)
     a_table_dict.add_column( a_column_dict )
 
     # ---- plant_id
@@ -77,9 +91,11 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "add_kw",
                                              db_type        = "VARCHAR(50)",
                                              display_type   = "string",
-                                             max_len        = None,
-                                             default_func= None ,
-                                             is_key_word        = True,)
+                                             is_keep_prior_enabled  = True,
+                                             is_key_word            = True,
+                                             max_len                = None,
+                                             default_func           = None , )
+
     a_table_dict.add_column( a_column_dict )
 
     # ---- descr
@@ -177,6 +193,43 @@ def build_it( a_data_dict ):
                                              max_len        = None,
                                              default_func= None,   )
     a_table_dict.add_column( a_column_dict )
+
+    # ---- plant_text ---------------------------------------------
+    a_table_dict   = data_dict.TableDict( "planting_text" )
+    a_data_dict.add_table ( a_table_dict )
+
+    # ---- id
+    a_column_dict = data_dict.ColumnDict(    column_name    = "id",
+                                             db_type        = "INTEGER",
+                                             display_type   = "integer",
+                                             max_len        = None,
+                                             default_func   = None,   )
+    a_table_dict.add_column( a_column_dict )
+
+    # ---- id_old
+    a_column_dict = data_dict.ColumnDict(    column_name    = "id_old",
+                                             db_type        = "VARCHAR(15)",
+                                             display_type   = "string",
+                                             max_len        = None,
+                                             default_func= None,   )
+    a_table_dict.add_column( a_column_dict )
+
+    # ---- text_type
+    a_column_dict = data_dict.ColumnDict(    column_name    = "text_type",
+                                             db_type        = "VARCHAR(15)",
+                                             display_type   = "string",
+                                             max_len        = None,
+                                             default_func= None,   )
+    a_table_dict.add_column( a_column_dict )
+
+    # ---- text_data
+    a_column_dict = data_dict.ColumnDict(    column_name    = "text_data",
+                                             db_type        = "TEXT",
+                                             display_type   = "string",
+                                             max_len        = None,
+                                             default_func= None,   )
+    a_table_dict.add_column( a_column_dict )
+
 
 
     # ---- planting_key_word ---------------------------------------------

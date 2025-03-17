@@ -19,7 +19,7 @@ hostname              = socket.gethostname()
 cwd                   = os.getcwd()
 adjust_path_file      = __file__
 
-VERBOSE   = 100
+VERBOSE   = 10
 
 if VERBOSE > 20:
 
@@ -52,6 +52,8 @@ src_root         = "/mnt/WIN_D/russ/0000/python00/python3"
 # ---- ./ path
 sys.path.insert( 1, f"./libs" )   # for installation off dev machines
 sys.path.insert( 1, f"./data_dict_src" )   # for installation off dev machines
+sys.path.insert( 1, f"./sql" )   # for installation off dev machines
+
 
 # ---- only on russ's computers
 sys.path.insert( 1, f"{src_root}/_projects/rshlib" )

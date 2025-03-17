@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# ---- tof
 """
 
 """
@@ -26,14 +27,11 @@ import shutil
 import time
 from pathlib import Path
 
+import app_exceptions
 import data_dict
 import gui_qt_ext
 import wat_inspector
 from app_global import AppGlobal
-# ---- Qt
-
-from PyQt5.QtWidgets import QSpacerItem, QSizePolicy
-
 from PyQt5.QtCore import (QAbstractTableModel,
                           QDate,
                           QModelIndex,
@@ -47,7 +45,6 @@ from PyQt5.QtGui import (QIntValidator,
                          QPixmap,
                          QStandardItem,
                          QStandardItemModel)
-
 from PyQt5.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
@@ -83,6 +80,8 @@ from PyQt5.QtWidgets import (QAction,
                              QMenu,
                              QMessageBox,
                              QPushButton,
+                             QSizePolicy,
+                             QSpacerItem,
                              QSpinBox,
                              QTableView,
                              QTableWidget,
@@ -106,11 +105,15 @@ import qt_sql_query
 import qt_with_logging
 #import  mdi_management
 import table_model
-import app_exceptions
+
+# ---- Qt
+
+
+
+
 
 
 LOG_LEVEL   = 10    # higher is more
-
 logger      = logging.getLogger( )
 
 
@@ -150,7 +153,8 @@ class PictureDocument( base_document_tabs.DocumentBase ):
         self.current_tab        = 0
 
         self.prior_criteria     = None
-        self.current_criteria   = None    # init just after criteria tab created
+        self.current_criteria   = None
+            # init just after criteria tab created
 
         # Main notebook with  tabs
         main_notebook           = self.tab_folder   # create in parent
@@ -256,54 +260,6 @@ class PictureDocument( base_document_tabs.DocumentBase ):
         self.criteria_tab.criteria_select()
         return
 
-    # -----------------------------------
-    def add_row_historyxxx( self, index ):
-        """
-        pretty much from chat
-
-        def add_row_to_tab2(self, index):
-        # Get the data from the selected row
-        id_data = self.model.data(self.model1.index(index.row(), 0))
-        name_data = self.model1.data(self.model1.index(index.row(), 2))
-
-        # Create items for the second model
-        id_item = QStandardItem(str(id_data))
-        name_item = QStandardItem(name_data)
-
-        # Add a new row to the second model
-        self.history_model.appendRow([id_item, name_item])
-
-        """
-        1/0
-        return
-
-        # Get the data from the selected row
-        detail_model    = self.detail_tab.tab_model
-        history_model   = self.history_tab.history_model
-        #ia_qt.q_sql_query_model( self.detail_tab.tab_model, "add_row_history photo_sub" )
-
-        id_data         = detail_model.data( detail_model.index( index.row(), 0))
-        name_data       = detail_model.data( detail_model.index( index.row(), 2))
-        msg       = ( f"in add_row_history {id_data = }   {name_data = }")
-
-        logging.debug( msg )
-
-        # Create items for the second model
-        id_item     = QStandardItem( str(id_data) )
-        name_item   = QStandardItem( name_data )
-
-        # Add a new row to the second model
-        history_model.appendRow([id_item, name_item])
-
-        # if not self.index:   # new row  self.index and index not the same
-        #     print( ">>>>>>>>>>>>new row AppGlobal.key_gen       = a_key_gen")
-        #     key             = AppGlobal.key_gen.get_next_key( table_name )
-        #     # row count here becomes rowcount - 1 later
-        #     model.insertRow( model.rowCount() )
-        #     ix_row               = model.rowCount() - 1   # model row that get the data here new row
-        #     # model.index makes an index row col for the data
-        #     model.setData( model.index( ix_row, 0), key )
-
     # ---------------------------------------
     def display_picture( self, file_name  ):
         """
@@ -336,7 +292,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
     def __init__(self, parent_window ):
         """
         the usual
-
         """
         super().__init__( parent_window )
         self.tab_name            = "PictureCriteriaTab"
@@ -345,10 +300,8 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
     def _build_tab( self,   ):
         """
         what it says, read
-
         """
         page            = self
-        tab             = page
 
         placer          = gui_qt_ext.PlaceInGrid(
             central_widget  = page,
@@ -388,7 +341,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         placer.new_row()
         placer.place( widget )
 
-        #widget                  = QLineEdit()
         widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
         self.key_words_widget   = widget
         widget.critera_name     = "key_words"
@@ -413,7 +365,8 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget  = QLabel( "With file?" )
         placer.place( widget )
 
-        widget                      = custom_widgets.CQComboBoxEditCriteria( get_type = "string", set_type = "string")
+        widget                      = custom_widgets.CQComboBoxEditCriteria(
+                                    get_type = "string", set_type = "string")
         self.file_name_empty_widget = widget
         widget.critera_name         = "file_name_empty"
         self.critera_widget_list.append( widget )
@@ -428,7 +381,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget  = QLabel( "File Name Like" )
         placer.place( widget )
 
-        # widget                  = QLineEdit()
         widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
         self.file_name_widget   = widget
         widget.critera_name     = "file_name_like"
@@ -456,24 +408,33 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self.criteria_changed_widget  = widget
         placer.place( widget )
 
-        # ---- dates
-        self.add_date_widgets( placer, row_lables = ( "dt_item", "dt_enter") )
+        # # ---- dates
+        # self.add_date_widgets( placer, row_lables = ( "dt_item", "dt_enter") )
 
-        self.add_buttons( placer )
+        # self.add_buttons( placer )
+
+        # ---- push controls up page, may need adjuxtment
+        width    = 350
+        widget   = QSpacerItem( width, 100, QSizePolicy.Expanding, QSizePolicy.Minimum )
+        placer.new_row()
+        # placer.place( widget )
+        placer.layout.addItem( widget, placer.ix_row, placer.ix_col    )  # row column
+
+
 
     # -------------
     def criteria_select( self,     ):
         """
         do the select
         """
-        parent_document                 = self.parent_window
+        parent_document     = self.parent_window
 
-        model                           = parent_document.list_tab.list_model
+        model               = parent_document.list_tab.list_model
 
-        query                           = QSqlQuery()
-        query_builder                   = qt_sql_query.QueryBuilder( query, print_it = False, )
+        query               = QSqlQuery()
+        query_builder       = qt_sql_query.QueryBuilder( query, print_it = False, )
 
-        kw_table_name                   = "photo_key_words"
+        kw_table_name       = "photo_key_words"
 
         # !! next is too much
         columns    = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
@@ -552,17 +513,17 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         msg       = ( "only have one date so far and names are a bit of a dyslexia mess")
         logging.info( msg )
 
-        start_date_edit   = criteria_dict[ "start_edit_date" ]
-        # rint( f"{start_date_edit}")
-        if start_date_edit:
-            add_where         = " dt_enter >= :start_date_edit"
-            query_builder.add_to_where( add_where, [ ( ":start_date_edit", start_date_edit ) ])
+        # start_date_edit   = criteria_dict[ "start_edit_date" ]
+        # # rint( f"{start_date_edit}")
+        # if start_date_edit:
+        #     add_where         = " dt_enter >= :start_date_edit"
+        #     query_builder.add_to_where( add_where, [ ( ":start_date_edit", start_date_edit ) ])
 
-        end_date_edit   = criteria_dict[ "end_edit_date" ]
-        if end_date_edit:
-            # rint( f"{start_date_edit}")
-            add_where         = " dt_enter >= :end_date_edit"
-            query_builder.add_to_where( add_where, [ ( ":end_date_edit", end_date_edit ) ])
+        # end_date_edit   = criteria_dict[ "end_edit_date" ]
+        # if end_date_edit:
+        #     # rint( f"{start_date_edit}")
+        #     add_where         = " dt_enter >= :end_date_edit"
+        #     query_builder.add_to_where( add_where, [ ( ":end_date_edit", end_date_edit ) ])
 
         # ---- order by
         order_by   = criteria_dict[ "order_by" ]
@@ -605,36 +566,6 @@ class PictureListTab( base_document_tabs.ListTabBase  ):
         self.tab_name        = "PictureListTab"
         self._build_gui()
 
-    # ------------------------------------------
-    def _build_guixxx( self,  ):
-        """
-        what it says, read
-            for columns see criteria select in criteria table
-        ?? looks pretty promotable
-
-        """
-        page            = self
-        tab             = page
-        #a_notebook.addTab( page, 'Channels ' )
-        placer          = gui_qt_ext.PlaceInGrid(
-            central_widget  = page,
-            a_max           = 0,
-            by_rows         = False  )
-
-        model               = QSqlTableModel( self, self.parent_window.db ) # perhaps a global
-        self.list_model     = model
-
-        model.setTable( self.parent_window.detail_table_name )
-
-        model.setEditStrategy( QSqlTableModel.OnManualSubmit) # = never
-
-        view                 = QTableView()
-        self.list_view       = view
-        view.setSelectionBehavior( QTableView.SelectRows )
-        view.setModel( model )
-        placer.place(  view )
-        view.clicked.connect( self.parent_window.on_list_clicked )
-
 # ----------------------------------------
 class PictureDetailTab( base_document_tabs.DetailTabBase   ):
     """
@@ -660,7 +591,6 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
             an ascii picture would be nice
         """
         page            = self
-        #tab             = self
 
         main_layout     = QVBoxLayout( page )
         upper_layout    = QHBoxLayout( )  # for detail and a pic
@@ -673,17 +603,18 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
 
         picture_layout  = QHBoxLayout( )
 
-        upper_layout.addLayout( field_layout )
-        upper_layout.addLayout( picture_layout )                  # might be ok withou
+        upper_layout.addLayout( field_layout,   stretch = 0 )
+        upper_layout.addLayout( picture_layout, stretch = 2 )                  # might be ok withou
 
         # ---- code_gen: sql_to_fields  -- begin table entries
         # ---- put picture in to right
 
         viewer              = picture_viewer.PictureViewer( self )
         viewer.set_fnf( parameters.PARAMETERS.pic_nf_file_name )
+        viewer.setMinimumSize( 300, 200 )  # width=300, height=200 in pixels
         self.viewer         = viewer
 
-        picture_layout.addWidget( viewer )
+        picture_layout.addWidget( viewer, stretch = 2 )
 
         # ---- build_fields
         self._build_fields( field_layout )
@@ -713,8 +644,6 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         detail_notebook           = QTabWidget()
         self.detail_notebook      = detail_notebook
 
-        #main_notebook.currentChanged.connect( self.on_tab_changed )
-
         # ---- buttons
         widget  = QPushButton( "Add To Album" )
         widget.clicked.connect(self.add_to_show)
@@ -724,7 +653,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         widget.clicked.connect(self.clip_filename)
         field_layout.addWidget( widget)
 
-        # may want spaces down here
+        # may want spacers down here
 
     #---------------------------------
     def _build_fields( self, layout ):
@@ -741,8 +670,9 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
             self.sub_dir_field       = edit_field
 
         """
+        width    = 200
         for ix in range( layout.col_max ):  # layout.col_max
-            widget   = QSpacerItem( 50, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
+            widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
             layout.addItem( widget, 0, ix  )  # row column
 
         # ---- code_gen: TableDict.to_build_form 2025_02_01 for photo -- begin table entries -----------------------
@@ -1082,10 +1012,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
 
-
     # ================================== end code gen ==============================
-
-
 
     # ---------------------------
     def select_record( self, id_value  ):
@@ -1161,7 +1088,9 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         photo_target     = AppGlobal.mdi_management.get_album_doc()
         #photo_target   = AppGlobal.add_photo_target
         if   photo_target is not None:
-            msg       = ( f" check target has a current id  {photo_target = }")
+            msg       = ( f"add_to_show_zzz check target has a current id  {photo_target = }")
+            logging.debug( msg )
+            msg       = ( f"add_to_show maybe album should do update   {photo_target = }")
             logging.debug( msg )
             photo_target.add_photo_to_show( row_dict )
                 # perhaps in album picture sub tab
@@ -1237,7 +1166,6 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
 
         full_file_name  = base_document_tabs.build_pic_filename( self.file_field.text(), self.sub_dir_field.text() )
 
-
         # root         = AppGlobal.parameters.picture_db_root + "/"
         # file_dir     = self.sub_dir_field.text() + "/"
         # file_name    = self.file_field.text().strip()
@@ -1255,7 +1183,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
 
 # ==================================
 class PictureTextTab( base_document_tabs.TextTabBase   ):
-
+    """ """
     def __init__(self, parent_window  ):
         """
         the usual
@@ -1482,11 +1410,12 @@ class PicturePictureTab_promoted ( base_document_tabs.DetailTabBase   ):
         self.display_file( picture_file_name )
 
     # ------------------------------------------
-    def select_by_id ( self, id ):
+    def select_by_id ( self, a_id ):
         """
         try to get one that works
         """
-        msg       = ( f"picture picture tab select_by_id, do I get called ................................select_by_id")
+        msg       = ( f"picture picture tab select_by_id, "
+                       f"do I get called ... .select_by_id {a_id = }")
         logging.debug( msg )
 
     # ---- zooms, may also be in context map, may want buttons for these
@@ -1541,9 +1470,9 @@ class PictureBrowseSubTab( QWidget ):
         tab_layout.addLayout( button_layout )
 
         # Column headers
-        headers = ["File Name", "Date", "What"]
+        headers = ["File Name", "Date", "What"] # search width
         #self.view           = QTableView()
-        self.model          = table_model.TableModel( headers)
+        self.model          = table_model.TableModel( headers )
         #self.model.set_data( data )
 
         # Proxy model for sorting
@@ -1553,6 +1482,10 @@ class PictureBrowseSubTab( QWidget ):
 
         table_view          = QTableView()
         self.table_view     = table_view
+        # self.set_column_width()
+
+
+
         # Connect the clicked signal to a slot
         table_view.clicked.connect( self.on_row_clicked )
         # table_view.setModel( self.model )
@@ -1572,7 +1505,7 @@ class PictureBrowseSubTab( QWidget ):
         self.viewer         = viewer
         tab_layout.addWidget( viewer )
 
-        self.display_file()
+        self.display_file()     # probably the 404 by default
 
         # ---- buttons
         a_widget        = QPushButton( "Browse" )
@@ -1590,6 +1523,9 @@ class PictureBrowseSubTab( QWidget ):
         a_widget        = QPushButton( "fit" )
         a_widget.clicked.connect( self.fit_in_view )
         button_layout.addWidget( a_widget )
+
+
+        self.set_column_width()
 
     # -------------------------
     def browse( self, ):
@@ -1647,8 +1583,6 @@ class PictureBrowseSubTab( QWidget ):
         return -- album document....
         raise  some exception if error
         check we have some photos
-
-
         """
         detail_tab          = self.parent_window
 
@@ -1693,9 +1627,6 @@ class PictureBrowseSubTab( QWidget ):
         move all picture files to new picture documents
 
         """
-        # msg       = ( "\n move_all ")
-        # logging.debug( msg )
-
         try:
             album_target = self.move_all_setup()
 
@@ -1711,21 +1642,26 @@ class PictureBrowseSubTab( QWidget ):
         while True:
             if model.rowCount() == 0:
                 break
-            ix_debug +=1
-            if ix_debug > 3:
-                msg    = "move_all  hit temp debug limit move_all"
-                logging.debug( msg )
-                break
+
+            # ix_debug +=1
+            # if ix_debug > 3:
+            #     msg    = "move_all  hit temp debug limit move_all"
+            #     logging.debug( msg )
+            #     break
             # need to add a record
             self.parent_window.parent_window.add_copy()  # document =
-            print( "^^^^^^^^^^^^^^^^^^^^^^^   call move to pic  but add to album still missing  ")
+            print( "^^^^^^^^^^^^^^^^^^^^^^^   call move to pic  but add to album in process  ")
 
             index    = model.get_index_for_row( 0 ) # always get the top row
             self.move_to_pic( index )   # will send off to move_to_pic
 
-            1/0  # next would be detail_tab....       #    add_to_show(   )
+            detail_tab      = self.parent_window
+            detail_tab.add_to_show()
+                # data_in_dict["photo_id"]
+                # photo_dict    = data_in_dict["photo_id"]
+                # album_target.add_photo_to_show( photo_dict )
 
-        msg         = ( "\n unfinished return ++++++++++++++++++++++++++++++++++++++++++++")
+        msg         = ( "\n maybe finished return ++++++++++++++++++++++++++++++++++++++++++++")
         logging.debug( msg )
 
     # --------------------------------------
@@ -1860,7 +1796,7 @@ class PictureBrowseSubTab( QWidget ):
         msg = ( "move_to_pic we should automically save here !! ")
         logging.error( msg )
 
-        msg = ( "move_to_picneed to make display seems ok !! prehaps is ok ")
+        msg = ( "move_to_pic need to make display seems ok !! prehaps is ok ")
         logging.error( msg )
 
         parent_window.display_selected_pic()
@@ -1898,8 +1834,9 @@ class PictureBrowseSubTab( QWidget ):
         row_count   = model.rowCount()
         if row_count == 0:
             pass
-            msg    = ( "display_file_at_row how display 404")
-            logging.debug( msg )
+            self.display_file( )
+            # msg    = ( "display_file_at_row how display 404 shoudl be fixed ")
+            # logging.debug( msg )
             return
 
         if not row < model.rowCount():
@@ -1908,8 +1845,8 @@ class PictureBrowseSubTab( QWidget ):
         self.select_row( row )
         row_data = [self.model.data(self.model.index(row, col)) for col in range(self.model.columnCount())]
 
-        msg       = ( f"display_file_at_row Row {row + 1} clicked: {row_data}" )
-        logging.debug( msg )
+        # msg       = ( f"display_file_at_row Row {row + 1}   {row_data}" )
+        # logging.debug( msg )
 
         file_name   = row_data[0]   # what is 0 file name
         self.display_file( file_name )
@@ -1930,11 +1867,13 @@ class PictureBrowseSubTab( QWidget ):
           selection_model.select(row_start, selection_model.Select | selection_model.Rows)
 
     # -----------------------------
-    def display_file( self,  file_name = "/mnt/WIN_D/PhotoDB/02/102-0255_img.jpg"  ):
+    def display_file( self,  file_name = None  ):
         """
         what it says, read
         call from ?
         """
+        if file_name is None:
+            file_name  = parameters.PARAMETERS.pic_nf_file_name
         # pixmap      = QPixmap( file_name )
         # self.viewer.set_photo( pixmap )
         self.viewer.display_file( file_name )
@@ -1958,8 +1897,22 @@ class PictureBrowseSubTab( QWidget ):
 
     #-------------------------------------
     def fit_in_view(self):
+        """
+        """
         self.viewer.fit_in_view()
         #rint("PicturePictureTab Fit in View")
+
+    #-------------------------------------
+    def set_column_width(self):
+        """
+        fighting with this put where search headers
+        work in version 64
+        """
+        # ---- width match to headers above
+        table_view    = self.table_view
+        table_view.setColumnWidth( 0, 200)   # filename ?
+        table_view.setColumnWidth( 1, 150)   # date
+        table_view.setColumnWidth( 2, 100)   # what
 
 # ----------------------------------------
 class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
@@ -2033,13 +1986,13 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         """
         super().__init__( parent_window )
 
-        self.table_name     = "photo_subject"
-        self.tab_name       = "PictureSubjectSubTab"
+        self.table_name         = "photo_subject"
+        self.tab_name           = "PictureSubjectSubTab"
 
-        self.model_ituple           = None # to index table, table_id
+        self.model_ituple       = None # to index table, table_id
 
-        self.model_other            = None
-        self.model_other_ituple     = ( 0, 1 ) # to index table, table_id
+        self.model_other        = None
+        self.model_other_ituple = ( 0, 1 ) # to index table, table_id
             # ituple is indexer tuple for building index
 
         self._build_model()
@@ -2068,7 +2021,6 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         what it says, read
         """
         page                = self
-        tabxxxxxx                 = page
 
         layout              = QHBoxLayout( page )
         left_layout         = QVBoxLayout(   )
@@ -2085,9 +2037,9 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         # subjects/topics that have been selected for this pic s display only no db
             #self.model_display/self.view_display
         # subject/topics connected to db
-            # self.model_subject / self.list_view  / self.model self.model_indexer
+            # self.model_ subject / self.list_view  / self.model self.model_indexer
 
-        headers = [ "table", "table_id", "info"]   # other is items from other windows, clears when
+        headers = [ "model_other: table", "table_id", "info"]   # other is items from other windows, clears when
         model_other           = table_model.TableModel( headers)
         self.model_other      = model_other
         model_other.add_indexer(  self.model_other_ituple )
@@ -2097,7 +2049,10 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         view_other.setSelectionBehavior( QTableView.SelectRows )
         view_other.doubleClicked.connect( self.on_row_other_dclicked )
         view_other.setModel( model_other)
-        print( "!! _build_gui set indexer tuple next probably wrong -- or not special tab ")
+
+        debug_msg     =  ( "!! _build_gui set indexer tuple next probably wrong -- or not special tab ")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
         right_layout.addWidget( view_other )
 
         # ---- view_history
@@ -2137,7 +2092,6 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
             table.info ....
 
         """
-
         view                    = QTableView()
         self.list_view          = view
         view.setSelectionBehavior( QTableView.SelectRows )
@@ -2183,10 +2137,10 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
 
         # ---- model        ---- gets subjects but for background as we need join to
         #      get good display of inf see
-        model              = QSqlTableModel( self, self.db )
-        #model              = qt_with_logging.QSqlTableModelWithLogging(  self, self.db    )
+        model           = QSqlTableModel( self, self.db )
+        #model          = qt_with_logging.QSqlTableModelWithLogging(  self, self.db    )
 
-        self.model          = model    # these are the subjects in the db
+        self.model      = model    # these are the subjects in the db
 
         model.setTable( self.table_name )
         self.model_ituple   = ( 3, 5 ) # to index table, table_id check with table
@@ -2200,6 +2154,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         # ---- model subject
         # ============================================================
         # ---- model_subject ---- this will get the subjects, tables will be switched -- no update
+        # is used in select by id
         model               = QSqlTableModel( self, self.db )
         self.model_subject  = model   #  is this the display not yet implemented
 
@@ -2208,7 +2163,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
     #-------------------------------------
     def create_index( self, ):
         """
-        are we indexing the right guy
+        are we indexing the right guy do we need?
         """
         self.model_index.create_index()
 
@@ -2244,7 +2199,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         """
         what it says, read, search  --- should be a double clicked
         """
-        model    = self.model_other    # table_model.TableModel( headers)
+        #model    = self.model_other    # table_model.TableModel( headers)
         row      = index.row()
 
         msg       = ( f"on_row_other_clicked {row = }")
@@ -2264,7 +2219,6 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         """tail_tab.default_new_row( next_key )
         default values for a new row in the detail and the
         text tabs
-
         Returns:
             None.
 
@@ -2287,12 +2241,12 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         model  = self.model
         ia_qt.q_sql_table_model( model )
         # Loop through the rows in reverse order and delete them
-        for row in range(model.rowCount() - 1, -1, -1 ):
+        for row in range( model.rowCount() - 1, -1, -1 ):
             model.removeRow(row)
         self.view.show()
 
-        ia_qt.q_sql_table_model( model )
-        print( "for now update and select ")
+        # ia_qt.q_sql_table_model( model )
+        # print( "for now update and select ")
 
         if model.submitAll():
             model.select()  # Refresh the model to reflect changes in the view
@@ -2415,6 +2369,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
 
     def add_selected_other_2( self, table, table_id ):
         """
+        seems to be addition to add_selected_other   this may be addition or debug
         test routine, actually do the add to ...
         what does it need to know  table and table_id can figure out the rest
         """
@@ -2447,8 +2402,8 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
             pass
 
         else:
-            print("Error inserting record:", model.lastError().text())
-
+            msg    = ( f"add_selected_other_2 Error inserting record:  {model.lastError().text()}" )
+            logging.error( msg )
         # wat_inspector.go(
         #      msg            = "from picture document add_selected_other_2",
         #      a_locals       = locals(),
@@ -2457,10 +2412,10 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
     #--------------------------------
     def loop_thru_other( self ):
         """
-
+        is this dooing anything but logging ??
         """
-        # model_subjects is just model
-        model    = self.model  # .TableModel( headers) QAbstractTableModel
+        # model_  subjects is just model not here
+        model            = self.model  # .TableModel( headers) QAbstractTableModel
         ix_table_joined  = 3
         ix_table_id      = 5
         for ix_row in range( model.rowCount()  ):
@@ -2471,13 +2426,16 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
                 logging.debug( msg )
             msg   = ( f"{record.value(ix_table_joined)}) {record.value(ix_table_id)})" )
             logging.debug( msg )
+
             record_key    = (record.value(ix_table_joined), record.value(ix_table_id))
+
             msg   = ( f"{record_key = }")
             logging.debug( msg )
 
     # ------------------------------------------
     def loop_thru_subjects( self ):
         """
+        i do not see this doing anything but logging
         test routine, add the first other to the subjects
         maybe the real thing who says test
 
@@ -2495,7 +2453,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         record( ix)  according to chat === put this back in info  about
         """
 
-        # model_subjects is just model
+        # model_   subjects is just model
         model    = self.model  # QSqlTableModel
         ix_table_joined  = 3
         ix_table_id      = 5
@@ -2505,10 +2463,13 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
             for i in range(record.count()):
                 msg   = ( f"Field by index {i = } {record.fieldName(i)}: {record.value(i)}")
                 logging.debug( msg )
+
             msg   = ( f"{record.value(ix_table_joined)}) {record.value(ix_table_id)})" )
             logging.debug( msg )
+
             record_key    = (record.value(ix_table_joined), record.value(ix_table_id))
-            msg   = ( f"{record_key = }")
+
+            msg   = ( f"{record_key = }" )
             logging.debug( msg )
 
     # ------------------------------------------
@@ -2538,6 +2499,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         else:
             msg       = ("get_selected_row No row selected")
             logging.debug( msg )
+
     # ------------------------------------------
     def add_to_model( self,  photo_id, table_id, table, info   ):
         """
@@ -2569,9 +2531,18 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
     def select_by_id( self, id_value  ):
         """
         customized from PicturSubjectSubTab 2024Dec
+
+        involves 3 models see first 3 lines -- finally a fourth via call
+            model display is cleared
+            model is selected = fetched
+            relational data is feched with seperate get_info....
+            data added to model display
+                 call to self.populate_model_other()
+
         """
         model           = self.model
         model_subject   = self.model_subject
+        model_display   = self.model_display
 
         self.current_id = id_value
 
@@ -2579,14 +2550,14 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         model.select()
 
         #rint( "now loop thru getting table and table id ")
-        model_display   = self.model_display
+
         model_display.clear_data()
-        row_count       = model.rowCount()
-        column_count    = model.columnCount()
-        ix_table_column      = 3
-        ix_table_id_column   = 5
+        row_count           = model.rowCount()
+        column_count        = model.columnCount()
+        ix_table_column     = 3
+        ix_table_id_column  = 5
         for row in range( row_count ):
-            row_data = [] # what is thiis for  -- think dead
+            #row_data = [] # what is thiis for  -- think dead
 
             msg       = ( "column loop ok for debug but not needed")
             logging.debug( msg )
@@ -2596,8 +2567,9 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
                 index   = model.index(row, column)
                 # Get the data for the current index
                 data    = model.data(index)
-                row_data.append( data )
-                if   column == ix_table_column:     #
+                # 2025_03_12
+                #row_data.append( data )
+                if   column == ix_table_column:
                     table_name = data
                 elif column == ix_table_id_column:
                     table_id = data
@@ -2607,29 +2579,24 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
             # msg     = f"{table_name = } {table_id = }"
             # print( msg )
 
-            #rint( "clear model subject   ")
-            #model_subject.clear()    # no clear_data, but chant says clear
             if   table_name == "stuff":
                 info     = self.get_info_stuff( table_id  )
 
-            if   table_name == "people":
+            elif table_name == "people":
                 info     = self.get_info_people( table_id  )
 
-            if   table_name == "plant":
+            elif   table_name == "plant":
                 info     = self.get_info_plant( table_id  )
-                #self.add_to_model_display( id_value, table_name, table_id, info )
 
             else:
+                info    = "error info tbd"
 
-                info    = "info tbd"
             self.add_to_model_display( id_value, table_name, table_id, info )
 
-                # msg     = ( f"need subject processing for {table_name = }")
-                # AppGlobal.logger.info( msg )
-                # print( msg )
-                # pass
+            # msg     = ( f"need subject processing for {table_name = }")
 
             self.model_indexer.refresh_index()
+
             self.populate_model_other()
 
     # ------------------------------------------
@@ -2801,6 +2768,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
     # -----------------------
     def update_dbpromotedfornow( self,    ):
         """
+        in promoted version done on self.model
         for debugging
 
         do not need key generation on new
@@ -3005,16 +2973,19 @@ class PictureAlbumtSubTab(  QWidget  ):
         what it says, read
         """
         page            = self
-        tab             = page
+        tabxx             = page
 
-        layout                     = QVBoxLayout( tab )
+        layout                     = QVBoxLayout( page )
         button_layout              = QHBoxLayout()
 
         layout.addLayout( button_layout )
 
         view                 = QTableView()
         self.view            = view
+
         view.setModel( self.model )
+        # chat says last
+        self.set_headers()
 
         layout.addWidget( view )
 
@@ -3093,11 +3064,77 @@ class PictureAlbumtSubTab(  QWidget  ):
         """
         print( "i_am_hsw")
 
+    # ------------------------
+    def set_headers( self ):
+        """
+        what it says, read
+CREATE TABLE  photoshow    (
+     id  INTEGER,
+     id_old  VARCHAR(15),
+     name  VARCHAR(50),
+     cmnt  VARCHAR(100),
+     add_kw  VARCHAR(50),
+     start_date  INTEGER,
+     end_date  INTEGER,
+     create_date  INTEGER,
+     type  VARCHAR(20),
+     web_site_dir  VARCHAR(240)
+
+
+
+
+        """
+        model   = self.model
+        view    = self.view
+
+        ix_col  = 0
+        model.setHeaderData( ix_col, Qt.Horizontal , "ID")    #  Qt.Horizontal (for column headers) or Qt.Vertical
+        view.setColumnWidth( ix_col, 50  )
+
+        ix_col  = 1
+        model.setHeaderData( ix_col, Qt.Horizontal , "Old ID")
+        view.setColumnWidth( ix_col, 50  )
+
+        ix_col  += 1
+        model.setHeaderData( ix_col, Qt.Horizontal , "Name")
+        view.setColumnWidth( ix_col, 250  )
+
+        ix_col  += 1
+        model.setHeaderData( ix_col, Qt.Horizontal , "Comment")
+        view.setColumnWidth( ix_col, 250  )
+
+
+        ix_col  += 1
+        model.setHeaderData( ix_col, Qt.Horizontal , "Add KW")
+        view.setColumnWidth( ix_col, 250  )
+
+        # ix_col  = 2
+        # model.setHeaderData( ix_col, Qt.Horizontal , "Photo Filename")
+        # view.setColumnWidth( ix_col, 200  )
+
+        # ix_col  = 3
+        # model.setHeaderData( ix_col, Qt.Horizontal , "Folder")
+        # view.setColumnWidth( ix_col, 100  )
+
+        # chat says last
+        #self.view.setModel( self.model )
+
+    # -----------------------
+    def update_db( self ):
+        """
+        not sure about this
+
+        """
+        pass   # may be werong ?? but lets it run
+
     # -----------------------
     def __str__( self ):
+        """
+        the ususl !! not implemented
 
+        """
         a_str   = ""
-        a_str   = ">>>>>>>>>>* xxx *<<<<<<<<<<<<"
+        a_str   = ">>>>>>>>>>* PictureAlbumtSubTab *<<<<<<<<<<<<"
 
         return a_str
 

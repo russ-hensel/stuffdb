@@ -7,7 +7,7 @@ from:
 /mnt/WIN_D/Russ/0000/python00/python3/_examples/python_book_code/book_pyqt5_src/basic/widgets_list.py
   widgets_list.py
 
-KEY_WORDS:      comboBox sync ddl syncronized list custom  zzz
+KEY_WORDS:      comboBox sync ddl syncronized list custom
 CLASS_NAME:     ComboSyncTab
 WIDGETS:        ComboSync3  ComboSync2
 STATUS:         runs_correctly_5_10      demo_complete_2_10   !! review_key_words   !! review_help_0_10

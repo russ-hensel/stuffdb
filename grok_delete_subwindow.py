@@ -40,8 +40,10 @@ Now given the action how do i delete the action from the menu?
 
 grok
 
-from PyQt5.QtWidgets import QMainWindow, QMenuBar, QAction, QApplication
 import sys
+
+from PyQt5.QtWidgets import QAction, QApplication, QMainWindow, QMenuBar
+
 
 class MainWindow(QMainWindow):
     def __init__(self):

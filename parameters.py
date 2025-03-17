@@ -53,7 +53,10 @@ class Parameters( ):
             run, perhaps not in the way you want
         """
         #self.mode_new_db()
+        self.mode_github()
         self.mode_python_ex_on_theprof()
+
+        #self.mode_builddb_on_theprof()
 
         #self.mode_russ_on_theprof()
         #self.mode_helpdb_on_theprof()
@@ -75,6 +78,35 @@ class Parameters( ):
         # --- add on for testing, use as desired edit mode for your needs
         #self.plus_test_mode()
 
+
+    # -------
+    def new_user_mode( self ):
+        """
+        a mode for the new user, pretty much empty,
+        a new user may experiment here.
+        """
+        self.mode               = "mode new_user"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support sqllite
+        self.db_file_name       = "./data/python_ex.db"
+
+    # -------
+    def mode_github( self ):
+        """
+        test if will run in github, will probably be a lot like new user
+        """
+        self.mode               = "mode_github"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support sqllite
+
+        self.db_file_name       = "./data/new.db"   #  = "sample.db"   =  ":memory:"
+        self.db_file_name       = "./data/python_ex.db"
+
+        self.logging_level      = logging.DEBUG   # ERROR
 
     # ---- ---->> Methods:  one for each mode
     # -------
@@ -153,7 +185,33 @@ class Parameters( ):
 
         self.logging_level      = logging.ERROR   # ERROR
 
+    # -------
+    def mode_builddb_on_theprof( self ):
+        """
+        use with full path to db so code from sub dirs will work
+        """
+        self.mode               = "mode_builddb_on_theprof"
 
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/test_delete"
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support sqllite
+
+        self.db_file_name       = "./data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
+        #self.db_file_name       = "./data/python_ex.db"
+        #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
+
+        self.logging_level          = logging.INFO
+        self.logging_level          = logging.DEBUG
 
     # -------
     def mode_helpdb_on_theprof( self ):
@@ -202,7 +260,7 @@ class Parameters( ):
         later will export data then reimport and
         perhaps rekey
         """
-        self.mode               = "mode_helpdb_on_theprof"
+        self.mode               = "mode_python_ex_on_theprof"
         # but do they use the same units ?
         # self.qt_width           = 1200
         # self.qt_height          = 700    # 700 most of win height
@@ -229,8 +287,9 @@ class Parameters( ):
         self.db_file_name       = "./data_help_db/helpdb.db"
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
         #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
-        self.db_file_name       = "./data/python_ex.db"
-        # self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
+        #self.db_file_name       = "./data/python_ex.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
+        #                          /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
 
     # -------
     def mode_russ_on_theprof( self ):
@@ -294,22 +353,23 @@ class Parameters( ):
         # ---- file  and path names
         self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
 
-
         self.picture_db_sub     = "/test_delete"
         self.picture_db_sub     = "/99/new_test"
 
         self.db_file_name              = "./data/appdb.db"
         self.db_file_name              = "./data/sept_35.db"
 
-
-
     # -------
-    def new_user_mode( self ):
+    def mode_test_addon_ram_disk_db( self ):
         """
-        a mode for the new user, pretty much empty,
-        a new user may experiment here.
+        what it says
         """
-        self.mode               = "mode new_user"
+        self.mode               += " + mode_test_addon_in_memory_db"
+
+        self.db_type                = "QSQLITE"
+        self.db_file_name      = "/tmp/ramdisk/ramdisk.db"
+
+
 
     # -------
     def running_on_tweaks(self,  ):
@@ -321,7 +381,7 @@ class Parameters( ):
             version of os_tweaks and computer name tweaks which
         may replace them
         this is computer name tweaks code,
-            !! find run_on on which uses os or put computer name under this
+
         """
         self.os_tweaks()
 
@@ -390,56 +450,6 @@ class Parameters( ):
             else:
                 self.ex_editor          =  r"leafpad"    # Linux raspberry pi maybe
 
-    # -------
-    def os_tweaks( self ):
-        """
-        this is an subroutine to tweak the default settings of "default_mode"
-        for particular operating systems
-        you may need to mess with this based on your os setup
-        """
-        if  self.os_win:
-            self.icon               = r"./images/clipboard_b.ico"
-                #  very dark greenhouse this has issues on rasPi
-            self.icon               = r"./images/clipboard_b_red_GGV_icon.ico"
-                #  looks same as clipboard_b_red_gimp.ico
-            self.icon               = r"./images/clipboard_b_red_gimp.ico"    # pretty visible -- make black version -- cannot get gimp to do it
-
-        else:
-            pass
-            #self.gui_style          = "linux"
-
-
-    # -------
-    def __init__( self, ):
-        """
-        Init for instance, usually not modified, except perhaps debug stuff
-        ( if any )... but use plus_test_mode()
-        may be down in listing because it should not be messed with.
-        """
-        AppGlobal.parameters       = self   # register as a global -- phase out
-        self.mode_default()
-        self.running_on_tweaks()
-        self.choose_mode()
-
-        msg     = ( "--------------- PARAMETERS FILE -------------------", __file__ )
-        logging.debug( msg )
-
-        self.parameter_dir   = str( Path( __file__ ).parent )
-        msg     = ( f"parameter_file_from {self.parameter_dir = }")
-        logging.debug( msg )
-
-        # next lets you use  parameters.PARAMETERS as a global
-        global PARAMETERS
-        if not PARAMETERS:
-            msg     = ( "creating global parameters.PARAMETERS")
-            PARAMETERS    = self
-        else:
-            msg     = ( "__init__ probably an error unless a restart")
-            PARAMETERS    = self
-            # 1/0
-        logging.debug( msg )
-
-        #rint( self ) # for debugging
 
     # ------->> default mode, always call
     def mode_default( self ):
@@ -448,19 +458,22 @@ class Parameters( ):
         documents the meaning of the modes
         call first, then override as necessary
         good chance these settings will at least let the app run
+
+        Generally this mode should only be changed by developers
         """
-        self.mode              = "default"
+        self.mode              = "mode_default"
             # name your config, it will show in app title
             # may be changed later in parameter init
 
         #--------------- automatic settings -----------------
+        #---- running_on gathers information about you computer environment
         self.running_on   = running_on.RunningOn
         self.running_on.gather_data()
 
         # some of the next all?? should be moved over to RunningOn
         self.running_on.log_me( logger = None, logger_level = 10, print_flag = False )
 
-        # this is the path to the main.py program
+        # this is the path to the main.py program --
         self.py_path                   = self.running_on.py_path
 
         self.set_default_path_here     = True
@@ -511,41 +524,41 @@ class Parameters( ):
         self.icon               =  "./misc/binocular.png"
         self.icon               =  "./misc/iconfinder_database_103466.png"
         self.icon               =  "./misc/db_red_on_yellow.png"
-        #self.icon               =  "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/misc/db_red_on_yellow.png"
+
 
         self.text_edit_font     = ("Arial", 12)
 
         # ---- logging
-        self.pylogging_fn           = "./logs/app.py_log"   # file name for the python logging
+        self.pylogging_fn           = "./logs/app.py_log"
+            # file name for the python logging
+
+        # next two seem redundant
         self.log_mode               = "w"    # "a" append "w" truncate and write
         self.delete_log_on_start    = True
+            # if True you get a new log file everytime the program starts
+
         self.logging_level          = logging.DEBUG         # may be very verbose
         self.logging_level          = logging.INFO
         self.logging_level          = logging.DEBUG
             # logging level used by app logger
 
-        self.logger_id              = "stuffdb"         # id of app in logging file
+        self.logger_id              = "stuffdb"
+            # id of app in logging file
 
-        self.gui_text_log_fn        = None   # for edit window if None then no logging
-        self.gui_text_log_fn        = "./logs/gui_log.log"
-
-        self.log_gui_text           = False # this is for gui_ext message area
-                                             # goes to normal log file  not special one
-
-        # ---- file  and path names
+        # ---- file  and path names more
         self.picture_browse         = "/mnt/WIN_D/PhotosRaw/2024/pixel4a/july4"
-            # browsing starts from here
+            # browsing starts from here see PictureDocument
 
-        # picture to use when not found
+        # picture to use when a valid picture is not found or does not exist
         self.pic_nf_file_name       = "./misc/404.png"
 
         self.picture_db_root        = "/mnt/WIN_D/PhotoDB/"
-            # all pictures should be under this directory
+            # all pictures once in the db should be under this directory
 
         self.picture_db_sub         = "/test_delete"
-            # subdir for above
+            # subdir for above used when adding new pictures
 
-        # ---- type and location of the db file
+        # ---- .... db type and location of the db file
         self.db_type                = "QSQLITE"
             # the type of database, so far we only support sqllite
 
@@ -564,17 +577,17 @@ class Parameters( ):
         # to be used in opening an external editor
         self.ex_editor         =  r"D:\apps\Notepad++\notepad++.exe"    # russ win 10
         self.text_editor       = "gedit"
-
+        self.text_editor_list  = [ "xed", "gedit" ]
 
         # control button for editing the readme file
         self.readme_fn          = "readme_rsh.txt"   # or None to suppress in gui
             # a readme file accessible from the main menu
 
-
         # or anything else ( will try to shell out may or may not work )
         self.help_fn       =  "./docs/help.txt"   #  >>. this is the path to our main .py file self.py_path + "/" +
         self.help_path     =  "./docs"
 
+        self.idle_venv     = "py_12_misc"   # idle will open in this python venv
             # path leading to all docs and help
 
         #self.help_file       =  "http://www.opencircuits.com/Python_Smart_ClipBoard"
@@ -584,9 +597,9 @@ class Parameters( ):
             # how often we poll for clip changes, in ms,
             # think my computer works well as low as 10ms
 
-        self.auto_run           = True  # run code examples
+        self.auto_run           = True  # run code examples -- !! what but needed
 
-        # ---- templates  a bit odd to control left margin
+        # ---- templates  a bit odd to control left margin -- !! change to textwrap
         self.text_templates     = {}
         template_name           = "Python"
         template_text           = (
@@ -594,6 +607,8 @@ class Parameters( ):
 >>Py a_python_template
 
 print( f"a_python_template { 0 = }" )
+
+>>end -----------------
 """ )
         self.text_templates[template_name] = template_text
 
@@ -623,9 +638,7 @@ print( f"bash a_shell_template still needs writing { 0 = }"
 """  )
         self.text_templates[template_name] = template_text
 
-
-
-        # ---- shell
+        # ---- .... shell template
         template_name          = "Shell"
         template_text          = (
 """
@@ -635,16 +648,67 @@ print( f"bash a_shell_template still needs writing { 0 = }"
 
         # ---- systems for helpdb ??alpha
         self.systems_list      =  [    '',
-                        'Python',
-                        'StuffDB',
-                        'Powerbuilder',
-                        'RshPy',              # subsystem the project
                         'Bash',
+                        'Delete',
                         'Linux',
+                        'Powerbuilder',
+                        'Python',
+                        'RasPi',
+                        'RshPy',              # subsystem the project
                         'Russ',
-                        "Delete",
-                        "RasPi",
-                        'TBD',  ]
+                        'StuffDB',
+                        'TBD',
+                        ]
+
+    # -------
+    def __init__( self, ):
+        """
+        Init for instance, usually not modified, except perhaps debug stuff
+        ( if any )... but use plus_test_mode()
+        may be down in listing because it should not be messed with.
+        """
+        AppGlobal.parameters       = self   # register as a global -- phase out
+        self.mode_default()
+        self.running_on_tweaks()
+        self.choose_mode()
+
+        msg     = ( "--------------- PARAMETERS FILE -------------------", __file__ )
+        logging.debug( msg )
+
+        self.parameter_dir   = str( Path( __file__ ).parent )
+        msg     = ( f"parameter_file_from {self.parameter_dir = }")
+        logging.debug( msg )
+
+        # next lets you use  parameters.PARAMETERS as a global
+        global PARAMETERS
+        if not PARAMETERS:
+            msg     = ( "creating global parameters.PARAMETERS")
+            PARAMETERS    = self
+        else:
+            msg     = ( "__init__ probably an error unless a restart")
+            PARAMETERS    = self
+            # 1/0
+        logging.debug( msg )
+
+        #rint( self ) # for debugging
+
+    # -------
+    def os_tweaks( self ):
+        """
+        this is an subroutine to tweak the default settings of "default_mode"
+        for particular operating systems
+        you may need to mess with this based on your os setup
+        """
+        if  self.os_win:
+            self.icon               = r"./images/clipboard_b.ico"
+                #  very dark greenhouse this has issues on rasPi
+            self.icon               = r"./images/clipboard_b_red_GGV_icon.ico"
+                #  looks same as clipboard_b_red_gimp.ico
+            self.icon               = r"./images/clipboard_b_red_gimp.ico"    # pretty visible -- make black version -- cannot get gimp to do it
+
+        else:
+            pass
+            #self.gui_style          = "linux"
 
 
     # ---------------------
@@ -677,7 +741,6 @@ print( f"bash a_shell_template still needs writing { 0 = }"
         a_str   = string_util.to_columns( a_str, ["db_type",
                                            f"{self.db_type}" ] )
 
-
         a_str   = string_util.to_columns( a_str, ["logger_id", f"{self.logger_id}" ] )
         a_str   = string_util.to_columns( a_str, ["logging_level", f"{self.logging_level}" ] )
         a_str   = string_util.to_columns( a_str, ["pylogging_fn",    f"{self.pylogging_fn}" ] )
@@ -690,7 +753,7 @@ print( f"bash a_shell_template still needs writing { 0 = }"
                                                   f"{self.delete_log_on_start}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["gui_text_log_fn", f"{self.gui_text_log_fn}" ] )
+        # a_str   = string_util.to_columns( a_str, ["gui_text_log_fn", f"{self.gui_text_log_fn}" ] )
 
         a_str   = string_util.to_columns( a_str, ["readme_fn", f"{self.readme_fn}" ] )
        # a_str   = string_util.to_columns( a_str, ["help_file",    f"{self.help_file}" ] )
@@ -716,8 +779,8 @@ print( f"bash a_shell_template still needs writing { 0 = }"
         a_str   = string_util.to_columns( a_str, ["help_path",
                                            f"{self.help_path}" ] )
 
-        a_str   = string_util.to_columns( a_str, ["log_gui_text",
-                                           f"{self.log_gui_text}" ] )
+        # a_str   = string_util.to_columns( a_str, ["log_gui_text",
+        #                                    f"{self.log_gui_text}" ] )
         a_str   = string_util.to_columns( a_str, ["opening_dir",
                                            f"{self.opening_dir}" ] )
         a_str   = string_util.to_columns( a_str, ["os_win",

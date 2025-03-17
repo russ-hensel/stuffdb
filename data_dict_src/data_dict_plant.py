@@ -14,7 +14,6 @@ def build_it( a_data_dict ):
 
 
     """
-
     # ---- plant ---------------------------------------------
     a_table_dict   = data_dict.TableDict( "plant" )
     a_data_dict.add_table ( a_table_dict )
@@ -25,7 +24,13 @@ def build_it( a_data_dict ):
                                              display_order  =  0,
                                              display_type   = "integer",
                                              max_len        = None,
-                                             default_func= None,   )
+                                             default_func   = None,
+                                             col_head_text      = "ID",
+                                             col_head_width     = 10,
+                                             col_head_order     = 0,
+                                             form_col_span      = 1,
+                                             form_read_only     = True, )
+
     a_table_dict.add_column( a_column_dict )
 
     # ---- id_old
@@ -34,7 +39,12 @@ def build_it( a_data_dict ):
                                              display_type   = "string",
                                              display_order  =  4,
                                              max_len        = None,
-                                             default_func= None,   )
+                                             default_func= None,
+                                             col_head_text      = "ID Old",
+                                             col_head_width     = 10,
+                                             col_head_order     = 1,
+                                             form_col_span      = 1,
+                                             form_read_only     = True, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- name
@@ -44,10 +54,13 @@ def build_it( a_data_dict ):
                                              display_order  =  10,
                                              max_len        = None,
                                              default_func   = None,
+                                             is_keep_prior_enabled  = True,
+
                                              is_key_word    = True,
                                              col_head_text      = "Name",
-                                             col_head_width     = 25,
-                                             col_head_order     = 10, )
+                                             col_head_width     = 40,
+                                             col_head_order     = 10,
+                                             form_col_span      = 4,)
     a_table_dict.add_column( a_column_dict )
 
     # ---- latin_name
@@ -58,9 +71,11 @@ def build_it( a_data_dict ):
                                              max_len        = None,
                                              default_func   = None,
                                              is_key_word    = True,
+                                             is_keep_prior_enabled  = True,
                                              col_head_text      = "Latin",
-                                             col_head_width     = 20,
-                                             col_head_order     = 10, )
+                                             col_head_width     = 40,
+                                             col_head_order     = 10,
+                                             form_col_span      = 4,)
 
     a_table_dict.add_column( a_column_dict )
 
@@ -71,10 +86,11 @@ def build_it( a_data_dict ):
                                              display_order  = 30,
                                              max_len        = None,
                                              default_func   = None,
-                                             is_key_word    = True,
-                                             col_head_text      = "Key Words",
-                                             col_head_width     = 20,
-                                             col_head_order     = 50, )
+                                             is_key_word            = True,
+                                             is_keep_prior_enabled  = True,
+                                             col_head_text          = "Key Words",
+                                             col_head_width         = 40,
+                                             col_head_order         = 50, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- descr

@@ -37,6 +37,16 @@ from subprocess import Popen
 import os_call
 import psutil
 
+# may not be using next
+try:
+    import parameters
+    PARAMETERS = parameters.PARAMETERS
+
+except Exception as an_except:
+
+    PARAMETERS = None
+
+
 
 # ---- begin functions
 # ----------------------------------------------

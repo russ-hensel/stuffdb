@@ -17,7 +17,7 @@ if __name__ == "__main__":
 #import collections
 import functools
 import logging
-import pprint
+#import pprint
 #import sqlite3
 import time
 from functools import partial
@@ -27,14 +27,9 @@ import gui_qt_ext
 import string_util
 import text_edit_ext
 from app_global import AppGlobal
-import parameters
-
-
-# ---- QtCore
-from PyQt5.QtGui  import QFont
-from PyQt5.QtWidgets import QSpacerItem, QSizePolicy
 from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import QIntValidator, QStandardItem, QStandardItemModel
+# ---- Qt
+from PyQt5.QtGui import QFont, QIntValidator, QStandardItem, QStandardItemModel
 # ---- QtSql
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 from PyQt5.QtWidgets import (QAction,
@@ -59,6 +54,8 @@ from PyQt5.QtWidgets import (QAction,
                              QMenu,
                              QMessageBox,
                              QPushButton,
+                             QSizePolicy,
+                             QSpacerItem,
                              QSpinBox,
                              QTableView,
                              QTableWidget,
@@ -73,15 +70,19 @@ from PyQt5.QtWidgets import (QAction,
 import base_document_tabs
 import custom_widgets
 import data_manager
+import example_code  # against code in tex
 #import  ia_qt
 import key_words
+import parameters
 import qt_sql_query
-
-import example_code
-
 
 # move to parameters
 SYSTEM_LIST     = parameters.PARAMETERS.systems_list
+
+
+
+logger          = logging.getLogger( )
+
 
 LOG_LEVEL  = 5   # higher is more
 
@@ -97,12 +98,6 @@ class HelpDocument( base_document_tabs.DocumentBase ):
         the usual
         """
         super().__init__()
-
-        # mdi_area                = AppGlobal.main_window.mdi_area
-        #     #we could return the subwindow for parent to addS
-        # sub_window              = self
-        #     # sub_window.setWindowTitle( "this title may be replaced " )
-        # self.db                 = AppGlobal.qsql_db_access.db
 
         self.detail_table_name  = "help_info"
         self.text_table_name    = "help_text"  # text tables always id and text_data
@@ -156,6 +151,7 @@ class HelpDocument( base_document_tabs.DocumentBase ):
     #-------------------------------------
     def default_new_row( self ):
         """
+        perhaps promote !! need to look around help may be special
         defaults values for a new row in the detail and the
         text tabs
 
@@ -192,7 +188,7 @@ class HelpDocument( base_document_tabs.DocumentBase ):
         """
         row                 = index.row()
         column              = index.column()
-        print( f"Clicked on row {row}, column {column}, value tbd" ) # " value: {value}" )
+        #rint( f"Clicked on row {row}, column {column}, value tbd" ) # " value: {value}" )
 
     # ---- sub window interactions ---------------------------------------
      # ------------------------------------------
@@ -203,69 +199,6 @@ class HelpDocument( base_document_tabs.DocumentBase ):
         """
         self.criteria_tab.criteria_select()
 
-        return
-
-
-    # -----------------------------------
-    def add_row_historyxxxxxxx( self, index ):
-        """
-        pretty much from chat
-
-        def add_row_to_tab2(self, index):
-        # Get the data from the selected row
-        id_data = self.model1.data(self.model1.index(index.row(), 0))
-        name_data = self.model1.data(self.model1.index(index.row(), 2))
-
-        # Create items for the second model
-        id_item = QStandardItem(str(id_data))
-        name_item = QStandardItem(name_data)
-
-        # Add a new row to the second model
-        self.history_model.appendRow([id_item, name_item])
-
-        """
-        return
-
-
-        # Get the data from the selected row
-        detail_model    = self.detail_tab.tab_model
-        history_model   = self.history_tab.history_model
-
-        id_data         = detail_model.data( detail_model.index( index.row(), 0))
-        name_data       = detail_model.data( detail_model.index( index.row(), 2))
-        print( f"in add_row_history {id_data = }   {name_data = }")
-        # Create items for the second model
-        id_item     = QStandardItem( str(id_data) )
-        name_item   = QStandardItem( name_data )
-
-        # Add a new row to the second model
-        history_model.appendRow([id_item, name_item])
-
-    # ------------------------------------------
-    def on_history_clicked( self, index: QModelIndex ):
-        """
-        !! finish me --- can i be promoted
-        Args:
-            index (QModelIndex): DESCRIPTION.
-
-        !! promote the whole thing?? need key to be id col 0 seems ok
-        might be functioalize if we use an argument for self.list.tab
-        """
-        print( f"on_history_clicked  save first if necessary")
-        row                     = index.row()
-        column                  = index.column()
-
-        self.list_tab.list_ix   = row
-
-        id_index                = self.history_tab.history_model.index( index.row( ), 0 )
-        db_key                  = self.history_tab.history_model.data( id_index, Qt.DisplayRole )
-        print( f"on_history_clicked Clicked on list row {row}, column {column}, {db_key = }" ) # " value: {value}" )
-
-        self.fetch_row_by_id( db_key )
-
-        # set tab
-        self.main_notebook.setCurrentIndex( self.detail_tab_index )
-        self.detail_tab.id_field.setText( str( db_key )  ) # fetch currently does not include the id
 
     # -----------------------
     def __str__( self ):
@@ -290,7 +223,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         super().__init__( parent_window )
         self.tab_name               = "HelpCriteriaTab"
 
-
     # ------------------------------------------
     def _build_tab( self,   ):
         """
@@ -298,7 +230,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         put page into the notebook
         """
         page            = self
-        tab             = page
 
         placer          = gui_qt_ext.PlaceInGrid(
             central_widget  = page,
@@ -325,8 +256,8 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         placer.new_row()
         placer.place( widget )
 
-        #widget                  = QLineEdit()
-        widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
+        widget                  = custom_widgets.CQLineEditCriteria(
+                                   get_type = "string", set_type = "string")
         self.key_words_widget   = widget
         widget.critera_name     = "id_old"
         self.critera_widget_list.append( widget )
@@ -338,7 +269,8 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget  = QLabel( "Key Words" )
         placer.place( widget )
 
-        widget                    = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
+        widget                    = custom_widgets.CQLineEditCriteria(
+                                      get_type = "string", set_type = "string")
         self.key_words_widget     = widget
         widget.setPlaceholderText( "key_words"  )
         widget.critera_name       = "key_words"
@@ -374,7 +306,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget.addItems( SYSTEM_LIST )
         # widget.addItem( '' )
 
-
         widget.setCurrentIndex( 0 )
 
         # ---- Order by
@@ -382,7 +313,8 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget  = QLabel( "Order by" )
         placer.place( widget )
 
-        widget                 = custom_widgets.CQComboBoxEditCriteria( get_type = "string", set_type = "string")
+        widget                 = custom_widgets.CQComboBoxEditCriteria(
+                                 get_type = "string", set_type = "string")
         self.order_by_widget   = widget
         self.critera_widget_list.append( widget )
         widget.critera_name    = "order_by"
@@ -426,8 +358,14 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         self.criteria_changed_widget  = widget
         placer.place( widget )
 
+        # ---- push up on page still needs adjust
+        widget   = QSpacerItem( 350, 310, QSizePolicy.Expanding, QSizePolicy.Minimum )
+        placer.new_row()
+        # placer.place( widget )
+        placer.layout.addItem( widget, placer.ix_row, placer.ix_col    )  # row column
+
     # -------------
-    def criteria_select( self,     ):
+    def criteria_select( self, ):
         """
         moved down from document
         uses info in criteria tab to build list in list tab
@@ -438,8 +376,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
             use fully qualified names in all sql
 
         """
-        print( "criteria_select in Help doc,  needs work add dates " )
-
         parent_document                 = self.parent_window
 
         help_document                   = self.parent_window
@@ -455,12 +391,11 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         query_builder                   = qt_sql_query.QueryBuilder( query, print_it = True  )
 
         kw_table_name                   = "help_key_words"
-        #column_list                     = [ "id",   "title", "system", "key_words"   ]
 
         # !! next is too much
         columns         = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
         #col_head_texts   = [ "seq" ]  # plus one for sequence
-        col_names       = [   ]
+        col_names       = [  ]
         #col_head_widths  = [ "10"  ]
         for i_column in columns:
             col_names.append(        i_column.column_name  )
@@ -505,7 +440,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         if key_word_count > 0:
             query_builder.group_by_c_list   = column_list
             query_builder.sql_inner_join    = " help_key_word  ON help_info.id = help_key_word.id "
-            query_builder.sql_having        = f" count(*) = {key_word_count} "
+            query_builder.sql_having        = f" count(*) >= {key_word_count} "    # >+ for key word errors
 
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )
 
@@ -564,7 +499,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         query_builder.prepare_and_bind()
 
-        msg      = f"{query_builder = }"
+        debug_msg      = f"{query_builder = }"
         logging.log( LOG_LEVEL,  debug_msg, )
 
         is_ok   = AppGlobal.qsql_db_access.query_exec_model( query,
@@ -587,8 +522,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
             set value of key words with criteria
                 self.key_words_widget
             run criteria select
-
-
         """
         parent_window    = self.parent_window
         parent_window.update_db()
@@ -675,9 +608,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         # ---- post init
         self.post_init()
 
-        #self.text_edit_ext_obj
-
-
     #-------------------------------------
     def _build_gui( self ):
         """
@@ -701,11 +631,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         self.text_data_manager      = data_manager.DataManager( self.text_model )
         # next is a bit ass backwards
         self.pseodo_text_tab        = self.text_data_manager
-        #self.text_data_manager.next_key_function     = AppGlobal.key_gen.get_next_key
-                # a_key_gen               = key_gen.KeyGenerator( a_qsql_db_access.db  )  #  AppGlobal.qsql_db_access.db
-                # AppGlobal.key_gen       = a_key_gen.key_gen     # some_function( table_name )
-        # if self.key_word_table_name != "":
-        #     self.data_manager.enable_key_words(  self.key_word_table_name  )
+
 
         page            = self
         tab             = self
@@ -743,13 +669,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         detail_notebook           = QTabWidget()
         self.detail_notebook      = detail_notebook
 
-        # # ---- buttons
-        # button_layout = QHBoxLayout()
-
-        # # fetch_button = QPushButton("Fetch")
-        # # fetch_button.clicked.connect(self.fetch_detail_row)
-        # # button_layout.addWidget(fetch_button)
-
 
     #-------------------------------------
     def build_gui_layout( self ):
@@ -765,9 +684,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
     def build_gui_layout_stable( self ):
         """
         """
-
-
-
 
     #---------------------------------
     def _build_fields( self, layout ):
@@ -1083,7 +999,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
             widget   = QSpacerItem( 50, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
             layout.addItem( widget, 0, ix  )  # row column
 
-
         # ---- code_gen: TableDict.to_build_form 2025_02_01 for help_info -- begin table entries -----------------------
 
         # ---- id
@@ -1290,13 +1205,8 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         like to build gui on text tabs borrowed here
         in help_document, try to make copy over to base document text tab
         we may be able to make this a method in base see base document ??
-        """
-        # self.build_text_gui_stable()
-        self._build_text_gui_test( a_layout )
 
-    # -------------------------------------
-    def _build_text_gui_test( self, a_layout ):
-        """
+
         new since last back lets use boxes
         like to build gui on text tabs borrowed here
         in help_document, try to make copy over to base document text tab
@@ -1353,8 +1263,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         data_manager.add_field( widget, )
         button_layout.addWidget( widget, )
 
-
-
         label           = "Paste Clip"
         widget          = QPushButton( label )
         # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
@@ -1363,13 +1271,11 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         button_layout.addWidget( widget, )
 
         # ---- template may not even need in self
-
         print( "monkey_patch_here_please")
         ddl_widget, ddl_button_widget  = self.text_edit_ext_obj.build_up_template_widgets()
 
         button_layout.addWidget( ddl_widget  )
         button_layout.addWidget( ddl_button_widget  )
-
 
         # ---- copy line
         label           = "Copy\nLine"
@@ -1393,7 +1299,13 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         widget.clicked.connect( self.text_edit_ext_obj.paste_cache )
         button_layout.addWidget( widget, )
 
-
+        # ---- Paste Prior
+        label           = "Remove Lead/Trail"
+        widget          = QPushButton( label )
+        # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
+        # widget.clicked.connect( connect_to )
+        widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
+        button_layout.addWidget( widget, )
 
 
         # # ---- template may not even need in self
@@ -1441,7 +1353,8 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         # ---- >>
         label       = ">>"
         widget      = QPushButton( label )
-        connect_to  = functools.partial( text_edit_ext.cmd_exec, text_entry_widget )
+        #connect_to  = functools.partial( text_edit_ext_obj.cmd_exec, text_entry_widget )
+        connect_to  =   text_edit_ext_obj.cmd_exec
         widget.clicked.connect( connect_to )
         text_layout.addWidget ( widget,     )
 

@@ -50,7 +50,8 @@ def build_it( a_data_dict ):
                                    col_head_width     = 10,
                                    col_head_order     = 1,
                                    display_order      = 0,
-                                   form_col_span      = 1,  )
+                                   form_col_span      = 1,
+                                    form_read_only     = True, )
 
     a_table_dict.add_column( a_column_dict )
 
@@ -64,7 +65,8 @@ def build_it( a_data_dict ):
                                              default_func   = None,
                                              col_head_order  = 1,
                                              display_order      = 2,
-                                             form_col_span      = 1,  )
+                                             form_col_span      = 1,
+                                             form_read_only     = True, )
 
 
     a_table_dict.add_column( a_column_dict )

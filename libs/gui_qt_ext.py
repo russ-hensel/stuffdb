@@ -22,8 +22,6 @@ Various classes to extend qt5 functionality
      message frames
 
 
-
-
 master in rsh_lib, gui_qt_ext
 
 us sys path for development, then copy over file and edit for git hub
@@ -35,7 +33,7 @@ AppGlobal is needed to run this,
 look for links
         .parameters
         .logger
-
+gui_qt_ext.
 
 """
 # ---- tof
@@ -43,12 +41,7 @@ look for links
 
 # ---- imports
 
-# perhaps lazy import better  tk.
-#import tkinter as tk
-#from   tkinter.filedialog import askopenfilename
-#from   tkinter.filedialog import askdirectory
-#from   tkinter.messagebox import showinfo
-#import tkinter.ttk as ttk
+
 
 #import PyQt5.QtWidgets as qtw    #  qt widgets avaoid so much import below
 from   PyQt5.QtCore import Qt, QTimer
@@ -62,7 +55,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButto
 
 import sys
 import os
-# import pyperclip
+
 
 import string_util
 
@@ -71,7 +64,6 @@ from   app_global import AppGlobal
 # where app was started, or provide another in this dir
 # seems to work
 
-# STICKY_ALL          = tk.N + tk.S + tk.E + tk.W
 
 import logging
 
@@ -158,7 +150,7 @@ def about(  controller  ):
     message_box.exec_()
 
 #---------------------
-def make_root( parameters  ):
+def make_rootxxxxxxxx( parameters  ):
     """
     What it says, read code
     make a root window with support for themes
@@ -271,26 +263,9 @@ class FileBrowseWidget( QWidget ):
         return self.entry_1.text()
 
 
-# if __name__ == '__main__':
-#     app = QApplication(sys.argv)
-#     widget = FileBrowseWidget()
-#     widget.show()
-#     sys.exit(app.exec_())
-
-# if __name__ == '__main__':
-#     app = QApplication(sys.argv)
-#     widget = DirBrowseWidget()
-#     widget.show()
-#     sys.exit(app.exec_())
-
-
-
 
 class DirBrowseWidget(QWidget):
     """
-
-
-
 
 
     """
@@ -789,6 +764,7 @@ class ListboxScroll( ):
 class CQGridLayout( QGridLayout ) :
     """
     a custom grid layout from PlaceInGrid but this is a layout
+    gui_qt_ext.CQGridLayout( col_max = 10 )
     """
     def __init__( self,   *, col_max = 0, indent = 0   ):
         super().__init__(  )
@@ -799,22 +775,26 @@ class CQGridLayout( QGridLayout ) :
         # for debug
         self.last_ix_row  = None
         self.last_ix_col  = None
-        self.last_stretch = None
+        #self.last_stretch = None
         # or call reset
+        self.reset
 
     def reset( self,  *, col_max = 0, indent = 0   ):
         """
-        for debug may become more pearmanent """
-        self.col_max    = col_max  # 0 no max
-        self.ix_row     = 0
-        self.ix_col     = 0
-        self.indent     = indent  # an idea but what idea no implemented
+        for debug may become more pearmanent
+        grids my have enouth internal state that they should
+        not be reused
+        """
+        self.col_max        = col_max  # 0 no max
+        self.ix_row         = 0
+        self.ix_col         = 0
+        self.indent         = indent  # an idea but what idea no implemented
         # for debug
         self.last_ix_row  = None
         self.last_ix_col  = None
-        self.last_stretch = None
+        #self.last_stretch = None
 
-        print( "reset================>", self )
+        print( "CQGridLayout_reset================>", self )
 
     # -----------------------------------
     def addWidget( self,
@@ -824,14 +804,15 @@ class CQGridLayout( QGridLayout ) :
                *,
                columnspan   = 1,
                rowspan      = 1,
-               stretch      = None,
+               #stretch      = None,
                ):
         """
         to work like QLayouts but do ix_row, ix_col automatically
         this is preliminary
         layout.addWidget( widget, ix_row, ix_col, row_span, col_span )
 
-        rowspan not yet implementd
+        rowspan will be passed on but is not accounted for by
+        self.ix_row
 
 
         """

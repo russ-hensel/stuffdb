@@ -14,7 +14,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver 63: 2025 02 25.01"
+__version__   = "Ver 66: 2025 03 16.01"
 
 import datetime
 import inspect
@@ -26,7 +26,13 @@ import time
 # ---- imports
 import traceback
 
-
+import app_logging
+import data_dict
+#import   stuffdb_def
+import dict_main
+import text_edit_ext
+import wat_inspector
+from app_global import AppGlobal
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import (PYQT_VERSION_STR,
                           QT_VERSION_STR,
@@ -68,21 +74,12 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
-import parameters
 import key_gen
 #import   mdi_management
 import main_window
-
+import parameters
 import qsql_db_access
 import sql_util
-import app_logging
-import data_dict
-#import   stuffdb_def
-import dict_main
-import wat_inspector
-from app_global import AppGlobal
-import text_edit_ext
-
 
 # ---- end imports
 
@@ -145,7 +142,7 @@ class App( ):
         this process can be very quick -- much quicker than a cold start
         this code is also an extension of __init__
         """
-        print( "========= restart =================" )
+        print( "========= StuffDb restart =================" )
 
         self.q_app              = QApplication( []  )
         AppGlobal.q_app         = self.q_app
@@ -179,10 +176,10 @@ class App( ):
         AppGlobal.main_window   = self.main_window
         self.main_window.show()
 
-        print( f"{AppGlobal.logger = }")
+        #rint( f"{AppGlobal.logger = }")
 
         self.prog_info()
-        print( f"{AppGlobal.logger = }")
+        #rint( f"{AppGlobal.logger = }")
         AppGlobal.logger.debug( "self.q_app.exec_() next" )
         a_wat_inspector  = wat_inspector.WatInspector( self.q_app )
         # dialog       = wat_inspector.DisplayWat( self.q_app )
@@ -240,11 +237,6 @@ class App( ):
         my_logging   = app_logging.APP_LOGGING
         my_logging.os_open_log_file
         return
-
-        1/0
-        self.log_file_handler.flush()  # Manually flushing
-
-        AppGlobal.os_open_txt_file( self.parameters.pylogging_fn)
 
     # ----------------------------------------------
     def os_open_parmfile( self,  ):

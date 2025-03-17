@@ -6,7 +6,7 @@ Created on Sun Dec 15 12:41:16 2024
 """
 """
 
-KEY_WORDS:      some stuff rsh custom  edit with sql model for forms and fields zz
+KEY_WORDS:      some stuff rsh custom  edit with sql model for forms and fields
 CLASS_NAME:     CustomEditWidget_2Tab
 WIDGETS:        CQLineEdit CQDateEdit QSqlTableModel
 STATUS:         dev 2/10
@@ -103,6 +103,7 @@ import wat_inspector
 import custom_widgets
 import global_vars
 import info_about
+import tab_base
 
 FIF       = info_about.INFO_ABOUT.find_info_for
 
@@ -887,7 +888,7 @@ class CustomEditWidget_2Tab( QWidget ) :
              # inspect_me     = self.people_model,
              a_locals       = locals(),
              a_globals      = globals(), )
-
+        self.append_msg( tab_base.DONE_MSG )
     # ------------------------
     def breakpoint(self):
         """
@@ -895,6 +896,6 @@ class CustomEditWidget_2Tab( QWidget ) :
         """
         print_func_header( "breakpoint" )
         breakpoint()
-
+        self.append_msg( tab_base.DONE_MSG )
 
 # ---- eof

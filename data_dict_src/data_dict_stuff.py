@@ -35,7 +35,9 @@ def build_it( a_data_dict ):
                                              db_type        = "INTEGER",
                                              display_type   = "integer",
                                              max_len        = None,
-                                             default_func   = None,   )
+                                             default_func   = None,
+                                             form_col_span          = 1,
+                                             form_read_only         = True, )
 
     a_table_dict.add_column( a_column_dict )
 
@@ -44,7 +46,9 @@ def build_it( a_data_dict ):
                                              db_type        = "VARCHAR(15)",
                                              display_type   = "string",
                                              max_len        = None,
-                                             default_func   = None, )
+                                             default_func   = None,
+                                             form_col_span          = 1,
+                                             form_read_only         = True, )
 
     a_table_dict.add_column( a_column_dict )
 
@@ -436,6 +440,77 @@ def build_it( a_data_dict ):
     #print( a_data_dict )
 
 
+
+    # ---- stuff_event  ---------------------
+
+    a_table_dict   = data_dict.TableDict(  "stuff_event" )
+    a_data_dict.add_table ( a_table_dict )
+
+    # ---- "id",
+    a_column_dict = data_dict.ColumnDict( column_name  = "id",
+                                          db_type      = "VARCHAR(15)",
+                                          display_type = "string",
+                                          max_len        = None,
+                                          default_func   = None,
+                                         col_head_text      = "ID",
+                                             col_head_width     = 20,
+                                             col_head_order     = 2, )
+    a_table_dict.add_column( a_column_dict )
+
+    # ---- "stuff_id",
+    a_column_dict = data_dict.ColumnDict( column_name  = "stuff_id",
+                                          db_type      = "VARCHAR(15)",
+                                          display_type = "string",
+                                          max_len        = None,
+                                          default_func   = None,
+                                           col_head_text      = "Stuff ID",
+                                             col_head_width     = 20,
+                                             col_head_order     = 2, )
+    a_table_dict.add_column( a_column_dict )
+
+    # ---- "event_dt",
+    a_column_dict = data_dict.ColumnDict( column_name  = "event_dt",
+                                          db_type      = "INTEGER",
+                                          display_type = "string",
+                                          max_len        = None,
+                                          default_func   = None,
+                                           col_head_text      = "Date",
+                                             col_head_width     = 20,
+                                             col_head_order     = 2, )
+    a_table_dict.add_column( a_column_dict )
+
+    # ---- "dlr",
+    a_column_dict = data_dict.ColumnDict( column_name  = "dlr",
+                                          db_type      = "INTEGER",
+                                          display_type = "string",
+                                          max_len        = None,
+                                          default_func   = None,
+                                           col_head_text      = "$ Amount",
+                                             col_head_width     = 20,
+                                             col_head_order     = 2, )
+    a_table_dict.add_column( a_column_dict )
+
+    # ---- "cmnt",
+    a_column_dict = data_dict.ColumnDict( column_name  = "cmnt",
+                                          db_type      = "VARCHAR(150)",
+                                          display_type = "string",
+                                          max_len        = None,
+                                          default_func   = None,
+                                           col_head_text      = "Comment",
+                                             col_head_width     = 20,
+                                             col_head_order     = 2, )
+    a_table_dict.add_column( a_column_dict )
+
+    # ---- "type",
+    a_column_dict = data_dict.ColumnDict( column_name  = "type",
+                                          db_type      = "VARCHAR(15)",
+                                          display_type = "string",
+                                          max_len        = None,
+                                          default_func   = None,
+                                           col_head_text      = "Type",
+                                             col_head_width     = 20,
+                                             col_head_order     = 2, )
+    a_table_dict.add_column( a_column_dict )
 
 
 # # --------------------

@@ -17,16 +17,16 @@ if __name__ == "__main__":
 # --------------------
 
 import functools
+import logging
 #import sqlite3
 import time
 import traceback
-import logging
+
 import data_dict
 import gui_qt_ext
 import string_util
 import wat_inspector
 from app_global import AppGlobal
-# ---- Qt
 from PyQt5.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, pyqtSlot
 from PyQt5.QtGui import (QIcon,
                          QIntValidator,
@@ -45,6 +45,7 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
+# ---- Qt
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
                              QApplication,
@@ -71,6 +72,8 @@ from PyQt5.QtWidgets import (QAction,
                              QMenu,
                              QMessageBox,
                              QPushButton,
+                             QSizePolicy,
+                             QSpacerItem,
                              QSpinBox,
                              QTableView,
                              QTableWidget,
@@ -81,7 +84,6 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
-
 # ---- local imports
 import base_document_tabs
 import custom_widgets
@@ -89,13 +91,12 @@ import key_words
 import picture_viewer
 #import document_maker
 import qt_sql_query
-#import qt_with_logging
 
+#import qt_with_logging
 
 
 # ---- end imports
 LOG_LEVEL  = 10
-
 
 
 # ----------------------------------------
@@ -312,7 +313,6 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
             self.detail_table_name )
         self.detail_tab.default_new_row( next_key )
         self.text_tab.default_new_row(   next_key )
-
 
     # -------------------------------------
     def copy_prior_row( self ):
@@ -714,16 +714,23 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
         """
         page            = self
 
-        max_col         = 4
+        max_col         = 10
+        self.max_col    = max_col
 
         box_layout_1    =  QVBoxLayout( page )
 
-        placer          = gui_qt_ext.PlaceInGrid(
-                            central_widget  = box_layout_1,
-                            a_max           = max_col,
-                            by_rows         = False  )
+        # placer          = gui_qt_ext.PlaceInGrid(
+        #                     central_widget  = box_layout_1,
+        #                     a_max           = max_col,
+        #                     by_rows         = False  )
+
+        # tab_layout      = placer
+
+        placer          = gui_qt_ext.CQGridLayout( col_max = max_col )
 
         tab_layout      = placer
+        box_layout_1.addLayout( placer )
+
 
         # ----fields
         self._build_fields( placer )
@@ -777,6 +784,164 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
 
     #---------------------------------
     def _build_fields( self, layout ):
+        """
+        What it says, read
+            this is generated code, then tweaked.
+            tweaks are:
+                ---  spacers
+        """
+        width    = 10
+        for ix in range( self.max_col ):  # try to tweak size to make it work
+            widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
+            layout.addItem( widget, 0, ix  )  # row column
+
+        # max_col         = 10  and width = 10 seems good
+        # ---- code_gen: TableDict.to_build_form 2025_02_01 for photoshow -- begin table entries -----------------------
+
+        # ---- id
+        edit_field                  = custom_widgets.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "id",
+                                                db_type        = "integer",
+                                                display_type   = "string",
+                                                 )
+        self.id_field     = edit_field
+        edit_field.setReadOnly( True )
+        edit_field.setPlaceholderText( "id" )
+        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
+        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
+        # still validator / default func  None
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 1 )
+        edit_field.setReadOnly( True )
+
+        # ---- id_old
+        edit_field                  = custom_widgets.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "id_old",
+                                                db_type        = "string",
+                                                display_type   = "string",
+                                                 )
+        self.id_old_field     = edit_field
+        edit_field.setReadOnly( True )
+        edit_field.setPlaceholderText( "id_old" )
+        # still validator / default func  None
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 1 )
+        edit_field.setReadOnly( True )
+
+        # ---- name
+        edit_field                  = custom_widgets.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "name",
+                                                db_type        = "string",
+                                                display_type   = "string",
+                                                 )
+        self.name_field     = edit_field
+        edit_field.setPlaceholderText( "name" )
+        # still validator / default func  None
+        self.data_manager.add_field( edit_field, is_key_word = True )
+        layout.addWidget( edit_field, columnspan = 4 )
+
+        # ---- cmnt
+        edit_field                  = custom_widgets.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "cmnt",
+                                                db_type        = "string",
+                                                display_type   = "string",
+                                                 )
+        self.cmnt_field     = edit_field
+        edit_field.setPlaceholderText( "cmnt" )
+        # still validator / default func  None
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 4 )
+
+        # ---- add_kw
+        edit_field                  = custom_widgets.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "add_kw",
+                                                db_type        = "string",
+                                                display_type   = "string",
+                                                 )
+        self.add_kw_field     = edit_field
+        edit_field.setPlaceholderText( "add_kw" )
+        # still validator / default func  None
+        self.data_manager.add_field( edit_field, is_key_word = True )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- start_date
+        edit_field                  = custom_widgets.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "start_date",
+                                                db_type        = "integer",
+                                                display_type   = "timestamp",
+                                                 )
+        self.start_date_field     = edit_field
+        edit_field.setPlaceholderText( "start_date" )
+        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
+        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
+        # still validator / default func  None
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- end_date
+        edit_field                  = custom_widgets.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "end_date",
+                                                db_type        = "integer",
+                                                display_type   = "timestamp",
+                                                 )
+        self.end_date_field     = edit_field
+        edit_field.setPlaceholderText( "end_date" )
+        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
+        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
+        # still validator / default func  None
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- create_date
+        edit_field                  = custom_widgets.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "create_date",
+                                                db_type        = "integer",
+                                                display_type   = "timestamp",
+                                                 )
+        self.create_date_field     = edit_field
+        edit_field.setPlaceholderText( "create_date" )
+        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
+        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
+        # still validator / default func  None
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- type
+        edit_field                  = custom_widgets.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "type",
+                                                db_type        = "string",
+                                                display_type   = "string",
+                                                 )
+        self.type_field     = edit_field
+        edit_field.setPlaceholderText( "type" )
+        # still validator / default func  None
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- web_site_dir
+        edit_field                  = custom_widgets.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "web_site_dir",
+                                                db_type        = "string",
+                                                display_type   = "string",
+                                                 )
+        self.web_site_dir_field     = edit_field
+        edit_field.setPlaceholderText( "web_site_dir" )
+        # still validator / default func  None
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+    #---------------------------------
+    def _build_fields_bak_1( self, layout ):
         """
         What it says, read
             this is generated code, then tweaked.
@@ -926,7 +1091,7 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
 
 
     #---------------------------------
-    def _build_fields_old( self, layout ):
+    def _build_fields_bak_0( self, layout ):
         """
         What it says, read
             this is generated code, then tweaked.
@@ -1835,7 +2000,10 @@ class TestDetaiSubTab( base_document_tabs.DetailTabBase, ):
         !! could be promoted
         """
         id      = self.id_field.text()
-        print( f"Album text tab fetch_row { id=}")
+
+        debug_msg   = ( f"Album text tab fetch_detail_row { id= }")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
         self.fetch_detail_row_by_id( id )
 
     # -----------------------------
@@ -1923,7 +2091,8 @@ class TestDetaiSubTab( base_document_tabs.DetailTabBase, ):
         print( f"update_new_record  {self.record_state=}")
 
         if not self.record_state  == base_document_tabs.RECORD_NEW:
-            print( f"save_new_record bad state, return  {self.record_state=}")
+            debug_msg  = ( f"update_new_record bad state, return  {self.record_state=}")
+            logging.error( debug_msg )
             return
 
         model      = self.detail_text_model
@@ -1938,14 +2107,17 @@ class TestDetaiSubTab( base_document_tabs.DetailTabBase, ):
             self.record_state    = base_document_tabs.RECORD_FETCHED
             QMessageBox.information(self, "Save New", "New record saved!")
         else:
-            print( f"do not seem to have new id and text {new_id=} { new_text=}")
+            debug_msg   = ( f"do not seem to have new id and text {new_id=} { new_text=}")
+            logging.error( debug_msg )
 
     # ----------------------
     def update_record_fetched(self):
-        print( f"update_record_fetched  {self.record_state=}")
+        debug_msg  = ( f"update_record_fetched  {self.record_state=}")
+        logging.error( debug_msg )
 
         if not self.record_state  == base_document_tabs.RECORD_FETCHED:
-            print( f"update_record_fetched bad state, return  {self.record_state=}")
+            debug_msg    = ( f"update_record_fetched bad state, return  {self.record_state=}")
+            logging.error( debug_msg )
             return
 
         model      = self.detail_text_model
@@ -1967,7 +2139,9 @@ class TestDetaiSubTab( base_document_tabs.DetailTabBase, ):
         """
 
         """
-        print( "update text in album used? promoted??")
+        debug_msg  = ( "update text in album used? promoted??")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
         if self.record_state   == base_document_tabs.RECORD_NULL:
             print( "update_db record null no action, return ")
 
@@ -2120,6 +2294,49 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
 
         main_layout.addLayout( photo_layout )
 
+        model       = self.model
+        view        = self.view
+
+        ix_col      = 0
+        model.setHeaderData(  ix_col, Qt.Horizontal, "ID" )
+        view.setColumnWidth(  ix_col, 50)  # Set column 0 width to 100 pixels
+
+        ix_col      = 1
+        view.setColumnHidden( ix_col, True )  # might or might not change cloumn numbers -- beware in all of order of operations
+
+        ix_col      = 2
+        view.setColumnHidden( ix_col, True )
+
+
+        ix_col      = 3
+        model.setHeaderData(  ix_col, Qt.Horizontal, "Seq" )
+        view.setColumnWidth(  ix_col, 50)  # Set column 0 width to 100 pixels
+        # view.setColumnHidden( ix_col, True )  # might or might not change cloumn numbers -- beware in all of order of operations
+        ix_col      += 1
+        view.setColumnHidden( ix_col, True )
+
+        ix_col      += 1
+        model.setHeaderData(  ix_col, Qt.Horizontal, "Camera" )
+        view.setColumnWidth(  ix_col, 80)  # Set column 0 width to 100 pixels
+
+
+
+        ix_col      += 1
+        model.setHeaderData(  ix_col, Qt.Horizontal, "File" )
+        view.setColumnWidth(  ix_col, 180)  # Set column 0 width to 100 pixels
+
+        ix_col      += 1
+        model.setHeaderData(  ix_col, Qt.Horizontal, "Photo ID" )
+        view.setColumnWidth(  ix_col, 80)  # Set column 0 width to 100 pixels
+
+        ix_col      += 1
+        model.setHeaderData(  ix_col, Qt.Horizontal, "SubDir" )
+        view.setColumnWidth(  ix_col, 80)  # Set column 0 width to 100 pixels
+
+        ix_col      += 1
+        model.setHeaderData(  ix_col, Qt.Horizontal, "Name" )
+        view.setColumnWidth(  ix_col, 120)  # Set column 0 width to 100 pixels
+
         # ---- view   -- built with model here layout only
         # self.view           = QTableView()
         # self.view.setSelectionBehavior(QTableView.SelectRows)
@@ -2149,6 +2366,17 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
 
+        #
+        widget        = QPushButton( '!!Copy FN')
+        # connect_to     = functools.partial( self.prior_next, -1 )
+        # widget.clicked.connect( connect_to )
+        button_layout.addWidget( widget )
+
+        #
+        widget        = QPushButton( '!!Jump to Pic')
+        # connect_to     = functools.partial( self.prior_next, -1 )
+        # widget.clicked.connect( connect_to )
+        button_layout.addWidget( widget )
 
         # # Create buttons for CRUD operations
         # widget        = QPushButton('AddDlg')
@@ -2313,12 +2541,14 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
         what it says, read
         now just a table  !! promote me??
         """
-        print( f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>{index = }"   )  # the row?
+        debug_msg   = ( f">> _on_list_click {index = }"   )  # the row?
+        logging.debug( debug_msg )
 
         row                     = index.row()
         # column                  = index.column()
         debug_msg = ( f"PhotoshowDetailListTab_on_list_click {row = }  ")
         logging.debug( debug_msg )
+
         self.list_ix            = row
         self.prior_next( 0 )
 
@@ -2338,7 +2568,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
         self.edit_model.setSort(column_to_sort_by, sort_order)
 
         msg       = f"{self.edit_model.selectStatement()}"
-        print( msg )
+
         """
         self.album_id       = a_id    # change to album_id in all of this tab
         model               = self.model
@@ -2769,8 +2999,6 @@ https://stackoverflow.com/questions/tagged/qsqlrelationaltablemodel?tab=newest&p
 
 python - Updating a relational column in QSqlRelationalTableModel (PyQt6) - Stack Overflow
 https://stackoverflow.com/questions/72576673/updating-a-relational-column-in-qsqlrelationaltablemodel-pyqt6
-
-
 
         """
         model           = self.model

@@ -75,72 +75,13 @@ from PyQt5.QtWidgets import (
     QMdiSubWindow,
     )
 
-# # ----QtWidgets layouts
-# from PyQt5.QtWidgets import (
-#     QGridLayout,
-#     QVBoxLayout,
-#     QHBoxLayout,
-#     )
-
-# # ----QtWidgets Boxs, Dialogs
-# from PyQt5.QtWidgets import (
-#     QAction,
-#     QActionGroup,
-#     QDockWidget,
-#     QFileDialog,
-#     QInputDialog,
-
-#     QLabel,
-#     QListWidget,
-#     QMenu,
-#     QMessageBox,
-#     QPushButton,
-#     QSpinBox,
-#     QTextEdit,
-#     QVBoxLayout,
-#     QCheckBox,
-#     QComboBox,
-#     )
-
-# ---- QtSqlimport pprint
-# import sqlite3
-
-
-# # ---- Imports
-# import shutil
-# import os
-# import time
-# import stat
-# import os
-# #import datetime
-# from   datetime import datetime
-# from   pathlib import Path
-
-# from PyQt5.QtSql import (
-#     QSqlDatabase,
-#     QSqlTableModel,
-#     QSqlQuery
-#     )
-
 
 # import pprint
 # import sqlite3
 
 
 # # ---- Imports
-# import shutil
-# import os
-# import time
-# import stat
-# import os
-# #import datetime
-# from   datetime import datetime
-# from   pathlib import Path
-# import traceback
 
-# import ex_helpers
-# import ex_helpers  as ex_h
-#import db_create
 # import code_gen
 # import data_dict
 # import import_utils
@@ -648,6 +589,26 @@ def redo_help_files( db ):
     # update does not insert
     stuff_util_sql.update_table_key_gen( db,  "help_info", 8000   )
 
+    # ---- .... people
+    table_name      = "people"
+    #table_name      = "people_text"
+    #table_name      = "people_key_word"
+
+# -------------------------------
+def redo_people_tables( db ):
+    """
+    !! should be tables
+    rebuild the tables needed for help -- should be able to add after this
+    this does not create the key gen table do that first
+        and insert a key any key
+    """
+    table_list    = [ "people", "people_text", "people_key_word", ]
+    drop_tables(   db, table_list )
+    create_tables( db, table_list )   # only single tabe in     stuff_util_sql.
+    # update does not insert  stuff_util_sql.insert_key_gen( db, table_name   )
+    stuff_util_sql.insert_key_gen( db, "photoshow" )
+    stuff_util_sql.update_table_key_gen( db,  "people", 14000   )
+
 # -------------------------------
 def redo_photoshow_tables( db ):
     """
@@ -695,6 +656,27 @@ def redo_plant_tables( db ):
     # update does not insert  stuff_util_sql.insert_key_gen( db, table_name   )
     stuff_util_sql.insert_key_gen( db, "plant" )
     stuff_util_sql.update_table_key_gen( db,  "plant", 5000   )
+
+# -------------------------------
+def redo_planting_tables( db ):
+    """
+    rebuild the tables needed for planting -- should be able to add after this
+    this does not create the key gen table do that first
+        and insert a key any key
+    """
+    table_list    = [ "planting", "planting_text", "planting_key_word", ]
+    drop_tables(   db, table_list )
+    create_tables( db, table_list )   # only single tabe in     stuff_util_sql.
+    # update does not insert  stuff_util_sql.insert_key_gen( db, table_name   )
+    stuff_util_sql.insert_key_gen( db, "plant" )
+    stuff_util_sql.update_table_key_gen( db,  "plant", 15000   )
+
+    #table_name      = "planting"
+    #table_name      = "planting_text"
+    #table_name      = "planting_key_word"
+
+
+
 
 # -------------------------------
 def redo_stuff_tables( db ):
@@ -763,15 +745,19 @@ qsql_utils.APP      = app
 
 
 
-# ---- run command --- chedk parameters
+# ---- run command --- check parameters
 # make sure there is a key_gen table run form stuff_util
 #redo_help_files( DB_CONNECTION )
-redo_photoshow_tables( db )
+
+
+redo_people_tables( db )
+#redo_photoshow_tables( db )
 #redo_photo_tables( db )
+
+# redo_plant_tables( db )
+#redo_planting_tables( db )
+
 #redo_stuff_tables( db )
-#redo_plant_tables( db )
-
-
 # ---- clean up
 db.close()
 #print( "done")

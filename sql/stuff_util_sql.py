@@ -35,12 +35,13 @@ from PyQt5.QtWidgets import (
 
 
 
-# ---- QtSqlimport pprint
-# import sqlite3
-
-
-
+# ---- imports
 import parameters
+import qsql_utils
+import data_dict
+
+
+# ---- end imports
 
 temp  = parameters.Parameters()
 print( parameters.PARAMETERS )
@@ -48,14 +49,6 @@ print( parameters.PARAMETERS )
 
 App              = None
 DB_CONNECTION    = None
-
-# ---- imports
-import qsql_utils
-import data_dict
-
-
-
-# ---- end imports
 
 #------------
 def create_connection(   ):
@@ -86,11 +79,15 @@ def create_connection(   ):
 
     if not db.open():
         print(f"SampleDB Error: Unable to establish a database connection.{db_file_name}")
+        print(f"may need to change to an absolute path for the db for connect to work {1}")
         1/0
         return None
     return db
 
-# ---- =============================================
+    def  end_connection(   ):
+        global  DB_CONNECTION
+        DB_CONNECTION.close( )
+        DB_CONNECTION = None
 
 
 #--------------
@@ -625,11 +622,11 @@ def check_key_words_for_dups( db, table_name ):
             break
 
 
-
 # ====================================================================
 
 def  do_it():
-    # ---- run from here =====================================
+    # ---- run manuallually from here =====================================
+    global DB_CONNECTION
     create_connection()
     data_dict.build_it()
     app                 = QApplication( [] )
@@ -643,7 +640,20 @@ def  do_it():
 
     #table_name    = "key_gen"
 
+    # ---- .... people
+    table_name      = "people"
+    #table_name      = "people_text"
+    #table_name      = "people_key_word"
+    table_name      = "people_phone"
+
+    # ---- .... plant
     # table_name      = "plant"
+    # table_name      = "plant_text"
+    # table_name      = "plant_key_word"
+
+    #table_name      = "planting"
+    #table_name      = "planting_text"
+    #table_name      = "planting_key_word"
 
     # table_name      = "people"
     # table_name      = "people_text"
@@ -661,10 +671,12 @@ def  do_it():
     #table_name      = "photoshow"
     #table_name      = "photoshow_key_word"
     # table_name      = "photo_text"     # not yet
+    #table_name      = "photo_subject"
+    #table_name      = "photo_in_show"
 
     #table_name      = "stuff"
-    table_name      = "stuff_key_word"
-
+    #table_name      = "stuff_key_word"
+    # table_name      = "stuff_event"
     #table_name      = "xxx"
 
     # ---- run command
@@ -673,7 +685,7 @@ def  do_it():
     # drop_table(   DB_CONNECTION, table_name = table_name )
     # create_table( DB_CONNECTION, table_name = table_name )
 
-
+    print( "some stuff move to chekc and fix ")
 
     #test_query( DB_CONNECTION, table_name = table_name )
     #print_missing_text( DB_CONNECTION, table_name = table_name )
@@ -692,7 +704,22 @@ def  do_it():
 
     # ---- clean up
     DB_CONNECTION.close()
+    DB_CONNECTION = None
     #print( "done")
+
+
+
+
+def  init_as_module():
+    """ make auto on import"""
+    print( "ran init_as_module" )
+    global DB_CONNECTION
+    create_connection()
+    data_dict.build_it()
+    #app                 = QApplication( [] )
+
+init_as_module()
+
 
 # --------------------
 if __name__ == "__main__":

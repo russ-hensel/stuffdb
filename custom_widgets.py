@@ -52,8 +52,6 @@ from PyQt5.QtGui import (QCursor,
                          QStandardItem,
                          QStandardItemModel,
                          QTextCursor)
-
-
 from PyQt5.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
@@ -62,8 +60,6 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-
-
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
                              QApplication,
@@ -103,10 +99,9 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
-# ---- imports
-
 import convert_db_display
 
+# ---- imports local
 
 
 
@@ -824,7 +819,6 @@ class TableModel( QAbstractTableModel ):
         self.beginResetModel()
         self._data.clear()
         self.endResetModel()
-
 
 #-------------------------------
 class CQComboBoxEditCriteria2( QComboBox ):

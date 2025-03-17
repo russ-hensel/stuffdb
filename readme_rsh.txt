@@ -41,6 +41,84 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
                 also see tech_notes.txt
 
 ----
+---- ver66
+
+    why
+        -- just another checkpoint
+        -->> see prior exp people
+        -->> remove dead code, then regroup
+        -->> make help rebuild key words using existing code
+        ** get some db test routines into help
+
+
+---- ver65
+
+    why
+        -- just another checkpoint but help pretty good
+            pictures beginning to work
+            stuff detail fair
+        ** -->> clean up stuff detail layout some field width proteced id's
+        ** improved data dict reports
+        *! -->> clean up album detail layout some field width proteced id's
+                copy work from stuff
+                ** list and history ok ( some excess fields on history )
+                ** form pretty good
+                *! pictures sub tab heading need work
+
+        *! -->> clean up plant detail and document layout some field width proteced id's
+                plant tables are not defined  -- ok in single and multi
+                document can add an item
+                ** select spacing is unusable
+                !! plantings sub tab are missing
+                !! criteria select needs new layout like....
+
+        *! -->> clean up planting detail layout some field width proteced id's
+                ** create planting tables
+                pictures are messed up
+
+                !! planting  --- buildfields seems wrong ??
+
+                !! allow copy on some fields
+
+        *! -->> clean up people, currently way behind
+                    ** create   tables
+                !! list headers  -- progress on people contact
+                !! criteria
+                !! detail edits
+                -- then assess, still tables missing.....
+                ** data dict for people phone
+
+        !! -->> work on error detect in db and
+                repair inc key word regen
+
+        !*  adding a lot of help inside the help documents
+            todo
+
+---- ver64
+
+    why
+        -- just another checkpoint but help pretty good
+            pictures seem to work on add add all and subuects, a bit ugly
+            stuff detail works, no events yet
+
+        **-->> delete dead as usual
+        **-->> quiet logging as ususl
+
+        ** add events to stuff
+        *! polish up events
+        !! events via custom edits  custom edits   to dict from dict
+        *! add save from menu -- but test
+        ** improve stuff picture headers -- in base so may be good for all picture sub tabs
+
+        *! -->> work on pictures some more -- say column headers and widths
+        !! __>> clean up stuff detail layout
+        ** add two forms of >>idle
+
+
+
+
+
+
 ---- ver63
 
     why
@@ -49,10 +127,10 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
                 hyper commans work at base level
                 improved layout and data dict
 
-        !! paste prior is broken again
+        *! paste prior is broken again -- fixed on help
         ** add snippet command
-
-    ** fix close and distruction of window and perhaps the titles
+        !! prior next buttons on stuff  --- no on base for the photo page --- move to picture perhaps
+        ** fix close and distruction of window and perhaps the titles
 
     !! check add copy in picture and fix
 FileNotFoundError: [Errno 2] No such file or directory: '/mnt/WIN_D/temp_photo/99/new_test/9903_004.jpg'

@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+# ---- tof
+
 """
+
+On advice of chat  --- not sure worth keeping --- or work ??
+
 Created on Sun Aug 11 17:23:25 2024
 chat with hellp from russ
 
@@ -68,8 +74,8 @@ class QSqlTableModelWithLoggingxxx(QSqlTableModel):
             query = QSqlQuery(db)
             last_query    = query.lastQuery()
             bound_values  = query.boundValues()
-            print("Executed Query during submitAll: ", last_query)
-            print("With Bound Values: ", bound_values)
+            print( f"Executed Query during submitAll:  {last_query = } ")
+            print( f"With Bound Values:   {bound_values = } ")
 
         # Disable tracing if it was enabled
         if hasattr(driver, 'setTracingEnabled'):
@@ -82,8 +88,8 @@ class QSqlTableModelWithLoggingxxx(QSqlTableModel):
         query = QSqlQuery(self.database())
         success = super().select()
         if success:
-            last_query = query.lastQuery()
-            bound_values = query.boundValues()
+            last_query     = query.lastQuery()
+            bound_values   = query.boundValues()
             # ?? not getting any info from next
             #rint("Executed Query during select: ", last_query, )
             #rint("With Bound Values: ", bound_values)
@@ -134,16 +140,15 @@ class QSqlTableModelWithLogging(QSqlTableModel):
         last_query    = query.lastQuery()
         bound_values  = query.boundValues()
 
-        print("Executed Query during submitAll: ", last_query)
-        print("With Bound Values: ", bound_values)
+
+        print( f"submitAllExecuted Query during submitAll:  {last_query = } ")
+        print( f"submitAllWith Bound Values:   {bound_values = } ")
 
         #query = model.query()
         if query.lastError().isValid():
-            print(f"Error: {query.lastError().text()}")
+            print(f"submitAllError: {query.lastError().text()}")
         else:
-            print(f"Last Query: {query.lastQuery()}")
-
-
+            print(f"submitAll Last Query: {query.lastQuery()}")
 
 
 
@@ -157,10 +162,12 @@ class QSqlTableModelWithLogging(QSqlTableModel):
         query = QSqlQuery(self.database())
         success = super().select()
         if success:
-            last_query = query.lastQuery()
-            bound_values = query.boundValues()
-            print("Executed Query during select: ", last_query)
-            print("With Bound Values: ", bound_values)
+            last_query      = query.lastQuery()
+            bound_values    = query.boundValues()
+
+            print( f"select Executed Query during submitAll:  {last_query = } ")
+            print( f"select With Bound Values:   {bound_values = } ")
+
         return success
 
 # # Usage
@@ -170,9 +177,6 @@ class QSqlTableModelWithLogging(QSqlTableModel):
 
 # # Make some changes to the model and call submitAll to trigger logging
 # model.submitAll()
-
-
-
 
 
 
@@ -228,7 +232,6 @@ class QSqlRelationalTableModelWithLogging( QSqlRelationalTableModel ):
         query = self.database().driver().sqlStatement(QSqlDriver.DeleteStatement, self.tableName(), QSqlRecord(), False)
         print(f"SQL deleteRowFromTable: {query}")
         return super().deleteRowFromTable(row)
-
 
 
 """

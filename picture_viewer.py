@@ -11,13 +11,12 @@ I have a QGraphicsView
 I would like the graphics in it to fill the layout area.
 I would like some code to do this:
 
-
-
 """
 # --------------------
 if __name__ == "__main__":
     import main
     main.main()
+import logging
 import os
 # --------------------
 # ---- import
@@ -51,19 +50,27 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
+logger          = logging.getLogger( )
+
+# for custom logging level at module
+LOG_LEVEL  = 10   # higher is more
+
 
 # -------------------------------------
 class PictureViewer( QGraphicsView ):
     def __init__(self, parent=None):
         """
         what it says, read it
+        used like where
+            stuffdb picture document i think
+                may be in qt5 by example
         """
         super( PictureViewer, self).__init__(parent)
         self.scene          = QGraphicsScene(self)
         self.setScene( self.scene )
         self.pixmap_item    = QGraphicsPixmapItem()
         self.scene.addItem( self.pixmap_item )
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
 
         #
         sb_policy           = Qt.ScrollBarAlwaysOn
@@ -74,24 +81,12 @@ class PictureViewer( QGraphicsView ):
         # # Set the scene for the view  -- does this need to be done again
         # self.view.setScene(self.scene)
 
-        self.setRenderHint(QPainter.Antialiasing)
+        self.setRenderHint( QPainter.Antialiasing )
         self.setRenderHint(QPainter.SmoothPixmapTransform)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
         self.file_name              = None
         self.file_name_not_found    = None
-
-    # -----------------------------
-    def set_fnf( self,  file_name ):
-        """
-        what it says, read
-        this is the file to use if not found
-        might want to check for its exist
-        good to set at create time
-
-        """
-        self.file_name_not_found     = file_name
-
 
     # -----------------------------
     def display_file( self,  file_name ):
@@ -106,13 +101,10 @@ class PictureViewer( QGraphicsView ):
                 file_exists   = False
             else:
                 file_exists   = os.path.exists( file_name )
-            msg    = ( f"PictureViewer display_file error    { file_name = } {file_exists = }")
-            AppGlobal.logger.info( msg )
-            print( msg )
+            debug_msg   = (  f"PictureViewer display_file error    { file_name = } {file_exists = }")
+            logging.log( LOG_LEVEL,  debug_msg, )
+
             self.clear()
-            if self.file_name_not_found is not None: # move test to self.display_fnf() ??
-                self.display_fnf()
-            return
 
         else:
             #rint( f"display_   { file_name = }")
@@ -120,6 +112,17 @@ class PictureViewer( QGraphicsView ):
 
         self.fit_in_view()
 
+
+    # -----------------------------
+    def set_fnf( self,  file_name ):
+        """
+        what it says, read
+        this is the file to use if not found
+        might want to check for its exist
+        good to set at create time
+
+        """
+        self.file_name_not_found     = file_name
 
     # -----------------------------
     def display_fnf( self,    ):
@@ -133,6 +136,7 @@ class PictureViewer( QGraphicsView ):
         ok              = self.set_pixmap( pixmap )
         self.fit_in_view()
 
+
     # -----------------------------
     def set_pixmap( self, pixmap ):
         """
@@ -146,9 +150,9 @@ class PictureViewer( QGraphicsView ):
             self.fit_in_view()  # Automatically fit the image to view when loaded\\\\\\
             return True
         else:
-            msg     = ("PictureViewer Failed to load image pixmap is null")
-            AppGlobal.logger.info( msg )
-            print( msg )
+            debug_msg   = ( "PictureViewer Failed to load image pixmap is null")
+            logging.log( LOG_LEVEL,  debug_msg, )
+
             return False
 
     # # -----------------------------
@@ -177,9 +181,10 @@ class PictureViewer( QGraphicsView ):
         self.resetTransform()
         #rint("Zoom Reset")
 
-    def fit_in_view(self):
+    def fit_in_view( self ):
         """
         what it says, read it
+        but what does it mean
         """
         self.fitInView( self.scene.sceneRect(), Qt.KeepAspectRatio)
         #rint("Fit in View")
@@ -190,9 +195,8 @@ class PictureViewer( QGraphicsView ):
 
     def get_file_name(self, event):
         """ """
-        msg    = ( "PictureViewer finish get_file_name {self.file_name = }" )
-        AppGlobal.logger.info( msg )
-        print( msg )
+        debug_msg    = ( "PictureViewer finish get_file_name {self.file_name = }" )
+        logging.log( LOG_LEVEL,  debug_msg, )
 
     # ------------------------------------
     def clip_file_name( self,   ):
@@ -203,153 +207,8 @@ class PictureViewer( QGraphicsView ):
 
         # Set a string into the clipboard
         clipboard.setText( self.file_name )
-        msg      = ( f"PictureViewer clip_file_name  { self.file_name = }" )
-        AppGlobal.logger.info( msg )
-        print( msg )
-
-        #get_text_out   =   clipboard.text()
-
-    # -----------------------------
-    def contextMenuEvent(self, event):
-        """
-        what it says, read it
-        """
-        context_menu        = QMenu(self)
-
-        zoom_in_action      = context_menu.addAction("Zoom In")
-        zoom_out_action     = context_menu.addAction("Zoom Out")
-        reset_zoom_action   = context_menu.addAction("Reset Zoom")
-        fit_in_view_action  = context_menu.addAction("Fit in View")
-        get_file_name_action  = context_menu.addAction("Clip File Name")
-
-        photo_1_action      = context_menu.addAction("photo_1_action")
-        photo_2_action      = context_menu.addAction("photo_2_action")
-
-        action = context_menu.exec_(self.mapToGlobal(event.pos()))
-
-        if action == zoom_in_action:
-            self.zoom_in()
-        elif action == zoom_out_action:
-            self.zoom_out()
-        elif action == reset_zoom_action:
-            self.reset_zoom()
-        elif action == fit_in_view_action:
-            self.fit_in_view()
-        elif action == photo_1_action:
-            self.photo_1()
-        elif action == photo_2_action:
-            self.photo_2()
-        elif action == get_file_name_action:
-            self.clip_file_name( )
-
-    # ------------------------------------
-    def clear( self,   ):
-        """
-
-        """
-        scene   = QGraphicsScene()
-        #view    = self( scene )
-        scene.clear()
-
-
-
-    # -----------------------------
-    def display_file( self,  file_name ):
-        """
-        what it says, read
-        """
-        self.file_name  = file_name
-        pixmap          = QPixmap( file_name )
-        ok              = self.set_pixmap( pixmap )
-        if not ok:
-            if file_name is None:
-                file_exists   = False
-            else:
-                file_exists   = os.path.exists( file_name )
-            msg    = ( f"PictureViewer display_file error    { file_name = } {file_exists = }")
-            AppGlobal.logger.info( msg )
-            print( msg )
-            self.clear()
-
-        else:
-            #rint( f"display_   { file_name = }")
-            pass
-
-        self.fit_in_view()
-
-    # -----------------------------
-    def set_pixmap( self, pixmap ):
-        """
-        what it says, but keep separate or merge into display_file
-        pixmap may be useful for other viewer
-        """
-        if not pixmap.isNull():
-            self.pixmap_item.setPixmap(pixmap)
-            self.setSceneRect(QRectF(pixmap.rect()))  # Convert QRect to QRectF
-            #rint(f"Image set: {pixmap.size()}")
-            self.fit_in_view()  # Automatically fit the image to view when loaded\\\\\\
-            return True
-        else:
-            msg     = ("PictureViewer Failed to load image pixmap is null")
-            AppGlobal.logger.info( msg )
-            print( msg )
-            return False
-
-    # # -----------------------------
-    # def photo_1(self):
-    #     self.display_file( "/mnt/WIN_D/PhotoDB/02/102-0253_img.jpg" )
-
-    # # -----------------------------
-    # def photo_2(self):
-    #     self.display_file( "/mnt/WIN_D/PhotoDB/02/102_motor2.jpg" )
-
-    def zoom_in(self):
-        """
-        what it says, read it
-        """
-        self.scale(1.5, 1.5)
-        #p#rint("Zoomed In")
-    # -----------------------------
-    def zoom_out(self):
-        """
-        what it says, read it
-        """
-        self.scale(0.75, 0.75)
-        #rint("Zoomed Out")
-
-    def reset_zoom(self):
-        self.resetTransform()
-        #rint("Zoom Reset")
-
-    def fit_in_view(self):
-        """
-        what it says, read it
-        """
-        self.fitInView( self.scene.sceneRect(), Qt.KeepAspectRatio)
-        #rint("Fit in View")
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.fit_in_view()
-
-    def get_file_name(self, event):
-        """ """
-        msg    = ( "PictureViewer finish get_file_name {self.file_name = }" )
-        AppGlobal.logger.info( msg )
-        print( msg )
-
-    # ------------------------------------
-    def clip_file_name( self,   ):
-        """
-        ?? clip some more inspect stuff
-        """
-        clipboard = QApplication.clipboard()
-
-        # Set a string into the clipboard
-        clipboard.setText( self.file_name )
-        msg      = ( f"PictureViewer clip_file_name  { self.file_name = }" )
-        AppGlobal.logger.info( msg )
-        print( msg )
+        # debug_msg      = ( f"PictureViewer clip_file_name  { self.file_name = }" )
+        # logging.log( LOG_LEVEL,  debug_msg, )
 
         #get_text_out   =   clipboard.text()
 
@@ -418,6 +277,9 @@ class PictureViewer( QGraphicsView ):
 class PictureViewerPlus( QWidget ):
 
     """
+    Why is ist plus ---
+        seems to setup on a tab widget
+        display_info ??
     what it says, read it
     will make it accept all the picture viewer stuff
 
@@ -426,6 +288,9 @@ class PictureViewerPlus( QWidget ):
 
     QWidget
     QGraphicsView
+    used like where
+            may be in qt5 by example
+
     """
 
     # ----------------------------------
@@ -443,7 +308,7 @@ class PictureViewerPlus( QWidget ):
         """
         main gui build method -- for some sub layout use other methods
         """
-        layout      = QVBoxLayout( self  )
+        layout          = QVBoxLayout( self  )
 
         self.tab_widget = QTabWidget()
 
@@ -529,7 +394,7 @@ class PictureViewerPlus( QWidget ):
     # ----------------------------------
     def display_info(self,  ):
         """
-
+        some half baked idea does what
         """
         fn      = self.picture_viewer_widget.file_name
         info    = fn

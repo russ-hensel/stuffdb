@@ -415,7 +415,7 @@ class TableDict(  ):
         #line_list.append(  " ---- still needs review/test ....... " )
         what            = f"TableDict.to_build_form {__VERSION__} for {self.table_name}"
 
-        line_list.append( f"        # ---- code_gen: {what} -- begin table entries ----------------------- " )
+        line_list.append( f"\n        # ---- code_gen: {what} -- begin table entries ----------------------- " )
 
         #line_list.append(  f'    # ---- {self.table_name} ---------------------------------------------' )
 
@@ -505,6 +505,14 @@ class TableDict(  ):
                     form_col_span = COLUMN_SPAN
 
                 line_list.append( f'{indent_1}layout.addWidget( edit_field, columnspan = {form_col_span} ) ' )
+
+                if i_column.form_read_only:  # perhapes None
+                    line_list.append( f'{indent_1}edit_field.setReadOnly( True )' )
+
+
+       # edit_field.setReadOnly( True )
+
+                # self.form_read_only         = form_read_only
 
         a_str       = "\n".join( line_list )
         return a_str
@@ -612,6 +620,7 @@ class ColumnDict(  ):
                  rec_to_edit            = None,    # no _build_gui output, edit will default
                  edit_to_rec            = None,
                  form_col_span          = None,    # defaulted later
+                 form_read_only         = None,    # what it says on detail edit fie4lds None defaults to False
                  is_keep_prior_enabled  = None,
                  # rec_to_edit         = "rec_to_edit_str_to_str",
                  # edit_to_rec         = "edit_to_rec_str_to_str",
@@ -627,6 +636,7 @@ class ColumnDict(  ):
         self.topic_colunm_order     = topic_colunm_order
         self.display_order          = display_order
         self.form_col_span          = form_col_span
+        self.form_read_only         = form_read_only
 
         self.edit_to_rec            = edit_to_rec    # string name of function
         self.rec_to_edit            = rec_to_edit
@@ -845,10 +855,6 @@ def  build_it( db_name = None ):
     #rint( f"{data_dict.DATA_DICT}" )
     print( "DATA_DICT created ")
     return  DATA_DICT
-
-
-DEBUG_BREAK = 0
-print( "=================================== end of data_dict =======================================")
 
 #build_it()
 

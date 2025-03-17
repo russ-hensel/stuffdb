@@ -4,6 +4,7 @@
 search for ia objects to create
 
 just started is it a good idea
+this should make less setup code -- not sure if any implemented
 
 
 """

@@ -1,36 +1,34 @@
-2025-03-04 15:24:14,500 - CRITICAL - Root logger is set up. Modules can now log using logging.getLogger().
-2025-03-04 15:24:14,540 - INFO - config_logger call was: logging.info
-2025-03-04 15:24:14,541 - DEBUG - QsqlDbAccess  init_db()
-2025-03-04 15:24:14,570 - DEBUG - connection_name = 'qt_sql_default_connection'
-2025-03-04 15:24:16,048 - Notice - 
-2025-03-04 15:24:16,097 - Notice - ============================
-2025-03-04 15:24:16,123 - Notice - 
-2025-03-04 15:24:16,124 - Notice - Application: Stuff DB in QT Ver 63: 2025 02 25.01 in mode mode_helpdb_on_theprofand version  Ver 63: 2025 02 25.01
-2025-03-04 15:24:16,135 - Notice - 
-2025-03-04 15:24:16,144 - Notice - command line arg + 0  =  /mnt/WIN_D/for_github/stuffdb/base_document_tabs.py)
-2025-03-04 15:24:16,154 - Notice - current directory /mnt/WIN_D/for_github/stuffdb
-2025-03-04 15:24:16,171 - Notice - Time now: 2025-03-04 20:24:16
-2025-03-04 15:24:16,186 - DEBUG - self.q_app.exec_() next
-2025-03-04 15:25:50,438 - DEBUG - set_size_pos--------------------------------------  
-2025-03-04 15:25:50,447 - DEBUG - init  DetailTabBase  
-2025-03-04 15:25:50,517 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
-2025-03-04 15:25:50,621 - DEBUG - init  DetailTabBase  
-2025-03-04 15:25:50,634 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
-2025-03-04 15:25:50,672 - DEBUG - post_init DetailTabBase  HelpDetailTab  
-2025-03-04 15:25:52,778 - DEBUG - CQComboBoxEditCriteria 
-2025-03-04 15:25:52,786 - DEBUG - CQComboBoxEditCriteria title - ignore case
-2025-03-04 15:25:52,796 - DEBUG - CQComboBoxEditCriteria Ascending
-2025-03-04 15:25:52,808 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n     \n     ORDER BY  lower(help_info.title) ASC  '
-2025-03-04 15:25:53,085 - DEBUG - CQComboBoxEditCriteria 
-2025-03-04 15:25:53,142 - DEBUG - CQComboBoxEditCriteria title - ignore case
-2025-03-04 15:25:53,177 - DEBUG - CQComboBoxEditCriteria Ascending
-2025-03-04 15:25:53,225 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n     \n     ORDER BY  lower(help_info.title) ASC  '
-2025-03-04 15:26:04,408 - DEBUG - DocumentBase.on_list_clicked Stuff Clicked on list row 226, column 1  save first ??
-2025-03-04 15:26:04,445 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
-2025-03-04 15:26:04,505 - DEBUG - update_db record null no action, return help_info
-2025-03-04 15:26:04,551 - DEBUG - update_db record null no action, return help_text
-2025-03-04 15:26:04,600 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-03-04 15:26:04,603 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-03-04 15:26:04,826 - DEBUG - set_preped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-03-04 15:26:04,861 - ERROR - send_topic_update needs fixing !! just reenabled 
-2025-03-04 15:26:04,888 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-03-13 15:47:35,974 - CRITICAL - Root logger is set up. Modules can now log using logging.getLogger().
+2025-03-13 15:47:35,978 - INFO - config_logger call was: logging.info
+2025-03-13 15:47:35,979 - DEBUG - QsqlDbAccess  init_db()
+2025-03-13 15:47:35,980 - DEBUG - connection_name = 'qt_sql_default_connection'
+2025-03-13 15:47:36,079 - Notice - 
+2025-03-13 15:47:36,080 - Notice - ============================
+2025-03-13 15:47:36,081 - Notice - 
+2025-03-13 15:47:36,081 - Notice - Application: Stuff DB in QT Ver 64: 2025 03 08.01 in mode mode_githuband version  Ver 64: 2025 03 08.01
+2025-03-13 15:47:36,082 - Notice - 
+2025-03-13 15:47:36,082 - Notice - command line arg + 0  =  /mnt/WIN_D/for_github/stuffdb/base_document_tabs.py)
+2025-03-13 15:47:36,083 - Notice - current directory /mnt/WIN_D/for_github/stuffdb
+2025-03-13 15:47:36,083 - Notice - Time now: 2025-03-13 19:47:36
+2025-03-13 15:47:36,084 - DEBUG - self.q_app.exec_() next
+2025-03-13 15:47:41,807 - DEBUG - set_size_pos--------------------------------------  
+2025-03-13 15:47:41,819 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
+2025-03-13 15:47:41,832 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
+2025-03-13 15:47:41,834 - DEBUG - post_init DetailTabBase  HelpDetailTab  
+2025-03-13 15:47:46,035 - DEBUG - CQComboBoxEditCriteria 
+2025-03-13 15:47:46,038 - DEBUG - CQComboBoxEditCriteria title - ignore case
+2025-03-13 15:47:46,040 - DEBUG - CQComboBoxEditCriteria Ascending
+2025-03-13 15:47:46,046 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "idle" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) = 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-03-13 15:47:46,056 - DEBUG - CQComboBoxEditCriteria 
+2025-03-13 15:47:46,058 - DEBUG - CQComboBoxEditCriteria title - ignore case
+2025-03-13 15:47:46,060 - DEBUG - CQComboBoxEditCriteria Ascending
+2025-03-13 15:47:46,063 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "idle" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) = 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-03-13 15:47:49,161 - DEBUG - DocumentBase.on_list_clicked Stuff Clicked on list row 0, column 1  save first ??
+2025-03-13 15:47:49,163 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-03-13 15:47:49,165 - DEBUG - update_db record null no action, return help_info
+2025-03-13 15:47:49,167 - DEBUG - update_db record null no action, return help_text
+2025-03-13 15:47:49,170 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-03-13 15:47:49,173 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-03-13 15:47:49,181 - DEBUG - set_preped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-03-13 15:47:49,183 - ERROR - send_topic_update needs fixing !! just reenabled 
+2025-03-13 15:47:49,184 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 

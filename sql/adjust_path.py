@@ -56,7 +56,7 @@ print( "========================================================================
 print( "your path has been adjusted for theProf Mint "
        "\n     ...sql" )
 
-if True:
+if False:
     print( "    path now:" )
     for i_path in sys.path:
         print( "        ", i_path )

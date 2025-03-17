@@ -17,6 +17,7 @@ if __name__ == "__main__":
 # ---- imports
 
 import datetime
+import logging
 # import collections
 import sqlite3 as lite
 import time
@@ -31,7 +32,7 @@ from tkinter import messagebox
 #import sql_writers
 import string_util
 from app_global import AppGlobal
-import logging
+
 
 # ----------------------------------------
 class QueryBuilder(    ):

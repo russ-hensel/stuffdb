@@ -23,16 +23,12 @@ if __name__ == "__main__":
 # --------------------
 
 
+import logging
 import sqlite3
 
-
-
 from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-
 from PyQt5.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
-
 from PyQt5.QtSql import QSqlDatabase, QSqlError, QSqlQuery, QSqlTableModel
-
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
                              QApplication,
@@ -61,8 +57,6 @@ from PyQt5.QtWidgets import (QAction,
                              QToolBar,
                              QVBoxLayout,
                              QWidget)
-
-import logging
 
 LOG_LEVEL   =   10
 

@@ -8,7 +8,7 @@ Created on Sun Dec 15 12:41:16 2024
 """
 """
 
-KEY_WORDS:      some stuff rsh custom widgets update maager with sql model for forms and fields   new tab stagetwo zzz
+KEY_WORDS:      some stuff rsh custom widgets update maager with sql model for forms and fields   new tab stagetwo
 CLASS_NAME:     CustomUpdateManagerTab
 WIDGETS:        CQLineEdit CQDateEdit QSqlTableModel DataManager
 STATUS:         runs_correctly_1_10      demo_complete_2_10   !! review_key_words   !! review_help_0_10

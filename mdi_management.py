@@ -30,6 +30,7 @@ if __name__ == "__main__":
 #from   functools import partial
 import collections
 import functools
+import logging
 import sys
 
 from app_global import AppGlobal
@@ -67,9 +68,6 @@ from PyQt5.QtWidgets import (QAction,
                              QTextEdit,
                              QVBoxLayout,
                              QWidget)
-
-import logging
-
 
 import adjust_path
 import album_document

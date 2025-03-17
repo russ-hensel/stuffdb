@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# ---- tof
+
 """
 Created on Fri Jul  5 08:23:13 2024
 
@@ -42,7 +44,6 @@ class KeyGenerator:
         """
         query = QSqlQuery(self.db)
 
-        # Start a transaction to ensure atomic operation
         self.db.transaction()
 
         # Fetch the current key value for the table
@@ -67,23 +68,18 @@ class KeyGenerator:
             insert_query.exec()
 
         self.db.commit()
-        print( f"key gen {next_key = } for {table_name = } ")
+        #rint( f"key gen {next_key = } for {table_name = } ")
         return next_key
-
-
-
-
 
     #---------------------------
     def update_key_for_table(self, table_name, a_key ):
-        """ """
-
+        """
+        """
         update_query = QSqlQuery( self.db )
         update_query.prepare("UPDATE key_gen SET key_value = :next_key WHERE table_name = :table_name")
         update_query.bindValue(":next_key",   a_key)
         update_query.bindValue(":table_name", table_name)
         update_query.exec()
-
 
     #---------------------------
     def get_max_for_table( self, table_name ):
@@ -101,10 +97,9 @@ class KeyGenerator:
         else:
             max_id     = -9999
 
-        msg    = f"max id for table {table_name =} is {max_id = }"
+        #msg    = f"max id for table {table_name =} is {max_id = }"
 
         return max_id
-
 
 # ========================================
 class KeyGeneratorWithModel( QWidget ):
@@ -236,8 +231,6 @@ class KeyGeneratorWithModel( QWidget ):
         return next_key
 
     # -------------------------
-
-    # -------------------------
     def get_next_key_old( self, table_name ):
         """
         will get the next key and update anything
@@ -278,3 +271,4 @@ class KeyGeneratorWithModel( QWidget ):
         return next_key
 
 
+# ---- eof

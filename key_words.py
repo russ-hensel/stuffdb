@@ -12,7 +12,8 @@ Created on Sun Jun 30 16:13:31 2024
 import logging
 import re
 
-
+# ---- local imports
+import string_util
 from PyQt5 import QtGui
 from PyQt5.QtCore import (QDate,
                           QModelIndex,
@@ -62,8 +63,6 @@ from PyQt5.QtWidgets import (QAbstractItemView,
                              QVBoxLayout,
                              QWidget)
 
-# ---- local imports
-import string_util
 import qsql_utils
 
 VERBOSE    = False   # phase out
@@ -313,6 +312,8 @@ class KeyWords(   ):
         what it says, bad way to use argument id
         new jan 20 does it work ?
 
+        think finds duplicates in key words that should not be there
+        we can redo the key word index in bulk with....
         """
         is_ok       = True
         query       = QSqlQuery( self.db )
@@ -333,10 +334,11 @@ class KeyWords(   ):
             frequency   = query.value(2)
 
             msg  = (f"ID: {a_id = }  { name = }  {frequency = }  ")
-            logging.error( msg )
+            logging.debug( msg )
 
         if not is_ok:
-            1/0
+            msg  = (f"check_id_for_error think frequency should be one ID: {a_id = }  { name = }  {frequency = }  ")
+            logging.error( msg )
 
     # --------------------------------------
     def __str__( self,   ):
