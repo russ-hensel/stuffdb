@@ -96,6 +96,7 @@ class DataManager(   ):
 
         self.record_state           = RECORD_NULL
 
+
         # key word is up there in parent
         self.key_word_table_name    = ""        # set in init of child ??
         self.id_field               = None      # infered below
@@ -122,7 +123,6 @@ class DataManager(   ):
                 msg     = ( f"DataManager.debug_to_log_ Error {i_field.field_name = } "
                            f"{i_field.ct_default = } { i_field.ct_prior = }" )
                 logging.error( msg )
-
 
     # -------------------------------------
     def enable_key_words( self, key_word_table ):
@@ -285,14 +285,16 @@ class DataManager(   ):
         elif  self.record_state   == RECORD_DELETE:
             self.delete_record_update()
             if self.key_word_table_name:
-                self.key_word_obj.string_to_new( "" )
+                 self.key_word_obj.delete_all( self.current_id )
 
         else:
             msg     = ( f"update_db wtf  {self.record_state = } " )
             logging.error( msg )
             1/0
 
-        if self.key_word_table_name:
+        # or move up into the 2 cases might be better just 2 lines
+        if ( ( self.record_state in [ RECORD_NEW, RECORD_FETCHED ] ) and
+                                    ( self.key_word_table_name ) ):
             self.key_word_obj.compute_add_delete( self.current_id  )
         #rint( f"update_db record state now:  {self.record_state = } ")
         #rint( "what about other tabs and subtabs")
@@ -330,7 +332,6 @@ class DataManager(   ):
 
         id_value = self.id_field.text()
         if id_value:
-
             # msg    = ( "update_record_fetched_v3 ")
             # logging.debug( msg )
             #model.setFilter(f"id = {id_value}")
@@ -344,110 +345,32 @@ class DataManager(   ):
                 ok   = self.model_submit_all( model, f"DataManager.update_record_fetched_v1 {id_value = } {self.table_name = } ")
                 model.select()
             else:
+                msg   = ( f"update_record_fetched_v3 for {id_value} got 0 records " )
+                logging.error( msg )
+
                 1/0   # pretty poor
         else:
+            msg   = ( f"update_record_fetched_v3 for id_value = >{id_value}< was falsy " )
+            logging.error( msg )
             1/0   # pretty poor
             #model.setFilter("")  # seems wrong
 
     # ---------------------------
     def update_new_record( self ):
         """
-        when i had problems with update i had several versions of this
-            now in Ver 63: I will delted them look in old versions if you
-            want that code
-
-        """
-        #self.update_new_record_v2( )
-        self.update_new_record_v3( )  # v3 works others sseem not to
-
-    # --------------------------
-    def update_new_record_v2( self ):
-        """
-        here lets
-            change the filter
-            add the record
-            modify the record
-            add modle_debug to model_submit_all
-
-        """
-        msg       = ( f"document_manager update_new_record_v2  {self.table_name  = } " )
-        logging.debug( msg )
-
-        model   = self.model     # QSqlTableModel(
-        if not self.record_state  == RECORD_NEW:
-            msg       = ( f"document_manager save_new_record bad state, return  {self.record_state  = } {self.table_name  = } ")
-            logging.error( msg )
-            return
-
-        model.setFilter( "" )  # hope does not trigger a fetch
-        log_msg    = info_about.INFO_ABOUT.find_info_for(
-                        model,
-                        msg             = "update_new_record_v2 after filter to empty",
-                        max_len         = None,
-                        xin             = "",
-                        print_it        = False,
-                        sty             = "",
-                        include_dir     = False,  )
-
-        logging.log( LOG_LEVEL,  log_msg, )
-
-        record  = model.record()   # type is QSqlRecord
-
-        self.field_to_record( record )
-
-        # ERROr just for debugging
-        record.setValue( "add_kw", "data_for_add_kw" )
-
-        msg      = "update_new_record_v2 prior to insertRecord {model.rowCount() = } "
-        logging.log( LOG_LEVEL,  msg, )
-        # seems key to modify record first then insert -- may want to look into someroe r
-        # but seems like that was what id did in ver 1
-        model.insertRecord( model.rowCount(), record )  # QSqlTableModel
-
-        msg      = "update_new_record_v2 post to insertRecord {model.rowCount() = } "
-        logging.log( LOG_LEVEL,  msg, )
-
-        msg    = info_about.INFO_ABOUT.find_info_for(
-                        record,
-                        msg             = "update_new_record_v2 after field_to_record new record",
-                        max_len         = None,
-                        xin             = "",
-                        print_it        = False,
-                        sty             = "",
-                        include_dir     = False,  )
-        logging.log( LOG_LEVEL,f"\n{msg}" )
-
-        log_msg    = info_about.INFO_ABOUT.find_info_for(
-                        model,
-                        msg             = "update_new_record_v2 after field_to_record ",
-                        max_len         = None,
-                        xin             = "",
-                        print_it        = False,
-                        sty             = "",
-                        include_dir     = False,  )
-
-        logging.log( LOG_LEVEL,  log_msg, )
-
-        ok   = self.model_submit_all( model, f"DataManager.update_new_record { self.current_id = } {self.table_name = } {self.record_state = }")
-
-        self.record_state    = RECORD_FETCHED
-        # msg      =  f"New record saved! { self.current_id = } "
-        # rint( msg )
-        #QMessageBox.information(self, "Save New", msg )
-        model.setFilter( f"id = {self.current_id}" )  # hope does not trigger a fetch
-        msg    = "update_new_record_v2 at very end "
-        #model_debug( model, msg )
-
-
-    # ---------------------------
-    def update_new_record_v3( self ):
-        """
+        ver3 the one the worked others in a backup or earlier than v66
         like v2 but a bit different on filters
-        here lets
+        here lets        when i had problems with update i had several versions of this
+                    now in Ver 63: I will delted them look in old versions if you
+                    want that code
             change the filter
             add the record
             modify the record
             add modle_debug to model_submit_all
+
+            when i had problems with update i had several versions of this
+                now in Ver 63: I will delted them look in old versions if you
+                want that code
         """
         debug_msg       = ( f"document_manager update_new_record_v3  {self.table_name  = } " )
         logging.log( LOG_LEVEL,  debug_msg, )
@@ -458,7 +381,6 @@ class DataManager(   ):
             logging.error( msg )
             return
 
-        #model.setFilter( "" )  # hope does not trigger a fetch
         model.setFilter( f"id = {self.current_id}" )
 
         debug_msg    = info_about.INFO_ABOUT.find_info_for(
@@ -478,18 +400,20 @@ class DataManager(   ):
         # ERROr just for debugging
         #record.setValue( "add_kw", "data_for_add_kw" )
 
-        debug_msg      = "update_new_record_v3 prior to insertRecord {model.rowCount() = } "
+        debug_msg       = "update_new_record_v3 prior to insertRecord {model.rowCount() = } "
         logging.log( LOG_LEVEL,  debug_msg, )
         # seems key to modify record first then insert -- may want to look into someroe r
         # but seems like that was what id did in ver 1
         model.insertRecord( model.rowCount(), record )  # QSqlTableModel
 
-        debug_msg      = "update_new_record_v3 post to insertRecord {model.rowCount() = } "
+        debug_msg       = "update_new_record_v3 post to insertRecord {model.rowCount() = } "
         logging.log( LOG_LEVEL,  debug_msg, )
 
-        ok   = self.model_submit_all( model, f"DataManager.update_new_record_v3 { self.current_id = } {self.table_name = } {self.record_state = }")
+        ok              = self.model_submit_all( model, ( f"DataManager.update_new_record_v3 "
+                                                f" { self.current_id = } {self.table_name = }"
+                                                f" {self.record_state = }" ) )
 
-        self.record_state    = RECORD_FETCHED
+        self.record_state = RECORD_FETCHED
         # msg      =  f"New record saved! { self.current_id = } "
         # rint( msg )
         #QMessageBox.information(self, "Save New", msg )
@@ -499,53 +423,51 @@ class DataManager(   ):
         debug_msg    = ( f"\n{msg}" )
         logging.log( LOG_LEVEL,  debug_msg, )
 
-    # ---------------------------
-    def update_new_record_v1( self ):
-        """
-        now in data_manager
-        from russ crud worked   --- from photo_text -- worked
-        photo-detal ng need edit trying worked --- move to ancestor
-        insert new record earliern??")
-        ideas
-            model.setFilter("")  or perhaps to the new record
-
-        """
-        msg       = ( f"document_manager update_new_record  {self.table_name  = } " )
-        logging.debug( msg )
-
-        # # and some more debugging
-        # have_updates = self.have_updatable_edits( )
-        # if not have_updates:
-        #     have_updates = self.have_updatable_edits( log_it = True )
-        #     breakpoint()     # debug remove
-
-        model   = self.model     # QSqlTableModel(
-        if not self.record_state  == RECORD_NEW:
-            msg       = ( f"document_manager save_new_record bad state, return  {self.record_state  = } {self.table_name  = } ")
-            logging.error( msg )
-            return
-
-        record  = model.record()   # type is QSqlRecord
-
-        self.field_to_record( record )
-        model.insertRecord( model.rowCount(), record )
-
-        log_msg    = ( f"data_manager.DataManager update_new_record {model.isDirty()} = " )
-        logging.debug( log_msg )
-
-        msg         = ( f"data_manager.DataManager update_new_record {1 =}")
-        log_msg      = info_about.INFO_ABOUT.find_info_for(
-                            record,
-                            msg         = msg,
-                            print_it    = False,
-                           )
-        logging.log( LOG_LEVEL,  log_msg, )
-
-        ok   = self.model_submit_all( model,
-                f"DataManager.update_new_record { self.current_id = } "
-                f"{self.table_name = } {self.record_state = }"  )
-
         self.record_state    = RECORD_FETCHED
+
+    # ---------------------------
+    def delete_record_update( self ):
+        """
+        chat says:
+def delete_record_by_id(model, id_value):
+    # Ensure the latest data is loaded
+    model.select()
+
+    # Find the row based on the id_value
+    for row in range(model.rowCount()):
+        index = model.index(row, model.fieldIndex("id"))
+        if model.data(index) == id_value:
+            # Confirm before deleting
+            reply = QMessageBox.question(None, "Confirm Delete",
+                                          f"Are you sure you want to delete record with id {id_value}?",
+                                          QMessageBox.Yes | QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                model.removeRow(row)
+                if model.submitAll():
+                    print("Record deleted successfully!")
+                else:
+                    print("Failed to delete record:", model.lastError().text())
+            return
+    print("Record not found.")
+
+
+
+        """
+        model    = self.model
+        for row in range(model.rowCount()):
+            index = model.index(row, model.fieldIndex("id"))
+            if model.data(index) == self.current_id:
+
+                model.removeRow(row)
+                if model.submitAll():
+                    debug_msg  = ("Record deleted successfully!")
+                    logging.log( LOG_LEVEL,  debug_msg, )
+
+                else:
+                    debug_msg  = (f"Failed to delete record:  {model.lastError().text() }" )
+                    logging.log( LOG_LEVEL,  debug_msg, )
+
+        self.record_state = RECORD_NULL
 
     # ---------------
     def model_submit_all( self, model, msg ):
@@ -566,7 +488,7 @@ class DataManager(   ):
 
         if debug_on:
             debug_msg    = (  f"\ndata_manager debug on model_submit_all  caller says {msg}" )
-            logging.log( LOG_LEVEL,  debug_msg, )
+            logging.log( LOG_LEVEL, debug_msg, )
 
             debug_msg    = info_about.INFO_ABOUT.find_info_for(
                             model,
@@ -698,10 +620,23 @@ class DataManager(   ):
     def delete_all( self,   ):
         """
         delete all under this id   current_id
-
+        all not a great word here .....
         """
         msg    = "in datamanager delete all "
         logging.debug( msg )
+
+        if not self.record_state == RECORD_FETCHED:
+            print( "not sure how to delete what is not in db,")
+            1/0
+        self.record_state = RECORD_DELETE
+        self.update_db()
+        # will come back record null
+        # more here inc changing record state
+        return
+
+        # older code may have some validity  -- move transaction way up
+
+
         model  = self.model
 
         # Loop through the rows in reverse order and delete them
@@ -747,6 +682,10 @@ class DataManager(   ):
                 logging.log( LOG_LEVEL,  debug_msg, )
                 if  i_field.text_edit_ext_obj is not None:
                     i_field.text_edit_ext_obj.cache_current()
+
+            if  ( i_field.field_name  == "id_in_old" ):
+                pass   # debug
+
 
             # use if need breakpooint
             # if LOG_LEVEL >= 10:

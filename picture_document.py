@@ -106,16 +106,10 @@ import qt_with_logging
 #import  mdi_management
 import table_model
 
-# ---- Qt
-
-
-
-
-
+# ----
 
 LOG_LEVEL   = 10    # higher is more
 logger      = logging.getLogger( )
-
 
 # ----------------------------------------
 class PictureDocument( base_document_tabs.DocumentBase ):
@@ -173,24 +167,24 @@ class PictureDocument( base_document_tabs.DocumentBase ):
         ix                       += 1
         self.list_tab_index      = ix
         self.list_tab            = PictureListTab(   self  )
-        main_notebook.addTab(             self.list_tab  ,   "List"    )
+        main_notebook.addTab( self.list_tab, "List"    )
         # print( "!! fix monkey patch ")
         # #self.list_tab.parent_window     = self
 
         ix                       += 1
         self.detail_tab_index     = ix
         self.detail_tab           = PictureDetailTab( self )
-        main_notebook.addTab( self.detail_tab,    "Detail"     )
+        main_notebook.addTab( self.detail_tab, "Detail"     )
 
         ix                         += 1
         self.text_tab_index      = ix
         self.text_tab               = PictureTextTab( self )
-        main_notebook.addTab( self.text_tab,    "Text"     )
+        main_notebook.addTab( self.text_tab, "Text"     )
 
         ix                         += 1
         self.picture_tab_index       = ix
         self.picture_tab             = base_document_tabs.StuffdbPictureTab( self )
-        main_notebook.addTab( self.picture_tab,    "Picture"     )
+        main_notebook.addTab( self.picture_tab,  "Picture"     )
 
         ix                        += 1
         self.history_tab_index     = ix
@@ -208,7 +202,6 @@ class PictureDocument( base_document_tabs.DocumentBase ):
         """
         !! not currently used so promote? -- or delete
         what it says, read
-
         Args:
             index (QModelIndex):  where clicked
 
@@ -294,119 +287,109 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         the usual
         """
         super().__init__( parent_window )
-        self.tab_name            = "PictureCriteriaTab"
+        self.tab_name   = "PictureCriteriaTab"
 
     # ------------------------------------------
     def _build_tab( self,   ):
         """
         what it says, read
         """
-        page            = self
+        page        = self
+        layout      = QHBoxLayout( page )
+                # can we fold in to next
 
-        placer          = gui_qt_ext.PlaceInGrid(
-            central_widget  = page,
-            a_max           = 0,
-            by_rows         = False  )
+        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        layout.addLayout( grid_layout )
 
-        self._build_top_widgets(  placer )
+        self._build_top_widgets_grid( grid_layout )
 
         # ----id
         widget                = QLabel( "ID" )
-        placer.new_row()
-        placer.place( widget )
+        # grid_layout.new_row()
+        grid_layout.addWidget( widget )
 
-        #widget                  = QLineEdit()
-        widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
-        self.key_words_widget   = widget
-        widget.critera_name     = "table_id"
+        widget                  = custom_widgets.CQLineEdit(
+                                                field_name = "table_id"   )
         self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget, )    # columnspan = 3 )
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
 
         # ----id_old
         widget                = QLabel( "ID Old" )
-        placer.new_row()
-        placer.place( widget )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
 
-        #widget                  = QLineEdit()
-        widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
-        self.key_words_widget   = widget
-        widget.critera_name     = "id_old"
+        widget                  = custom_widgets.CQLineEdit(
+                                                field_name = "id_old"   )
         self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget, )    # columnspan = 3 )
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
 
         # ----key words
         widget                = QLabel( "Key Words" )
-        placer.new_row()
-        placer.place( widget )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
 
-        widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
-        self.key_words_widget   = widget
-        widget.critera_name     = "key_words"
+        widget                  = custom_widgets.CQLineEdit(
+                                                field_name = "key_words"   )
         self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget, columnspan = 3 )
+        # widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, columnspan = 3 )
 
         # ---- name like
-        placer.new_row()
+        grid_layout.new_row()
         widget  = QLabel( "Name (like)" )
-        placer.place( widget )
+        grid_layout.addWidget( widget )
 
-        widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
-        self.name_widget        = widget
-        widget.critera_name     = "name"
+        widget                  = custom_widgets.CQLineEdit(
+                                                field_name = "name"   )
         self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget )
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget )
 
         # ---- with file
-        placer.new_row()
+        grid_layout.new_row()
         widget  = QLabel( "With file?" )
-        placer.place( widget )
+        grid_layout.addWidget( widget )
 
-        widget                      = custom_widgets.CQComboBoxEditCriteria(
-                                    get_type = "string", set_type = "string")
-        self.file_name_empty_widget = widget
-        widget.critera_name         = "file_name_empty"
+        widget                      = custom_widgets.CQComboBox(
+                                                field_name = "file_name_empty"   )
         self.critera_widget_list.append( widget )
-        widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
+        #widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
         widget.addItem('Any')
         widget.addItem('Yes')
         widget.addItem('No')
-        placer.place( widget )
+        grid_layout.addWidget( widget )
 
         # ---- file name like
-        placer.new_row()
+        grid_layout.new_row()
         widget  = QLabel( "File Name Like" )
-        placer.place( widget )
+        grid_layout.addWidget( widget )
 
-        widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
-        self.file_name_widget   = widget
-        widget.critera_name     = "file_name_like"
+        widget                  = custom_widgets.CQLineEdit(
+                                                field_name = "file_name_like"   )
         self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget )
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget )
 
         # ---- Order by
-        placer.new_row()
+        grid_layout.new_row()
         widget  = QLabel( "Order by" )
-        placer.place( widget )
+        grid_layout.addWidget( widget )
 
-        widget                 = custom_widgets.CQComboBoxEditCriteria( get_type = "string", set_type = "string")
-        self.order_by_widget   = widget
-        widget.critera_name    = "order_by"
+        widget                 = custom_widgets.CQComboBox(
+                                                field_name = "order_by"   )
         self.critera_widget_list.append( widget )
         widget.addItem('dt_enter')
         widget.addItem('dt_enter')
         widget.addItem('Title??')
-        placer.place( widget )
+        grid_layout.addWidget( widget )
 
         # ---- criteria changed should be in parent
-        placer.new_row()
+        grid_layout.new_row()
         widget  = QLabel( "criteria_changed_widget" )
         self.criteria_changed_widget  = widget
-        placer.place( widget )
+        grid_layout.addWidget( widget )
 
         # # ---- dates
         # self.add_date_widgets( placer, row_lables = ( "dt_item", "dt_enter") )
@@ -416,9 +399,15 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         # ---- push controls up page, may need adjuxtment
         width    = 350
         widget   = QSpacerItem( width, 100, QSizePolicy.Expanding, QSizePolicy.Minimum )
-        placer.new_row()
-        # placer.place( widget )
-        placer.layout.addItem( widget, placer.ix_row, placer.ix_col    )  # row column
+        grid_layout.new_row()
+        # grid_layout.addWidget( widget )
+        grid_layout.addItem( widget, grid_layout.ix_row, grid_layout.ix_col    )  # row column
+
+        # ---- function_on_return( self )
+        for i_widget in self.critera_widget_list:
+            i_widget.function_on_return     = self.criteria_select
+            # add value changed to custome edits widget.textChanged.connect
+            i_widget.function_on_changed    = ( lambda: self.criteria_changed( True ) )
 
 
 
@@ -428,7 +417,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         do the select
         """
         parent_document     = self.parent_window
-
         model               = parent_document.list_tab.list_model
 
         query               = QSqlQuery()
@@ -436,10 +424,10 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         kw_table_name       = "photo_key_words"
 
-        # !! next is too much
-        columns    = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
+        # !! next is too much   !! change to list comp ---
+        columns     = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
         #col_head_texts   = [ "seq" ]  # plus one for sequence
-        col_names        = [   ]
+        col_names   = [   ]
         #col_head_widths  = [ "10"  ]
         for i_column in columns:
             col_names.append(        i_column.column_name  )
@@ -535,7 +523,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         elif order_by == "dt_enter":
             column_name = "dt_enter"
         else:   # !! might better handle this
-            column_name = "dt_item"
+            column_name = "dt_enter"   # check if exists  dt_item
 
         query_builder.add_to_order_by(    column_name, "ASC",   )
 
@@ -548,7 +536,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
                                                   model,
                                                   msg = "HelpSubWindow criteria_select" )
 
-        msg       = ( f"init StuffTextTab    {query.executedQuery() = }" )
+        msg       = ( f"StuffTextTab_criteria_select   {query.executedQuery() = }" )
         logging.debug( msg )
 
         parent_document.main_notebook.setCurrentIndex( parent_document.list_tab_index )
@@ -1484,8 +1472,6 @@ class PictureBrowseSubTab( QWidget ):
         self.table_view     = table_view
         # self.set_column_width()
 
-
-
         # Connect the clicked signal to a slot
         table_view.clicked.connect( self.on_row_clicked )
         # table_view.setModel( self.model )
@@ -1523,7 +1509,6 @@ class PictureBrowseSubTab( QWidget ):
         a_widget        = QPushButton( "fit" )
         a_widget.clicked.connect( self.fit_in_view )
         button_layout.addWidget( a_widget )
-
 
         self.set_column_width()
 
@@ -2618,7 +2603,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
 
         query           = QSqlQuery( self.db )
 
-        if not query.prepare(sql):
+        if not query.prepare( sql ):
             msg       = (f"Prepare failed: {query.lastError().text()}")
             logging.error( msg )
 
@@ -2973,7 +2958,6 @@ class PictureAlbumtSubTab(  QWidget  ):
         what it says, read
         """
         page            = self
-        tabxx             = page
 
         layout                     = QVBoxLayout( page )
         button_layout              = QHBoxLayout()
@@ -3081,8 +3065,6 @@ CREATE TABLE  photoshow    (
      web_site_dir  VARCHAR(240)
 
 
-
-
         """
         model   = self.model
         view    = self.view
@@ -3151,7 +3133,6 @@ class PictureHistorylTab( base_document_tabs.HistoryTabBase   ):
         """
         super().__init__( parent_window )
         self.tab_name            = "PictureHistorylTab"
-
 
 
 # ---- eof ------------------------------

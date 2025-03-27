@@ -1,229 +1,61 @@
 
-SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info
-    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id
-    WHERE  lower(help_info.system = "powerbuilder"  AND   key_word IN ( "testxxx" )
-    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words
-    HAVING  count(*) = 1
-     ORDER BY  lower(help_info.title) ASC
 
-these all work
 
-SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info
-    WHERE   help_info.system = "Java"
-     ORDER BY  lower(help_info.title) ASC
 
+#-------------------------------
 
-SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info
-    WHERE  lower( help_info.system ) = "java"
-     ORDER BY  lower(help_info.title) ASC
 
-SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info
-    WHERE  lower( help_info.system ) = "powerbuilder"
-     ORDER BY  lower(help_info.title) ASC
 
-SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info
-    WHERE  lower( help_info.system ) = "powerbuilder"
-     ORDER BY  lower(help_info.title) ASC
 
---- seemed not to work
-SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info
-    WHERE  lower(help_info.system = "powerbuilder"
-     ORDER BY  lower(help_info.title) ASC
+# ---- eof
 
-    WHERE  lower(help_info.system = "powerbuilder"
-    WHERE  lower( help_info.system ) = "powerbuilder"
----------------
-SELECT   people.id,  people.l_name,  people.f_name, people.add_kw    FROM people
-    WHERE lower( f_name )  like "%ru%"
 
 
+id_to_delete    in list was null should not be
+self.current_id  was null in caller should not be
 
 
-I would like to add to this select
+deleteing 1132   now see 1133 in detail
+        1132 no longer in history
 
-    select
-    photo_subject.id,
-	photo_subject.photo_id,
-	photo_subject.table_id,
-	photo_subject.table_joined,
 
-    FROM photo_subject
-    WHERE  photo_subject.table_joined  = "people"
+        1132 still in list
 
-to join to a table people
 
+        1132 gone from db
 
-CREATE TABLE people   (
-	id    			INTEGER,
-	id_old          VARCHAR(15),
-	add_kw        	VARCHAR(50),
-	descr 			VARCHAR(50)
-    )
+        list tab base reports it is deleted but still viaible
+ListTabBase
 
-using photo_subject.table_id  = people.id
+/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/logs/app.py_log_deletestuff.log
 
 
 
 
 
-print(f"Date: {date_obj}")
-print(f"Datetime: {datetime_obj}")
 
 
+        a_partial           = partial( self.do_ct_value, "" )
+        self.ct_default     = a_partial
 
 
-I have
 
+column_list
 
-class SendSignals( QObject ):
+criteria_dict
 
-    topic_update_signal = pyqtSignal(str, int, str )
+SELECT   photo.id,  photo.name,  photo.title,  photo.add_kw, photo.descr    FROM photo
 
-    def send_topic_update(self, table, table_id, info):
-        print( "send_topic_update emit next")
-        self.topic_update_signal.emit( table, table_id, info )
+     ORDER BY  dt_item ASC
 
 
-and
 
-in Class X  __init__
 
-    send_signals  = mdi_management.SendSignals()
-    send_signals.topic_update_signal.connect( self.topic_update )
 
-and finally in Class X
 
-   def topic_update( self,   table, table_id,  info, ):
-
-       print( f"got topic update {table = } {table_id = } {info = }")
-
-but while i call send_topic_update it does not seem to be
-recieved by topic_update.
-
-Any idea why?  Should I be using a @slot decorator?
-
-
-def two_way_to_remove_mapper():
-
-
-    # Disconnect the mapper from the model
-    self.mapper.setModel( None )
-
-
-    # Clear the mappings
-    self.mapper.clearMapping()
-
-    # Optionally, clear any custom delegate
-    self.mapper.setItemDelegate(None)
-
-
-
-
-
-from PyQt5.QtCore import QObject, pyqtSignal
-
-
-class MDI(QObject):
-    # Define a custom signal with arguments
-    update_signal = pyqtSignal(str, int, dict)
-
-    def send_update(self, table, table_id, info):
-        # Emit the signal when needed
-        self.update_signal.emit(table, table_id, info)
-
-class PicSubject(QObject):
-    def __init__(self):
-        super().__init__()
-        # Connect the signal to the slot
-        mdi = MDI()
-        mdi.update_signal.connect(self.topic_update)
-
-    def topic_update(self, table, table_id, info):
-        # Handle the update signal
-        print(f"Received update: table={table}, table_id={table_id}, info={info}")
-
-# Example usage
-mdi = MDI()
-pic_subject = PicSubject()
-mdi.send_update("photo_table", 101, {"description": "Updated photo"})
-
-
-class PicSubject(QObject):
-    def __init__(self):
-        super().__init__()
-        # Connect the signal to the slot
-        mdi = MDI()
-        mdi.update_signal.connect(self.topic_update)
-
-    def topic_update(self, table, table_id, info):
-        # Handle the update signal
-        print(f"Received update: table={table}, table_id={table_id}, info={info}")
-
-
-
-
-
-
-
-
-view.setSelectionBehavior(QTableView.SelectRows)  # For row selection
-view.setSelectionBehavior(QTableView.SelectColumns)  # For column selection
-
-
-
-
-
-
-i want to
-
-pub.sendMessage( TOPIC_UPDATE,  table, table_id, info   )
-
-in another part of the program how to I subscribe to this
-message and what sort of function is needed.
--------------------
-
-
-
-in a mdi_management module an object say MDI sends a message with:
-
-pub.sendMessage( TOPIC_UPDATE,  table = table, table_id = table_id, info = info   )
-
-in a picture_document module an object say PicSubject
-it trys to subscribe with:
-
-pub.subscribe( self.topic_update, mdi_management.TOPIC_UPDATE )
-
-and
-PicSubject has a method
-
-def topic_update( self,   table, table_id,  info  ):
-    .....
-
-
-but i get an error:
-
-ListenerMismatchError: Listener "PictureSubjectSubTab.topic_update" (from module "picture_document") inadequate: needs to accept 2 more args (arg2, arg1)
-
-how do i fix this?
-
-
----------------
-
-i changed my subscriber to
-
-def topic_update( self,    *args, **kwargs ):
-
-but when i use:
-
-pub.sendMessage( TOPIC_UPDATE,  table = table, table_id = table_id, info = info   )
-
-it complains
-
-SenderMissingReqdMsgDataError: Some required args missing in call to sendMessage('topic_update', table,table_id,info): arg1
-
-and by the way what is arg1?
-
-
+- DEBUG - PictureViewer Failed to load image pixmap is null
+2025-03-26 10:34:13,826 - DEBUG - PictureViewer display_file error     file_name = '' file_exists = False
+2025-03-26 10:34:13,828 - DEBUG - ListTabBase_delete_row_by_id
 
 
 

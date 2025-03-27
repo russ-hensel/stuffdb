@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 
 
-
 """
 this module is intended to be the top module else do not use
-
 
 
 """
@@ -14,7 +12,6 @@ this module is intended to be the top module else do not use
 if __name__ != "__main__":
     1/0
 # --------------------
-
 
 
 # ---- imports

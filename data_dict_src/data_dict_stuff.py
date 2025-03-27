@@ -134,7 +134,7 @@ def build_it( a_data_dict ):
 
     # ---- add_kw
     a_column_dict = data_dict.ColumnDict(    column_name    = "add_kw",
-                                             display_order  = 58,
+                                             display_order  = 24,
                                              db_type        = "VARCHAR(50)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -149,7 +149,7 @@ def build_it( a_data_dict ):
 
     # ---- descr
     a_column_dict = data_dict.ColumnDict(    column_name    = "descr",
-                                             display_order  = 55,
+                                             display_order  = 22,
                                              db_type        = "VARCHAR(50)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -164,6 +164,7 @@ def build_it( a_data_dict ):
     # ---- type
     a_column_dict = data_dict.ColumnDict(    column_name    = "type",
                                              db_type        = "VARCHAR(15)",
+                                             display_order  = 26,
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None, )
@@ -173,6 +174,7 @@ def build_it( a_data_dict ):
     # ----type_sub
     a_column_dict = data_dict.ColumnDict(    column_name    = "type_sub",
                                              db_type        = "VARCHAR(15)",
+                                             display_order  = 28,
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func= None, )
@@ -182,6 +184,7 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "author",
                                              db_type        = "VARCHAR(50)",
                                              display_type   = "string",
+                                             display_order  =  52,
                                              max_len        = None,
                                              default_func= None, )
     a_table_dict.add_column( a_column_dict )
@@ -190,6 +193,7 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "publish",
                                              db_type        = "VARCHAR(50)",
                                              display_type   = "string",
+                                             display_order  =  54,
                                              max_len        = None,
                                              default_func= None, )
     a_table_dict.add_column( a_column_dict )
@@ -198,6 +202,7 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "model",
                                              db_type        = "VARCHAR(35)",
                                              display_type   = "string",
+                                             display_order  =  40,
                                              max_len        = None,
                                              default_func= None, )
     a_table_dict.add_column( a_column_dict )
@@ -206,6 +211,7 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "serial_no",
                                              db_type        = "VARCHAR(35)",
                                              display_type   = "string",
+                                             display_order  =  46,
                                              max_len        = None,
                                              default_func= None, )
     a_table_dict.add_column( a_column_dict )
@@ -275,13 +281,14 @@ def build_it( a_data_dict ):
                                              db_type        = "VARCHAR(35)",
                                              display_type   = "string",
                                              max_len        = None,
-                                             default_func= None, )
+                                             default_func   = None, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- format
     a_column_dict = data_dict.ColumnDict(    column_name    = "format",
                                              db_type        = "VARCHAR(20)",
                                              display_type   = "string",
+                                             display_order  =  56,
                                              max_len        = None,
                                              default_func   = None, )
     a_table_dict.add_column( a_column_dict )
@@ -308,6 +315,7 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "status",
                                              db_type        = "VARCHAR(250)",
                                              display_type   = "string",
+                                             display_order  =  38,
                                              max_len        = None,
                                              default_func= None, )
     a_table_dict.add_column( a_column_dict )
@@ -316,8 +324,12 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "id_in_old",
                                              db_type        = "VARCHAR(15)",
                                              display_type   = "string",
+                                             display_order  =  30,
                                              max_len        = None,
-                                             default_func= None, )
+                                             default_func   = None,
+                                             col_head_text      = "id_in_old",
+                                             col_head_width     = 20,
+                                             col_head_order     = 30, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- dt_item
@@ -343,6 +355,7 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "performer",
                                              db_type        = "VARCHAR(35)",
                                              display_type   = "string",
+                                             display_order  =  54,
                                              max_len        = None,
                                              default_func= None, )
     a_table_dict.add_column( a_column_dict )
@@ -350,6 +363,7 @@ def build_it( a_data_dict ):
     # ---- cont_type
     a_column_dict = data_dict.ColumnDict(    column_name    = "cont_type",
                                              db_type        = "VARCHAR(15)",
+                                             display_order  = 29,
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func= None, )
@@ -376,6 +390,7 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "title",
                                              db_type        = "VARCHAR(150)",
                                              display_type   = "string",
+                                             display_order  =  50,
                                              is_keep_prior_enabled  = True,
                                              max_len        = None,
                                              default_func= None, )
@@ -384,7 +399,7 @@ def build_it( a_data_dict ):
 
     # ---- name
     a_column_dict = data_dict.ColumnDict(    column_name    = "name",
-                                             display_order  =  50,
+                                             display_order  =  20,
                                              db_type        = "VARCHAR(150)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -401,6 +416,7 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "loc_add_info",
                                              db_type        = "VARCHAR(150)",
                                              display_type   = "string",
+                                             display_order  =  34,
                                              max_len        = None,
                                              default_func   = None, )
     a_table_dict.add_column( a_column_dict )
@@ -409,6 +425,7 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "manufact",
                                              db_type        = "VARCHAR(100)",
                                              display_type   = "string",
+                                             display_order  =  44,
                                              max_len        = None,
                                              default_func= None, )
     a_table_dict.add_column( a_column_dict )

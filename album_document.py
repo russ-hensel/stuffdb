@@ -45,7 +45,7 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-# ---- Qt
+
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
                              QApplication,
@@ -89,10 +89,8 @@ import base_document_tabs
 import custom_widgets
 import key_words
 import picture_viewer
-#import document_maker
 import qt_sql_query
 
-#import qt_with_logging
 
 
 # ---- end imports
@@ -102,13 +100,12 @@ LOG_LEVEL  = 10
 # ----------------------------------------
 class AlbumDocument( base_document_tabs.DocumentBase ):
     """
-    for the photo_show table....
+    for the photoshow table....
     """
     # --------------------------------------
     def __init__(self, ):
         """
         the usual
-
         """
         super().__init__()
 
@@ -137,8 +134,7 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         # # Main notebook with  tabs
         main_notebook           = self.tab_folder   # create in parent
         self.main_notebook      = main_notebook
-        # self.main_notebook      = main_notebook
-        # main_notebook.currentChanged.connect( self.on_tab_changed )
+
 
         # ---- tab building
         ix                        = -1
@@ -202,17 +198,17 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
     def _build_tab_criteria( self, parent_window ):
         """
         what it says, read
-        put page into the notebook
+            put page into the notebook
         """
         return AlbumCriteriaTab( parent_window  )
 
     # -------------------------------------
     def _build_tab_picture( self, parent_window ):
         """
-        'build_tab_detail'
+        '_build_tab_picture'
         """
-        debug_msg    =( f"_build_tab_picture  {parent_window=}")
-        logging.log( LOG_LEVEL,  debug_msg, )
+        # debug_msg    =( f"_build_tab_picture  {parent_window=}")
+        # logging.log( LOG_LEVEL,  debug_msg, )
 
         return base_document_tabs.StuffdbPictureTab( parent_window )
 
@@ -255,33 +251,6 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         # set tab
         self.main_notebook.setCurrentIndex( self.detail_tab_index )
         self.detail_tab.id_field.setText( str( db_key )  )
-
-    # ------------------------------------------
-    def on_list_clicked_promoted( self, index: QModelIndex ):
-        """
-        Args:
-            index (QModelIndex): DESCRIPTION.
-
-        !! promote the whole thing?? need key to be id col 0 seems ok
-        might be functioalize if we use an argument for self.list.tab
-        """
-        debug_msg  = ( f"on_list_clicked  save first if necessary")
-        logging.log( LOG_LEVEL,  debug_msg, )
-
-        row                     = index.row()
-        column                  = index.column()
-
-        self.list_tab.list_ix   = row
-
-        id_index                = self.list_tab.list_model.index(
-            index.row( ), 0 )
-        db_key                  = self.list_tab.list_model.data(
-            id_index, Qt.DisplayRole )
-        #rint( f"photo Clicked on list row {row}, column {column}, {db_key = }" )
-
-        self.select_record( db_key )
-
-        self.main_notebook.setCurrentIndex( self.detail_tab_index )
 
     # ------------------------------------------
     def on_list_double_clicked( self, index: QModelIndex ):
@@ -328,43 +297,6 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         self.detail_tab.copy_prior_row( next_key )
         self.text_tab.copy_prior_row(  next_key )
 
-    # -----------------------------------
-    def add_row_historyxxxxx( self, index ):
-        """
-        pretty much from chat
-
-        def add_row_to_tab2(self, index):
-        # Get the data from the selected row
-        id_data = self.model1.data(self.model1.index(index.row(), 0))
-        name_data = self.model1.data(self.model1.index(index.row(), 2))
-
-        # Create items for the second model
-        id_item = QStandardItem(str(id_data))
-        name_item = QStandardItem(name_data)
-
-        # Add a new row to the second model
-        self.history_model.appendRow([id_item, name_item])
-
-        """
-        return
-
-        # Get the data from the selected row
-        detail_model    = self.detail_tab.tab_model
-        history_model   = self.history_tab.history_model
-
-        id_data         = detail_model.data(
-            detail_model.index( index.row(), 0))
-        name_data       = detail_model.data(
-            detail_model.index( index.row(), 2))
-        # rint( f"in add_row_history {id_data = }   {name_data = }")
-        # Create items for the second model
-        id_item     = QStandardItem( str(id_data) )
-        name_item   = QStandardItem( name_data )
-
-        # Add a new row to the second model
-        history_model.appendRow([id_item, name_item])
-
-
     # ---------------------------------------
     def display_photo( self, file_name  ):
         """
@@ -402,13 +334,114 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
     def __init__(self, parent_window ):
         """
         the usual
-        much looks promotable
         """
         super().__init__( parent_window )
         self.tab_name            = "AlbumCriteriaTab"
 
     # ------------------------------------------
     def _build_tab( self, ):
+        """
+        what it says, read
+        put page into the notebook
+        """
+        page            = self
+        layout           = QHBoxLayout( page )
+                # can we fold in to next
+
+        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        layout.addLayout( grid_layout )
+
+        self._build_top_widgets_grid( grid_layout )
+
+        # ----id
+        widget                = QLabel( "ID" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        #widget                  = QLineEdit()
+        widget                  = custom_widgets.CQLineEdit(
+                                     field_name = "table_id" )
+        self.critera_widget_list.append( widget )
+        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
+
+        # ----id_old
+        widget                = QLabel( "ID Old" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = custom_widgets.CQLineEdit(
+                                     field_name = "id_old" )
+        self.critera_widget_list.append( widget )
+        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
+
+        # ----key words
+        widget                = QLabel( "Key Words" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = custom_widgets.CQLineEdit(
+                                     field_name = "key_words" )
+        self.critera_widget_list.append( widget )
+        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, columnspan = 3 )
+
+        # ----name
+        widget                = QLabel( "name" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = custom_widgets.CQLineEdit(
+                                     field_name = "name" )
+        self.critera_widget_list.append( widget )
+        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, columnspan = 3 )
+
+        # ---- Order by
+        grid_layout.new_row()
+        widget  = QLabel( "Order by" )
+        grid_layout.addWidget( widget )
+
+        widget                 = custom_widgets.CQComboBox(
+                                     field_name = "order_by" )
+        self.critera_widget_list.append( widget )
+
+        widget.addItem('name')
+        widget.addItem("name - ignore case")
+        widget.addItem('descr')
+        widget.addItem('id')
+        widget.addItem('id_old')
+        widget.addItem('start_date')
+
+        grid_layout.addWidget( widget )
+
+        # ---- Order by Direction
+        #grid_layout.new_row()
+        widget  = QLabel( "Direction" )
+        grid_layout.addWidget( widget )
+
+        widget                 = custom_widgets.CQComboBox(
+                                     field_name = "order_by_dir" )
+        self.critera_widget_list.append( widget )
+
+        widget.addItem('Ascending')
+        widget.addItem('Decending')
+
+        debug_msg = ( "build_tab build criteria change put in as marker ")
+        logging.debug( debug_msg )
+
+        widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget )
+
+        # ---- debug criteria changed should be in parent
+        grid_layout.new_row()
+        widget  = QLabel( "criteria_changed_widget" )
+        self.criteria_changed_widget  = widget
+        grid_layout.addWidget( widget )
+
+    # ------------------------------------------
+    def _build_tab_old( self, ):
         """
         what it says, read
         put page into the notebook
@@ -667,9 +700,6 @@ class AlbumListTab( base_document_tabs.ListTabBase  ):
 
         self._build_gui()
 
-
-
-
 # ----------------------------------------
 class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
     """
@@ -684,26 +714,10 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
         """
         super().__init__( parent_window )
 
-
-        # self._build_gui()
-        # # { self.this_subwindow = }
-        # #self.this_subwindow     = "photoshowDetailTab"
-        # self.tab_name           = "AlbumDetailTab"
-
-        # model                   = QSqlTableModel(
-        #                             self, AppGlobal.qsql_db_access.db )
-        # self.tab_model          = model
-        # self.table              = parent_window.detail_table_name
-
-        # model.setTable( self.table )
-
-        # super().__init__( parent_window )
-
         self.tab_name               = "AlbumDetailTab"
 
         self.key_word_table_name    = "photoshow_key_word"
         self.post_init()
-
 
     # -------------------------------------
     def _build_gui( self ):
@@ -730,7 +744,6 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
 
         tab_layout      = placer
         box_layout_1.addLayout( placer )
-
 
         # ----fields
         self._build_fields( placer )
@@ -940,679 +953,6 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
 
-    #---------------------------------
-    def _build_fields_bak_1( self, layout ):
-        """
-        What it says, read
-            this is generated code, then tweaked.
-            tweaks are:
-                --- none yet
-        """
-        # ---- code_gen: detail_tab_build_gui use for _build_fields was_build_gui  -- begin table entries
-        # ---- code_gen: TableDict.to_build_form 2025_02_01 for photoshow -- begin table entries -----------------------
-
-        # ---- id
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id",
-                                                db_type        = "integer",
-                                                display_type   = "string",
-                                                 )
-        self.id_field     = edit_field
-        edit_field.setPlaceholderText( "id" )
-        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
-        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-        # ---- id_old
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id_old",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.id_old_field     = edit_field
-        edit_field.setPlaceholderText( "id_old" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-        # ---- name
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "name",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.name_field     = edit_field
-        edit_field.setPlaceholderText( "name" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field )
-
-        # ---- cmnt
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "cmnt",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.cmnt_field     = edit_field
-        edit_field.setPlaceholderText( "cmnt" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-        # ---- add_kw
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "add_kw",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.add_kw_field     = edit_field
-        edit_field.setPlaceholderText( "add_kw" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field )
-
-        # ---- start_date
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "start_date",
-                                                db_type        = "integer",
-                                                display_type   = "timestamp",
-                                                 )
-        self.start_date_field     = edit_field
-        edit_field.setPlaceholderText( "start_date" )
-        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
-        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-        # ---- end_date
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "end_date",
-                                                db_type        = "integer",
-                                                display_type   = "timestamp",
-                                                 )
-        self.end_date_field     = edit_field
-        edit_field.setPlaceholderText( "end_date" )
-        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
-        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-        # ---- create_date
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "create_date",
-                                                db_type        = "integer",
-                                                display_type   = "timestamp",
-                                                 )
-        self.create_date_field     = edit_field
-        edit_field.setPlaceholderText( "create_date" )
-        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
-        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-        # ---- type
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "type",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.type_field     = edit_field
-        edit_field.setPlaceholderText( "type" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-        # ---- web_site_dir
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "web_site_dir",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.web_site_dir_field     = edit_field
-        edit_field.setPlaceholderText( "web_site_dir" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-    #---------------------------------
-    def _build_fields_bak_0( self, layout ):
-        """
-        What it says, read
-            this is generated code, then tweaked.
-            """
-
-
-        # ---- code_gen: detail_tab_build_gui use for _build_fields was_build_gui  -- begin table entries
-
-
-        # ---- id
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id",
-                                                db_type        = "integer",
-                                                display_type   = "string",
-                                                 )
-        self.id_field     = edit_field
-        edit_field.setPlaceholderText( "id" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- id_old
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id_old",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.id_old_field     = edit_field
-        edit_field.setPlaceholderText( "id_old" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- name
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "name",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.name_field     = edit_field
-        edit_field.setPlaceholderText( "name" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- add_kw
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "add_kw",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.add_kw_field     = edit_field
-        edit_field.setPlaceholderText( "add_kw" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field )
-
-
-        # ---- descr
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "descr",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.descr_field     = edit_field
-        edit_field.setPlaceholderText( "descr" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field )
-
-
-        # ---- type
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "type",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.type_field     = edit_field
-        edit_field.setPlaceholderText( "type" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- series
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "series",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.series_field     = edit_field
-        edit_field.setPlaceholderText( "series" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- author
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "author",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.author_field     = edit_field
-        edit_field.setPlaceholderText( "author" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field )
-
-
-        # ---- dt_enter
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "dt_enter",
-                                                db_type        = "integer",
-                                                display_type   = "timestamp",
-                                                 )
-        self.dt_enter_field     = edit_field
-        edit_field.setPlaceholderText( "dt_enter" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- format
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "format",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.format_field     = edit_field
-        edit_field.setPlaceholderText( "format" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- inv_id
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "inv_id",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.inv_id_field     = edit_field
-        edit_field.setPlaceholderText( "inv_id" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- cmnt
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "cmnt",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.cmnt_field     = edit_field
-        edit_field.setPlaceholderText( "cmnt" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- status
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "status",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.status_field     = edit_field
-        edit_field.setPlaceholderText( "status" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- c_name
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "c_name",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.c_name_field     = edit_field
-        edit_field.setPlaceholderText( "c_name" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- title
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "title",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.title_field     = edit_field
-        edit_field.setPlaceholderText( "title" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field )
-
-
-        # ---- tag
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "tag",
-                                                db_type        = "string",
-                                                display_type   = "skip",
-                                                 )
-        self.tag_field     = edit_field
-        edit_field.setPlaceholderText( "tag" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- old_inv_id
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "old_inv_id",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.old_inv_id_field     = edit_field
-        edit_field.setPlaceholderText( "old_inv_id" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- file
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "file",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.file_field     = edit_field
-        edit_field.setPlaceholderText( "file" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- sub_dir
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "sub_dir",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.sub_dir_field     = edit_field
-        edit_field.setPlaceholderText( "sub_dir" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- photo_url
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "photo_url",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.photo_url_field     = edit_field
-        edit_field.setPlaceholderText( "photo_url" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- camera
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "camera",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.camera_field     = edit_field
-        edit_field.setPlaceholderText( "camera" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- lens
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "lens",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.lens_field     = edit_field
-        edit_field.setPlaceholderText( "lens" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- f_stop
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "f_stop",
-                                                db_type        = "string",
-                                                display_type   = "skip",
-                                                 )
-        self.f_stop_field     = edit_field
-        edit_field.setPlaceholderText( "f_stop" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- shutter
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "shutter",
-                                                db_type        = "integer",
-                                                display_type   = "string",
-                                                 )
-        self.shutter_field     = edit_field
-        edit_field.setPlaceholderText( "shutter" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-        # ---- copyright
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "copyright",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.copyright_field     = edit_field
-        edit_field.setPlaceholderText( "copyright" )
-        # still need validater
-        # still default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field )
-
-
-    #---------------------------------
-    def _build_fieldsxxx( self, layout ):
-        """
-        What it says, read
-            thi
-            """
-        # ---- code_gen: detail_tab_build_gui use for _build_fields was_build_gui  -- begin table entries
-                                                # qdates make these non editable
-        # ---- id
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id",
-                                                db_type        = "integer",
-                                                display_type   = "string" )
-        self.id_field         = edit_field
-        #edit_field.setPlaceholderText( "id" )
-        self.field_list.append( edit_field )
-        layout.addWidget( edit_field )
-
-        # ---- id_old
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id_old",
-                                                db_type        = "string",
-                                                display_type   = "string" )
-        self.id_old_field         = edit_field
-        edit_field.setPlaceholderText( "id_old" )
-        self.field_list.append( edit_field )
-        layout.addWidget( edit_field )
-
-        # ---- name
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "name",
-                                                db_type        = "string",
-                                                display_type   = "string" )
-        self.name_field         = edit_field
-        edit_field.setPlaceholderText( "name" )
-        self.field_list.append( edit_field )
-        layout.addWidget( edit_field )
-
-        # ---- cmnt
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "cmnt",
-                                                db_type        = "string",
-                                                display_type   = "string" )
-        self.cmnt_field         = edit_field
-        edit_field.setPlaceholderText( "cmnt" )
-        self.field_list.append( edit_field )
-        layout.addWidget( edit_field )
-
-                                                # timestamp to qdates make these non editable
-
-        # ---- start_date
-        edit_field                  = custom_widgets.CQDateEdit(
-                                                parent         = None,
-                                                field_name     = "start_date",
-                                                db_type        = "timestamp",
-                                                display_type   = "qdate" )
-        self.start_date_field         = edit_field
-        #edit_field.setPlaceholderText( "start_date" )
-        self.field_list.append( edit_field )
-        layout.addWidget( edit_field )
-
-                                                # timestamp to qdates make these non editable
-
-        # ---- end_date
-        edit_field                  = custom_widgets.CQDateEdit(
-                                                parent         = None,
-                                                field_name     = "end_date",
-                                                db_type        = "timestamp",
-                                                display_type   = "qdate" )
-        self.end_date_field         = edit_field
-        #edit_field.setPlaceholderText( "end_date" )
-        self.field_list.append( edit_field )
-        layout.addWidget( edit_field )
-
-                                                # timestamp to qdates make these non editable
-
-        # ---- create_date
-        edit_field                  = custom_widgets.CQDateEdit(
-                                                parent         = None,
-                                                field_name     = "create_date",
-                                                db_type        = "timestamp",
-                                                display_type   = "qdate" )
-        self.create_date_field         = edit_field
-        #edit_field.setPlaceholderText( "create_date" )
-        self.field_list.append( edit_field )
-        layout.addWidget( edit_field )
-
-        # ---- type
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "type",
-                                                db_type        = "string",
-                                                display_type   = "string" )
-        self.type_field         = edit_field
-        edit_field.setPlaceholderText( "type" )
-        self.field_list.append( edit_field )
-        layout.addWidget( edit_field )
-
-        # ---- add_kw
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "add_kw",
-                                                db_type        = "string",
-                                                display_type   = "string" )
-        self.add_kw_field         = edit_field
-        edit_field.setPlaceholderText( "add_kw" )
-        self.field_list.append( edit_field )
-        layout.addWidget( edit_field )
-
-        # ---- web_site_dir
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "web_site_dir",
-                                                db_type        = "string",
-                                                display_type   = "string" )
-        self.web_site_dir_field         = edit_field
-        edit_field.setPlaceholderText( "web_site_dir" )
-        self.field_list.append( edit_field )
-        layout.addWidget( edit_field )
-
-        # ---- code_gen: detail_tab_build_gui use for _build_fields was_build_gui  -- end table entries
-
-
-    # -------------------------------------
-    # def _build_tab_pictures( self, parent_window ):
-    #     """
-    #     for override and trying different implementations
-    #     all should have the same interface
-    #     """
-    #     # return AlbumDetailTab(  parent_window )
-    #     # return AlbumDetailListTab( parent_window )
-    #     # return AlbumDetailListTab_pre_crud( parent_window )
-    #     return AlbumDetailListTab( parent_window )
 
     # ----------------------------
     def fetch_detail_row( self, id=None ):
@@ -2198,28 +1538,6 @@ class AlbumHistoryTab(  base_document_tabs.HistoryTabBase  ):
         super().__init__( parent_window )
         self.tab_name            = "AlbumHistorylTab"
 
-    # -------------------------------------
-    def _build_guixxxxx( self ):
-        """
-        what it says read
-        Returns:
-            none  --- perhaps promote some, but not likely
-        """
-        tab                  = self
-        table                = QTableWidget(
-            0, 10, self )  # row column third arg parent
-        self.history_table   = table
-
-        ix_col   = 1
-        table.setColumnWidth( ix_col, 22 )
-
-        # table.clicked.connect( self.parent_window.on_history_clicked )
-        # table.clicked.connect( self.on_list_clicked )
-        table.cellClicked.connect( self.on_cell_clicked )
-
-        layout2     = QVBoxLayout()
-        layout2.addWidget( table )
-        tab.setLayout( layout2 )
 
 
 # ----------------------------------------

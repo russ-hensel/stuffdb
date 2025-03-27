@@ -32,7 +32,7 @@ table_name      = "people_phone"
 #table_name      = "photoshow"
 
 
-#table_name      = "plant"
+table_name      = "plant"
 #table_name      = "planting"
 # ---- begin reports
 

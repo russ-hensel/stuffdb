@@ -30,7 +30,7 @@ from app_global import AppGlobal
 from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
 # ---- Qt
 from PyQt5.QtGui import QFont, QIntValidator, QStandardItem, QStandardItemModel
-# ---- QtSql
+
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
@@ -70,7 +70,7 @@ from PyQt5.QtWidgets import (QAction,
 import base_document_tabs
 import custom_widgets
 import data_manager
-import example_code  # against code in tex
+#import example_code  # against code in tex
 #import  ia_qt
 import key_words
 import parameters
@@ -85,8 +85,6 @@ logger          = logging.getLogger( )
 
 
 LOG_LEVEL  = 5   # higher is more
-
-
 
 # ----------------------------------------
 class HelpDocument( base_document_tabs.DocumentBase ):
@@ -164,16 +162,20 @@ class HelpDocument( base_document_tabs.DocumentBase ):
 
     #-------------------------------------
     def copy_prior_row( self ):
-        """tail_tab.default_new_row( next_key )
+        """
+        looks promotable
+
+        tail_tab.default_new_row( next_key )
         default values with copy for a new row in the detail and the
                text tabs
         probably can promote, may need different func name on text so tabs can be the same?
         Returns:
             None.
             """
-        next_key      = AppGlobal.key_gen.get_next_key(   self.detail_table_name )
+        next_key      = AppGlobal.key_gen.get_next_key(
+                                  self.detail_table_name )
         self.detail_tab.copy_prior_row( next_key )
-        self.text_tab.copy_prior_row(  next_key )
+        self.text_tab.copy_prior_row(   next_key )
 
     # ---- capture events ----------------------------
     # ------------------------------------------
@@ -217,7 +219,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
     """
     def __init__(self, parent_window ):
         """
-        the usual  -- some is promotable
+        the usual
 
         """
         super().__init__( parent_window )
@@ -230,94 +232,83 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         put page into the notebook
         """
         page            = self
+        layout          = QHBoxLayout( page )
+                # can we fold in to next
 
-        placer          = gui_qt_ext.PlaceInGrid(
-            central_widget  = page,
-            a_max           = 0,
-            by_rows         = False  )
+        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 12 )
+        layout.addLayout( grid_layout )
 
-        self._build_top_widgets( placer )
+        self._build_top_widgets_grid( grid_layout )
 
         # ----id
         widget                = QLabel( "ID" )
-        placer.new_row()
-        placer.place( widget )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
 
-        #widget                  = QLineEdit()
-        widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
-        self.key_words_widget   = widget
-        widget.critera_name     = "table_id"
+        widget                  = custom_widgets.CQLineEdit(
+                                             field_name = "table_id" )
         self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget, )    # columnspan = 3 )
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
 
         # ----id_old
         widget                = QLabel( "ID Old" )
-        placer.new_row()
-        placer.place( widget )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
 
-        widget                  = custom_widgets.CQLineEditCriteria(
-                                   get_type = "string", set_type = "string")
-        self.key_words_widget   = widget
-        widget.critera_name     = "id_old"
+        widget                  = custom_widgets.CQLineEdit(
+                                   field_name = "id_old" )
         self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget, )    # columnspan = 3 )
+        # widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
 
         # ---- "Key Words"
-        placer.new_row()
+        grid_layout.new_row()
         widget  = QLabel( "Key Words" )
-        placer.place( widget )
+        grid_layout.addWidget( widget )
 
-        widget                    = custom_widgets.CQLineEditCriteria(
-                                      get_type = "string", set_type = "string")
+        widget                    = custom_widgets.CQLineEdit(
+                                       field_name = "key_words" )
         self.key_words_widget     = widget
         widget.setPlaceholderText( "key_words"  )
-        widget.critera_name       = "key_words"
-        widget.functon_on_return  = self.criteria_select
         self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget )
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget )
 
-        # ---- placer.new_row()
-        placer.new_row()
+        # ---- grid_layout.new_row()
+        grid_layout.new_row()
         widget  = QLabel( "Title (like)" )
-        placer.place( widget )
+        grid_layout.addWidget( widget )
 
-        widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
-        self.title_widget       = widget
-        widget.critera_name     = "title"
-        widget.functon_on_return  = self.criteria_select
+        widget                  = custom_widgets.CQLineEdit(
+                                                 field_name = "title" )
         self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget, columnspan = 2 )
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, columnspan = 2 )
 
-        # ---- system placer.new_row()
-        placer.new_row()
+        # ---- system grid_layout.new_row()
+        grid_layout.new_row()
         widget          = QLabel( "System" )
-        placer.place( widget  )
+        grid_layout.addWidget( widget  )
 
-        widget                  = custom_widgets.CQComboBoxEditCriteria( get_type = "string", set_type = "string")
-        self.system_widget      = widget
-        widget.critera_name     = "system"
+        widget                  = custom_widgets.CQComboBox(
+                                                 field_name = "system" )
         self.critera_widget_list.append( widget )
-
-        placer.place( widget )
+        grid_layout.addWidget( widget )
         widget.addItems( SYSTEM_LIST )
         # widget.addItem( '' )
 
         widget.setCurrentIndex( 0 )
 
         # ---- Order by
-        placer.new_row()
+        grid_layout.new_row()
         widget  = QLabel( "Order by" )
-        placer.place( widget )
+        grid_layout.addWidget( widget )
 
-        widget                 = custom_widgets.CQComboBoxEditCriteria(
-                                 get_type = "string", set_type = "string")
-        self.order_by_widget   = widget
+        widget                 = custom_widgets.CQComboBox(
+                                 field_name = "order_by" )
         self.critera_widget_list.append( widget )
-        widget.critera_name    = "order_by"
+
 
         widget.addItem('title - ignore case')
         widget.addItem('descr')
@@ -329,40 +320,50 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         # widget.addItem('Title??')
 
         print( f"{self.tab_name} build_tab build criteria change put in as marker ")
-        widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget )
+        #widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget )
 
         # ---- Order by Direction
-        #placer.new_row()
         widget  = QLabel( "Direction" )
-        placer.place( widget )
+        grid_layout.addWidget( widget )
 
-        widget                      = custom_widgets.CQComboBoxEditCriteria( get_type = "string", set_type = "string")
-        self.order_by_dir_widget    = widget
-        #widget.functon_on_return    = self.criteria_select
+        widget                      = custom_widgets.CQComboBox(
+                                          field_name = "order_by_dir" )
+        #self.order_by_dir_widget    = widget
         self.critera_widget_list.append( widget )
-        widget.critera_name    = "order_by_dir"
+        #widget.critera_name    = "order_by_dir"
 
         widget.addItem('Ascending')
         widget.addItem('Decending')
         # widget.addItem('id')
         # widget.addItem('Title??')
 
-        print( f"{self.tab_name} build_tab build criteria change put in as marker ")
-        widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget )
+        #widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.new_row()  # because seems to be missing
+        grid_layout.addWidget( widget )
+
+        widget  = QLabel( "<<<Direction" )
+        grid_layout.addWidget( widget )
 
         # ---- criteria changed should be in parent
-        placer.new_row()
+        print( f"{self.tab_name} build_tab build criteria change put in as marker ")
+        grid_layout.new_row()
         widget  = QLabel( "criteria_changed_widget" )
         self.criteria_changed_widget  = widget
-        placer.place( widget )
+        grid_layout.addWidget( widget )
 
         # ---- push up on page still needs adjust
-        widget   = QSpacerItem( 350, 310, QSizePolicy.Expanding, QSizePolicy.Minimum )
-        placer.new_row()
-        # placer.place( widget )
-        placer.layout.addItem( widget, placer.ix_row, placer.ix_col    )  # row column
+        widget   = QSpacerItem( 350, 110, QSizePolicy.Expanding, QSizePolicy.Minimum )
+            # width, height..... pixels
+        grid_layout.new_row()
+        # grid_layout.place( widget )
+        grid_layout.addItem( widget, grid_layout.ix_row, grid_layout.ix_col    )  # row column
+
+        # ---- function_on_return( self )
+        for i_widget in self.critera_widget_list:
+            i_widget.function_on_return     = self.criteria_select
+            i_widget.function_on_changed    = ( lambda: self.criteria_changed( True ) )
+
 
     # -------------
     def criteria_select( self, ):
@@ -377,7 +378,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         """
         parent_document                 = self.parent_window
-
         help_document                   = self.parent_window
 
         model                           = help_document.list_tab.list_model
@@ -632,9 +632,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         # next is a bit ass backwards
         self.pseodo_text_tab        = self.text_data_manager
 
-
         page            = self
-        tab             = self
 
         box_layout_1    =  QVBoxLayout( page )
 
@@ -670,21 +668,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         self.detail_notebook      = detail_notebook
 
 
-    #-------------------------------------
-    def build_gui_layout( self ):
-        """
-        """
-
-    #-------------------------------------
-    def build_gui_layout_test( self ):
-        """
-        """
-
-    #-------------------------------------
-    def build_gui_layout_stable( self ):
-        """
-        """
-
     #---------------------------------
     def _build_fields( self, layout ):
         """
@@ -704,267 +687,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
 
         """
-        # self._build_fields_test( layout )
-        self._build_fields_stable( layout )
 
-    #---------------------------------
-    def _build_fields_test( self, layout ):
-        """
-        What it says, read
-                tweaks    may need         widget.setReadOnly( True )
-                # ---- system TO combo box
-        for a grid# Row 1, Column 0, Span 1 row and 2 columns
-
-        row_span      = 1 # default is 1
-        col_span      = 1 # default is 1
-
-        # rowSpan: (Optional) The number of rows the widget should span. Defaults to 1.
-        # columnSpan: (Optional) The number of columns the widget should span. Defaults to 1.
-
-        widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        layout.addWidget( widget, ix_row, ix_col, row_span, col_span )
-
-
-        """
-        # ---- code_gen: detail_tab_build_gui use for _build_fields was_build_gui  -- begin table entries
-        # ---- code_gen: TableDict.to_build_form 2025_02_01 for help_info -- begin table entries -----------------------
-
-        row_span      = 1
-        col_span      = 1
-
-        # for ix in range( 8 ):
-        #     widget   = QLineEdit( )
-        #     #widget   = QSpacerItem( 0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum )
-        #     layout.addWidget( widget, columnspan = col_span  )
-
-        # this seems to stabalize the grid at top not visible
-        for ix in range( 8 ):
-            widget   = QSpacerItem( 50, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
-            layout.addItem( widget, 0, ix  )  # row column
-
-
-        row_span      = 1
-        col_span      = 1
-        # ---- id
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id",
-                                                db_type        = "integer",
-                                                display_type   = "integer",
-                                                 )
-        self.id_field               = edit_field
-        edit_field.setPlaceholderText( "id" )
-        edit_field.setReadOnly( True )
-        edit_field.edit_to_rec      = edit_field.edit_to_rec_str_to_int
-        edit_field.rec_to_edit      = edit_field.rec_to_edit_int_to_str
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-        # ---- id_old
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id_old",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.id_old_field     = edit_field
-        edit_field.setPlaceholderText( "id_old" )
-        edit_field.setReadOnly( True )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-        # ---- title
-        col_span      = 2
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "title",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.title_field     = edit_field
-        edit_field.setPlaceholderText( "title" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4  )
-
-        # # ---- system
-        # edit_field                  = custom_widgets.CQLineEdit(
-        #                                         parent         = None,
-        #                                         field_name     = "system",
-        #                                         db_type        = "string",
-        #                                         display_type   = "string",
-        #                                          )
-        # self.system_field     = edit_field
-        # edit_field.setPlaceholderText( "system" )
-        # # still validator / default func  None
-        # self.data_manager.add_field( edit_field, is_key_word = True )
-        # layout.addWidget( edit_field )
-
-        # ---- system:  combo
-        edit_field                  = custom_widgets.CQComboBox(
-                                                parent         = None,
-                                                field_name     = "system",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.system_field     = edit_field
-        edit_field.setPlaceholderText( "system" )
-        edit_field.clear()
-        edit_field.add_items( SYSTEM_LIST )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-
-        # ---- sub_system
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "sub_system",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.sub_system_field     = edit_field
-        edit_field.setPlaceholderText( "sub_system" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-        # ---- key_words
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "key_words",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.key_words_field     = edit_field
-        edit_field.setPlaceholderText( "key_words" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-        # ---- java_package
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "java_package",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.java_package_field     = edit_field
-        edit_field.setPlaceholderText( "package" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-        # ---- java_type
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "java_type",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.java_type_field     = edit_field
-        edit_field.setPlaceholderText( "type" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-        # ---- java_name
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "java_name",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.java_name_field     = edit_field
-        edit_field.setPlaceholderText( "name" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-        # ---- table_name
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "table_name",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.table_name_field     = edit_field
-        edit_field.setPlaceholderText( "table_name" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-        # ---- column_name
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "column_name",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.column_name_field     = edit_field
-        edit_field.setPlaceholderText( "column_name" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-        # ---- type
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "type",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.type_field     = edit_field
-        edit_field.setPlaceholderText( "type" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-        # ---- edit_ts
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "edit_ts",
-                                                db_type        = "integer",
-                                                display_type   = "timestamp",
-                                                 )
-        self.edit_ts_field     = edit_field
-        edit_field.setPlaceholderText( "edit_ts" )
-        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
-        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-        # ---- is_example
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "is_example",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.is_example_field     = edit_field
-        edit_field.setPlaceholderText( "is_example" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-        # ---- can_execute
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "can_execute",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.can_execute_field     = edit_field
-        edit_field.setPlaceholderText( "can_execute" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = col_span  )
-
-    #---------------------------------
-    def _build_fields_stable( self, layout ):
         """
         What it says, read
                 tweaks    may need         widget.setReadOnly( True )
@@ -1197,8 +920,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
 
-
-
     # -------------------------------------
     def _build_text_gui( self, a_layout ):
         """
@@ -1222,16 +943,16 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         text_layout     = QVBoxLayout()
         tab_layout.addLayout( text_layout, stretch=2 )
 
-        data_manager    = self.text_data_manager
+        data_manager        = self.text_data_manager
 
         # ---- TextEdit   needs to be defined at beginning with exte4nsion object
         # and monkey patch
-        edit_field         = custom_widgets.CQTextEdit(
+        edit_field          = custom_widgets.CQTextEdit(
                                     parent         = None,
                                     field_name     = "text_data",
                                     db_type        = "string",   # or text ??
                                     display_type   = "string" )
-        text_entry_widget        = edit_field
+        text_entry_widget   = edit_field
         font                = QFont( * parameters.PARAMETERS.text_edit_font ) # ("Arial", 12)
         edit_field.setFont(font)
         self.text_data_field = edit_field    # may be used for editing
@@ -1307,14 +1028,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
         button_layout.addWidget( widget, )
 
-
-        # # ---- template may not even need in self
-        # self.text_edit_ext_obj         = text_edit_ext.TextEditExt( AppGlobal.parameters, text_entry_widget)
-        # text_entry_widget.text_edit_ext_obj = self.text_edit_ext_obj
-        # text_edit_ext.STUFF_DB         = AppGlobal.controller
-        # ddl_widget, ddl_button_widget  = self.text_edit_ext_obj.build_up_template_widgets()
-
-
         # ---- search text
         search_layout       = QHBoxLayout()
         text_layout.addLayout( search_layout )
@@ -1324,7 +1037,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         search_line_edit    = widget
         widget.setPlaceholderText("Enter search text")
         search_layout.addWidget( widget,   )
-
 
         # ---- up down Buttons
         widget                  = QPushButton("Down")
@@ -1340,7 +1052,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         connect_to      = functools.partial( self.text_edit_ext_obj.search_up, search_line_edit ,)
         up_button.clicked.connect( connect_to )
         search_layout.addWidget( widget,   )
-
 
         # # ---- qt_exec
         # label           = "qt_exec"
@@ -1376,6 +1087,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
     # -----------------------------
     def copy_prior_row( self, next_key ):
         """
+        !! may be dead
         could use create default_new_row
         what it says
             this is for a new row on the window -- no save
@@ -1389,25 +1101,11 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         add_kw     = self.add_kw_field.text()
         #print(  ia_qt.q_line_edit( self.name_field,
         #                   msg = "this is the name field",  ) # include_dir = True ) )
-        # url      = self.url_field.text()
-        # mypref   = self.mypref_field.text()
-        # mygroup  = self.mygroup_field.text()
-        # add_ts   = self.add_ts_field.text()
+
         edit_ts  = self.edit_ts_field.text()
         edit_ts  = "self.edit_ts_field.text()"   # !! test
 
         self.default_new_row(  next_key )
-
-        # ---- set the defaults
-
-        # self.descr_field.setText( descr + "*" )
-        #self.url_field.setText( url )
-
-        # # ---- ??redef add_ts
-        # a_ts   = str( time.time() ) + "sec"
-
-        # self.add_ts_field.setText(  a_ts )
-
 
     # -----------------------
     def __str__( self ):
@@ -1435,6 +1133,5 @@ class HelpHistorylTab( base_document_tabs.HistoryTabBase  ):
         """
         super().__init__( parent_window )
         self.tab_name            = "HelpHistorylTab"
-
 
 # ---- eof ------------------------------

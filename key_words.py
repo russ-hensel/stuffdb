@@ -172,6 +172,32 @@ class KeyWords(   ):
         #debug_key_words         = self.new_key_words
 
     #----------------------------------
+    def delete_all( self, table_id  ):
+        """
+        delete all the records for a given table id
+
+        """
+        query   = QSqlQuery( self.db )
+
+        sql     = "DELETE FROM stuff_key_word WHERE id = :id_value"
+        #print(f"Executing: {sql}")
+
+        query.prepare(sql)
+        query.bindValue(":id_value", table_id )
+
+        # this may be a repeat that we want to elimiante
+        # Execute the DELETE statement
+        if not query.exec_():
+            error = query.lastError()
+            msg   = (f"Error deleting id {table_id}: {error.text()}")
+            logging.error( msg )
+
+        else:
+            if VERBOSE:
+                debug_msg   = (f"Successfully deleted rows where table_id = {table_id}")
+                logging.log( LOG_LEVEL,  debug_msg, )
+
+    #----------------------------------
     def compute_add_delete( self, table_id  ):
         """
         process a string to key words for adds and deletes

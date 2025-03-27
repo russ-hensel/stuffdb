@@ -45,7 +45,7 @@ from PyQt5.QtGui import (QFont,
                          QStandardItem,
                          QStandardItemModel,
                          QTextCursor)
-# ---- QtSql
+
 from PyQt5.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
@@ -76,7 +76,9 @@ from PyQt5.QtWidgets import (QAction,
                              QMenu,
                              QMessageBox,
                              QPushButton,
+                             QSpacerItem,
                              QSpinBox,
+                             QSizePolicy,
                              QTableView,
                              QTableWidget,
                              QTableWidgetItem,
@@ -285,6 +287,7 @@ class ReadOnlySqlTableModel( QSqlTableModel ):
         """
         super(ReadOnlySqlTableModel, self).__init__(parent, db)
 
+    # -----------------------
     def flags(self, index):
         """
         # Make all cells non-editable
@@ -354,6 +357,7 @@ class DocumentBase( QMdiSubWindow ):
 
         self.detail_table_id           = None    # set in descendant
         self.current_id                = None    # same as above, !! delete one
+            # probably should be deleted in favor of one in detail in data_manager
         self.detail_table_name         = None    # set in descendant
         self.menu_action_id            = None    # set by midi_management id the menu
         # self.record_state
@@ -451,14 +455,13 @@ class DocumentBase( QMdiSubWindow ):
         Args:
             index (QModelIndex): DESCRIPTION.
 
-        !! promote the whole thing from stuff removed there and rest
-        might be functioalize if we use an argumen for self.list.tab
         """
         row                     = index.row()
         column                  = index.column()
 
-        debug_msg  = ( f"DocumentBase.on_list_clicked Stuff Clicked on list row {row}, column { column}  save first ??" )  # " value: {value}" )
-        logging.debug( debug_msg )
+        # debug_msg  = ( "DocumentBase.on_list_clicked Stuff Clicked on list"
+        #               f"  row {row}, column { column}  save first ??" )  # " value: {value}" )
+        # logging.debug( debug_msg )
         self.list_tab.list_ix   = row  # do !! we need this ??
 
         self.set_list_to_detail_ix( row )
@@ -529,16 +532,16 @@ class DocumentBase( QMdiSubWindow ):
         consider second arg a delta -- that might eliminat the prior next but
         working now
         """
-        self.update_db()
+        self.update_db()    # why !! try remove
 
-        tab                     =  self.list_tab
-        no_rows                  = tab.list_model.rowCount()
+        tab                 = self.list_tab
+        no_rows             = tab.list_model.rowCount()
 
         if no_rows < 1:
             debug_msg  = ( "set_list_to_detail_ix  may need to clear some stuff" )
             logging.debug( debug_msg )
 
-        list_ix                  = tab.list_ix
+        list_ix             = tab.list_ix
 
         if new_list_ix >= no_rows:
             new_list_ix  =  no_rows -1
@@ -711,10 +714,15 @@ class DocumentBase( QMdiSubWindow ):
         if not is_delete_ok():
             return
 
-        debug_msg    = ( "delete.... the detail items and all that depend on it need to complete and route to update_db ")
+        current_id   = self.detail_tab.data_manager.current_id
+        debug_msg    = ( f"DocumentBase_delete is current.id ok {current_id} ")
         logging.debug( debug_msg )
 
-        debug_msg    = ( "convert to loop?? !! may need to check record state ")
+
+        debug_msg    = ( "DocumentBase_delete.... the detail items and all that depend on it need to complete and route to update_db ")
+        logging.debug( debug_msg )
+
+        debug_msg    = ( "DocumentBase_delete convert to loop?? !! may need to check record state ")
         logging.debug( debug_msg )
 
         if self.detail_tab is not None:
@@ -723,12 +731,20 @@ class DocumentBase( QMdiSubWindow ):
         if self.text_tab is not None:
             self.text_tab.delete_all()
 
-        self.current_id     = None
+        self.list_tab.delete_row_by_id( current_id )
 
+        self.history_tab.delete_row_by_id( current_id )
+
+        self.next_list_to_detail()  # and hope it works --- need tab shift?
+
+                # if not perhaps stay on criter or clear the detail ... to
+                # be done
+
+        #self.current_id     = None
         # self.record_state   = RECORD_DELETE   # this is in detail tab not here
         #self.record_state   = RECORD_NULL
 
-        debug_msg     = f"sUB wINDOE.delete...  ....   for {self.subwindow_name = }"
+        debug_msg     = f"DocumentBase_delete  done   for {self.subwindow_name = }"
         logging.debug( debug_msg )
 
     # --------------------------
@@ -1191,6 +1207,15 @@ class DetailTabBase( QWidget ):
             i_tab.select_by_id( next_key )  # key will not exist
 
     # ---------------------------
+    def post_select_record( self, id_value  ):
+        """
+        some tweaking after a select, may need similar thing
+        for update_db
+        probably only implemented in descandant
+        """
+        pass
+
+    # ---------------------------
     def select_record( self, id_value  ):
         """
         from russ crud  works
@@ -1318,7 +1343,7 @@ class ListTabBase( DetailTabBase ):
 
         """
         super().__init__( parent_window  )
-        self.list_ix            = 5
+        #self.list_ix            = 5
 
     # ------------------------------------------
     def _build_gui( self, ):
@@ -1329,7 +1354,7 @@ class ListTabBase( DetailTabBase ):
             or get table from parent
         """
         page            = self
-        tab             = page
+
         # a_notebook.addTab( page, 'Channels ' )
         placer          = gui_qt_ext.PlaceInGrid(
             central_widget=page,
@@ -1379,6 +1404,75 @@ class ListTabBase( DetailTabBase ):
         for ix_col, i_width in enumerate( col_head_widths ):
             #rint( f" {ix_col = } { i_width = }")
             view.setColumnWidth( ix_col, i_width * WIDTH_MULP )
+
+    #-------------------------------
+    def delete_row_by_id ( self, id_to_delete ):
+        """
+        called after a record delete perhaps from document
+        seems best of redoing the select
+
+        """
+        model           = self.list_model
+
+        debug_msg       = ( f"ListTabBase_delete_row_by_id end gona just do a criteria_select  {model.rowCount() = } ).")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
+
+        self.parent_window.criteria_tab.criteria_select()
+
+
+        debug_msg  = ( f"ListTabBase_delete_row_by_id Deletion loop_complete (in model only id = {id_to_delete} ).")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
+
+    #-------------------------------
+    def delete_row_by_id_without_update ( self, id_to_delete ):
+        """called after a record delete perhaps from document
+        full of chat tries and retries
+
+        """
+
+            # Iterate from bottom to top to avoid shifting row indices
+
+        model    = self.list_model
+
+
+        #print(f"Is model editable? {model.isReadOnly()}")  # Should print False see next
+
+        debug_msg  = ( f"ListTabBase_delete_row_by_id begin  {model.rowCount() = } {model.isReadOnly() = }")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
+
+        for row in reversed(range(model.rowCount())):
+            id_index = model.index(row, model.fieldIndex("id"))
+            if model.data(id_index) == id_to_delete:
+                debug_msg  = ( f"ListTabBase_delete_row_by_id Deleting row with id = {id_to_delete} at row {row}")
+                logging.log( LOG_LEVEL, debug_msg, )
+
+                #model.removeRow(row)  # but row still there acording to chat
+                    #or try rows
+                if model.removeRows(row, 1):
+                    model.layoutChanged.emit()
+                    print(f"ListTabBase_delete_row_by_id Row count after removeRows: {model.rowCount()}")
+                else:
+                    print("ListTabBase_delete_row_by_id Failed to remove row.")
+
+
+
+                model.rowsRemoved.emit( QModelIndex(), row, row)
+                model.layoutChanged.emit()
+                # # next to refresh -- but is probalbly wron from chat
+                # topLeft         = model.index(row, 0)
+                # bottomRight     = model.index(row, model.columnCount() - 1)
+                # model.dataChanged.emit( topLeft, bottomRight )
+
+
+        debug_msg  = ( f"ListTabBase_delete_row_by_id end  {model.rowCount() = } ).")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
+        debug_msg  = ( f"ListTabBase_delete_row_by_id Deletion loop_complete (in model only id = {id_to_delete} ).")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
 
 # ----------------------------------------
 class SubTabBase( QWidget ):
@@ -1508,7 +1602,51 @@ class CriteriaTabBase( QWidget ):
         placer.place( widget_to_layout )
 
     # -------------------------------
-    def _build_top_widgets( self, placer ):
+    def _build_top_widgets_grid( self, grid_layout ):
+        """
+        what it says read, std for all criteria tabs
+        lets add a Hbox
+        now on an hbox placed on the grid layout
+        return
+            mutates
+            creates new row, uses creates another
+        """
+        grid_layout.new_row()
+        button_layout    = QHBoxLayout()
+        grid_layout.addLayout( button_layout, grid_layout.ix_col, grid_layout.ix_row, 1, 5  )
+        #row: int, column: int, rowSpan: int, columnSpan: int, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = Qt.Alignment()):
+        grid_layout.new_row()
+
+        # ---- may need a spacer where titles are in rest of page
+        # width    = 35
+        # widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
+        # #grid_layout.new_row()
+        # # grid_layout.addWidget( widget )
+        # grid_layout.addItem( widget, grid_layout.ix_row, grid_layout.ix_col    )  # row column
+        # grid_layout.ix_col  += 1
+
+        # ---- buttons
+        a_widget        = QPushButton( "Clear" )
+        a_widget.clicked.connect(  self.clear_criteria )
+        button_layout.addWidget( a_widget )
+
+        a_widget        = QPushButton( "Go -->" )
+        a_widget.clicked.connect(  self.parent_window.criteria_select )
+        button_layout.addWidget( a_widget )
+
+        a_widget        = QPushButton( "Paste/Go -->" )
+        a_widget.clicked.connect(  self.paste_go )
+        button_layout.addWidget( a_widget )
+
+        a_widget        = QPushButton( "Clear/Paste/Go -->" )
+        a_widget.clicked.connect(  self.clear_go )
+        button_layout.addWidget( a_widget )
+
+        grid_layout.new_row()
+
+
+    # -------------------------------
+    def _build_top_widgets_placer_delete( self, placer ):
         """
         what it says read, std for all criteria tabs
         lets add a Hbox
@@ -1663,7 +1801,8 @@ class CriteriaTabBase( QWidget ):
 
         """
         for i_criteria in self.critera_widget_list:
-            i_criteria.set_data_default()
+           # i_criteria.set_data_default()
+            i_criteria.ct_default()
 
     # -----------------------------
     def paste_go( self ):
@@ -1753,7 +1892,7 @@ class HistoryTabBase( QWidget ):
         """
         tab                     = self
         table                   = QTableWidget(
-                                    0, 10, self )  # row column third arg parent
+                                       0, 10, self )  # row column   parent
         self.history_table      = table
 
         # ---- column headder and width
@@ -1888,6 +2027,28 @@ class HistoryTabBase( QWidget ):
             table.setItem( ix_row, ix_col, item   )
             ix_col          += 1
 
+
+    def delete_row_by_id( self, id_to_delete ):
+        """
+        Delete a row from QTableWidget where the value in column 0 matches id_to_delete.
+        """
+        table_widget   = self.history_table
+
+        # Iterate through rows from bottom to top to avoid index shifting
+        for row in reversed(range(table_widget.rowCount())):
+            item = table_widget.item(row, 0)
+            if item and item.text() == str(id_to_delete):
+                debug_msg  = (f"HistoryTabBase_delete_row_by_id Deleting row {row} with id = {id_to_delete}")
+                logging.log( LOG_LEVEL,  debug_msg, )
+
+                table_widget.removeRow(row)
+                table_widget.viewport().update() # if just one row
+                return
+
+        debug_msg  = (f"HistoryTabBase_delete_row_by_id No row found with id = {id_to_delete}")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
+
 # ==================================
 class TextTabBase( DetailTabBase  ):
     """
@@ -1907,16 +2068,6 @@ class TextTabBase( DetailTabBase  ):
         self.tab_name               = "TextTabBase should be redefined"
         self.table                  = parent_window.text_table_name
         self.key_word_table_name    = ""   # supress key word processing
-        # def in child
-        # self.table_name          = "stuff"
-        # self.tab_name            = "StuffTextTab"
-
-        # model                    = QSqlTableModel(
-        #     self, AppGlobal.qsql_db_access.db )
-        # self.tab_model           = model  # !! change everywhere
-        # # self.detail_text_model   = model # !! remove  everywhere
-        # model.setTable( parent_window.text_table_name )
-
 
     # -------------------------------------
     def _build_gui( self ):

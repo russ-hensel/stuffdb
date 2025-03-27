@@ -16,8 +16,6 @@ if __name__ == "__main__":
 # --------------------
 
 
-
-
 import sys
 
 from app_global import AppGlobal
@@ -50,20 +48,15 @@ from PyQt5.QtWidgets import (QApplication,
 # import  tracked_qsql_relational_table_model
 
 
-
 # ---- end imports
 
 style       = "photo"  # or seq >
 style       = "seq"  # or seq >
 
-#------------
-relation    = "none"    # one  two    # related columns
-relation    = "one"    # one  two    # related columns
-relation    = "two"    # one  two    # related columns
 
 
-print( "\n\n")
-print( f"using: {style = }   {relation =}")
+# print( "\n\n")
+# print( f"using: {style = }   {relation =}")
 
 ok_blow_on_error = False
 print( f"using: {ok_blow_on_error = } ")

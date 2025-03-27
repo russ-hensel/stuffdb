@@ -621,6 +621,84 @@ def check_key_words_for_dups( db, table_name ):
         if ix >= max_ix:
             break
 
+# ------------------------------
+def insert_stuff_sample_data( db, ):
+        """
+        with a delete first
+        both tables
+        no key words yet
+        """
+
+        # anothere way
+        # drop_table( DB_CONNECTION, table_name = table_name )
+        # create_table( DB_CONNECTION, table_name = table_name )
+
+
+
+        # ---- the delete
+        table_name    = "stuff"
+        sql           = f"DELETE FROM {table_name}"
+
+        # Create and execute the DELETE query
+        query = QSqlQuery( db,)
+        query.prepare( sql )
+
+        if query.exec_():
+            print(f"All rows deleted from {table_name}.")
+        else:
+            print(f"Error deleting rows: {query.lastError().text()}")
+
+        # ---- the delete
+        table_name    = "stuff_text"
+        sql           = f"DELETE FROM {table_name}"
+
+        # Create and execute the DELETE query
+        query = QSqlQuery( db,)
+        query.prepare( sql )
+
+        if query.exec_():
+            print(f"All rows deleted from {table_name}.")
+        else:
+            print(f"Error deleting rows: {query.lastError().text()}")
+
+        # ---- the insert
+
+        sql  =   """INSERT INTO stuff (
+                id,
+                name,
+                descr,
+                id_in_old
+                  )
+            VALUES ( ?,?, ?, ? )
+        """
+
+        query       = QSqlQuery( db, )
+
+
+        # you can comment out some data if you wish
+        table_data = [
+            ( 1001,   "name 1001",   "desc 1001 in 1002",    1002   ),
+            ( 1002,   "name 1002",   "desc 1002 in 1003",    1003   ),
+            ( 1003,   "name 1003",   "desc 1003 in 1004",    1004   ),
+            ( 1004,   "name 1004",   "desc 1004 in 1003",    1003   ),
+            #
+            #("Jim",     28,   "Son"       ),
+            # ("Judy",    28,   "Sun"       ),
+            # ("Jo",      29,   "God"       ),
+        ]
+
+
+        for a_id,  name, descr, id_in_old in table_data:
+            # this only one way to bind
+            query.prepare( sql )
+            query.addBindValue(a_id)
+            query.addBindValue(name)
+            query.addBindValue(descr)
+            query.addBindValue(id_in_old)
+            query.exec_()
+
+
+        add_missing_text( db, "stuff" )
 
 # ====================================================================
 
@@ -674,14 +752,14 @@ def  do_it():
     #table_name      = "photo_subject"
     #table_name      = "photo_in_show"
 
-    #table_name      = "stuff"
+    table_name      = "stuff"
     #table_name      = "stuff_key_word"
     # table_name      = "stuff_event"
     #table_name      = "xxx"
 
     # ---- run command
 
-
+    # ---- drop and create beware
     # drop_table(   DB_CONNECTION, table_name = table_name )
     # create_table( DB_CONNECTION, table_name = table_name )
 
@@ -692,21 +770,25 @@ def  do_it():
     #print_record_count( DB_CONNECTION, table_name = table_name )
     #add_missing_text( DB_CONNECTION, table_name = table_name )
     #test_query( DB_CONNECTION, table_name = table_name )
-    drop_table( DB_CONNECTION, table_name = table_name )
-    create_table( DB_CONNECTION, table_name = table_name )
+
+
+    # ----  ========================== beware ==============================
+    # ---- drop and create beware
+    # drop_table( DB_CONNECTION, table_name = table_name )
+    # create_table( DB_CONNECTION, table_name = table_name )
     #key_gen_for( DB_CONNECTION, table_name = table_name )
     #insert_key_gen( DB_CONNECTION, table_name  )
 
-    # ========================== beware ==============================
+    # ---- will deleted data, slight change woud delete and add tables
+    #      perhps that would be better
+    insert_stuff_sample_data( DB_CONNECTION )
 
-    # table_name_list     = [ "help_ifno", "help_text", "help_key_words" ]
-    # create_db ---- not finished
+
 
     # ---- clean up
     DB_CONNECTION.close()
     DB_CONNECTION = None
     #print( "done")
-
 
 
 
@@ -718,7 +800,7 @@ def  init_as_module():
     data_dict.build_it()
     #app                 = QApplication( [] )
 
-init_as_module()
+init_as_module()   # not quite sure why here and should be
 
 
 # --------------------

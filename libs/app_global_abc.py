@@ -34,7 +34,7 @@ import webbrowser
 from pathlib import Path
 from subprocess import Popen
 
-import os_call
+import os_services
 import psutil
 
 # may not be using next
@@ -155,6 +155,7 @@ class NoLoggerLogger( ):
             print( f"log_saved_for_later {arg_set[ 0 ]} {arg_set[ 1 ]}" )
             logger.log( arg_set[ 0 ], arg_set[ 1 ] )
 
+
 # ========================== Begin Class ================================
 class UserCancel( Exception ):
     """
@@ -165,83 +166,6 @@ class UserCancel( Exception ):
         # Set some exception information
         self.msg = arg
 
-# # ------------------------   moved to os_call.py
-# class OSCall(  ):
-#     """
-#     try to call os based on attempts with different utilities
-#     in different operating systems
-#     """
-#     #------------------------
-#     def __init__(self, command_list, ):
-#         """
-#         command list is the list of utilities to try, a list of strings
-#         command_aux: like command list but may be a list, a single string, or none, see code
-
-#         """
-#         self.command_list = []
-#         self.add_command( command_list )
-
-#     # ----------------------------------------------
-#     def add_command( self, more_command_list ):
-#         """
-#         add a command at the beginning and re init the list
-#         call internally at init or externally ( parameters ) to add to list
-#         """
-#         #rint( f"adding {more_command_list}")
-#         if more_command_list is None:
-#             self.command_list        = more_command_list     # [   r"D:\apps\Notepad++\notepad++.exe", r"gedit", r"xed", r"leafpad"   ]   # or init from parameters or put best guess first
-
-#         else:
-#             if type( more_command_list ) ==  str:
-#                 more_command_list  = [ more_command_list ]
-#             # else we expect a list
-#             self.command_list = more_command_list + self.command_list
-
-#         self.ix_command          = -1
-#         self.working_command     = None
-#         #rint( f"command list now{self.command_list}")
-
-#     # ----------------------------------------------
-#     def get_next_command( self,  ):
-#         """
-#         what it says
-#         None if cannot find one ( at end of list )
-#         """
-#         self.ix_command += 1
-#         if         self.ix_command >= len( self.command_list ):
-#             ret =  None
-#         else:
-#             ret =         self.command_list[ self.ix_command ]
-#         #rint( f"command = { self.ix_command} {ret} ", flush = True )
-#         return ret
-
-#     # ----------------------------------------------
-#     def os_call( self, cmd_arg,  ):
-#         """
-#         make an os call trying various utilities until one works
-
-#         """
-#         while True:   # will exit when it works or run out of editors
-#             a_command    = self.working_command
-#             if  a_command is None:
-#                 a_command  = self.get_next_command( )
-
-#             if a_command is None:   # still
-#                 msg = f"Run out of editors to try >{a_command}< >{cmd_arg}<"
-#                 #cls.logger.error( msg )
-#                 raise RuntimeError( msg )
-#                 #break  # think we are already done
-#             try:
-#                 if cmd_arg is None:
-#                     proc = Popen( [ a_command,  ] )
-#                 else:
-#                     proc = Popen( [ a_command, cmd_arg ] )
-#                 self.working_command  = a_command
-#                 break  # do not get here if exception
-#             except Exception as excpt:
-#                 pass     # this should let us loop
-# #                 cls.logger.error( "os_open_logfile exception trying to use >" + str( cls.parameters.ex_editor ) + "< to open file >" + str( cls.parameters.pylogging_fn ) +
-# #                                  "< Exception " + str( excpt ) )
 
 # ------------------------------------------
 class AppGlobalABC( abc.ABC ):
@@ -295,27 +219,27 @@ class AppGlobalABC( abc.ABC ):
 
     if sys.platform.startswith( "lin"): # assume linux for now
 
-        linux_editors           =  [    "gedit",
-                                        "xed",
+        linux_editors       =  [    "xed",
+                                        "gedit",
                                         "leafpad",
                                         "mousepad",
                                     ]
-        text_editors             = text_editors + linux_editors
+        text_editors        = text_editors + linux_editors
 
     else: # windows? Apple?
           # I do not know what to do for apple so just throw everything in here
 
-        win_editors            =  [ r"D:\apps\Notepad++\notepad++.exe",
+        win_editors         =  [ r"D:\apps\Notepad++\notepad++.exe",
                                     r"C:\apps\Notepad++\notepad++.exe",
                                     "notepad++.exe",
                                   ]
 
-        text_editors             = text_editors  + win_editors
+        text_editors        = text_editors  + win_editors
 
     # text_editors            =  [ r"D:\apps\Notepad++\notepad++.exe", r"C:\apps\Notepad++\notepad++.exe", "notepad++.exe",
     #                              r"gedit", r"xed", r"leafpad", r"mousepad", ]
 
-    file_text_editor        = os_call.OSCall( text_editors,  )
+    file_text_editor        = os_services.OSCall( text_editors,  )
 
     # too soon to call a parameters not defined need to do later
     #file_text_editor.add_command( parameters.ex_editor )
@@ -326,7 +250,7 @@ class AppGlobalABC( abc.ABC ):
 
     # file_explorers  not in parameters as yet
     file_explorers          = [ r"explorer", "nemo", "xfe", "pcmanfm", ]
-    file_explorer           = os_call.OSCall( file_explorers ) # !! need linux add and parameters
+    file_explorer           = os_services.OSCall( file_explorers ) # !! need linux add and parameters
 
     # cls not yet defined
     # this gives the name notice to force_log_level... perhaps a better name might be used

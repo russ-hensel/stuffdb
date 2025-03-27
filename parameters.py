@@ -576,7 +576,10 @@ class Parameters( ):
         # this is the name of a program: its executable with path info.
         # to be used in opening an external editor
         self.ex_editor         =  r"D:\apps\Notepad++\notepad++.exe"    # russ win 10
-        self.text_editor       = "gedit"
+        self.ex_editor         = "xed"
+
+        self.text_editor       = "xed"
+
         self.text_editor_list  = [ "xed", "gedit" ]
 
         # control button for editing the readme file
@@ -646,18 +649,24 @@ print( f"bash a_shell_template still needs writing { 0 = }"
 """  )
         self.text_templates[template_name] = template_text
 
-        # ---- systems for helpdb ??alpha
+        # ---- systems for helpdb ??alpha  to sort make all quotes the same
         self.systems_list      =  [    '',
-                        'Bash',
-                        'Delete',
-                        'Linux',
-                        'Powerbuilder',
-                        'Python',
-                        'RasPi',
-                        'RshPy',              # subsystem the project
-                        'Russ',
-                        'StuffDB',
-                        'TBD',
+                            'Bash',
+                            'CAD/Print',
+                            'Delete',
+                            'Electronics',
+                            'House',
+                            'Linux',
+                            'Powerbuilder',
+                            'Programming',
+                            'Python',
+                            'RasPi',
+                            'RshPy',              # subsystem the project
+                            'Russ',
+                            'StuffDB',
+                            'TBD',
+                            'Tools',
+
                         ]
 
     # -------

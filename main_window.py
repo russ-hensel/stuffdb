@@ -65,7 +65,7 @@ from PyQt5.QtWidgets import (QAction,
 import mdi_management
 import parameters
 import stuffdb
-
+import combo_dict_ext
 
 # ------------------------------------------
 class StuffdbMainWindow( QMainWindow ):
@@ -92,6 +92,7 @@ class StuffdbMainWindow( QMainWindow ):
                           parameters.qt_height  )
 
         self.build_gui( )
+        combo_dict_ext.build_it( AppGlobal.qsql_db_access.db )
 
     # -------------------------
     def build_gui( self,  ):
@@ -668,7 +669,7 @@ class StuffdbMainWindow( QMainWindow ):
             msg     = f"format-exc       >>{s_trace}<<"
             logging.error( msg )
 
-            msg     = f"looking for function     >>{a_function_name = }<< in {active_window = }"
+            msg     = f"looking for function and got exception \n    >>{a_function_name = }<< in {active_window = }"
             logging.error( msg )
 
         #     #raise  # to re raise same

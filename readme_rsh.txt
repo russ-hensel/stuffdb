@@ -34,21 +34,147 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
 
 
 
-
 ====Versions   old version info in  ./docs/version_notes.txt
 
 
                 also see tech_notes.txt
 
 ----
+
+----
+---- ver69
+
+    why
+        -- lots of changes in custom widgets edits, criteria version gone
+            much cleaner, more function, delete implemented for
+            what i think is the hard part
+
+            look for db fragments as a way of making sure deletes are
+            ok
+
+            improve deletes for events....
+
+            improve the date edits, one for new records non edit current date
+            one for photos can set date and copy to next record.
+
+
+
+---- ver68
+
+    why
+        -- lots of changes in custom widgets edits, criteria version gone
+            much dead code want to get out of way and work on a lot of
+            cosmetics
+
+
+        !! make a signal on data changed for the edits -- could be useful for updates
+           as well
+
+
+        !! can i drive more runtime off the data dictionary think about it
+
+        ** do a light backyp ver67_lite
+
+        ** picture does not do its select  --- order by dt_item does not seem
+              to be a valid field
+
+              !! need key words indexed and check the indexing
+
+
+   --->> check all criteria for this
+               ** picture
+        # ---- function_on_return( self )
+        for i_widget in self.critera_widget_list:
+            i_widget.function_on_return     = self.criteria_select
+            # add value changed to custome edits widget.textChanged.connect
+
+
+   ---->>  do this everywhere          i_widget.function_on_changed    = ( lambda: self.criteria_changed( True ) )
+
+
+        *! start on delete   --- pick up on stuff delete in history and list
+            some base work done, other like events needs to be added to base
+            or done in each tab.  Make util to look for db fragments
+
+
+
+
+        ** clean up  -- they all open ---  deleted in range of .3 meg
+               ** help
+               ** stuff
+               **  and all the rest still need some test
+               **
+               **
+               **
+        !! clean up the text tab to be on par with the help one
+
+        !! re-layou the stuff fields
+
+
+---- ver67
+
+    why
+        -- just another checkpoint
+            almost whole app runs if not nicely
+            *! fix the date edit to new std and make work
+            *! getting close to time to redo the custom edits, prehaps a_id
+               bit more test first
+
+            !! some more tests of stuff and photos
+            *! get plant-planting connection working via drop down
+                    make post fetch instead of pre the wayit is now
+          *! stuff needs to load ddl at end of select
+
+        !! help detail, fix the date edits
+
+        !! stuff load the ddl at end of select -- later at end of save
+          !! trim the line edit
+          !! trim text after end of line
+
+        !!!!  -->> redo all criteria pages for new controls, delete old controls
+            ** stuff
+            ** help
+            ** album
+            ** people
+            ** picture    ---- but needs some placement work
+            ** plant
+            ** planting
+
+
+            search and replace in new function
+                CQLineEditCriteria
+                        CQLineEdit
+
+                CQComboBoxEditCriteria
+                        CQComboBox
+
+                placer.place(
+                    grid_layout.addWidget(
+
+
+                placer.new_row(
+                      grid_layout.new_row(
+
+                                     (
+                        field_name = "xxxx"   )
+
 ---- ver66
 
     why
         -- just another checkpoint
-        -->> see prior exp people
+        -->> see prior esp people
         -->> remove dead code, then regroup
-        -->> make help rebuild key words using existing code
+        **-->> make help rebuild key words using existing code
         ** get some db test routines into help
+        *! get stuff in_id working with a dict based ddl
+                    ** find out why update not working on ddl
+                            debug is probaly the way to go
+
+
+        *! get plant-planting connection working via drop down
+                make post fetch instead of pre the wayit is now
+        ** add planting sub tab to plant
+        ** insert test records for stuff in sql
 
 
 ---- ver65
@@ -88,7 +214,7 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
                 -- then assess, still tables missing.....
                 ** data dict for people phone
 
-        !! -->> work on error detect in db and
+        *! -->> work on error detect in db and
                 repair inc key word regen
 
         !*  adding a lot of help inside the help documents
@@ -113,10 +239,6 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
         *! -->> work on pictures some more -- say column headers and widths
         !! __>> clean up stuff detail layout
         ** add two forms of >>idle
-
-
-
-
 
 
 ---- ver63
@@ -168,7 +290,6 @@ doc->str
 tab->str
 
 
-
 ---- ver62
 
         why
@@ -205,7 +326,7 @@ tab->str
         !! doc to str and tab to str  get off menu bar ??
         !! load a lot of photos to pictures and to an album
 
-        !! run out of github ??
+        ** run out of github ??
         !! look at  links in text exp in help
 
                 save if
@@ -230,23 +351,11 @@ tab->str
 
             !! subject from plant  -- look in data_manager
 
-  File /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/picture_document.py:2706 in populate_model_other
-    open_topics_list    = AppGlobal.mdi_management.open_topics    # list of dicts
-
-  File /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/mdi_management.py:415 in open_topics
-    topic_dict[ "topic"]      = i_window.get_topic()
-
-  File /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/plant_document.py:174 in get_topic
-    a_id        = self.detail_tab.id_field.get_raw_data()
-
-AttributeError: 'PlantDetailTab' object has no attribute 'id_field'
-
 
           !! plantsubwindow should be Plant Document and so on
           *! automate some save
           !! validate an int
-          !! trim the line edict
-          !! trim text after end of line
+
 
 
 ---- ver61

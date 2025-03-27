@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# ---- tof
 """
 
 The point of this module is to manage the general aspects of
@@ -27,6 +28,9 @@ if __name__ == "__main__":
     main.main()
 # --------------------
 
+# ---- imports
+
+
 #from   functools import partial
 import collections
 import functools
@@ -34,7 +38,7 @@ import logging
 import sys
 
 from app_global import AppGlobal
-#from pubsub import pub
+
 from PyQt5.QtCore import (QDate,
                           QModelIndex,
                           QObject,
@@ -69,28 +73,29 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
-import adjust_path
+
+
 import album_document
-#import base_document_tabs
 import help_document
-import mdi_info
 import people_document
 import picture_document
 import plant_document
 import planting_document
 import stuff_document
 
-# ---- imports
+import string_util
+
+
+# ---- imports end
 
 logger          = logging.getLogger( )
-
-# for custom logging level at module
+#for custom logging level at module
 LOG_LEVEL  = 20   # higher is more
 
+# maybe not the best choice for location
 
-#import gui_qt_ext
 
-MenuInfo   = collections.namedtuple( 'MenuInfo', "window, menu_item" )
+# MenuInfo   = collections.namedtuple( 'MenuInfo', "window, menu_item" )
 
 #mdi_management
 TopicData   = collections.namedtuple(   "TopicData", "table, id, topic" )
@@ -100,12 +105,9 @@ TopicData   = collections.namedtuple(   "TopicData", "table, id, topic" )
 
     # name is first argument  --- second arg space sep or a tuple
 
-an_example   = MenuInfo( window  = "aaa", menu_item = "bbb",   )     # no quotes on instance names
-print( an_example.window )
-#print( an_example [ window ] )
+# an_example   = MenuInfo( window  = "aaa", menu_item = "bbb",   )     # no quotes on instance names
+# print( an_example.window )
 
-
-#if type( i_doc ) == picture_document.PictureDocument:
 
 NOT_FOR_SUBJECTS   = {  picture_document.PictureDocument, album_document.AlbumDocument,  }
 # the above document should not be the subjects of pictures
@@ -134,19 +136,38 @@ class SendSignals( QObject ):
     """
     my signals for db changes and document topics
     some for picture topics
-
+    also stuff containers
     """
-    topic_update_signal = pyqtSignal(str, int, str )
+    # these seem to be class level objects
+    topic_update_signal            = pyqtSignal(str, int, str )
+    stuff_container_update_signal  = pyqtSignal( str, int, dict )
 
     def send_topic_update(self, table, table_id, info):
-        print( "send_topic_update emit next")
+        debug_msg   = ( "send_topic_update emit next")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
         self.topic_update_signal.emit( table, table_id, info )
+
+    # --------------------------
+    def stuff_container_update_xxx( self, update_type, stuff_id, stuff_data, ):
+        debug_msg   = ( "stuff_container_update emit next")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
+        self.stuff_container_update_signal.emit( update_type, stuff_id, stuff_data,   )
+
+    # --------------------------
+    def stuff_container_update_old( self, update_type, stuff_id, stuff_data, ):
+        debug_msg   = ( "stuff_container_update emit next")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
+        self.stuff_container_update_signal.emit( update_type, stuff_id, stuff_data,   )
+
 
 # -------------------------------
 class MdiManagement():
     """
     manage the mdi interface.  Need to fix the dyslexia
-    midma
+    mid
     """
     def __init__( self, main_window ):
         self.main_window       = main_window
@@ -166,11 +187,15 @@ class MdiManagement():
             #     "action_id"    this is the action on the menu, consider name change
 
 
-
-        self.closed_topics   = []   # _list of dicts      a list of windows that are close but have had topics
-        self._open_topics    = []
+        self.closed_topics      = []   # _list of dicts      a list of windows that are close but have had topics
+        self._open_topics       = []
         # pub.unsubAll( TOPIC_UPDATE )
-        self.send_signals    = SendSignals()
+        self.send_signals       = SendSignals()
+        # we have a class for this but we are just using a dict -- lets get rid of the class
+        # bad name for just a dict
+
+        self.plant_containers   = { None: "", 1: "1one", 2: "2two" }
+
 
     # -------------------------
     def register_document( self,  window_id  ):
@@ -203,39 +228,6 @@ class MdiManagement():
         window_id  = None  # this does not matter but all othere reverences do
 
 
-        # a_index   =  self.window_list.index( window_id )
-        #self.window_dict[ window_id ]    =  WindowData( menu_id = None )
-        # msg     = f"forget_document found window at index {a_index = }"
-        # print( msg )
-
-        # self.window_list.remove( window_id )
-
-        # msg     = f"forget_document end {len(self.window_list) = }"
-        # print( msg )
-
-    # # -------------------------
-    # def get_window_info_dict ( self,     ):
-    #     """
-    #     will get from each active window
-    #     as a dict, perhaps could make a generator instead
-    #     """
-    #     for i_window, this_dict   in self.window_dict.items(   ):
-    #         title       = i_window.windowTitle()
-    #         this_dict
-    #         topic     = None
-
-
-
-
-        # a_index   =  self.window_list.index( window_id )
-        #self.window_dict[ window_id ]    =  WindowData( menu_id = None )
-        # msg     = f"forget_document found window at index {a_index = }"
-        # print( msg )
-
-        # self.window_list.remove( window_id )
-
-        # msg     = f"forget_document end {len(self.window_list) = }"
-        # print( msg )
 
 
     # --------------------------------------
@@ -351,6 +343,29 @@ class MdiManagement():
         main_window.window_menu.addAction( action )
 
     # -------------------------
+    def get_stuff_docs(self, ):
+        """
+        album_docs      = AppGlobal.mdi_management..get_album_docs()
+
+        what it says, read
+          may replace !! get_album_doc
+              may generalize even more
+
+         does this matter
+
+         self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
+                                       "action_id":  None }   # title action_id
+         AlbumDocument
+
+        """
+        docs    = []
+        for i_doc in  self.window_dict.keys():   # !! better a comp
+            if type( i_doc ) == stuff_document.StuffDocument:
+                docs.append( i_doc )
+
+        return docs
+
+    # -------------------------
     def get_album_docs(self, ):
         """
         album_docs      = AppGlobal.mdi_management..get_album_docs()
@@ -372,18 +387,6 @@ class MdiManagement():
                 album_docs.append( i_doc )
 
         return album_docs
-        # if len( album_docs ) == 1:
-        #     # should have a bit more testing here
-        #     return album_docs[0]
-
-        # elif len( album_docs ) == 0:
-        #     msg   = "You have no albums open, please open one"
-        # #elif len( album_docs ) == 0:
-        # else:
-        #     msg     = "You have more than one album open, please close one."
-
-        # QMessageBox.information( AppGlobal.main_window,   "Info", msg )
-
 
     # -------------------------
     def get_album_doc(self, ):
@@ -415,22 +418,6 @@ class MdiManagement():
 
         QMessageBox.information( AppGlobal.main_window,   "Info", msg )
 
-        # # old version
-        # album_docs    = []
-        # for i_doc in self.window_list:
-        #     if type( i_doc ) == picture_document.PictureDocument:
-        #         album_docs.append( i_doc )
-        # if len( album_docs ) == 1:
-        #     # should have a bit more testing here
-        #     return album_docs[0]
-        # elif len( album_docs ) == 0:
-        #     msg   = "You have no albums open, please open one"
-        # #elif len( album_docs ) == 0:
-        # else:
-        #     msg     = "You have more than one album open, please close one."
-
-        # QMessageBox.information( AppGlobal.main_window,   "Info", msg )
-
     # -------------------------
     def menu_item_clicked(self, name):
         """
@@ -438,6 +425,30 @@ class MdiManagement():
 
         """
         QMessageBox.information(self, "Info", f"You clicked on {name}")
+
+    # -------------------------
+    def update_stuff_container_movedtostuffdocument( self, update_type, stuff_id, stuff_data):
+        """
+        update should include add, delete, update
+        what it says, read.... more coming maybe
+
+        """
+        #QMessageBox.information(self, "Info", f"You clicked on {name}")
+        if update_type == stuff_document.UPDATE:
+            if stuff_id in self.stuff_containers:
+                self.stuff_container[ stuff_id ].update( stuff_id, stuff_data )
+            else:
+                self.stuff_containers[ stuff_id ] = StuffContainer( stuff_id, stuff_data )
+
+        else:
+            # delete
+            debug_msg     = ( f"update_stuff_container delete needs imp { stuff_id }   " )
+            logging.error(    debug_msg, )
+
+        pass  # debugging
+
+        # now finc all the stuff windows and send them notification
+        # to rebuild dd list for stuff containers
 
     # -------------------------
     @property
@@ -455,7 +466,8 @@ class MdiManagement():
         no need to be instance var
         does it need to be a dict, a list might do as well
         """
-        print( "midi_management open_topics under test ...........................")
+        debug_msg   = ( "mdi_management open_topics under test ...........................")
+        logging.log( LOG_LEVEL,  debug_msg, )
 
         topic_list           = []
 
@@ -470,41 +482,11 @@ class MdiManagement():
                 topic_dict[ "topic"]      = i_window.get_topic()
                 topic_list.append( topic_dict )
 
-            # key                 =  (  i_window.detail_table_name, i_window.detail_table_id )
 
-            # #open_topics[ key ]  =   i_window.topic
-            # open_topics[ key ]  =   "mdi_m broken in open_topics"
-            # print( )
-
-        print( f"{topic_list = }")
+        debug_msg    = ( f"{topic_list = }" )
+        logging.log( LOG_LEVEL,  debug_msg, )
         return topic_list
 
-    # # ----------------------------------
-    # def send_topic_update( self, table, table_id, info):
-    #     # Emit the signal when needed
-    #     self.topic_update_signal.emit( table, table_id, info )
-
-
-    # # ---------------------------------
-    # def topic_update( self, table, table_id, info  ):
-    #     """
-    #     could just be the window id and we could get the rest
-    #     send from mdi_management, but perhaps just as well from the window
-
-    #     consider adding window_id
-
-    #     """
-    #     pub.sendMessage( TOPIC_UPDATE,  table = table, table_id = table_id, info = info   )
-
-    # # ---------------------------------
-    # def topic_delete( self, ):
-    #     """
-    #     send from mdi_management, but perhaps just as well from the window
-
-    #      placeholder not implemented yet
-
-    #     """
-    #     #pub.sendMessage( TOPICS_DELETE, topic_dict = self.topic_dict,   )
 
     # -------------------------
     def show_mdi_info( self,     ):
@@ -512,7 +494,7 @@ class MdiManagement():
         what it says, read.... more coming maybe
 
         """
-        print( "show_midi_info .....................................")
+        print( "show_mdi_info .....................................")
 
         for i_window in self.main_window.mdi_area.subWindowList():
             a_str     = ""
@@ -577,6 +559,47 @@ class MdiManagement():
         else:
             1/0
             #sub_window      = CriteriaSubWind
+
+
+    def plant_container_update( self, update_type, table_id, table_info ):
+        """first warn, then change
+        if we used signals and slots we would go directly to the detail
+        tab, maybe later
+
+        stuff_container_update(  update_type = , stuff_id = , stuff_data = )
+        """
+        planting_docs   = self.get_planting_docs()
+        for i_doc in planting_docs:
+            i_doc.stuff_containers_update( just_warning = True )
+
+        # self.stuff_containers
+        self.update_plant_containers( update_type = update_type,
+                                     table_id     = table_id,
+                                     table_info   = table_info)
+        for i_doc in planting_docs:
+            i_doc.plant_containers_update( just_warning = False )
+
+    # ----------------------------------------------
+    def update_plant_containers( self, *, update_type, table_id, table_info ):
+        """
+        CHANGE THE DICTIONARY
+        update should include add, delete, update
+        what it says, read.... more coming maybe
+        sometimes an update may not actually change the dict ?
+        """
+        #QMessageBox.information(self, "Info", f"You clicked on {name}")
+        if update_type == UPDATE:
+            if table_id in self.plant_containers:
+                self.plant_containers[ table_id ].update( table_id, table_info )
+            else:
+                self.plant_containers[ table_id ] = stuff_document.StuffContainer( table_id, table_info )
+
+        else:
+            # delete
+            debug_msg     = ( f"update_plant_containers delete needs imp { table_id }   " )
+            logging.error(    debug_msg, )
+
+        pass  # debugging
 
 
 # ---- eof
