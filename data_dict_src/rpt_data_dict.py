@@ -35,6 +35,34 @@ LOG_LEVEL   = 10   # higher is more
 #-------------------------------
 data_dict.build_it()
 
+# ---------------------
+def to_columns( current_str, item_list, format_list = ( "{: <30}", "{:<30}" ), indent = "    "  ):
+    """
+    this is close to what is in string_util.py
+    make a partial to avoid repeat of format list ??
+    for __str__  probably always default format_list
+    see ColunmFormatter which is supposed to be more elaborate version
+    see its __str__
+    ex:
+        import string_util
+        a_str     = string_util.to_columns( a_str, ["column_data",    f"{self.column_data}"  ] )
+        a_str     = string_util.to_columns( a_str,
+                                            ["column_data",    f"{self.column_data}"  ],
+                                            format_list = ( "{: <30}", "{:<30}" )
+    """
+    #rint ( f"item_list {item_list}.............................................................. " )
+    line_out  = ""
+    for i_item, i_format in zip( item_list, format_list ):
+        a_col  = i_format.format( i_item )
+        line_out   = f"{indent}{line_out}{a_col}"
+    if current_str == "":
+        ret_str  = f"{line_out}"
+    else:
+        ret_str  = f"{current_str}\n{line_out}"
+    return ret_str
+
+
+
 # ---- table orineted ---------------------------
 def rpt_topic_columns( table_name ):
     """
@@ -136,9 +164,18 @@ def rpt_key_words( table_name ):
             msg    = f"{ix} { column_name = } {i_is_key_word = }  "
             print( msg )
 
-
 # -----------------------------------
 def rpt_display_order( table_name ):
+    """
+    Print display order for a table
+        this is for code gen
+        think this for forms not lists
+
+    """
+    rpt_display_order_with_columns( table_name )
+
+# -----------------------------------
+def rpt_display_order_old( table_name ):
     """
     Print display order for a table
         this is for code gen
@@ -173,6 +210,58 @@ def rpt_display_order( table_name ):
         print( msg )
 
 
+# -----------------------------------
+def rpt_display_order_with_columns( table_name ):
+    """
+    Print display order for a table
+        this is for code gen
+        think this for forms not lists
+
+    """
+    format_list = ( "{:<4}", "{:<30}", "{:<30}", "{:<30}", "{:<30}", "{:<30}", "{:<30}" )
+    indent      = ""
+            # ok to have too many i think so
+
+
+    a_table    = data_dict.DATA_DICT.get_table( table_name )
+    columns    = a_table.columns
+
+    columns.sort( key = lambda i_column: i_column.display_order   )
+
+    a_str    =  ""
+    column_items    = [ "ix", "column_name", "display_order", "form_col_span","form_read_only" ]
+    a_str           = to_columns( a_str, column_items, format_list = format_list, indent = indent )
+
+    for ix, i_column in enumerate( columns ):
+        i_type          = i_column.db_type
+        i_db_type       = i_column.db_type
+        column_name   = i_column.column_name
+        i_my_type       = i_column.column_name
+        i_display_type  = i_column.display_type
+        i_form_edit     = i_column.form_edit
+        i_is_key_word   = i_column.is_key_word
+        i_placeholder   = i_column.placeholder_text
+        i_default_func  = i_column.default_func
+        i_is_topic      = i_column.is_topic
+        col_head_text       = i_column.col_head_text
+        col_head_width      = i_column.col_head_width
+        col_head_order          = i_column.col_head_order
+        display_order           = i_column.display_order
+        form_col_span           = i_column.form_col_span
+        form_read_only      = i_column.form_read_only
+        is_keep_prior_enabled   = i_column.is_keep_prior_enabled
+
+        # msg    = f"{ix} { column_name = } {display_order = } {form_col_span = } {form_read_only = }"
+        # print( msg )
+
+        column_items    = [ f"{ix}", f"{ column_name}", f" {display_order}", f" {form_col_span} ",f" {form_read_only}" ]
+        a_str           = to_columns( a_str, column_items, format_list = format_list, indent = indent )
+
+
+
+    print( a_str )
+
+# -------------------------------------------
 def rpt_list_order( table_name ):
     """
     Print list and history list info for a table
@@ -203,6 +292,9 @@ def rpt_list_order( table_name ):
 
         print( msg )
 
+
+
+# ------------------------------
 def rpt_sql( table_name ):
     """
     Print sql create for a table

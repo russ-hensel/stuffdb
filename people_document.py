@@ -15,29 +15,22 @@ if __name__ == "__main__":
 # --------------------
 
 
-
-# ---- begin pyqt from import_qt.py
-
 #from   functools import partial
 #import collections
 import functools
 import logging
 import sqlite3
 import time
+from   datetime import datetime
 
-import data_dict
-#import  picture_viewer
-#import  tracked_qsql_relational_table_model  # dump for qt with logging
-import gui_qt_ext
-import string_util
-from app_global import AppGlobal
+
 from PyQt5.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, pyqtSlot
 from PyQt5.QtGui import (QIntValidator,
                          QPainter,
                          QPixmap,
                          QStandardItem,
                          QStandardItemModel)
-# ---- QtSql
+
 from PyQt5.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
@@ -85,10 +78,17 @@ from PyQt5.QtWidgets import (QAction,
                              QWidget)
 
 # ---- imports local
+
+import data_dict
+#import  picture_viewer
+#import  tracked_qsql_relational_table_model  # dump for qt with logging
+import gui_qt_ext
+import string_util
+from   app_global import AppGlobal
 import base_document_tabs
-import custom_widgets
+import custom_widgets  as cw
 import key_words
-import mdi_management
+#import mdi_management
 import people_document_edit
 import qt_sql_query
 import qt_with_logging
@@ -96,6 +96,27 @@ import qt_with_logging
 logger          = logging.getLogger( )
 LOG_LEVEL       = 20 # level form much debug
       #   higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
+
+# one of two can we combine or at least improve name
+PEOPLE_CONTACT_COLUMN_DICT         = None
+    # search for build location  or put here and call back
+    # map from name to column #
+
+
+EVENT_FIELD_DICT          = None
+PHONE_FIELD_DICT          = None
+
+
+# def build_pccd( ):
+#     """
+#     put in some init do delay build = lazy
+#     """
+#     global PEOPLE_CONTACT_COLUMN_DICT
+
+#     if PEOPLE_CONTACT_COLUMN_DICT is None:
+#         a_table    = data_dict.DATA_DICT.get_table( "people_phone" )
+#         PEOPLE_CONTACT_COLUMN_DICT   = a_table.make_name_to_ix_dict()
+
 
 
 # ----------------------------------------
@@ -220,9 +241,6 @@ class PeopleDocument( base_document_tabs.DocumentBase ):
         self.detail_tab.copy_prior_row( next_key )
         self.text_tab.copy_prior_row(  next_key )
 
-    # ---- capture events none ----------------------------
-
-
     # ---- sub window interactions ---------------------------------------
     # -----------------------
     def __str__( self ):
@@ -250,24 +268,46 @@ class PeopleCriteriaTab( base_document_tabs.CriteriaTabBase,  ):
         what it says, read
         """
         page            = self
-
-        layout           = QHBoxLayout( page )
+        layout          = QHBoxLayout( page )
                 # can we fold in to next
 
-        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        grid_layout     = gui_qt_ext.CQGridLayout( col_max = 10 )
         layout.addLayout( grid_layout )
 
         self._build_top_widgets_grid( grid_layout )
 
-        # ----key words
-        widget                = QLabel( "Key Words" )
+        # ----id
+        widget                = QLabel( "ID" )
         grid_layout.new_row()
         grid_layout.addWidget( widget )
 
-        widget                  = custom_widgets.CQLineEdit(
-                                                 field_name = "key_words" )
+        #widget                  = QLineEdit()
+        widget                  = cw.CQLineEdit(
+                                     field_name = "table_id" )
         self.critera_widget_list.append( widget )
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
+
+        # ----id_old
+        widget                = QLabel( "ID Old" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit(
+                                     field_name = "id_old" )
+        self.critera_widget_list.append( widget )
+        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
+
+        # ----key words
+        widget          = QLabel( "Key Words" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget          = cw.CQLineEdit(
+                                    field_name = "key_words" )
+        self.critera_widget_list.append( widget )
+        widget.textChanged.connect( lambda: self.criteria_changed( True ) )
         grid_layout.addWidget( widget, columnspan = 3 )
 
         # ---- name like
@@ -275,24 +315,46 @@ class PeopleCriteriaTab( base_document_tabs.CriteriaTabBase,  ):
         widget  = QLabel( "Last Name (like)" )
         grid_layout.addWidget( widget )
 
-        widget                  = custom_widgets.CQLineEdit(
+        widget                  = cw.CQLineEdit(
                                                  field_name = "last_name" )
         self.critera_widget_list.append( widget )
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget )
+        grid_layout.addWidget( widget, columnspan = 3 )
 
         # ---- Order by
         grid_layout.new_row()
         widget  = QLabel( "Order by" )
         grid_layout.addWidget( widget )
 
-        widget                 = custom_widgets.CQComboBox(
+        widget                 = cw.CQComboBox(
                                                  field_name = "order_by" )
         self.critera_widget_list.append( widget )
 
         widget.addItem('l_name')
         widget.addItem('f_name')
         #widget.addItem('Title??')
+
+        widget.currentIndexChanged.connect( lambda: self.criteria_changed( True ) )
+        grid_layout.addWidget( widget )
+
+        # ---- Order by Direction
+        #grid_layout.new_row()
+        widget  = QLabel( "Direction" )
+        grid_layout.addWidget( widget )
+
+        widget                 = cw.CQComboBox(
+                                     field_name = "order_by_dir" )
+        self.critera_widget_list.append( widget )
+
+        widget.addItem('Ascending')
+        widget.addItem('Decending')
+
+        debug_msg = ( "build_tab build criteria change put in as marker ")
+        logging.debug( debug_msg )
+
+        widget.currentIndexChanged.connect( lambda: self.criteria_changed( True ) )
+        grid_layout.addWidget( widget )
+
 
         debug_msg = ( "build_tab build criteria change put in as marker ")
         logging.log( LOG_LEVEL,  debug_msg, )
@@ -306,12 +368,12 @@ class PeopleCriteriaTab( base_document_tabs.CriteriaTabBase,  ):
         self.criteria_changed_widget  = widget
         grid_layout.addWidget( widget )
 
-        # ---- push controls up page, may need adjuxtment
-        width    = 350
-        widget   = QSpacerItem( width, 310, QSizePolicy.Expanding, QSizePolicy.Minimum )
-        grid_layout.new_row()
-        # grid_layout.addWidget( widget )
-        grid_layout.addItem( widget, grid_layout.ix_row, grid_layout.ix_col    )
+        # # ---- push controls up page, may need adjuxtment
+        # width    = 350
+        # widget   = QSpacerItem( width, 310, QSizePolicy.Expanding, QSizePolicy.Minimum )
+        # grid_layout.new_row()
+        # # grid_layout.addWidget( widget )
+        # grid_layout.addItem( widget, grid_layout.ix_row, grid_layout.ix_col    )
 
         # ---- function_on_return( self )
         for i_widget in self.critera_widget_list:
@@ -491,10 +553,309 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
             widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
             layout.addItem( widget, 0, ix  )  # row column
 
+
+        # ---- code_gen: TableDict.to_build_form 2025_04_01 for people -- begin table entries -----------------------
+
+        # ---- id
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "id", )
+        self.id_field     = edit_field
+        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
+        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
+        edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
+        edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
+        edit_field.setReadOnly( True )
+        edit_field.setPlaceholderText( "id" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 1 )
+
+        # ---- id_old
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "id_old", )
+        self.id_old_field     = edit_field
+        edit_field.setReadOnly( True )
+        edit_field.setPlaceholderText( "id_old" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- descr
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "descr", )
+        self.descr_field     = edit_field
+        edit_field.setPlaceholderText( "descr" )
+        self.data_manager.add_field( edit_field, is_key_word = True )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- add_kw
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "add_kw", )
+        self.add_kw_field     = edit_field
+        edit_field.setPlaceholderText( "add_kw" )
+        self.data_manager.add_field( edit_field, is_key_word = True )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- f_name
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "f_name", )
+        self.f_name_field     = edit_field
+        self.topic_edits.append( (edit_field, 1 ) )
+        edit_field.setPlaceholderText( "f_name" )
+        self.data_manager.add_field( edit_field, is_key_word = True )
+        layout.addWidget( edit_field, columnspan = 4 )
+
+        # ---- m_name
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "m_name", )
+        self.m_name_field     = edit_field
+        edit_field.setPlaceholderText( "m_name" )
+        self.data_manager.add_field( edit_field, is_key_word = True )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- l_name
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "l_name", )
+        self.l_name_field     = edit_field
+        self.topic_edits.append( (edit_field, 2 ) )
+        edit_field.setPlaceholderText( "l_name" )
+        self.data_manager.add_field( edit_field, is_key_word = True )
+        layout.addWidget( edit_field, columnspan = 4 )
+
+        # ---- st_adr_1
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "st_adr_1", )
+        self.st_adr_1_field     = edit_field
+        edit_field.setPlaceholderText( "st_adr_1" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- st_adr_2
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "st_adr_2", )
+        self.st_adr_2_field     = edit_field
+        edit_field.setPlaceholderText( "st_adr_2" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- st_adr_3
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "st_adr_3", )
+        self.st_adr_3_field     = edit_field
+        edit_field.setPlaceholderText( "st_adr_3" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- city
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "city", )
+        self.city_field     = edit_field
+        edit_field.setPlaceholderText( "city" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- state
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "state", )
+        self.state_field     = edit_field
+        edit_field.setPlaceholderText( "state" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- zip
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "zip", )
+        self.zip_field     = edit_field
+        edit_field.setPlaceholderText( "zip" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- type
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "type", )
+        self.type_field     = edit_field
+        edit_field.setPlaceholderText( "type" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- type_sub
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "type_sub", )
+        self.type_sub_field     = edit_field
+        edit_field.setPlaceholderText( "type_sub" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- dt_enter
+        edit_field                  = cw.CQDateEdit(
+                                                parent         = None,
+                                                field_name     = "dt_enter", )
+        self.dt_enter_field     = edit_field
+        edit_field.setPlaceholderText( "dt_enter" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- cmnt
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "cmnt", )
+        self.cmnt_field     = edit_field
+        edit_field.setPlaceholderText( "cmnt" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 4 )
+
+        # ---- status
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "status", )
+        self.status_field     = edit_field
+        edit_field.setPlaceholderText( "status" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+
+        # ---- dt_item
+        edit_field                  = cw.CQDateEdit(
+                                                parent         = None,
+                                                field_name     = "dt_item", )
+        self.dt_item_field                = edit_field
+        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_qdate
+        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_qdate
+        edit_field.edit_to_rec_cnv        = edit_field.cnv_qdate_to_int
+        edit_field.edit_to_dict_cnv       = edit_field.cnv_qdate_to_int
+        edit_field.setPlaceholderText( "dt_item" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- c_name
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "c_name", )
+        self.c_name_field     = edit_field
+        edit_field.setPlaceholderText( "c_name" )
+        self.data_manager.add_field( edit_field, is_key_word = True )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- title
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "title", )
+        self.title_field     = edit_field
+        edit_field.setPlaceholderText( "title" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- dddd
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "dddd", )
+        self.dddd_field     = edit_field
+        edit_field.setPlaceholderText( "dddd" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- department
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "department", )
+        self.department_field     = edit_field
+        edit_field.setPlaceholderText( "department" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- floor
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "floor", )
+        self.floor_field     = edit_field
+        edit_field.setPlaceholderText( "floor" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- location
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "location", )
+        self.location_field     = edit_field
+        edit_field.setPlaceholderText( "location" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- role_text
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "role_text", )
+        self.role_text_field     = edit_field
+        edit_field.setPlaceholderText( "role_text" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- assoc_msn
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "assoc_msn", )
+        self.assoc_msn_field     = edit_field
+        edit_field.setPlaceholderText( "assoc_msn" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- bussiness_house
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "bussiness_house", )
+        self.bussiness_house_field     = edit_field
+        edit_field.setPlaceholderText( "bussiness_house" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- country
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "country", )
+        self.country_field     = edit_field
+        edit_field.setPlaceholderText( "country" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- autodial
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "autodial", )
+        self.autodial_field     = edit_field
+        edit_field.setPlaceholderText( "autodial" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+    # -------------------------------------
+    def _build_fields_old( self, layout ):
+        """
+        place fields into tab_layout, a sub layout is ok
+        tweaks
+               spacer code at top
+               watch for ddl but may not be any yet
+        """
+        width  = 50
+        for ix in range( self.max_col ):  # try to tweak size to make it work
+            widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
+            layout.addItem( widget, 0, ix  )  # row column
+
         # ---- code_gen: TableDict.to_build_form 2025_02_01 for people -- begin table entries -----------------------
 
         # ---- id
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "id",
                                                 db_type        = "integer",
@@ -511,7 +872,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         edit_field.setReadOnly( True )
 
         # ---- id_old
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "id_old",
                                                 db_type        = "string",
@@ -525,7 +886,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- descr
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "descr",
                                                 db_type        = "string",
@@ -538,7 +899,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- add_kw
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "add_kw",
                                                 db_type        = "string",
@@ -551,7 +912,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- f_name
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "f_name",
                                                 db_type        = "string",
@@ -564,7 +925,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 4 )
 
         # ---- m_name
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "m_name",
                                                 db_type        = "string",
@@ -576,7 +937,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- l_name
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "l_name",
                                                 db_type        = "string",
@@ -589,7 +950,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 4 )
 
         # ---- st_adr_1
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "st_adr_1",
                                                 db_type        = "string",
@@ -601,7 +962,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- st_adr_2
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "st_adr_2",
                                                 db_type        = "string",
@@ -613,7 +974,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- st_adr_3
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "st_adr_3",
                                                 db_type        = "string",
@@ -625,7 +986,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- city
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "city",
                                                 db_type        = "string",
@@ -637,7 +998,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- state
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "state",
                                                 db_type        = "string",
@@ -649,7 +1010,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- zip
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "zip",
                                                 db_type        = "string",
@@ -661,7 +1022,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- type
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "type",
                                                 db_type        = "string",
@@ -674,7 +1035,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- type_sub
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "type_sub",
                                                 db_type        = "string",
@@ -687,22 +1048,20 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- dt_enter
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "dt_enter",
-                                                db_type        = "integer",
-                                                display_type   = "timestamp",
-                                                 )
+                                                field_name     = "dt_enter", )
         self.dt_enter_field     = edit_field
+        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_qdate
+        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_qdate
+        edit_field.edit_to_rec_cnv        = edit_field.cnv_qdate_to_int
+        edit_field.edit_to_dict_cnv       = edit_field.cnv_qdate_to_int
         edit_field.setPlaceholderText( "dt_enter" )
-        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
-        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
-        # still validator / default func  None
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- cmnt
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "cmnt",
                                                 db_type        = "string",
@@ -715,7 +1074,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 4 )
 
         # ---- status
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "status",
                                                 db_type        = "string",
@@ -728,7 +1087,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- dt_item
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "dt_item",
                                                 db_type        = "integer",
@@ -743,7 +1102,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- c_name
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "c_name",
                                                 db_type        = "string",
@@ -756,7 +1115,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- title
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "title",
                                                 db_type        = "string",
@@ -769,7 +1128,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- dddd
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "dddd",
                                                 db_type        = "string",
@@ -782,7 +1141,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- department
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "department",
                                                 db_type        = "string",
@@ -795,7 +1154,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- floor
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "floor",
                                                 db_type        = "string",
@@ -808,7 +1167,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- location
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "location",
                                                 db_type        = "string",
@@ -821,7 +1180,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- role_text
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "role_text",
                                                 db_type        = "string",
@@ -834,7 +1193,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- assoc_msn
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "assoc_msn",
                                                 db_type        = "string",
@@ -847,7 +1206,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- bussiness_house
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "bussiness_house",
                                                 db_type        = "string",
@@ -860,7 +1219,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- country
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "country",
                                                 db_type        = "string",
@@ -873,7 +1232,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- autodial
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "autodial",
                                                 db_type        = "integer",
@@ -971,10 +1330,80 @@ class PeopleHistorylTab( base_document_tabs.HistoryTabBase   ):
 
         self.tab_name            = "PeopleHistorylTab"
 
-    # -------------------------------------
-
 # ----------------------------------------
 class PeopleEventSubTab( base_document_tabs.SubTabBase ):
+    """
+    """
+    def __init__(self, parent_window ):
+        """
+        """
+        super().__init__( parent_window )
+
+        self.table_name      = "people_phone"
+
+        global EVENT_FIELD_DICT
+        if EVENT_FIELD_DICT is None:
+            EVENT_FIELD_DICT   = data_dict.rpt_sub_tab_columns_order( self.table_name, verbose = False  )
+
+        self.field_dict     = EVENT_FIELD_DICT  # order is ix  key is field_name then a dict
+
+        self._build_model()
+        self._build_gui()
+
+    # ---------------------------------
+    def _build_model( self, ):
+        """
+        put in some init do delay build = lazy
+        """
+        global PEOPLE_CONTACT_COLUMN_DICT
+
+        if PEOPLE_CONTACT_COLUMN_DICT is None:
+            a_table    = data_dict.DATA_DICT.get_table( self.table_name )
+            PEOPLE_CONTACT_COLUMN_DICT   = a_table.make_name_to_ix_dict()
+
+
+        model              = ContactSqlTableModel(  self, self.db    )
+        self.model         = model
+
+        model.setTable( self.table_name )
+        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+
+    # ------------------------------------------
+    def _build_dialog( self, data ):
+        """
+        what it says, read
+        # Open dialog with the current data
+        #dialog = StuffEventDialog(self, edit_data=data)
+        """
+        dialog   = people_document_edit.EditPeopleContact( self, data )
+        return   dialog
+
+    # ------------------------------------------
+    def fix_add_keys( self, form_data ):
+        """ """
+        # print( "SubTabBase still need to fix this perahps add_dict_adjust( form_data ) not clear how to paramaterize ")
+        # ver 3  --- but some may be passed in ?
+        a_id    = AppGlobal.key_gen.get_next_key( self.table_name )
+
+        form_data[ "seq_id" ]     = a_id
+        form_data[ "people_id" ]  = self.current_id
+
+    # ---------------------------------------
+    def select_by_id( self, id ):
+        """
+        maybe make anscestor and promote
+        could be paramaterized with key name ??
+        """
+        model               = self.model
+
+        self.current_id     = id
+        model.setFilter( f"people_id = {id}" )
+        # model_write.setFilter( f"pictureshow_id = {id} " )
+        model.select()
+
+
+# ----------------------------------------
+class PeopleEventSubTabOld( base_document_tabs.SubTabBaseOld ):
     """
     """
     def __init__(self, parent_window ):
@@ -1153,7 +1582,7 @@ class PeopleEventSubTab( base_document_tabs.SubTabBase ):
         return a_str
 
 # ----------------------------------------
-class PeopleContactSubTab( base_document_tabs.SubTabBase   ):
+class PeopleContactSubTab( base_document_tabs.SubTabBaseOld ):
     """
     """
     def __init__(self, parent_window ):
@@ -1162,10 +1591,10 @@ class PeopleContactSubTab( base_document_tabs.SubTabBase   ):
         super().__init__( parent_window )
 
 
-        self.table_name      = "people_contact"
+        self.table_name      = "people_contact"  # revise
         self.table_name      = "people_phone"
-        self.list_table_name = self.table_name   # delete this
-        self.current_id      = None
+        # self.list_table_name = self.table_name   # delete this
+        self.current_id      = None  # probably get from somewher else ??
 
         self._build_model()
         self._build_gui()
@@ -1178,11 +1607,10 @@ class PeopleContactSubTab( base_document_tabs.SubTabBase   ):
         what it says, read
         !! initial query should come out
         """
-        page            = self
+        page                = self
 
-
-        layout                     = QVBoxLayout( page )
-        button_layout              = QHBoxLayout()
+        layout              = QVBoxLayout( page )
+        button_layout       = QHBoxLayout()
 
         layout.addLayout( button_layout )
 
@@ -1197,7 +1625,17 @@ class PeopleContactSubTab( base_document_tabs.SubTabBase   ):
         # layout.addWidget( view )
         #placer.place(  view )
 
+        col_header_dict   = data_dict.rpt_sub_tab_columns_order( self.table_name, verbose = False  )
+            # could be done at module level
+
         ix_col = -1   # could make loop or even list comp
+        for i_column_name, col_dict in col_header_dict.items():
+            ix_col    += 1
+
+            model.setHeaderData( ix_col, Qt.Horizontal, col_dict[ "col_head_text"  ] )
+            view.setColumnWidth( ix_col,                col_dict[ "col_head_width" ] )
+
+
 # ---------
 # CREATE TABLE  people_phone    (
 #      seq_id  VARCAR(10),
@@ -1209,52 +1647,52 @@ class PeopleContactSubTab( base_document_tabs.SubTabBase   ):
 #      autodial  INTEGER
 #     )
 # ----------
-        ix_col += 1
-        model.setHeaderData( ix_col, Qt.Horizontal, "seq_id" )
-        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        # ix_col += 1
+        # model.setHeaderData( ix_col, Qt.Horizontal, "seq_id" )
+        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
 
-        ix_col += 1
-        model.setHeaderData( ix_col, Qt.Horizontal, "people_id" )
-        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        # ix_col += 1
+        # model.setHeaderData( ix_col, Qt.Horizontal, "people_id" )
+        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
 
-        ix_col += 1
-        model.setHeaderData( ix_col, Qt.Horizontal, "type" )
-        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        # ix_col += 1
+        # model.setHeaderData( ix_col, Qt.Horizontal, "Type" )
+        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
 
-        ix_col += 1
-        model.setHeaderData( ix_col, Qt.Horizontal, "phone_old" )
-        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        # ix_col += 1
+        # model.setHeaderData( ix_col, Qt.Horizontal, "Phone Old" )
+        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
 
-        ix_col += 1
-        model.setHeaderData( ix_col, Qt.Horizontal, "Comment" )
-        view.setColumnWidth( ix_col, 300)  # Set  width in  pixels
+        # ix_col += 1
+        # model.setHeaderData( ix_col, Qt.Horizontal, "Comment" )
+        # view.setColumnWidth( ix_col, 300)  # Set  width in  pixels
 
-        ix_col += 1
-        model.setHeaderData( ix_col, Qt.Horizontal, "phone" )
-        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        # ix_col += 1
+        # model.setHeaderData( ix_col, Qt.Horizontal, "Phone" )
+        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
 
-        ix_col += 1
-        model.setHeaderData( ix_col, Qt.Horizontal, "autodial" )
-        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        # ix_col += 1
+        # model.setHeaderData( ix_col, Qt.Horizontal, "AutoDial" )
+        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
 
         #view.setColumnHidden( 1, True )  # view or model
 
         layout.addWidget( view )
 
         # ---- buttons
-        widget        = QPushButton( 'add_record' )
+        widget        = QPushButton( 'Add' )
         #add_button    = widget
-        widget.clicked.connect( self.add_record )
+        widget.clicked.connect( self.add_new_contact )
         button_layout.addWidget( widget )
 
         #
-        widget        = QPushButton('edit_record')
+        widget        = QPushButton('Edit')
         #add_button    = widget
-        widget.clicked.connect(self.edit_record)
+        widget.clicked.connect( self.edit_selected_record )
         button_layout.addWidget( widget )
 
         #
-        widget        = QPushButton('delete_record')
+        widget        = QPushButton('Delete')
         #add_button    = widget
         widget.clicked.connect(self.delete_record)
         button_layout.addWidget( widget )
@@ -1263,7 +1701,15 @@ class PeopleContactSubTab( base_document_tabs.SubTabBase   ):
     def _build_model( self, ):
         """
 
+        put in some init do delay build = lazy
         """
+        global PEOPLE_CONTACT_COLUMN_DICT
+
+        if PEOPLE_CONTACT_COLUMN_DICT is None:
+            a_table    = data_dict.DATA_DICT.get_table( self.table_name )
+            PEOPLE_CONTACT_COLUMN_DICT   = a_table.make_name_to_ix_dict()
+
+
         model              = ContactSqlTableModel(  self, self.db    )
         self.model         = model
 
@@ -1307,7 +1753,7 @@ class PeopleContactSubTab( base_document_tabs.SubTabBase   ):
         self.text_tab.default_new_row(   next_key )
 
     # ------------------------------------------
-    def add_record(self):
+    def add_record_old_may_rename (self):
         """
         what it says, read?
         add test for success an refactor??
@@ -1320,24 +1766,165 @@ class PeopleContactSubTab( base_document_tabs.SubTabBase   ):
                        model,  f"PeopleEventsSubTab.add_record " )
             self.model.select()
 
-    # ------------------------------------------
-    def edit_record(self):
+    #---------------- restart here model view dialog name
+    #  ---- chat functions
+    def add_new_contact(self):
         """
+        Open dialog to add a new event and insert it into the model.
+        """
+        #dialog = StuffEventDialog(self)
+        dialog      = people_document_edit.EditPeopleContact( self )  # the parent tab
+        model       = self.model
+        # parent=None, edit_data=None ):
+
+        if dialog.exec_() == QDialog.Accepted:
+            form_data   = dialog.get_form_data()
+
+            # Create a new record
+            row         = self.model.rowCount()
+            self.model.insertRow(row)
+
+            # key
+            # Set data for each field
+            #model.setData( model.index(row, 0), form_data["id"])
+            a_id    = AppGlobal.key_gen.get_next_key( self.table_name )
+            # model.setData( model.index(row, 0), a_id )
+            # old_non_editable                = model.non_editable_columns
+            model.non_editable_columns  = { 99 } # beyond all columns
+
+            debug_id  = self.current_id
+            # model.setData( model.index(row, 1), form_data["stuff_id"])
+
+            # ver 1
+            #model.setData( model.index(row, 1), self.current_id )
+
+            # model.non_editable_columns  = old_non_editable
+
+            # ver 1
+            # model.setData( model.index(row, 2), form_data["people_id"])
+            # model.setData( model.index(row, 3), form_data["phone_old"])
+
+            # ver 2
+            # # can convert to loop ??
+            # field_name   = "people_id"
+            # field_ix     = PEOPLE_CONTACT_COLUMN_DICT[ field_name ]
+            # model.setData( model.index( row, field_ix ), form_data[ field_name] )
+
+            # field_name   = "phone_old"
+            # field_ix     = PEOPLE_CONTACT_COLUMN_DICT[ field_name ]
+            # model.setData( model.index( row, field_ix ), form_data[ field_name] )
+
+            # ver 3  --- but some may be passed in ?
+            form_data[ "seq_id" ]     = a_id
+            form_data[ "people_id" ]  = self.current_id
+
+            for field_name, field_ix in  PEOPLE_CONTACT_COLUMN_DICT.items():
+                model.setData( model.index( row, field_ix ), form_data[ field_name ] )
+
+
+            # model.setData( model.index(row, 4), form_data["cmnt"])
+            # model.setData( model.index(row, 5), form_data["type"])
+
+    # -------------------------------------------
+    def get_selected_row_data(self):
+        """
+        Get the data from the currently selected row.
+        """
+        # Get the currently selected row
+        model       = self.model
+
+        indexes     = self.view.selectedIndexes()
+        if not indexes:
+            QMessageBox.warning(self, "Warning", "No record selected.")
+            return None
+
+        # Get the model row index
+        model_row = indexes[0].row()
+
+        # a_timestamp = self.model.data(self.model.index(0, 2), Qt.EditRole)
+        # print(f"Raw timestamp: {a_timestamp = }")
+
+        # ver 1
+        # # Extract data from the row
+        # data = {
+        #     "id":         model.data( model.index( model_row, 0)),
+        #     "people_id":  model.data( model.index( model_row, 1)),
+
+        #     # # "event_dt":  model.data( model.index( model_row, 2)),
+        #     # "event_dt":  a_timestamp,
+
+        #     "phone_old":       model.data( model.index( model_row, 2)),
+        #     # "cmnt":      model.data( model.index( model_row, 4)),
+        #     # "type":      model.data( model.index( model_row, 5))
+        # }
+
+        # ver 2
+        data  = {}
+        for field_name, field_ix in  PEOPLE_CONTACT_COLUMN_DICT.items():
+            #model.setData( model.index( row, field_ix ), form_data[ field_name ] )
+            data[field_name]   = model.data( model.index( model_row, field_ix))
+        # # Extract data from the row
+        # data = {
+        #     "id":         model.data( model.index( model_row, 0)),
+        #     "people_id":  model.data( model.index( model_row, 1)),
+
+        #     # # "event_dt":  model.data( model.index( model_row, 2)),
+        #     # "event_dt":  a_timestamp,
+
+        #     "phone_old":       model.data( model.index( model_row, 2)),
+        #     # "cmnt":      model.data( model.index( model_row, 4)),
+        #     # "type":      model.data( model.index( model_row, 5))
+        # }
+
+
+        return (model_row, data)
+
+    # ----------------------------------
+    def edit_selected_record(self):
+        """
+        from stuff then update
+        Open dialog to edit the currently selected event.
+        """
+        selected_data = self.get_selected_row_data()
+        if selected_data is None:
+            return
+
+        row, data = selected_data
+
+        # Open dialog with the current data
+        #dialog = StuffEventDialog(self, edit_data=data)
+        dialog = people_document_edit.EditPeopleContact( self, edit_data = data )
+            # self the parent tab
+
+        model     = self.model
+
+        if dialog.exec_() == QDialog.Accepted:
+            form_data = dialog.get_form_data()
+
+            # # Update the row with the new data
+            # model.setData( model.index(row, 0), form_data["id"])
+            # model.setData( model.index(row, 1), form_data["people_id"])
+            # model.setData( model.index(row, 2), form_data["phone_old"])
+            # model.setData( model.index(row, 3), form_data["dlr"])
+            # model.setData( model.index(row, 4), form_data["cmnt"])
+            # model.setData( model.index(row, 5), form_data["type"])
+            # ver 3  --- but some may be passed in ?
+            # form_data[ "seq_id" ]     = a_id
+            # form_data[ "people_id" ]  = self.current_id
+
+            for field_name, field_ix in  PEOPLE_CONTACT_COLUMN_DICT.items():
+                model.setData( model.index( row, field_ix ), form_data[ field_name ] )
+
+
+
+    # ------------------------------------------
+    def edit_record_xxx(self):
+        """
+
+        in stuff as edit_selected_event ... will make edit_selected_record
         what it says, read?
         """
-        index       = self.view.currentIndex()
-        model       = self.model
-        if index.isValid():
-            dialog = people_document_edit.EditPeopleContact( self.model, index, parent = self )
-            if dialog.exec_() == QDialog.Accepted:
-                #self.model.submitAll()
-                ok     = base_document_tabs.model_submit_all(
-                           model,  f"PeopleEventsSubTab.add_record " )
-                #ia_qt.q_sql_table_model( self.model, "post edit_record submitAll()" )
-                self.model.select()
-        else:
-            msg   = "Click on row to edit..."
-            QMessageBox.warning(self, "Please", msg )
+
 
     # ------------------------------------------
     def delete_record(self):
@@ -1371,9 +1958,13 @@ class ContactSqlTableModel(QSqlTableModel):
     def __init__(self, parent=None, db=QSqlDatabase()):
         super().__init__(parent, db)
         # Specify multiple columns to make non-editable (e.g., columns 1 and 2)
-        self.non_editable_columns = {0, 1, }  # Columns ..doe it have to be in init or is synamic ..
+        self.non_editable_columns = { 99 }
+            # 99 not used Columns ..doe it have to be in init or is synamic ..
 
     def flags(self, index: QModelIndex):
+        """
+        from chat, not really used as for non edit
+        """
         # Get default flags from the base class
         flags = super().flags(index)
         # Remove editable flag for the specified columns
@@ -1381,17 +1972,40 @@ class ContactSqlTableModel(QSqlTableModel):
             return flags & ~Qt.ItemIsEditable  # Make these columns non-editable
         return flags
 
+    # -------------------------------
     def data(self, index: QModelIndex, role=Qt.DisplayRole):
-        # Handle text alignment for specific columns (optional)
-        if role == Qt.TextAlignmentRole:
-            if index.column() == 0:  # Left-align column 0
+        """
+        for special formatting
+        and alignment
+        """
+        col = index.column()
+
+        # Check role first
+        if role == Qt.DisplayRole:
+            # Handle display formatting for event_dt (column 2)
+            if col == 222:
+                value = super().data(index, Qt.EditRole)
+                if value is not None:
+                    return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
+                return value  # Return raw value if None
+
+        elif role == Qt.EditRole:
+            # Return raw value for editing/database sync
+            if col == 222:
+                return super().data(index, Qt.EditRole)
+
+        elif role == Qt.TextAlignmentRole:
+            # Handle alignment for all columns
+            if col == 0:  # id
                 return Qt.AlignLeft | Qt.AlignVCenter
-            elif index.column() == 1:  # Center-align column 1
+            elif col == 1:  # stuff_id
                 return Qt.AlignCenter | Qt.AlignVCenter
-            elif index.column() == 2:  # Right-align column 2
+            elif col == 2:  # event_dt
                 return Qt.AlignRight | Qt.AlignVCenter
-        # Default to base class implementation for other roles
+
+        # Default to base class for all other roles and columns
         return super().data(index, role)
+
 
 
 # ---- eof ------------------------------

@@ -11,7 +11,7 @@ Created on Thu Jan  9 11:57:40 2025
 import data_dict
 
 
-# ---- build it
+#------------------------
 def build_it( a_data_dict ):
     """
     build the data dictionary for all tables listed here
@@ -61,6 +61,11 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "id",
                                              display_order  =  0,
                                              db_type        = "INTEGER",
+                                             form_read_only       = True,
+                                             rec_to_edit_cnv      = "cnv_int_to_str",
+                                             dict_to_edit_cnv     = "cnv_int_to_str",
+                                             edit_to_rec_cnv      = "cnv_str_to_int",
+                                             edit_to_dict_cnv     = "cnv_str_to_int",
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
@@ -68,13 +73,14 @@ def build_it( a_data_dict ):
                                              col_head_width     = 10,
                                              col_head_order     = 1,
                                              form_col_span      = 1,
-                                             form_read_only     = True, )
+                                           )
     a_table_dict.add_column( a_column_dict )
 
     # ---- id_old
     a_column_dict = data_dict.ColumnDict(    column_name    = "id_old",
                                              display_order  =  1,
                                              db_type        = "VARCHAR(15)",
+                                             form_read_only  = True,
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,   )
@@ -88,7 +94,7 @@ def build_it( a_data_dict ):
                                              default_func       = None,
                                              is_key_word        = True,
                                              col_head_text      = "Key Words",
-                                             col_head_width     = 10,
+                                             col_head_width     = 20,
                                              col_head_order     = 10,
                                              display_order      =  20, )
     a_table_dict.add_column( a_column_dict )
@@ -122,6 +128,13 @@ def build_it( a_data_dict ):
     # ---- dt_enter
     a_column_dict = data_dict.ColumnDict(    column_name    = "dt_enter",
                                              db_type        = "INTEGER",
+
+                                            detail_edit_class  = "custom_widgets.CQDateEdit",
+                                            form_edit          = "custom_widgets.CQDateEdit",
+                                             rec_to_edit_cnv      = "cnv_int_to_qdate",
+                                                dict_to_edit_cnv     = "cnv_int_to_qdate",
+                                                edit_to_rec_cnv      = "cnv_qdate_to_int",
+                                                edit_to_dict_cnv     = "cnv_qdate_to_int",
                                              display_type   = "timestamp",
                                              max_len        = None,
                                              default_func   = None,   )
@@ -153,7 +166,7 @@ def build_it( a_data_dict ):
                                              default_func   = None,
                                              is_key_word    = True,
                                              col_head_text      = "Last Name",
-                                             col_head_width     = 20,
+                                             col_head_width     = 40,
                                              col_head_order     = 5,
                                              topic_colunm_order = 2,
                                              form_col_span      = 4, )
@@ -169,7 +182,7 @@ def build_it( a_data_dict ):
                                              default_func   = None,
                                              is_key_word    = True,
                                              col_head_text      = "First Name",
-                                             col_head_width     = 20,
+                                             col_head_width     = 40,
                                              col_head_order     = 4,
                                              topic_colunm_order = 1,
                                              form_col_span      = 4, )
@@ -243,12 +256,21 @@ def build_it( a_data_dict ):
     # ---- dt_item
     a_column_dict = data_dict.ColumnDict(    column_name    = "dt_item",
                                              db_type        = "INTEGER",
+
+                                             detail_edit_class  = "custom_widgets.CQDateEdit",
+                                             form_edit          = "custom_widgets.CQDateEdit",
+                                             rec_to_edit_cnv      = "cnv_int_to_qdate",
+                                                dict_to_edit_cnv     = "cnv_int_to_qdate",
+                                                edit_to_rec_cnv      = "cnv_qdate_to_int",
+                                                edit_to_dict_cnv     = "cnv_qdate_to_int",
+
+
                                              display_type   = "timestamp",
                                              max_len        = None,
                                              default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    # ---- c_name
+    # ---- c_name company
     a_column_dict = data_dict.ColumnDict(    column_name    = "c_name",
                                              db_type        = "VARCHAR(55)",
                                              display_type   = "string",
@@ -256,7 +278,7 @@ def build_it( a_data_dict ):
                                              default_func   = None,
                                              is_key_word        = True,
                                              col_head_text      = "Company",
-                                             col_head_width     = 20,
+                                             col_head_width     = 40,
                                              col_head_order     = 8,
                                            )
     a_table_dict.add_column( a_column_dict )
@@ -348,6 +370,11 @@ def build_it( a_data_dict ):
     # ---- id
     a_column_dict = data_dict.ColumnDict(    column_name    = "id",
                                              db_type        = "INTEGER",
+                                             form_read_only       = True,
+                                             rec_to_edit_cnv      = "cnv_int_to_str",
+                                             dict_to_edit_cnv     = "cnv_int_to_str",
+                                             edit_to_rec_cnv      = "cnv_str_to_int",
+                                             edit_to_dict_cnv     = "cnv_str_to_int",
                                              display_type   = "integer",
                                              max_len        = None,
                                              default_func   = None,   )
@@ -361,7 +388,7 @@ def build_it( a_data_dict ):
                                              default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    # ---- people_phone  ---------------------
+    # ---- people_phone  ----------------- a sub tab dict ----
     a_table_dict   = data_dict.TableDict(  "people_phone" )
     a_data_dict.add_table ( a_table_dict )
 
@@ -370,7 +397,10 @@ def build_it( a_data_dict ):
                                           db_type      = "VARCAR(10)",
                                           display_type = "error",
                                           max_len        = None,
-                                          default_func   = None,   )
+                                          default_func   = None,
+                                          col_head_text      = "Seq Id",
+                                          col_head_width     = 100, )
+
     a_table_dict.add_column( a_column_dict )
 
     # ---- "people_id",
@@ -378,7 +408,9 @@ def build_it( a_data_dict ):
                                           db_type      = "VARCAR(10)",
                                           display_type = "error",
                                           max_len        = None,
-                                          default_func   = None,   )
+                                          default_func   = None,
+                                          col_head_text      = "Seq Id",
+                                          col_head_width     = 100, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "type",
@@ -386,7 +418,9 @@ def build_it( a_data_dict ):
                                           db_type      = "VARCAR(10)",
                                           display_type = "error",
                                           max_len        = None,
-                                          default_func   = None,   )
+                                          default_func   = None,
+                                          col_head_text      = "Type",
+                                          col_head_width     = 100, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "phone_old",
@@ -394,7 +428,9 @@ def build_it( a_data_dict ):
                                           db_type      = "VARCAR(35)",
                                           display_type = "error",
                                           max_len        = None,
-                                          default_func   = None,   )
+                                          default_func   = None,
+                                          col_head_text      = "Phone Old",
+                                          col_head_width     = 100, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "cmnt",
@@ -402,7 +438,9 @@ def build_it( a_data_dict ):
                                           db_type      = "VARCAR(40)",
                                           display_type = "error",
                                           max_len        = None,
-                                          default_func   = None,   )
+                                          default_func   = None,
+                                          col_head_text      = "Comment",
+                                          col_head_width     = 100, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "phone",
@@ -410,7 +448,9 @@ def build_it( a_data_dict ):
                                           db_type      = "VARCAR(100)",
                                           display_type = "error",
                                           max_len        = None,
-                                          default_func   = None,   )
+                                          default_func   = None,
+                                          col_head_text      = "Phone",
+                                          col_head_width     = 100, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "autodial",
@@ -418,7 +458,9 @@ def build_it( a_data_dict ):
                                           db_type      = "INTEGER",
                                           display_type = "integer",
                                           max_len        = None,
-                                          default_func   = None,   )
+                                          default_func   = None,
+                                          col_head_text      = "AutoDial",
+                                          col_head_width     = 100, )
     a_table_dict.add_column( a_column_dict )
 
 

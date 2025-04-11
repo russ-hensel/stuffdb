@@ -100,8 +100,8 @@ class QsqlDbAccess(   ):
         debug_msg   = ( "QsqlDbAccess  init_db()" )
         logging.log( LOG_LEVEL,  debug_msg, )
 
-        db_file_name = AppGlobal.parameters.db_file_name
-        self.db = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type  )
+        db_file_name    = AppGlobal.parameters.db_file_name
+        self.db         = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type  )
         self.db.setDatabaseName(            db_file_name   )
 
         if not self.db.open():

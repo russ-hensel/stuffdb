@@ -46,7 +46,13 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
+import logging
 # ---- end imports
+
+LOG_LEVEL   = 30    # higher is more
+logger      = logging.getLogger( )
+
+# logging code incompletee
 
 
 class QSqlTableModelWithLoggingxxx(QSqlTableModel):
@@ -194,6 +200,7 @@ class QSqlRelationalTableModelWithLogging( QSqlRelationalTableModel ):
     """
     from chat
         use in place of QSqlRelationalTableModel for tracking sql
+        not sure if works
     """
     def __init__(self, *args, **kwargs):
         """
@@ -205,7 +212,9 @@ class QSqlRelationalTableModelWithLogging( QSqlRelationalTableModel ):
         """
         tbd, for now read
         """
-        print(f"SQL select: {self.selectStatement()}")
+        debug_msg = (f"QSqlRelationalTableModelWithLogging.select SQL select: {self.selectStatement()}")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
         return super().select()
 
     def insertRowIntoTable(self, record):
@@ -214,7 +223,9 @@ class QSqlRelationalTableModelWithLogging( QSqlRelationalTableModel ):
         """
         query   = self.database().driver().sqlStatement(QSqlDriver.InsertStatement,
                                                          self.tableName(), record, False)
-        print(f"SQL insertRowIntoTable: {query}")
+        debug_msg = (f"QSqlRelationalTableModelWithLogging SQL insertRowIntoTable: {query}")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
         return super().insertRowIntoTable(record)
 
     def updateRowInTable(self, row, record):

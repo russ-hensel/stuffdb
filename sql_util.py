@@ -15,11 +15,6 @@ this is just sql lite, no alchemy or qt
 
 
 
-"""
-
-
-"""
-
 
 import collections
 import logging
@@ -172,7 +167,7 @@ class SqlRunner(   ):
                 self._connection.close()
 
         try:
-            self._connection   =  lite.connect( self.db_file_name )
+            self._connection   = lite.connect( self.db_file_name )
             #rint( f"open_connection create connection for  {self.db_file_name} {self._connection}" )
 
         except lite.Error as a_except:
@@ -223,7 +218,6 @@ class SqlRunner(   ):
             self.close_connection( )
 
         print( f"define_table   {table_name} " )
-
 
     # ----------------------------------------------
     def insert_row( self, sql, a_row ):

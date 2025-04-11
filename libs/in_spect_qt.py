@@ -996,7 +996,7 @@ class InfoAboutQSqlTableModel( info_about.InfoAboutBase  ):
 
             # check for max ??
             for ix_col  in range( column_count ):   # should figure out a column count
-                index     = model.index( ix_row,   ix_col   )
+                index     = model.index( ix_row, ix_col )
                 data      = model.data( index )
                 msg       = f"for {ix_row = } {ix_col = } {index = } {data = }"
                 self.add_line(  f"{self.xin}{INDENT2} {msg}" )

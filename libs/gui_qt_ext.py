@@ -570,6 +570,19 @@ class CQGridLayout( QGridLayout ) :
     """
     a custom grid layout from PlaceInGrid but this is a layout
     gui_qt_ext.CQGridLayout( col_max = 10 )
+
+    --- next two may have been fixed
+    indent is not properly handled in all the code
+        needs to be anywhere go to next row
+
+    unclear what happens when columnspan will overrun the col_max
+    might experiment and offere options
+
+    self.ix_row
+    self.ix_col are port of the interface, but how does
+    changing them affect last_ix_row
+
+
     """
     def __init__( self,   *, col_max = 0, indent = 0   ):
         super().__init__(  )
@@ -577,7 +590,7 @@ class CQGridLayout( QGridLayout ) :
         self.ix_row     = 0
         self.ix_col     = 0
         self.indent     = indent  # an idea but what idea
-        # for debug
+        # for debug valuse just prior to addWidget
         self.last_ix_row  = None
         self.last_ix_col  = None
         #self.last_stretch = None
@@ -627,6 +640,11 @@ class CQGridLayout( QGridLayout ) :
         if ix_col is None:
             ix_col = self.ix_col
 
+        # check if it fits
+
+        if self.col_max and ( self.ix_col + columnspan  > self.col_max ):
+            self.new_row()
+
         self.last_ix_row     = ix_row
         self.last_ix_col     = ix_col
         self.last_columnspan = columnspan
@@ -638,18 +656,39 @@ class CQGridLayout( QGridLayout ) :
         #     # make default
         #     columnspan = 1
 
-        # this computes the next
+        # this computes the next -- do we need now we have precheck ?
         self.ix_col    += columnspan
         if self.col_max and ( self.ix_col  >= self.col_max ):
-            self.ix_row    += 1
-            self.ix_col    = 0
+            self.new_row()
+            # is self.new_row better here?
+            # self.ix_row    += 1
+            # self.ix_col    = 0
 
             debug_msg       = f"addWidget__increment row {self}  "
             logging.log( LOG_LEVEL,  debug_msg, )
         # else:  # for debug
         #     pass
         #     print( self )
+        # -----------------------------------
+        def place( self,
+                   a_widget,
+                   columnspan   = None,
+                   rowspan      = None,
+                   sticky       = None
+                   ):
+            """
+            for compat with PlaceInGrid so we can phase it out
+               widget,
+               ix_row       = None,
+               ix_col       = None,
+               *,
+               columnspan   = 1,
+               rowspan      = 1,
+               #stretch      = None,
+            """
+            self.addWidget( a_widget, columnspan = columnspan, rowspan = rowspan )
 
+    # ----------------------
     def get_add_parm_str( self, ):
         """
         for debugging lable controls wit this

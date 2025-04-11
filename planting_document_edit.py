@@ -15,7 +15,7 @@ if __name__ == "__main__":
     main.main()
 # --------------------
 
-
+# ---- imports
 import sys
 
 from app_global import AppGlobal
@@ -28,13 +28,14 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-# ----QtWidgets layouts
+
 from PyQt5.QtWidgets import (QApplication,
                              QComboBox,
                              QDialog,
                              QFormLayout,
                              QGridLayout,
                              QHBoxLayout,
+                             QDialogButtonBox,
                              QLabel,
                              QLineEdit,
                              QMainWindow,
@@ -46,7 +47,7 @@ from PyQt5.QtWidgets import (QApplication,
 
 # ---- local imports
 # import  tracked_qsql_relational_table_model
-
+import custom_widgets as cw
 
 # ---- end imports
 
@@ -112,7 +113,156 @@ def fix_none_str( obj ):
     else:
         return str( obj )
 
-class EditPlantingEvents( QDialog ):
+
+#--------------------------------
+class EditPlantingEvent( QDialog ):
+    """Dialog for adding or editing a record in the stuff_event table.
+    my first tweak before custom edits
+    """
+
+    def __init__(self, parent=None, edit_data = None ):
+        """ """
+
+        super().__init__(parent)
+        self.setWindowTitle("Add New Event Info" if edit_data is None else "Edit Event Info")
+        if parent is None:
+            1/0 # need parent which is the tab where the model is
+        # Create form layout and fields
+        self.edit_data  = edit_data
+
+        form_layout     = QFormLayout()
+
+        # ---- lets add a datadict code gen for this
+        self._build_fields( form_layout, edit_data  )
+        # If we're editing, populate the fields with the existing data
+        if edit_data is None:
+            edit_data       = {}
+            self.edit_data  = edit_data
+
+            for i_widget in self.widget_list:
+                i_widget.set_default()
+
+        else:
+            for i_widget in self.widget_list:
+                i_widget.dict_to_edit( edit_data )
+
+        # ---- Button box
+        button_box = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+
+        button_box.accepted.connect(self.accept)
+        button_box.rejected.connect(self.reject)
+
+        # Main layout
+        main_layout = QVBoxLayout()
+        main_layout.addLayout(form_layout)
+        main_layout.addWidget(button_box)
+
+        self.setLayout( main_layout )
+
+    # -------------------------------------
+    def _build_fields( self, layout, edit_data ):
+        """
+        place fields into layout, a sub layout is ok
+        tweaks
+            none yet
+
+
+CREATE TABLE  planting_event    (
+     id  INTEGER,
+     id_old  VARCHAR(15),
+     planting_id_old  VARCHAR(15),
+     planting_id  INTEGER,
+     event_dt  INTEGER,
+     dlr  INTEGER,
+     cmnt  VARCHAR(250),
+     type  VARCHAR(15),
+     dt_mo  INTEGER,
+     dt_day  INTEGER,
+     day_of_year  INTEGER
+    )
+
+        """
+        widget_list         = []
+        self.widget_list    = widget_list
+
+        # ---- begin gen ---------------------------------------
+
+        # ---- ID field
+        widget              = cw.CQLineEdit(
+                                        parent         = None,
+                                        field_name     = "id",
+                                         )
+
+        widget.dict_to_edit_cnv    =  widget.cnv_int_to_str
+        widget.edit_to_dict_cnv    =  widget.cnv_str_to_int
+
+        # widget.ct_default          = 1/0
+
+        #self.id_edit        = widget
+        widget_list.append( widget )
+        widget.setReadOnly( True )
+        widget.setMaxLength( 10 )
+        layout.addRow( "ID:", widget )
+
+        # ---- people_id
+        widget              = cw.CQLineEdit(
+                                        parent         = None,
+                                        field_name     = "planting_id",
+                                         )
+        widget.dict_to_edit_cnv    =  widget.cnv_int_to_str
+        widget.edit_to_dict_cnv    =  widget.cnv_str_to_int
+
+
+        #self.id_edit        = widget
+        widget_list.append( widget )
+        widget.setReadOnly( True )
+        widget.setMaxLength( 10 )
+        layout.addRow( "Planting ID:", widget )
+
+        # ---- cmnt
+        widget                      = cw.CQLineEdit(
+                                        parent         = None,
+                                        field_name     = "cmnt",
+                                         )
+        widget.dict_to_edit_cnv     =  widget.cnv_str_to_str
+        widget.edit_to_dict_cnv     =  widget.cnv_str_to_str
+
+        self.id_edit        = widget
+        widget_list.append( widget )
+        widget.setMaxLength( 20 )
+        layout.addRow( "Comment:", widget )
+
+        # ---- event_dt
+        # Event date/time field (stored as integer timestamp)
+        # self.event_date_edit = QDateTimeEdit(QDateTime.currentDateTime())
+        # form_layout.addRow( "Event Date:", self.event_date_edit )
+
+
+        widget                      = cw.CQDateEdit(
+                                        parent         = None,
+                                        field_name     = "event_dt",
+                                         )
+        widget.dict_to_edit_cnv     =  widget.cnv_int_to_qdate
+        widget.edit_to_dict_cnv     =  widget.cnv_qdate_to_int
+
+        self.id_edit                = widget
+        widget_list.append( widget )
+        # widget.setMaxLength( 20 ) not a method
+        layout.addRow( "Event Date:", widget )
+
+    #-----------------------
+    def get_form_data( self ):
+        """
+        Get the data from the form fields as a dictionary.
+        """
+        for i_widget in self.widget_list:
+            i_widget.edit_to_dict( self.edit_data )
+
+        return self.edit_data
+
+# -------------------------
+class EditPlantingEventsOld( QDialog ):
     """
     what it says, read?
     seems to be used to edit and add
@@ -148,7 +298,7 @@ class EditPlantingEvents( QDialog ):
         super().__init__( parent )
         self.parent         = parent  # parent may be a function use parent_window
         self.parent_window  = parent
-            # we will get some importand data from the parent
+            # we will get some important data from the parent
             # watch for it
         self.model          = model
 
@@ -171,7 +321,7 @@ class EditPlantingEvents( QDialog ):
         else:
 
             data  = self.parent_window.current_id
-            print( f"get currient_id {data = }")
+            print( f"get current_id {data = }")
             self.stuff_id_field.setText( str( data ) )
 
 
@@ -182,12 +332,9 @@ class EditPlantingEvents( QDialog ):
         """
         #self._build_seq_gui()
 
-        if   True:
-            self._build_gui_2()
-        elif style  == "seq":
-            self._build_gui_1()
-        else:
-            100/0
+
+        self._build_gui_2()
+
 
         # ---- buttons
         self.setLayout( self.layout )
@@ -211,48 +358,7 @@ class EditPlantingEvents( QDialog ):
         self.layout.addRow(self.buttons)
 
 
-    # ------------------------------------------
-    def _build_gui_1( self, ):
-        """
-        what it says, read?
 
-                self.name_ix          # useful later
-
-
-        """
-        self.layout                     = QFormLayout()
-
-        # a_widget                        = QLineEdit()
-        # self.seq_no_field               = a_widget
-        # self.layout.addRow( "seq_no",         a_widget )
-
-        # ----
-        a_widget                        = QLineEdit()
-        self.id_field                   = a_widget
-        self.id_ix                      = 0
-        self.layout.addRow( "id",         a_widget )
-
-        a_widget                            = QLineEdit()
-        self.photoshow_id_field             = a_widget
-        self.photoshow_id_ix                  = 1
-        self.layout.addRow( "photoshow_id",         a_widget )
-
-
-        # a_widget                            = QLineEdit()
-        # self.photo_name_field               = a_widget
-        # self.photo_name_ix                  = 2
-        # self.layout.addRow( "photo_name**",         a_widget )
-
-
-        a_widget                        = QLineEdit()
-        self.photo_photo_fn_field       = a_widget
-        self.photo_photo_fn_ix          = 3
-        self.layout.addRow( "photo_fn**",         a_widget )
-
-        a_widget                        = QLineEdit()
-        self.seq_no_field               = a_widget
-        self.seq_no_ix                  = 4
-        self.layout.addRow( "seq_no",         a_widget )
 
 
     # ------------------------------------------
@@ -309,6 +415,51 @@ class EditPlantingEvents( QDialog ):
         self.no_comma_field                   = a_widget
         self.no_comma_ix                      = ix_field
         layout.addRow( "no_comma",    a_widget )
+
+    # ------------------------------------------
+    def _build_gui_1( self, ):
+        """
+        what it says, read?
+
+                self.name_ix          # useful later
+
+
+        """
+        self.layout                     = QFormLayout()
+
+        # a_widget                        = QLineEdit()
+        # self.seq_no_field               = a_widget
+        # self.layout.addRow( "seq_no",         a_widget )
+
+        # ----
+        a_widget                        = QLineEdit()
+        self.id_field                   = a_widget
+        self.id_ix                      = 0
+        self.layout.addRow( "id",         a_widget )
+
+        a_widget                            = QLineEdit()
+        self.photoshow_id_field             = a_widget
+        self.photoshow_id_ix                  = 1
+        self.layout.addRow( "photoshow_id",         a_widget )
+
+
+        # a_widget                            = QLineEdit()
+        # self.photo_name_field               = a_widget
+        # self.photo_name_ix                  = 2
+        # self.layout.addRow( "photo_name**",         a_widget )
+
+
+        a_widget                        = QLineEdit()
+        self.photo_photo_fn_field       = a_widget
+        self.photo_photo_fn_ix          = 3
+        self.layout.addRow( "photo_fn**",         a_widget )
+
+        a_widget                        = QLineEdit()
+        self.seq_no_field               = a_widget
+        self.seq_no_ix                  = 4
+        self.layout.addRow( "seq_no",         a_widget )
+
+
 
         # ---- code_gen: edit_fields_for_form  -- end table entries
 
@@ -475,7 +626,7 @@ class EditPlantingEvents( QDialog ):
         if not self.index:   # new row  self.index and index not the same
             print( ">>>>>>>>>>>>new row AppGlobal.key_gen       = a_key_gen")
             key             = AppGlobal.key_gen.get_next_key( table_name )
-            # row count here becomes rowcount - 1 later
+            # row count here becomes rowCount - 1 later
             model.insertRow( model.rowCount() )
             ix_row               = model.rowCount() - 1   # model row that get the data here new row
             # model.index makes an index row col for the data
@@ -486,7 +637,7 @@ class EditPlantingEvents( QDialog ):
 
         else:
             print( ">>>>>>>>>>>>>>.update")
-            ix_row               = self.index.row()   # row index wher edit data come from
+            ix_row               = self.index.row()   # row index where edit data come from
             # index_update   = self.index
             # index          = index_update
             # index_row      = self.index.row()

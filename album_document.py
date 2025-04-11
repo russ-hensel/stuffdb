@@ -86,7 +86,7 @@ from PyQt5.QtWidgets import (QAction,
 
 # ---- local imports
 import base_document_tabs
-import custom_widgets
+import custom_widgets as cw
 import key_words
 import picture_viewer
 import qt_sql_query
@@ -345,7 +345,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         put page into the notebook
         """
         page            = self
-        layout           = QHBoxLayout( page )
+        layout          = QHBoxLayout( page )
                 # can we fold in to next
 
         grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
@@ -359,7 +359,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         grid_layout.addWidget( widget )
 
         #widget                  = QLineEdit()
-        widget                  = custom_widgets.CQLineEdit(
+        widget                  = cw.CQLineEdit(
                                      field_name = "table_id" )
         self.critera_widget_list.append( widget )
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
@@ -370,7 +370,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         grid_layout.new_row()
         grid_layout.addWidget( widget )
 
-        widget                  = custom_widgets.CQLineEdit(
+        widget                  = cw.CQLineEdit(
                                      field_name = "id_old" )
         self.critera_widget_list.append( widget )
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
@@ -381,8 +381,9 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         grid_layout.new_row()
         grid_layout.addWidget( widget )
 
-        widget                  = custom_widgets.CQLineEdit(
+        widget                  = cw.CQLineEdit(
                                      field_name = "key_words" )
+        self.key_words_widget   = widget
         self.critera_widget_list.append( widget )
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget, columnspan = 3 )
@@ -392,7 +393,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         grid_layout.new_row()
         grid_layout.addWidget( widget )
 
-        widget                  = custom_widgets.CQLineEdit(
+        widget                  = cw.CQLineEdit(
                                      field_name = "name" )
         self.critera_widget_list.append( widget )
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
@@ -403,7 +404,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget  = QLabel( "Order by" )
         grid_layout.addWidget( widget )
 
-        widget                 = custom_widgets.CQComboBox(
+        widget                 = cw.CQComboBox(
                                      field_name = "order_by" )
         self.critera_widget_list.append( widget )
 
@@ -421,7 +422,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget  = QLabel( "Direction" )
         grid_layout.addWidget( widget )
 
-        widget                 = custom_widgets.CQComboBox(
+        widget                 = cw.CQComboBox(
                                      field_name = "order_by_dir" )
         self.critera_widget_list.append( widget )
 
@@ -431,7 +432,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         debug_msg = ( "build_tab build criteria change put in as marker ")
         logging.debug( debug_msg )
 
-        widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
+        widget.currentIndexChanged.connect( lambda: self.criteria_changed( True ) )
         grid_layout.addWidget( widget )
 
         # ---- debug criteria changed should be in parent
@@ -440,117 +441,10 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self.criteria_changed_widget  = widget
         grid_layout.addWidget( widget )
 
-    # ------------------------------------------
-    def _build_tab_old( self, ):
-        """
-        what it says, read
-        put page into the notebook
-        """
-        page            = self
+        # ---- function_on_return( self )
+        for i_widget in self.critera_widget_list:
+            i_widget.function_on_return   = self.criteria_select
 
-        placer          = gui_qt_ext.PlaceInGrid(
-            central_widget=page,
-            a_max=0,
-            by_rows=False  )
-
-        self._build_top_widgets( placer )
-
-        # ----id
-        widget                = QLabel( "ID" )
-        placer.new_row()
-        placer.place( widget )
-
-        #widget                  = QLineEdit()
-        widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
-        self.key_words_widget   = widget
-        widget.critera_name     = "table_id"
-        self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget, )    # columnspan = 3 )
-
-        # ----id_old
-        widget                = QLabel( "ID Old" )
-        placer.new_row()
-        placer.place( widget )
-
-        #widget                  = QLineEdit()
-        widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
-        self.key_words_widget   = widget
-        widget.critera_name     = "id_old"
-        self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget, )    # columnspan = 3 )
-
-        # ----key words
-        widget                = QLabel( "Key Words" )
-        placer.new_row()
-        placer.place( widget )
-
-        widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
-        self.key_words_widget   = widget
-        self.critera_widget_list.append( widget )
-        widget.critera_name    = "key_words"
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget, columnspan = 3 )
-
-        # ----name
-        widget                = QLabel( "name" )
-        placer.new_row()
-        placer.place( widget )
-
-        widget                  = custom_widgets.CQLineEditCriteria( get_type = "string", set_type = "string")
-        self.key_words_widget   = widget
-        self.critera_widget_list.append( widget )
-        widget.critera_name    = "name"
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget, columnspan = 3 )
-
-
-        # ---- Order by
-        placer.new_row()
-        widget  = QLabel( "Order by" )
-        placer.place( widget )
-
-        widget                 = custom_widgets.CQComboBoxEditCriteria( get_type = "string", set_type = "string")
-        self.order_by_widget   = widget
-        self.critera_widget_list.append( widget )
-        widget.critera_name    = "order_by"
-
-        widget.addItem('name')
-        widget.addItem("name - ignore case")
-        widget.addItem('descr')
-        widget.addItem('id')
-        widget.addItem('id_old')
-        widget.addItem('start_date')
-
-        placer.place( widget )
-
-        # ---- Order by Direction
-        #placer.new_row()
-        widget  = QLabel( "Direction" )
-        placer.place( widget )
-
-        widget                 = custom_widgets.CQComboBoxEditCriteria( get_type = "string", set_type = "string")
-        self.order_by_dir_widget   = widget
-        self.critera_widget_list.append( widget )
-        widget.critera_name    = "order_by_dir"
-
-        widget.addItem('Ascending')
-        widget.addItem('Decending')
-
-        debug_msg = ( "build_tab build criteria change put in as marker ")
-        logging.debug( debug_msg )
-
-        widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
-        placer.place( widget )
-
-        # ---- debug criteria changed should be in parent
-        placer.new_row()
-        widget  = QLabel( "criteria_changed_widget" )
-        self.criteria_changed_widget  = widget
-        placer.place( widget )
-
-        # self.add_buttons( placer )
 
     # -------------
     def criteria_select( self,     ):
@@ -728,7 +622,7 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
         """
         page            = self
 
-        max_col         = 10
+        max_col         = 12
         self.max_col    = max_col
 
         box_layout_1    =  QVBoxLayout( page )
@@ -808,151 +702,115 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
             widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
             layout.addItem( widget, 0, ix  )  # row column
 
-        # max_col         = 10  and width = 10 seems good
-        # ---- code_gen: TableDict.to_build_form 2025_02_01 for photoshow -- begin table entries -----------------------
+        # ---- code_gen: TableDict.to_build_form 2025_04_01 for photoshow -- begin table entries -----------------------
 
         # ---- id
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "id",
-                                                db_type        = "integer",
-                                                display_type   = "string",
-                                                 )
+                                                field_name     = "id", )
         self.id_field     = edit_field
         edit_field.setReadOnly( True )
         edit_field.setPlaceholderText( "id" )
-        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
-        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
-        # still validator / default func  None
+        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
+        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
+        edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
+        edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 1 )
-        edit_field.setReadOnly( True )
 
         # ---- id_old
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "id_old",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
+                                                field_name     = "id_old", )
         self.id_old_field     = edit_field
         edit_field.setReadOnly( True )
         edit_field.setPlaceholderText( "id_old" )
-        # still validator / default func  None
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 1 )
-        edit_field.setReadOnly( True )
 
         # ---- name
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "name",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
+                                                field_name     = "name", )
         self.name_field     = edit_field
         edit_field.setPlaceholderText( "name" )
-        # still validator / default func  None
         self.data_manager.add_field( edit_field, is_key_word = True )
         layout.addWidget( edit_field, columnspan = 4 )
 
         # ---- cmnt
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "cmnt",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
+                                                field_name     = "cmnt", )
         self.cmnt_field     = edit_field
         edit_field.setPlaceholderText( "cmnt" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
+        self.data_manager.add_field( edit_field, is_key_word = True )
         layout.addWidget( edit_field, columnspan = 4 )
 
         # ---- add_kw
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "add_kw",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
+                                                field_name     = "add_kw", )
         self.add_kw_field     = edit_field
         edit_field.setPlaceholderText( "add_kw" )
-        # still validator / default func  None
         self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- start_date
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "start_date",
-                                                db_type        = "integer",
-                                                display_type   = "timestamp",
-                                                 )
-        self.start_date_field     = edit_field
-        edit_field.setPlaceholderText( "start_date" )
-        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
-        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- end_date
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "end_date",
-                                                db_type        = "integer",
-                                                display_type   = "timestamp",
-                                                 )
-        self.end_date_field     = edit_field
-        edit_field.setPlaceholderText( "end_date" )
-        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
-        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- create_date
-        edit_field                  = custom_widgets.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "create_date",
-                                                db_type        = "integer",
-                                                display_type   = "timestamp",
-                                                 )
-        self.create_date_field     = edit_field
-        edit_field.setPlaceholderText( "create_date" )
-        edit_field.edit_to_rec     = edit_field.edit_to_rec_str_to_int
-        edit_field.rec_to_edit     = edit_field.rec_to_edit_int_to_str
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
+        layout.addWidget( edit_field, columnspan = 4 )
 
         # ---- type
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "type",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
+                                                field_name     = "type", )
         self.type_field     = edit_field
         edit_field.setPlaceholderText( "type" )
-        # still validator / default func  None
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- web_site_dir
-        edit_field                  = custom_widgets.CQLineEdit(
+        edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "web_site_dir",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
+                                                field_name     = "web_site_dir", )
         self.web_site_dir_field     = edit_field
         edit_field.setPlaceholderText( "web_site_dir" )
-        # still validator / default func  None
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
 
+        # ---- create_date
+        edit_field                  = cw.CQDateEdit(
+                                                parent         = None,
+                                                field_name     = "create_date", )
+        self.create_date_field     = edit_field
+        edit_field.setPlaceholderText( "create_date" )
+        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_qdate
+        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_qdate
+        edit_field.edit_to_rec_cnv        = edit_field.cnv_qdate_to_int
+        edit_field.edit_to_dict_cnv       = edit_field.cnv_qdate_to_int
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- start_date
+        edit_field                  = cw.CQDateEdit(
+                                                parent         = None,
+                                                field_name     = "start_date", )
+        self.start_date_field     = edit_field
+        edit_field.setPlaceholderText( "start_date" )
+        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_qdate
+        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_qdate
+        edit_field.edit_to_rec_cnv        = edit_field.cnv_qdate_to_int
+        edit_field.edit_to_dict_cnv       = edit_field.cnv_qdate_to_int
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- end_date
+        edit_field                  = cw.CQDateEdit(
+                                                parent         = None,
+                                                field_name     = "end_date", )
+        self.end_date_field     = edit_field
+        edit_field.setPlaceholderText( "end_date" )
+        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_qdate
+        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_qdate
+        edit_field.edit_to_rec_cnv        = edit_field.cnv_qdate_to_int
+        edit_field.edit_to_dict_cnv       = edit_field.cnv_qdate_to_int
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
 
     # ----------------------------
     def fetch_detail_row( self, id=None ):
@@ -1538,14 +1396,17 @@ class AlbumHistoryTab(  base_document_tabs.HistoryTabBase  ):
         super().__init__( parent_window )
         self.tab_name            = "AlbumHistorylTab"
 
-
-
 # ----------------------------------------
-class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
+class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
     #class AlbumDetailListTab( base_document_tabs.SubTabBase  ):
     """
     This is the list of photos in the album
     see photo_in_show_join_chat.py
+
+    should this be pictuer list like other tabs, I think different from
+    subjects
+
+
     """
     # ------------------------------------------
     def __init__(self, parent_window ):
@@ -1615,6 +1476,8 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
         model       = self.model
         view        = self.view
 
+        view.setEditTriggers(QTableView.NoEditTriggers) # no editiong
+
         ix_col      = 0
         model.setHeaderData(  ix_col, Qt.Horizontal, "ID" )
         view.setColumnWidth(  ix_col, 50)  # Set column 0 width to 100 pixels
@@ -1624,7 +1487,6 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
 
         ix_col      = 2
         view.setColumnHidden( ix_col, True )
-
 
         ix_col      = 3
         model.setHeaderData(  ix_col, Qt.Horizontal, "Seq" )
@@ -1636,8 +1498,6 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
         ix_col      += 1
         model.setHeaderData(  ix_col, Qt.Horizontal, "Camera" )
         view.setColumnWidth(  ix_col, 80)  # Set column 0 width to 100 pixels
-
-
 
         ix_col      += 1
         model.setHeaderData(  ix_col, Qt.Horizontal, "File" )
@@ -1788,40 +1648,10 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
     # ------------------------------------------
     def _build_model_old( self, ):
         """
+        deleted
         what it says, read
         from russ_qrm and some more chat
         """
-        # Create the model and set up the relation for file and sub_dir
-        self.model = QSqlRelationalTableModel(self)
-        # self.model          = qt_with_logging.QSqlRelationalTableModelWithLogging(
-        #     self )
-        self.model.setTable("photo_in_show")
-
-        # Setting the relation to include `file` and `sub_dir`
-        self.model.setRelation(
-            self.model.fieldIndex("photo_id"),
-            QSqlRelation("photo", "id", "file, sub_dir, name")
-        )
-
-        # Set filter for the specific `photo_show_id`
-        self.model.setFilter( f"photo_show_id = {10028}" )
-
-        # Configure headers and load data
-        # self.model.setEditStrategy(QSqlRelationalTableModel.OnFieldChange)
-        self.model.setEditStrategy(QSqlRelationalTableModel.OnManualSubmit)
-        self.model.select()
-
-        # Setup table view and add it to the layout
-        view = QTableView()
-        view.setModel(self.model)
-
-        self.view.setModel( self.model )
-
-        # !! look into next
-        # self.view.setItemDelegate( QSqlRelationalDelegate(self.view ) )
-
-        view.setEditTriggers(QTableView.DoubleClicked | QTableView.SelectedClicked)
-
 
     # --------------------
     def create_context_menu(self):

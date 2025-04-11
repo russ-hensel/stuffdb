@@ -4,7 +4,7 @@
 """"
 Purpose:
     run a bit of python code and capture output
-
+/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/exec_qt.py
 
 Status:
      just started from wat_inskpector -- not sure why different
@@ -19,7 +19,8 @@ import ex_qt
 
 
 """
-
+# ---- imports
+#import adjust_path
 import dis
 import inspect
 import io
@@ -33,6 +34,7 @@ from subprocess import PIPE, STDOUT, Popen, run
 
 # import wat
 from PyQt5 import QtGui
+from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
 from PyQt5.QtGui import QTextCursor, QTextDocument
 # sql
@@ -64,8 +66,7 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
-# ---- imports
-import adjust_path
+
 
 # import info_about
 
@@ -262,7 +263,6 @@ class ExecWindow( QDialog ):
         widget.clicked.connect(         self.exec_code )
         row_layout.addWidget( widget,   )
 
-
         row_layout      = QHBoxLayout()
         layout.addLayout( row_layout )
 
@@ -278,6 +278,9 @@ class ExecWindow( QDialog ):
 
         widget                  = QTextEdit(    )
         self.code_text_widget   = widget
+        font                    = QFont( "Courier New" )  # Set a monospaced font "Courier New"
+        font.setPointSize(12)
+        widget.setFont(font)
         #widget.setGeometry( 50, 50, 200, 200 )
         # widget.itemClicked.connect( self.do_inspect_clicked_local )
         row_layout.addWidget( widget,   )
@@ -296,6 +299,10 @@ class ExecWindow( QDialog ):
         widget                      = QTextEdit()
         #self.text_edit              = widget
         self.output_text_widget     = widget
+        font                        = QFont( "Courier New" )  # Set a monospaced font "Courier New"
+        font.setPointSize(12)
+        widget.setFont(font)
+
         row_layout.addWidget( widget,   )
 
         # ---- bottom and buttons

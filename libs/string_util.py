@@ -79,6 +79,8 @@ def is_url( a_string,  ):
 # ---------------------
 def to_columns( current_str, item_list, format_list = ( "{: <30}", "{:<30}" ), indent = "    "  ):
     """
+    this is close to what is in string_util.py
+    make a partial to avoid repeat of format list ??
     for __str__  probably always default format_list
     see ColunmFormatter which is supposed to be more elaborate version
     see its __str__

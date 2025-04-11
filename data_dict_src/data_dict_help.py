@@ -42,8 +42,13 @@ def build_it( a_data_dict ):
 
     # ---- id
     a_column_dict = data_dict.ColumnDict(    column_name    = "id",
-                                   db_type        = "INTEGER",
-                                   display_type   = "integer",
+                                   db_type              = "INTEGER",
+                                             form_read_only       = True,
+                                             rec_to_edit_cnv      = "cnv_int_to_str",
+                                             dict_to_edit_cnv     = "cnv_int_to_str",
+                                             edit_to_rec_cnv      = "cnv_str_to_int",
+                                             edit_to_dict_cnv     = "cnv_str_to_int",
+
                                    max_len            = None,
                                    default_func       = None,
                                    col_head_text      = "ID",
@@ -51,22 +56,26 @@ def build_it( a_data_dict ):
                                    col_head_order     = 1,
                                    display_order      = 0,
                                    form_col_span      = 1,
-                                    form_read_only     = True, )
+                                   )
 
     a_table_dict.add_column( a_column_dict )
 
 
 
-
+    # ----id_old
     a_column_dict = data_dict.ColumnDict(    column_name    = "id_old",
                                              db_type        = "VARCHAR(15)",
+
+                                             form_read_only       = True,
+
+
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
                                              col_head_order  = 1,
                                              display_order      = 2,
                                              form_col_span      = 1,
-                                             form_read_only     = True, )
+                                                               )
 
 
     a_table_dict.add_column( a_column_dict )
@@ -101,7 +110,8 @@ def build_it( a_data_dict ):
                                              col_head_text      = "System",
                                              col_head_width     = 15,
                                              col_head_order     = 30,
-                                             display_order     = 15 )
+                                             display_order     = 15,
+                                             form_col_span      = 1,)
 
     a_table_dict.add_column( a_column_dict )
 
@@ -116,23 +126,33 @@ def build_it( a_data_dict ):
                                              col_head_text      = "Key Words",
                                              col_head_width     = 40,
                                              col_head_order     = 32,
-                                             display_order      = 20,
-                                              )
+                                             display_order      = 12,
+                                             form_col_span      = 4,)
     a_table_dict.add_column( a_column_dict )
 
-    # ---- add_ts
+    # ---- add_ts   --- may not exist ??
     a_column_dict = data_dict.ColumnDict(    column_name    = "add_ts",
                                              db_type        = "INTEGER",
                                              display_type   = "timestamp",
                                              max_len        = None,
-                                             default_func   = None, )
+                                             default_func   = None,
+                                             detail_edit_class  = "custom_widgets.CQDateEdit",
+                                             form_edit          = "custom_widgets.CQDateEdit",
+                                             form_read_only     = True,
+                                             display_order      = 120,
+                                             form_col_span      = 1,)
 
     # ---- edit_ts
     a_column_dict = data_dict.ColumnDict(    column_name    = "edit_ts",
                                              db_type        = "INTEGER",
                                              display_type   = "timestamp",
                                              max_len        = None,
-                                             default_func   = None, )
+                                             default_func   = None,
+                                             detail_edit_class  = "custom_widgets.CQDateEdit",
+                                             form_edit          = "custom_widgets.CQDateEdit",
+                                             form_read_only     = True,
+                                             display_order      = 120,
+                                             form_col_span      = 1,)
     a_table_dict.add_column( a_column_dict )
 
 
@@ -197,7 +217,8 @@ def build_it( a_data_dict ):
                                              col_head_text      = "Title",
                                              col_head_width     = 60,
                                              col_head_order     = 5,
-                                             display_order    = 10  )
+                                             display_order    = 10,
+                                             form_col_span      = 4,)
 
     a_table_dict.add_column( a_column_dict )
 
@@ -216,6 +237,11 @@ def build_it( a_data_dict ):
 
     a_column_dict = data_dict.ColumnDict(    column_name    = "id",
                                    db_type              = "INTEGER",
+                                             form_read_only       = True,
+                                             rec_to_edit_cnv      = "cnv_int_to_str",
+                                             dict_to_edit_cnv     = "cnv_int_to_str",
+                                             edit_to_rec_cnv      = "cnv_str_to_int",
+                                             edit_to_dict_cnv     = "cnv_str_to_int",
                                    display_type         = "integer",
                                    max_len              = None,
                                    default_func         = None,
@@ -227,6 +253,8 @@ def build_it( a_data_dict ):
 
     a_column_dict = data_dict.ColumnDict(    column_name    = "id_old",
                                    db_type        = "VARCHAR(15)",
+                                             form_read_only       = True,
+
                                    display_type   = "string",
                                    max_len        = None,
                                    default_func= None,

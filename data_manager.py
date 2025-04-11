@@ -12,10 +12,12 @@ if __name__ == "__main__":
     #----- run the full app
     import main
     main.main()
+
+
+
 import logging
 
-import info_about
-import string_util
+
 # --------------------
 # ---- import
 from PyQt5.QtSql import QSqlRecord
@@ -23,6 +25,8 @@ from PyQt5.QtSql import QSqlRecord
 import custom_widgets
 import key_words
 import qsql_utils
+import info_about
+import string_util
 
 logger              = logging.getLogger( )
 LOG_LEVEL           = 5 # level for more debug    higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
@@ -214,7 +218,7 @@ class DataManager(   ):
 
         # think we need to use custon_widget
         #self.id_field.setText( str( next_key ) )
-        self.id_field.set_preped_data( str(next_key ),  )
+        self.id_field.set_preped_data( str( next_key ),  )
 
         self.current_id             = next_key
         if self.key_word_table_name:
@@ -222,6 +226,7 @@ class DataManager(   ):
 
         msg     = ( f"DataManager new_record time stuff may be lost  {self.table_name = } ")
         logging.debug( msg )
+
         msg     = ( "new_record need to fix up the picture tab if any or does document do it ??")
         logging.debug( msg )
 
@@ -661,10 +666,19 @@ def delete_record_by_id(model, id_value):
         promoted
         move data from fetched record into the correct fields
         """
-        # ---- code_gen: detail_tab -- _record_to_field -- begin code
         for i_field in  self.field_list:
+
+            # some debug stuff keep for abit
             #rint( f"********record_to_field {i_field.field_name}")
             # i_field.set_data_from_record( record )
+            # if i_field.field_name in [ "edit_ts",  ]:
+            #     field_name    =  i_field.field_name
+            #     breakpoint()
+            #     # look at the field names
+            #     for i_field in self.field_list:
+            #         print( f"{i_field.field_name}")
+            #     pass # for breakpoint
+
             i_field.rec_to_edit( record, )  # format = None  hidden in closure
 
     # ------------------------
@@ -697,7 +711,7 @@ def delete_record_by_id(model, id_value):
             #         pass # for breakpoint
 
             # i_field.get_data_for_record( record, self.record_state  )
-            i_field.edit_to_rec(  record,  )  # format is hidden
+            i_field.edit_to_rec( record, )  # format is hidden
 
     # ------------------------
     def clear_fields( self, option ):
@@ -713,16 +727,30 @@ def delete_record_by_id(model, id_value):
 
         move option inside control with argument
         """
-        if option == "default":
-            for i_field in self.field_list:
-                # i_field.clear_data( to_prior = to_prior )
-                i_field.ct_default(  )
+        try:
+            if option == "default":
+                for i_field in self.field_list:
+                    # i_field.clear_data( to_prior = to_prior )
+                    i_field.ct_default(  )
 
-        elif option == "prior":
-            for i_field in self.field_list:
-                pass   # debug
-                print( f"{i_field = } {i_field.ct_prior = }")
-                i_field.ct_prior(  )
+            elif option == "prior":
+                for i_field in self.field_list:
+                    pass   # debug
+                    print( f"{i_field = } {i_field.ct_prior = }")
+                    i_field.ct_prior(  )
+        except:
+            pass
+            if option == "default":
+                for i_field in self.field_list:
+                    # i_field.clear_data( to_prior = to_prior )
+                    i_field.set_default(  )
+
+            elif option == "prior":
+                for i_field in self.field_list:
+                    pass   # debug
+                    print( f"{i_field = } {i_field.ct_prior = }")
+                    i_field.set_prior(  )
+
 
     # ------------------------------
     def __str__( self ):

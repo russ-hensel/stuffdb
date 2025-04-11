@@ -21,8 +21,8 @@ if __name__ == "__main__":
 #     main.main()
 # # --------------------
 
-# ---- local imports
-# import  tracked_qsql_relational_table_model
+# ---- imports
+
 import logging
 import sys
 
@@ -55,6 +55,8 @@ from PyQt5.QtWidgets import (QApplication,
                              QVBoxLayout,
                              QWidget)
 
+# ---- imports local
+
 logger          = logging.getLogger( )
 
 # for custom logging level at module
@@ -63,21 +65,16 @@ LOG_LEVEL  = 20   # higher is more
 
 # ---- end imports
 
-# style       = "photo"  # or seq >
-# style       = "seq"  # or seq >
-
-# #------------
-# relation    = "none"    # one  two    # related columns
-# relation    = "one"    # one  two    # related columns
-# relation    = "two"    # one  two    # related columns
 
 
-class EditStuffEvents(QDialog):
-    """Dialog for adding or editing a record in the stuff_event table.
-    my first tweak befor custom edits
+class EditStuffEvents( QDialog ):
+    """
+    Dialog for adding or editing a record in the stuff_event table.
+    my first tweak before custom edits
     """
 
     def __init__(self, parent=None, edit_data=None ):
+        """ """
         super().__init__(parent)
         self.setWindowTitle("Add New Event" if edit_data is None else "Edit Event")
         if parent is None:
@@ -138,7 +135,7 @@ class EditStuffEvents(QDialog):
             self.stuff_id_edit.setText( data )
 
             # Convert timestamp to QDateTime
-            dt = QDateTime()
+            dt    = QDateTime()
             dt.setSecsSinceEpoch(edit_data["event_dt"])
             self.event_date_edit.setDateTime(dt)
 
@@ -174,7 +171,7 @@ class EditStuffEvents(QDialog):
         else:
             a_id  = int( a_id )
 
-        stuff_id = self.id_edit.text().strip()
+        stuff_id = self.stuff_id_edit.text().strip()
         if stuff_id == "":
             stuff_id  = 0
         else:

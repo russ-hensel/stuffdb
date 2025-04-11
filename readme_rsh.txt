@@ -42,6 +42,57 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
 ----
 
 ----
+---- ver70
+
+    why
+        custom_widget have been greatly changed, breakin changes
+        now wok back into all the windows, this will take some time
+        and may break a lot
+
+
+
+        update the data dicts for the rest first pass
+            to do
+                people_document_edit   -- seems to be on old edits does it work?
+                        skip events for now
+                        contact info
+
+            to done
+
+                album   = pictues in shoe
+                stuff
+                help
+                people
+                pictures
+                plant
+                planting
+
+                album events  does not exist
+                help events   does not exist
+                stuff events  seems ok but not custom edits so fix at some point
+                planting_events        -- uses custom edits -- works just no except
+                people_document_edit   -- seems to be on old edits does it work?
+                        skip events for now
+                        contact info
+
+
+---- ver71
+
+    why
+        -- lots of changes in custom widgets edits -- have be redone, better
+             smaller  simpler
+
+             ---->clean up dead stuff
+
+             think upgrad to data doct is done, but needs to be tested
+                   keep the old for a while
+
+
+             ---- fix text tab for base or at least non help
+                   better for now
+
+            --- try old converted db
+
 ---- ver69
 
     why
@@ -49,15 +100,46 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
             much cleaner, more function, delete implemented for
             what i think is the hard part
 
-            look for db fragments as a way of making sure deletes are
-            ok
+           *! look for db fragments as a way of making sure deletes are
+              ok
 
-            improve deletes for events....
+        !! ===================>>> start with planting even using new subclass base
 
-            improve the date edits, one for new records non edit current date
+           !! improve deletes for events....
+
+           *!  improve the date edits, one for new records non edit current date
             one for photos can set date and copy to next record.
 
+            ** reformat pictue detail to look better
+            ** improved custom grid
 
+            *! place in grid should be totally removed
+
+
+
+            photo document
+                ** photo detail
+                    subject sub tab other tables
+                        ** fix column headers
+                        ** fix column width
+                     **    album sub seems not to work also ugly
+                     ** album stub tab fix column head and width
+
+        !! album document
+            detail tab
+              !! album date need to be fixed
+              !!  picture sub tag
+                  -- make non edit -- see if can improve columns inc order
+
+
+        !! can i drive more runtime off the data dictionary think about it
+            can always find edit in the list by its field name, or could
+            use a dict instead.  Layout may be the only one needing manual
+            intervention then tweak rest in loop at end???
+
+        !! time on help for edit date is still misbehaving
+
+        !! when time is more under control add to criteria
 
 ---- ver68
 

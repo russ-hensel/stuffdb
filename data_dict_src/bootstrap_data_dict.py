@@ -93,6 +93,38 @@ CREATE TABLE people_phone (
 	autodial INTEGER  )
 """
 
+# ---- planting event old may need
+sql_old    = """
+CREATE TABLE planting_event    (
+	id_old   			    VARCHAR(15),
+	planting_id_old   		VARCHAR(15),
+	planting_id             INTEGER NULL,
+	event_dt      		    INTEGER NULL,
+	dlr   			        DECIMAL( 7,2),
+	cmnt  			        VARCHAR(250),
+	type  			        VARCHAR(15),
+	dt_mo 			        DECIMAL(  11,0),
+	dt_day        	        DECIMAL(  11,0),
+	day_of_year   	        INTEGER  )
+"""
+# ---- planting event
+sql    = """
+CREATE TABLE planting_event (
+    id  INTEGER ,
+	id_old VARCHAR(15),
+	planting_id_old VARCHAR(15),
+	planting_id INTEGER,
+	event_dt INTEGER,
+	dlr INTEGER,
+	cmnt VARCHAR(250),
+	type VARCHAR(15),
+	dt_mo INTEGER,
+	dt_day INTEGER,
+	day_of_year INTEGER  )
+"""
+
+
+
 data_dict.create_some_data_dict_from_sql(sql)
 
 

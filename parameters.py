@@ -53,8 +53,9 @@ class Parameters( ):
             run, perhaps not in the way you want
         """
         #self.mode_new_db()
-        self.mode_github()
-        self.mode_python_ex_on_theprof()
+        #self.mode_github()
+        #self.mode_python_ex_on_theprof()
+        self.mode_imported_on_theprof()
 
         #self.mode_builddb_on_theprof()
 
@@ -63,8 +64,6 @@ class Parameters( ):
 
         # self.mode_temp_db_in_ram()
         # self.mode_add_real_pictures()
-
-
 
         #self.mode_russ_on_smithers()
         #self.new_user_mode()
@@ -261,17 +260,6 @@ class Parameters( ):
         perhaps rekey
         """
         self.mode               = "mode_python_ex_on_theprof"
-        # but do they use the same units ?
-        # self.qt_width           = 1200
-        # self.qt_height          = 700    # 700 most of win height
-        # self.qt_xpos            = 50
-        # self.qt_ypos            = 50
-
-        # # sizes for the wat-inspector in qt
-        # self.wat_qt_width       = 1300
-        # self.wat_qt_height      = 800
-        # self.wat_qt_xpos        = 10
-        # self.wat_qt_ypos        = 10
 
         self.picture_db_root    = "/mnt/WIN_D/temp_photo"
         self.picture_db_sub     = "/test_delete"
@@ -289,7 +277,30 @@ class Parameters( ):
         #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
         #self.db_file_name       = "./data/python_ex.db"
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
-        #                          /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+
+    # -------
+    def mode_imported_on_theprof( self ):
+        """
+        using one of the imported db perahps on ramdisk
+        """
+        self.mode               = "mode_imported_on_theprof"
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/test_delete"
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support sqllite
+
+        self.db_file_name       = "./data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/sept_35.db"
+
 
     # -------
     def mode_russ_on_theprof( self ):

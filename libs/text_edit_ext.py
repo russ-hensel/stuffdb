@@ -4,6 +4,7 @@
 
 # ---- tof
 """
+/mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/rshlib_qt/text_edit_ext.py
 Created on Fri Jan 10 16:32:00 2025
 text edit extensions
 

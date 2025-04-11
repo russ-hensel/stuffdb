@@ -109,6 +109,8 @@ def create_db( db, table_name_list  ):
 # ----------------------------------
 def key_gen_for( db, table_name ):
     """
+    unclear what this was supposed to do needs to be looked into
+    return count for table name
     what it says
     way more stuff than needed
     return count for table name
@@ -148,12 +150,14 @@ def key_gen_for( db, table_name ):
             break
 
     print( f"end   key_gen_for return {field_0} ")
+
     return field_0
 
 
 # -----------------------------
-def insert_key_gen( db, table_name   ):
+def insert_key_gen( db, table_name, value  ):
     """
+    xee StuffDB Database Utility
     table name is ignored
     junk in code left over but should work
     stuff_util_sql.insert_key_gen( db, table_name   )
@@ -173,7 +177,7 @@ def insert_key_gen( db, table_name   ):
     queries = [
        #( f'{begin_sql} VALUES (  "planting",      6060        )' ),
        # ( f'{begin_sql} VALUES (  "people",        7000        )' ),
-       ( f'{begin_sql} VALUES (  "{table_name}",        8000     )' ),
+       ( f'{begin_sql} VALUES (  "{table_name}",    {value}    )' ),
 
     ]
 
@@ -186,8 +190,6 @@ def insert_key_gen( db, table_name   ):
             1/0
 
     print( f"end {what}")
-
-
 
 # -----------------------------
 def insert_key_gen_init( db, table_name   ):
@@ -208,8 +210,9 @@ def insert_key_gen_init( db, table_name   ):
     queries = [
        #( f'{begin_sql} VALUES (  "planting",      6060        )' ),
        # ( f'{begin_sql} VALUES (  "people",        7000        )' ),
-       ( f'{begin_sql} VALUES (  "help_info",        8000     )' ),
-       ( f'{begin_sql} VALUES (  "picture",        9000     )' ),
+       #( f'{begin_sql} VALUES (  "help_info",        8000     )' ),
+       #( f'{begin_sql} VALUES (  "picture",        9000     )'
+       ( f'{begin_sql} VALUES (  "planting_event",        9200     )'   ),
     ]
 
     for sql in queries:
@@ -272,7 +275,6 @@ def create_table(   db, table_name   ):
     msg         = f"{sql} "
     print( msg )
 
-
     query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
 
     print( "table created, check it " )
@@ -298,12 +300,9 @@ def drop_table(   db, table_name   ):
 
     query_ok    =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
 
-
     db.commit()
 
     print( "delete_table done")
-
-
 
     # -------------------------------------
 
@@ -486,6 +485,56 @@ def add_missing_text( db, table_name ):
     print( "sql done" )
 
 # ----------------------------------
+def find_stuff_event_fragments( db,   ):
+    """
+    what it says
+    events that have no stuff
+    """
+    print( "begin  find_stuff_event_fragments ")
+
+
+    chat = """
+     rds?
+
+    """
+    if  True:
+    #if  table_name == "help_info":
+        sql = """
+            SELECT stuff_event.*
+            FROM stuff_event
+            LEFT JOIN stuff  ON stuff_event.id = stuff.id
+            WHERE stuff.id IS NULL;
+            """
+
+    print( sql )
+
+    record_count  = 0
+    max_ix        = 100000
+
+    query = QSqlQuery( DB_CONNECTION )
+
+    query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
+
+    print( "select result" )
+
+    ix          = 0
+    while query.next():
+        ix              += 1
+        field_0        = query.value(0)
+        field_1        = query.value(1)
+        field_2        = query.value(2)
+        field_3        = query.value(3)
+        field_4        = query.value(4)
+        field_5        = query.value(5)   # index past end, no error just get None
+
+        print(f"record:{ix} {field_0 = }  {field_1 = }  {field_2 = } {field_3 = } {field_4 = } {field_5 = } ")
+        if ix >= max_ix:
+            break
+
+    print( f"end   find_stuff_event_fragments {ix = }")
+
+
+# ----------------------------------
 def print_missing_text( db, table_name ):
     """
     what it says
@@ -620,6 +669,7 @@ def check_key_words_for_dups( db, table_name ):
         print(f"record:{ix} {field_0 = }  {field_1 = }  {field_2 = } {field_3 = } {field_4 = } {field_5 = } ")
         if ix >= max_ix:
             break
+    return ix
 
 # ------------------------------
 def insert_stuff_sample_data( db, ):
@@ -754,14 +804,14 @@ def  do_it():
 
     table_name      = "stuff"
     #table_name      = "stuff_key_word"
-    # table_name      = "stuff_event"
+    table_name      = "stuff_event"
     #table_name      = "xxx"
 
     # ---- run command
 
     # ---- drop and create beware
     # drop_table(   DB_CONNECTION, table_name = table_name )
-    # create_table( DB_CONNECTION, table_name = table_name )
+    create_table( DB_CONNECTION, table_name = table_name )
 
     print( "some stuff move to chekc and fix ")
 
@@ -781,8 +831,8 @@ def  do_it():
 
     # ---- will deleted data, slight change woud delete and add tables
     #      perhps that would be better
-    insert_stuff_sample_data( DB_CONNECTION )
-
+    #insert_stuff_sample_data( DB_CONNECTION )
+    #find_stuff_event_fragments( DB_CONNECTION )
 
 
     # ---- clean up

@@ -1,8 +1,180 @@
 
+SELECT   stuff.id,  stuff.name,  stuff.descr,  stuff.add_kw, stuff.id_in_old
+
+FROM stuff   ORDER BY  descr ASC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                value = super().data(index, Qt.EditRole)
+                if value is not None:
+                    return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
+                return value  # Return raw value if None
+
+        elif role == Qt.EditRole:
+            # Return raw value for editing/database sync
+            if col == 2:
+                return super().data(index, Qt.EditRole)
+
+        elif role == Qt.TextAlignmentRole:
+            # Handle alignment for all columns
+            if col == 0:  # id
+                return Qt.AlignLeft | Qt.AlignVCenter
+            elif col == 1:  # stuff_id
+                return Qt.AlignCenter | Qt.AlignVCenter
+            elif col == 2:  # event_dt
+                return Qt.AlignRight | Qt.AlignVCenter
+
+        # Default to base class for all other roles and columns
+        return super().data(index, role)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        model               = QSqlQueryModel( )
+        view                = QTableView()
+
+                                             display_order  = 30,
+                                             max_len        = None,
+                                             default_func   = None,
+                                             is_key_word    = True,
+
+
+
+I am in Python using qt and its widgets I am trying to join two tables.
+I have included the creat statements.
+I think I have a mistake.  Please comment on:
+
+    # ---------------------------------
+    def _build_model( self, ):
+        """
+
+        --------------------
+        photoshow
+            CREATE TABLE photoshow    (
+                 id  INTEGER,
+                 id_old  VARCHAR(15),
+                 name  VARCHAR(50),
+                 cmnt  VARCHAR(100),
+                 start_date  INTEGER,
+                 end_date  INTEGER,
+                 create_date  INTEGER,
+                 type  VARCHAR(20),
+                 add_kw  VARCHAR(50),
+                 web_site_dir  VARCHAR(240)
+                )
+
+        CREATE TABLE photo_in_show    (
+                 id  INTEGER,
+                 photo_id_old  VARCHAR(15),
+                 photo_show_id_old  VARCHAR(15),
+                 sequence  INTEGER,
+                 photo_in_show_id_old  VARCHAR(15),
+                 photo_id  INTEGER,
+                 photo_show_id  INTEGER,
+
+
+        """
+
+        model              =  QSqlRelationalTableModel(  self, self.db    )
+        self.model         = model
+
+        model.setTable( self.table_name )
+
+        ix_foreign_key        = 0
+
+
+        foreign_table         = "photo_in_show"
+        foreign_table_key     = "photo_show_id"
+
+        self.model.setRelation( ix_foreign_key, QSqlRelation( foreign_table,
+                                foreign_table_key,
+                                "id"  ))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 #-------------------------------
+
+
+select_by_id PictureAlbumtSubTab
+SQL select: SELECT relTblAl_0.id,photoshow."id_old",photoshow."name",
+photoshow."cmnt",photoshow."start_date",photoshow."end_date",photoshow."create_date",
+photoshow."type",photoshow."add_kw",photoshow."web_site_dir"
+FROM photoshow,photo_in_show relTblAl_0
+WHERE (photoshow."id"=relTblAl_0.photo_show_id) AND (photo_in_show.photo_id = 1023)
+
+                SELECT
+
+                photoshow.name,
+                photoshow.id,
+
+                photo_in_show.photo_id,
+
+                photo_in_show.sequence,
+                photo_in_show.photo_show_id
+
+
+                FROM   photoshow
+                JOIN   photo_in_show  ON   photo_in_show.photo_show_id  = photoshow.id
+
+
+                WHERE  photo_in_show.photo_id = 1023 ;
+----------------------------------
+
+
 
 
 
@@ -11,26 +183,8 @@
 
 
 
-id_to_delete    in list was null should not be
-self.current_id  was null in caller should not be
-
-
-deleteing 1132   now see 1133 in detail
-        1132 no longer in history
-
-
-        1132 still in list
-
-
-        1132 gone from db
-
-        list tab base reports it is deleted but still viaible
-ListTabBase
-
-/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/logs/app.py_log_deletestuff.log
-
-
-
+for i_field in self.field_list:
+    print( f"{i_field.field_name}")
 
 
 
@@ -60,50 +214,3 @@ SELECT   photo.id,  photo.name,  photo.title,  photo.add_kw, photo.descr    FROM
 
 
 
-======================================================================
-from PyQt5.QtCore import QSortFilterProxyModel, Qt
-from PyQt5.QtGui import QStandardItem, QStandardItemModel
-from PyQt5.QtWidgets import QApplication, QTableView
-
-
-class CustomFilterProxyModel(QSortFilterProxyModel):
-    def __init__(self, rows_to_hide=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Store the list of row indices to hide
-        self.rows_to_hide = rows_to_hide if rows_to_hide is not None else []
-
-    # Custom filtering method to hide specific rows
-    def filterAcceptsRow(self, source_row, source_parent):
-        # Hide the row if its index is in the rows_to_hide list
-        return source_row not in self.rows_to_hide
-
-    # Method to update the list of rows to hide
-    def setRowsToHide(self, rows):
-        self.rows_to_hide = rows
-        self.invalidateFilter()  # Reapply the filter to update the view
-
-app = QApplication([])
-
-# Create a simple QAbstractTableModel (for demo, using QStandardItemModel)
-model = QStandardItemModel(5, 2)
-for row in range(5):
-    for col in range(2):
-        item = QStandardItem(f"Item {row},{col}")
-        model.setItem(row, col, item)
-
-# Set up a proxy model to filter rows
-proxy_model = CustomFilterProxyModel()
-
-# Provide a list of rows to hide
-rows_to_hide = [1, 3]  # Hide row indices 1 and 3
-proxy_model.setRowsToHide(rows_to_hide)
-
-# Set the source model for the proxy
-proxy_model.setSourceModel(model)
-
-# Create a QTableView and set the proxy model
-view = QTableView()
-view.setModel(proxy_model)
-view.show()
-
-app.exec_()
