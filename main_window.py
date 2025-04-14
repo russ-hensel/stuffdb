@@ -628,10 +628,9 @@ class StuffdbMainWindow( QMainWindow ):
         for now search comming from text widget
         """
         #AppGlobal.mdi_management.make_document( window_type = window_type )
-        print( "here we are in search_me )))))))))))))))))))))))))))))))))))))))))))))))")
+        print( "here_we are in search_me )))))))))))))))))))))))))))))))))))))))))))))))")
         asw     = self.get_active_subwindow(  )
         asw.search_me( criteria )
-
 
 
     # ---------------------------------------

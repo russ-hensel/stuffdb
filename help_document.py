@@ -290,7 +290,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
                                      field_name = "order_by" )
         self.critera_widget_list.append( widget )
 
-
         widget.addItem('title - ignore case')
         widget.addItem('descr')
         widget.addItem('name')
@@ -302,7 +301,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         debug_msg  = ( f"{self.tab_name} build_tab build criteria change put in as marker ")
         logging.log( LOG_LEVEL,  debug_msg, )
-
 
         #widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget )
@@ -345,11 +343,9 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         # ---- function_on_return( self )
         for i_widget in self.critera_widget_list:
-            # i_widget.function_on_return     = self.criteria_select
-            # i_widget.function_on_changed    = ( lambda: self.criteria_changed( True ) )
-
             # ---- new  only really changes some edits
-            i_widget.on_return_pressed     = self.criteria_select
+            i_widget.on_value_changed       = lambda: self.criteria_changed( True )
+            i_widget.on_return_pressed      = self.criteria_select
 
     # -------------
     def criteria_select( self, ):
@@ -524,7 +520,9 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         self.key_words_widget.set_data( criteria )
 
-        self.criteria_select_if()    # may need to select is changed
+        # mayb this maybe not
+        #self.criteria_select_if()    # may need to select is changed
+        self.criteria_select()
 
 # ----------------------------------------
 class HelpListTab( base_document_tabs.ListTabBase  ):
@@ -535,7 +533,7 @@ class HelpListTab( base_document_tabs.ListTabBase  ):
         """
         super().__init__( parent_window )
 
-        self.list_ix            = 5  # should track selected an item in detail
+        #self.list_ix            = 5  # should track selected an item in detail
             # needs work
         self.tab_name           = "HelpListTab"
 
@@ -578,7 +576,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         self.text_model              = text_model
         text_model.setTable( "help_text" )
 
-        # ---- data maanager
+        # ---- data manager
         self.text_data_manager      = data_manager.DataManager( self.text_model )
         # next is a bit ass backwards
         self.pseodo_text_tab        = self.text_data_manager
@@ -591,15 +589,15 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         box_layout_1    =  QVBoxLayout( page )
 
         if False:
-            placer          = gui_qt_ext.PlaceInGrid(
+            placer      = gui_qt_ext.PlaceInGrid(
                                 central_widget  = box_layout_1,
                                 a_max           = max_col,
                                 by_rows         = False  )
 
-            layout          = placer
+            layout      = placer
 
         else:
-            layout          = gui_qt_ext.CQGridLayout( col_max = 12,  )
+            layout      = gui_qt_ext.CQGridLayout( col_max = 12,  )
             box_layout_1.addLayout( layout )
             # CQGridLayout
 
@@ -724,9 +722,11 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "key_words",
+                                                is_keep_prior_enabled        = True
                                                  )
         self.key_words_field     = edit_field
-        edit_field.is_keep_prior_enabled        = True
+        # this is too late
+        #edit_field.is_keep_prior_enabled        = True
         edit_field.setPlaceholderText( "key_words" )
         # still validator / default func  None
         self.data_manager.add_field( edit_field, is_key_word = True )
@@ -888,7 +888,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         text_layout     = QVBoxLayout()
         tab_layout.addLayout( text_layout, stretch=2 )
 
-        data_manager        = self.text_data_manager
+        data_manager    = self.text_data_manager
 
         # ---- TextEdit   needs to be defined at beginning with exte4nsion object
         # and monkey patch
@@ -918,14 +918,12 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         # # could have a button layout down one side ??
 
         # ---- id
-        widget                  =  cw.CQLineEdit(
+        widget          =  cw.CQLineEdit(
                                      parent         = None,
                                      field_name     = "id",
                                                 )
-        self.id_field               = widget
+        self.id_field   = widget
         widget.setReadOnly( True )
-
-
 
         data_manager.add_field( widget, )
         button_layout.addWidget( widget, )
@@ -985,16 +983,16 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         search_layout.addWidget( widget,   )
 
         # ---- up down Buttons
-        widget                  = QPushButton("Down")
-        down_button             = widget
+        widget              = QPushButton("Down")
+        down_button         = widget
         # connect below
         connect_to      = functools.partial( self.text_edit_ext_obj.search_down, search_line_edit ,)
                   #text_entry_widget  ) # entry_widget =.CQTextEdit(
         down_button.clicked.connect( connect_to )
         search_layout.addWidget( widget,  )
 
-        widget           = QPushButton("Up")
-        up_button        = widget
+        widget          = QPushButton("Up")
+        up_button       = widget
         connect_to      = functools.partial( self.text_edit_ext_obj.search_up, search_line_edit ,)
         up_button.clicked.connect( connect_to )
         search_layout.addWidget( widget,   )

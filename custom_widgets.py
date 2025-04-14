@@ -435,42 +435,21 @@ class TableModel( QAbstractTableModel ):
 # ---------------------------------
 class CQEditBase(   ):
     """
-
-    consider factoring out the conversions from record...
-
-
     second parent for QT edit child controls
 
-    do we need both?  what is the difference
-    set_to_default
-    clear_data
 
     do not need prior value it is just sitting in the control
 
 
-    --- default, prior
-            reset
-            change_to
-            * ct_default   ct_prior
-            clear
-            new
-    ---
-            set
-            set_data
-            set_to
-            make
-            * do_ct    do_ct_value   do_ct_today   do_ct_prior
-            do_data_to_
-
-    get rid of is_changed
+    get rid of is_changed ??
                 prior_data
                 events for above
 
     """
     def __init__( self,
-                 parent         = None        ,
-                 field_name        = None      ,
-                 is_keep_prior_enabled  = None   ):
+                 parent                 = None        ,
+                 field_name             = None      ,
+                 is_keep_prior_enabled  = None   ):  # perhaps last should be false or is it defaulted later
         """
         read it
         should always be called by descendants all args required
@@ -479,13 +458,13 @@ class CQEditBase(   ):
         """
         # print( "        begin init CQEditBase")
         # super(   ).__init__(   )  no parent
-        self.context_menu        = None  # override if one is added
+        self.context_menu           = None  # override if one is added
         if not field_name:
             pass
             #rint( "!! CQEditBase need except here ??")
             # 1/0
         # can be used as interface
-        self.field_name            = field_name
+        self.field_name             = field_name
 
         self.is_keep_prior_enabled  = is_keep_prior_enabled
 
@@ -814,6 +793,7 @@ class CQEditBase(   ):
         pass
         # print( f"{self.on_return_pressed = }")
         # print( f"{self.on_return_pressed  = }")
+
     #-----------------------------
     def on_value_changed( self ):
         """
@@ -832,8 +812,6 @@ class CQEditBase(   ):
     def show_context_menu(self, global_pos):
         """ chat code, modified a bit """
         self.context_menu.exec( global_pos )
-
-
 
     #----------------------------
     def handle_right_click(self, event):
@@ -1054,7 +1032,9 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         # issue of when evaluated this may be at compile vs lambda later
         self.returnPressed.connect( self.call_on_return_pressed )
 
-        self.textChanged.connect( self.on_value_changed  )
+        # self.textChanged.connect( self.on_value_changed  )
+        self.textChanged.connect( lambda: self.on_value_changed() )
+        #lambda: self.criteria_changed( True )
 
             # call in all edits where it applies
         self.setPlaceholderText( self.field_name )
@@ -1836,7 +1816,7 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
     def set_data_today(self):
         """
         needs rename
-        we need in in or out datatpe
+        we need in in or out datatype
         """
         qdate       = QDate.currentDate()
         self.set_data( qdate, "qdate" )

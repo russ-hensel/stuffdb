@@ -1,7 +1,4 @@
 
-SELECT   stuff.id,  stuff.name,  stuff.descr,  stuff.add_kw, stuff.id_in_old
-
-FROM stuff   ORDER BY  descr ASC
 
 
 
@@ -9,36 +6,6 @@ FROM stuff   ORDER BY  descr ASC
 
 
 
-
-
-
-
-
-
-
-
-
-                value = super().data(index, Qt.EditRole)
-                if value is not None:
-                    return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
-                return value  # Return raw value if None
-
-        elif role == Qt.EditRole:
-            # Return raw value for editing/database sync
-            if col == 2:
-                return super().data(index, Qt.EditRole)
-
-        elif role == Qt.TextAlignmentRole:
-            # Handle alignment for all columns
-            if col == 0:  # id
-                return Qt.AlignLeft | Qt.AlignVCenter
-            elif col == 1:  # stuff_id
-                return Qt.AlignCenter | Qt.AlignVCenter
-            elif col == 2:  # event_dt
-                return Qt.AlignRight | Qt.AlignVCenter
-
-        # Default to base class for all other roles and columns
-        return super().data(index, role)
 
 
 

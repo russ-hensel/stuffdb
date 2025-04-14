@@ -33,6 +33,7 @@ import string_util
 from app_global import AppGlobal
 
 VERBOSE   = False
+SYS_ARGS  = sys.argv
 
 
 if VERBOSE:
@@ -52,10 +53,19 @@ class Parameters( ):
             if you comment all out all modes you get the default mode which should
             run, perhaps not in the way you want
         """
+        #breakpoint( )
+        if self.mode_from_command_line():
+            return
+
+        note  = """
+        if you set the mode from the command line you will not
+        get here"""
+
+
         #self.mode_new_db()
         #self.mode_github()
-        #self.mode_python_ex_on_theprof()
-        self.mode_imported_on_theprof()
+        self.mode_python_ex_on_theprof()
+        #self.mode_imported_on_theprof()
 
         #self.mode_builddb_on_theprof()
 
@@ -88,7 +98,7 @@ class Parameters( ):
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
-            # the type of database, so far we only support sqllite
+            # the type of database, so far we only support SQLite
         self.db_file_name       = "./data/python_ex.db"
 
     # -------
@@ -100,12 +110,15 @@ class Parameters( ):
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
-            # the type of database, so far we only support sqllite
+            # the type of database, so far we only support SQLite
 
         self.db_file_name       = "./data/new.db"   #  = "sample.db"   =  ":memory:"
         self.db_file_name       = "./data/python_ex.db"
 
         self.logging_level      = logging.DEBUG   # ERROR
+
+        self.icon               =  "./misc/db_red_on_black.png"
+
 
     # ---- ---->> Methods:  one for each mode
     # -------
@@ -118,9 +131,9 @@ class Parameters( ):
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
-            # the type of database, so far we only support sqllite
+            # the type of database, so far we only support SQLite
 
-        # use full name if calling form a subdirectory of the project at least fo now
+        # use full name if calling form a sub-directory of the project at least for now
         #self.db_file_name      = ":memory:"
         self.db_file_name       = "./data/new.db"   #  = "sample.db"   =  ":memory:"
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/new.db"
@@ -151,8 +164,8 @@ class Parameters( ):
     def mode_temp_db_in_ram( self ):
         """
         a mode for the help info while still in dev
-        later will export data then reimport and
-        perhaps rekey
+        later will export data then re-import and
+        perhaps re-key
         """
         self.mode               = "mode_temp_db_in_ram"
         # but do they use the same units ?
@@ -176,7 +189,7 @@ class Parameters( ):
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
-            # the type of database, so far we only support sqllite
+            # the type of database, so far we only support SQLite
 
         self.db_file_name       = "./data_help_db/helpdb.db"
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
@@ -201,7 +214,7 @@ class Parameters( ):
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
-            # the type of database, so far we only support sqllite
+            # the type of database, so far we only support SQLite
 
         self.db_file_name       = "./data_help_db/helpdb.db"
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
@@ -215,10 +228,9 @@ class Parameters( ):
     # -------
     def mode_helpdb_on_theprof( self ):
         """
-
         a mode for the help info while still in dev
-        later will export data then reimport and
-        perhaps rekey
+        later will export data then re-import and
+        perhaps re-key
         """
         self.mode               = "mode_helpdb_on_theprof"
         # but do they use the same units ?
@@ -242,7 +254,7 @@ class Parameters( ):
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
-            # the type of database, so far we only support sqllite
+            # the type of database, so far we only support SQLite
 
         self.db_file_name       = "./data_help_db/helpdb.db"
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
@@ -252,12 +264,13 @@ class Parameters( ):
 
         self.logging_level          = logging.INFO
         self.logging_level          = logging.DEBUG
+
     # -------
     def mode_python_ex_on_theprof( self ):
         """
         a mode for the help info while still in dev
-        later will export data then reimport and
-        perhaps rekey
+        later will export data then re-import and
+        perhaps re-key
         """
         self.mode               = "mode_python_ex_on_theprof"
 
@@ -270,7 +283,7 @@ class Parameters( ):
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
-            # the type of database, so far we only support sqllite
+            # the type of database, so far we only support SQLite
 
         self.db_file_name       = "./data_help_db/helpdb.db"
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
@@ -279,9 +292,36 @@ class Parameters( ):
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
 
     # -------
+    def mode_github_example_code_on_theprof( self ):
+        """
+        a mode for the help info while still in dev
+        later will export data then re-import and
+        perhaps re key
+        """
+        self.mode               = "mode_github_example_code_on_theprof"
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/test_delete"
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support SQLite
+
+        self.db_file_name       = "./data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
+        #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
+        #self.db_file_name       = "./data/python_ex.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
+        self.icon               =  "./misc/db_red_on_black.png"
+
+    # -------
     def mode_imported_on_theprof( self ):
         """
-        using one of the imported db perahps on ramdisk
+        using one of the imported db perhaps on ramdisk
         """
         self.mode               = "mode_imported_on_theprof"
 
@@ -294,7 +334,7 @@ class Parameters( ):
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
-            # the type of database, so far we only support sqllite
+            # the type of database, so far we only support SQLite
 
         self.db_file_name       = "./data_help_db/helpdb.db"
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
@@ -546,7 +586,7 @@ class Parameters( ):
         # next two seem redundant
         self.log_mode               = "w"    # "a" append "w" truncate and write
         self.delete_log_on_start    = True
-            # if True you get a new log file everytime the program starts
+            # if True you get a new log file every time the program starts
 
         self.logging_level          = logging.DEBUG         # may be very verbose
         self.logging_level          = logging.INFO
@@ -571,14 +611,14 @@ class Parameters( ):
 
         # ---- .... db type and location of the db file
         self.db_type                = "QSQLITE"
-            # the type of database, so far we only support sqllite
+            # the type of database, so far we only support SQLite
 
         # self.db_fn              = "./data/appdb.db"
         # self.db_fn              = "/mnt/WIN_D/Russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db"
         # self.db_fn              = "/tmp/ramdisk/sept_28.db"
         # self.db_fn              = "/tmp/ramdisk/sept_35.db"
 
-        # think for qt4_by_ecample not stuff
+        # think for qt4_by_example not stuff
         self.db_file_name      = ":memory:"
         self.db_file_name      = "sample.db"   #  = "sample.db"   =  ":memory:"
         self.db_file_name      = ":memory:"     #  = "sample.db"   =  ":memory:"
@@ -680,6 +720,35 @@ print( f"bash a_shell_template still needs writing { 0 = }"
 
                         ]
 
+    # ------->> default mode, always call
+    def mode_from_command_line( self ):
+        """
+        checks to see if command line wants to set the mode
+        note case statement so need to set up
+            this sort of sucks esp since qt captures the exception
+            consider something more like eval, perhaps hasattr
+            and a dialog on failure
+        """
+        if len( SYS_ARGS ) > 1:
+            mode_string     = SYS_ARGS[1]
+
+            if mode_string     == "mode_new_user":
+                self.mode_new_user()
+
+            elif mode_string   == "mode_helpdb_on_theprof":
+                self.mode_helpdb_on_theprof()
+
+            elif mode_string   == "mode_github_example_code_on_theprof":
+                self.mode_github_example_code_on_theprof()
+
+            else:
+                print( f"unknown_mode_string {mode_string =}")
+                1/0   # !! fix better
+            return True
+
+        return False
+
+
     # -------
     def __init__( self, ):
         """
@@ -721,7 +790,7 @@ print( f"bash a_shell_template still needs writing { 0 = }"
         """
         if  self.os_win:
             self.icon               = r"./images/clipboard_b.ico"
-                #  very dark greenhouse this has issues on rasPi
+                #  very dark greenhouse this has issues on RasPi
             self.icon               = r"./images/clipboard_b_red_GGV_icon.ico"
                 #  looks same as clipboard_b_red_gimp.ico
             self.icon               = r"./images/clipboard_b_red_gimp.ico"    # pretty visible -- make black version -- cannot get gimp to do it
@@ -769,7 +838,7 @@ print( f"bash a_shell_template still needs writing { 0 = }"
                                                   f"{self.log_mode}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, [ "delete_log_on_start -- depricatef for log_mode",
+        a_str   = string_util.to_columns( a_str, [ "delete_log_on_start -- deprecate for log_mode",
                                                   f"{self.delete_log_on_start}" ] )
 
 

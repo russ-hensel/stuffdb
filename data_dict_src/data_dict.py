@@ -669,6 +669,8 @@ class TableDict(  ):
                 args  = "see below"
                 line_list.append( f'{indent_2}parent         = None, ' )
                 line_list.append( f'{indent_2}field_name     = "{field_name}", ) ' )
+                # next defaults to False so only really need if true
+                line_list.append( f'{indent_2}is_keep_prior_enabled     = "{is_keep_prior_enabled}", ) ' )
 
                 # ---- create instance with field name
                 # self.id_old_field         = edit_field
@@ -711,7 +713,7 @@ class TableDict(  ):
                     line_list.append( f'{indent_1}edit_field.setReadOnly( {value} ) ' )
 
                 #line_list.append( f'{indent_1}self.{i_name}_field     = edit_field' )
-                # ---- is_keep_prior_enabled
+                # ---- is_keep_prior_enabled  this is too late to do it myst be in init if true
                 value     = get_value( field_name            = field_name,
                                       atribute          = "is_keep_prior_enabled" ,
                                       current_value     =  is_keep_prior_enabled  )

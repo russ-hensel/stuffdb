@@ -1188,7 +1188,7 @@ class DetailTabBase( QWidget ):
         next_key     = self.data_manager.current_id
         if self.pseodo_text_tab is not None:
             # self.pseodo_text_tab.clear_fields( option = "default" )
-            self.pseodo_text_tab.new_record( next_key, option = "default" )
+            self.pseodo_text_tab.new_record( next_key, option = option )
 
         debug_msg = ( f"Detail_Tab_Base clear out sub tabs?? !!")
         logging.log( LOG_LEVEL,  debug_msg, )

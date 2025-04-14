@@ -9,10 +9,11 @@ source /home/russ/anaconda3/etc/profile.d/conda.sh
 conda activate py_12_misc
 
 # Navigate to the directory with main.py
-cd /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb
+#cd /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb
+cd /mnt/WIN_D/for_github/stuffdb
 
-# Run the Python program
-python main.py  mode_helpdb_on_theprof
+# Run the Python program -- with mode argument
+python main.py  mode_github_example_code_on_theprof
 
 # Deactivate the conda environment
 conda deactivate

@@ -1,34 +1,1546 @@
-2025-03-13 15:47:35,974 - CRITICAL - Root logger is set up. Modules can now log using logging.getLogger().
-2025-03-13 15:47:35,978 - INFO - config_logger call was: logging.info
-2025-03-13 15:47:35,979 - DEBUG - QsqlDbAccess  init_db()
-2025-03-13 15:47:35,980 - DEBUG - connection_name = 'qt_sql_default_connection'
-2025-03-13 15:47:36,079 - Notice - 
-2025-03-13 15:47:36,080 - Notice - ============================
-2025-03-13 15:47:36,081 - Notice - 
-2025-03-13 15:47:36,081 - Notice - Application: Stuff DB in QT Ver 64: 2025 03 08.01 in mode mode_githuband version  Ver 64: 2025 03 08.01
-2025-03-13 15:47:36,082 - Notice - 
-2025-03-13 15:47:36,082 - Notice - command line arg + 0  =  /mnt/WIN_D/for_github/stuffdb/base_document_tabs.py)
-2025-03-13 15:47:36,083 - Notice - current directory /mnt/WIN_D/for_github/stuffdb
-2025-03-13 15:47:36,083 - Notice - Time now: 2025-03-13 19:47:36
-2025-03-13 15:47:36,084 - DEBUG - self.q_app.exec_() next
-2025-03-13 15:47:41,807 - DEBUG - set_size_pos--------------------------------------  
-2025-03-13 15:47:41,819 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
-2025-03-13 15:47:41,832 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
-2025-03-13 15:47:41,834 - DEBUG - post_init DetailTabBase  HelpDetailTab  
-2025-03-13 15:47:46,035 - DEBUG - CQComboBoxEditCriteria 
-2025-03-13 15:47:46,038 - DEBUG - CQComboBoxEditCriteria title - ignore case
-2025-03-13 15:47:46,040 - DEBUG - CQComboBoxEditCriteria Ascending
-2025-03-13 15:47:46,046 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "idle" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) = 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-03-13 15:47:46,056 - DEBUG - CQComboBoxEditCriteria 
-2025-03-13 15:47:46,058 - DEBUG - CQComboBoxEditCriteria title - ignore case
-2025-03-13 15:47:46,060 - DEBUG - CQComboBoxEditCriteria Ascending
-2025-03-13 15:47:46,063 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "idle" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) = 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-03-13 15:47:49,161 - DEBUG - DocumentBase.on_list_clicked Stuff Clicked on list row 0, column 1  save first ??
-2025-03-13 15:47:49,163 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
-2025-03-13 15:47:49,165 - DEBUG - update_db record null no action, return help_info
-2025-03-13 15:47:49,167 - DEBUG - update_db record null no action, return help_text
-2025-03-13 15:47:49,170 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-03-13 15:47:49,173 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-03-13 15:47:49,181 - DEBUG - set_preped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-03-13 15:47:49,183 - ERROR - send_topic_update needs fixing !! just reenabled 
-2025-03-13 15:47:49,184 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-04-14 08:09:08,181 - CRITICAL - Root logger is set up. Modules can now log using logging.getLogger().
+2025-04-14 08:09:08,182 - INFO - config_logger call was: logging.info
+2025-04-14 08:09:08,182 - DEBUG - QsqlDbAccess  init_db()
+2025-04-14 08:09:08,183 - DEBUG - connection_name = 'qt_sql_default_connection'
+2025-04-14 08:09:08,222 - Notice - 
+2025-04-14 08:09:08,222 - Notice - ============================
+2025-04-14 08:09:08,222 - Notice - 
+2025-04-14 08:09:08,222 - Notice - Application: Stuff DB in QT Ver 70: 2025 04 09.01 in mode mode_github_example_code_on_theprofand version  Ver 70: 2025 04 09.01
+2025-04-14 08:09:08,222 - Notice - 
+2025-04-14 08:09:08,222 - Notice - command line arg + 0  =  main.py)
+2025-04-14 08:09:08,222 - Notice - command line arg + 1  =  mode_github_example_code_on_theprof)
+2025-04-14 08:09:08,223 - Notice - current directory /mnt/WIN_D/for_github/stuffdb
+2025-04-14 08:09:08,223 - Notice - Time now: 2025-04-14 12:09:08
+2025-04-14 08:09:08,223 - DEBUG - self.q_app.exec_() next
+2025-04-14 08:09:11,350 - DEBUG - set_size_pos--------------------------------------  
+2025-04-14 08:09:11,353 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
+2025-04-14 08:09:11,358 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
+2025-04-14 08:09:11,358 - DEBUG - post_init DetailTabBase  HelpDetailTab  
+2025-04-14 08:09:11,362 - ERROR - ------------------------ monkey_patch_here re-examine this--------------------------
+2025-04-14 08:09:17,143 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "sss" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 08:09:19,255 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 08:09:19,255 - DEBUG - update_db record null no action, return help_info
+2025-04-14 08:09:19,255 - DEBUG - update_db record null no action, return help_text
+2025-04-14 08:09:19,255 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 08:09:19,255 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-04-14 08:09:19,255 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-04-14 08:09:19,255 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
+2025-04-14 08:09:19,256 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-04-14 08:09:19,328 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-04-14 08:09:19,328 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 08:09:19,328 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-04-14 08:09:19,328 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-04-14 08:09:19,328 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 08:09:19,328 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-04-14 08:09:40,482 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 08:09:40,482 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_info' 
+2025-04-14 08:09:40,483 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8652
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+2025-04-14 08:09:40,484 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 08:09:40,577 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 08:09:40,577 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8652 self.table_name = 'help_info' self.record_state = 2
+2025-04-14 08:09:40,577 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 08:09:40,933 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_text' 
+2025-04-14 08:09:40,933 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486b10><
+custom_info for a QSqlTableModel 
+    tableName()         = help_text
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8652
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'text_data' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'text_data':  new_record.indexOf( i_name ) = 2 
+2025-04-14 08:09:40,933 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 08:09:40,933 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 08:09:41,007 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 08:09:41,007 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8652 self.table_name = 'help_text' self.record_state = 2
+2025-04-14 08:09:41,007 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 08:09:41,007 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 08:15:40,939 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "sss" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 08:15:46,061 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "demon", "romance", "the", "hunter", "s" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 5  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 08:15:46,063 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "demon", "romance", "the", "hunter", "s" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 5  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 08:15:52,939 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 08:15:52,940 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 08:15:52,940 - ERROR - data_manager model_submit_all submitAll error: DataManager.update_record_fetched_v1 id_value = '8652' self.table_name = 'help_info' 
+2025-04-14 08:15:52,940 - ERROR - error text: No Fields to update
+2025-04-14 08:15:52,941 - ERROR - 
+Info About >>>> model_submit_all error continued     
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 1
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = True
+    model.filter()      = id = 8652
+     for ix_row = 0 ix_col = 0 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460520> data = 8652
+     for ix_row = 0 ix_col = 1 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460590> data = None
+     for ix_row = 0 ix_col = 2 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460520> data = ''
+     for ix_row = 0 ix_col = 3 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460590> data = ''
+     for ix_row = 0 ix_col = 4 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460520> data = 'Russ'
+     for ix_row = 0 ix_col = 5 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460590> data = ''
+     for ix_row = 0 ix_col = 6 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460520> data = 946702800
+     for ix_row = 0 ix_col = 7 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460590> data = ''
+     for ix_row = 0 ix_col = 8 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460520> data = ''
+     for ix_row = 0 ix_col = 9 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460590> data = ''
+     for ix_row = 0 ix_col = 10 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460520> data = ''
+     for ix_row = 0 ix_col = 11 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460590> data = ''
+     for ix_row = 0 ix_col = 12 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460520> data = 'Electronic Frontier Foundation eff'
+     for ix_row = 0 ix_col = 13 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460590> data = ''
+     for ix_row = 0 ix_col = 14 index = <PyQt5.QtCore.QModelIndex object at 0x7f7bc6460520> data = ''
+    rows....
+    for model ix_row = 0 ix_col = 0 c_header = 'id'  field = 0  data = 8652
+    for model ix_row = 0 ix_col = 1 c_header = 'id_old'  field = 1  data = None
+    for model ix_row = 0 ix_col = 2 c_header = 'type'  field = 2  data = ''
+    for model ix_row = 0 ix_col = 3 c_header = 'sub_system'  field = 3  data = ''
+    for model ix_row = 0 ix_col = 4 c_header = 'system'  field = 4  data = 'Russ'
+    for model ix_row = 0 ix_col = 5 c_header = 'key_words'  field = 5  data = ''
+    for model ix_row = 0 ix_col = 6 c_header = 'edit_ts'  field = 6  data = 946702800
+    for model ix_row = 0 ix_col = 7 c_header = 'table_name'  field = 7  data = ''
+    for model ix_row = 0 ix_col = 8 c_header = 'column_name'  field = 8  data = ''
+    for model ix_row = 0 ix_col = 9 c_header = 'java_type'  field = 9  data = ''
+    for model ix_row = 0 ix_col = 10 c_header = 'java_name'  field = 10  data = ''
+    for model ix_row = 0 ix_col = 11 c_header = 'java_package'  field = 11  data = ''
+    for model ix_row = 0 ix_col = 12 c_header = 'title'  field = 12  data = 'Electronic Frontier Foundation eff'
+    for model ix_row = 0 ix_col = 13 c_header = 'is_example'  field = 13  data = ''
+    for model ix_row = 0 ix_col = 14 c_header = 'can_execute'  field = 14  data = ''
+--------
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+    record 0
+    Field by index ix = 0 record.fieldName(ix) = 'id': record.value(ix) = 8652
+    Field by index ix = 1 record.fieldName(ix) = 'id_old': record.value(ix) = None
+    Field by index ix = 2 record.fieldName(ix) = 'type': record.value(ix) = ''
+    Field by index ix = 3 record.fieldName(ix) = 'sub_system': record.value(ix) = ''
+    Field by index ix = 4 record.fieldName(ix) = 'system': record.value(ix) = 'Russ'
+    Field by index ix = 5 record.fieldName(ix) = 'key_words': record.value(ix) = ''
+    Field by index ix = 6 record.fieldName(ix) = 'edit_ts': record.value(ix) = 946702800
+    Field by index ix = 7 record.fieldName(ix) = 'table_name': record.value(ix) = ''
+    Field by index ix = 8 record.fieldName(ix) = 'column_name': record.value(ix) = ''
+    Field by index ix = 9 record.fieldName(ix) = 'java_type': record.value(ix) = ''
+    Field by index ix = 10 record.fieldName(ix) = 'java_name': record.value(ix) = ''
+    Field by index ix = 11 record.fieldName(ix) = 'java_package': record.value(ix) = ''
+    Field by index ix = 12 record.fieldName(ix) = 'title': record.value(ix) = 'Electronic Frontier Foundation eff'
+    Field by index ix = 13 record.fieldName(ix) = 'is_example': record.value(ix) = ''
+    Field by index ix = 14 record.fieldName(ix) = 'can_execute': record.value(ix) = ''
+=========
+2025-04-14 08:15:52,942 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 08:15:52,942 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 08:15:52,943 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8652' self.table_name = 'help_text' 
+2025-04-14 08:15:52,943 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 08:15:52,943 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-04-14 08:15:52,943 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-04-14 08:15:52,943 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
+2025-04-14 08:15:52,943 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-04-14 08:15:53,006 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-04-14 08:15:53,006 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 08:15:53,006 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-04-14 08:15:53,007 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-04-14 08:15:53,007 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 08:15:53,007 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-04-14 08:16:30,799 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 08:16:30,799 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_info' 
+2025-04-14 08:16:30,800 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8653
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+2025-04-14 08:16:30,800 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 08:16:30,858 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 08:16:30,859 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8653 self.table_name = 'help_info' self.record_state = 2
+2025-04-14 08:16:30,859 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 08:16:31,412 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_text' 
+2025-04-14 08:16:31,412 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486b10><
+custom_info for a QSqlTableModel 
+    tableName()         = help_text
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8653
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'text_data' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'text_data':  new_record.indexOf( i_name ) = 2 
+2025-04-14 08:16:31,412 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 08:16:31,413 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 08:16:31,474 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 08:16:31,474 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8653 self.table_name = 'help_text' self.record_state = 2
+2025-04-14 08:16:31,474 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 08:16:31,475 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 08:16:34,374 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "demon", "romance", "the", "hunter", "s" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 5  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 08:16:35,695 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 08:16:35,695 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 08:16:35,696 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8653' self.table_name = 'help_info' 
+2025-04-14 08:16:35,697 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 08:16:35,698 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 08:16:35,698 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8653' self.table_name = 'help_text' 
+2025-04-14 08:16:35,699 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 08:16:35,699 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-04-14 08:16:35,701 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-04-14 08:16:35,701 - ERROR - send_topic_update needs fixing !! just reenabled 
+2025-04-14 08:16:35,701 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-04-14 08:48:48,394 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 08:48:48,394 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 08:48:48,395 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8653' self.table_name = 'help_info' 
+2025-04-14 08:48:48,396 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 08:48:48,396 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 08:48:48,396 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8653' self.table_name = 'help_text' 
+2025-04-14 08:48:48,397 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 08:48:48,397 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-04-14 08:48:48,397 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-04-14 08:48:48,397 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
+2025-04-14 08:48:48,397 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-04-14 08:48:48,482 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-04-14 08:48:48,482 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 08:48:48,482 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-04-14 08:48:48,483 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-04-14 08:48:48,483 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 08:48:48,483 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-04-14 08:49:08,958 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 08:49:08,959 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_info' 
+2025-04-14 08:49:08,959 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8654
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+2025-04-14 08:49:08,960 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 08:49:09,029 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 08:49:09,029 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8654 self.table_name = 'help_info' self.record_state = 2
+2025-04-14 08:49:09,029 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 08:49:09,237 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_text' 
+2025-04-14 08:49:09,237 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486b10><
+custom_info for a QSqlTableModel 
+    tableName()         = help_text
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8654
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'text_data' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'text_data':  new_record.indexOf( i_name ) = 2 
+2025-04-14 08:49:09,237 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 08:49:09,238 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 08:49:09,311 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 08:49:09,311 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8654 self.table_name = 'help_text' self.record_state = 2
+2025-04-14 08:49:09,311 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 08:49:09,311 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 09:49:31,109 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 09:49:31,109 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 09:49:31,110 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8654' self.table_name = 'help_info' 
+2025-04-14 09:49:31,111 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 09:49:31,111 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 09:49:31,111 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8654' self.table_name = 'help_text' 
+2025-04-14 09:49:31,112 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 09:49:31,112 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-04-14 09:49:31,112 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-04-14 09:49:31,112 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
+2025-04-14 09:49:31,112 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-04-14 09:49:31,293 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-04-14 09:49:31,294 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 09:49:31,294 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-04-14 09:49:31,294 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-04-14 09:49:31,294 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 09:49:31,294 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-04-14 10:39:16,720 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:39:16,720 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_info' 
+2025-04-14 10:39:16,720 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8655
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+2025-04-14 10:39:16,721 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 10:39:16,785 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 10:39:16,785 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8655 self.table_name = 'help_info' self.record_state = 2
+2025-04-14 10:39:16,786 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 10:39:16,848 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_text' 
+2025-04-14 10:39:16,848 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486b10><
+custom_info for a QSqlTableModel 
+    tableName()         = help_text
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8655
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'text_data' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'text_data':  new_record.indexOf( i_name ) = 2 
+2025-04-14 10:39:16,849 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 10:39:16,849 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 10:39:16,931 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 10:39:16,932 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8655 self.table_name = 'help_text' self.record_state = 2
+2025-04-14 10:39:16,932 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 10:39:16,932 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:39:16,932 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-04-14 10:39:16,932 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-04-14 10:39:16,932 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
+2025-04-14 10:39:16,932 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-04-14 10:39:17,005 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-04-14 10:39:17,005 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 10:39:17,006 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-04-14 10:39:17,006 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-04-14 10:39:17,006 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 10:39:17,006 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-04-14 10:39:34,948 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:39:34,948 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_info' 
+2025-04-14 10:39:34,949 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8656
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+2025-04-14 10:39:34,949 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 10:39:35,011 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 10:39:35,011 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8656 self.table_name = 'help_info' self.record_state = 2
+2025-04-14 10:39:35,012 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 10:39:35,209 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_text' 
+2025-04-14 10:39:35,210 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486b10><
+custom_info for a QSqlTableModel 
+    tableName()         = help_text
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8656
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'text_data' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'text_data':  new_record.indexOf( i_name ) = 2 
+2025-04-14 10:39:35,210 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 10:39:35,210 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 10:39:35,300 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 10:39:35,300 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8656 self.table_name = 'help_text' self.record_state = 2
+2025-04-14 10:39:35,300 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 10:39:35,300 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:39:41,570 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "junk" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 10:39:41,572 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "junk" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 10:39:46,064 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:39:46,064 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:39:46,065 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8656' self.table_name = 'help_info' 
+2025-04-14 10:39:46,066 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:39:46,066 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 10:39:46,066 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8656' self.table_name = 'help_text' 
+2025-04-14 10:39:46,066 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:39:46,066 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-04-14 10:39:46,068 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-04-14 10:39:46,068 - ERROR - send_topic_update needs fixing !! just reenabled 
+2025-04-14 10:39:46,068 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-04-14 10:42:12,660 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    WHERE  lower(help_info.system)= "linux"  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 10:43:19,794 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  lower(help_info.system)= "linux"  AND   key_word IN ( "expand" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 10:43:19,803 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  lower(help_info.system)= "linux"  AND   key_word IN ( "expand" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 10:43:21,976 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:43:21,977 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:43:22,037 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8656' self.table_name = 'help_info' 
+2025-04-14 10:43:22,110 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:43:22,111 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 10:43:22,111 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8656' self.table_name = 'help_text' 
+2025-04-14 10:43:22,111 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:43:22,111 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-04-14 10:43:22,117 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-04-14 10:43:22,117 - ERROR - send_topic_update needs fixing !! just reenabled 
+2025-04-14 10:43:22,117 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-04-14 10:44:16,906 - DEBUG - ['>>Bash current size', 'swapon --show', '', '', '']
+2025-04-14 10:44:16,906 - DEBUG - cmd_exec cmd = 'bash' 
+ cmd_args = ['current', 'size']
+2025-04-14 10:44:16,906 - DEBUG - "run_code_lines in shellext    >>shell code_lines_new =["echo '>>Bash current size'   ", "echo 'swapon --show'", 'swapon --show']
+2025-04-14 10:44:16,906 - DEBUG - about to os.system cmd_str = 'gnome-terminal -- bash -c "echo \'>>Bash current size\'   ;echo \'swapon --show\';swapon --show; echo \'exec bash\' ;exec bash" '
+2025-04-14 10:44:33,483 - DEBUG - ['>>Bash current size', 'free -h', '']
+2025-04-14 10:44:33,483 - DEBUG - cmd_exec cmd = 'bash' 
+ cmd_args = ['current', 'size']
+2025-04-14 10:44:33,483 - DEBUG - "run_code_lines in shellext    >>shell code_lines_new =["echo '>>Bash current size'   ", "echo 'free -h'", 'free -h']
+2025-04-14 10:44:33,483 - DEBUG - about to os.system cmd_str = 'gnome-terminal -- bash -c "echo \'>>Bash current size\'   ;echo \'free -h\';free -h; echo \'exec bash\' ;exec bash" '
+2025-04-14 10:45:24,088 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "eff" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 10:45:24,090 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "eff" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 10:45:28,175 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:45:28,175 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:45:28,253 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8268' self.table_name = 'help_info' 
+2025-04-14 10:45:28,254 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:45:28,254 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 10:45:28,255 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8268' self.table_name = 'help_text' 
+2025-04-14 10:45:28,255 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:45:28,255 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-04-14 10:45:28,257 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-04-14 10:45:28,257 - ERROR - send_topic_update needs fixing !! just reenabled 
+2025-04-14 10:45:28,257 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-04-14 10:45:46,375 - DEBUG - ['>>url  https://www.eff.org/deeplinks/2025/04/congress-takes-another-step-toward-enabling-broad-internet-censorship', '']
+2025-04-14 10:45:46,375 - DEBUG - cmd_exec cmd = 'url' 
+ cmd_args = ['https://www.eff.org/deeplinks/2025/04/congress-takes-another-step-toward-enabling-broad-internet-censorship']
+2025-04-14 10:50:05,302 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:50:05,302 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:50:05,303 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8652' self.table_name = 'help_info' 
+2025-04-14 10:50:05,304 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:50:05,304 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 10:50:05,393 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8652' self.table_name = 'help_text' 
+2025-04-14 10:50:05,393 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:50:05,393 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-04-14 10:50:05,399 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-04-14 10:50:05,399 - ERROR - send_topic_update needs fixing !! just reenabled 
+2025-04-14 10:50:05,399 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-04-14 10:50:42,282 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:50:42,282 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:50:42,283 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8268' self.table_name = 'help_info' 
+2025-04-14 10:50:42,283 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:50:42,284 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 10:50:42,284 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8268' self.table_name = 'help_text' 
+2025-04-14 10:50:42,284 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:50:42,285 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-04-14 10:50:42,285 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-04-14 10:50:42,285 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
+2025-04-14 10:50:42,285 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-04-14 10:50:42,355 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-04-14 10:50:42,355 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 10:50:42,355 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-04-14 10:50:42,355 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-04-14 10:50:42,356 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 10:50:42,356 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-04-14 10:50:53,674 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:50:53,674 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_info' 
+2025-04-14 10:50:53,677 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8657
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+2025-04-14 10:50:53,678 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 10:50:53,743 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 10:50:53,743 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8657 self.table_name = 'help_info' self.record_state = 2
+2025-04-14 10:50:53,745 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 10:50:53,878 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_text' 
+2025-04-14 10:50:53,878 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486b10><
+custom_info for a QSqlTableModel 
+    tableName()         = help_text
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8657
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'text_data' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'text_data':  new_record.indexOf( i_name ) = 2 
+2025-04-14 10:50:53,879 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 10:50:53,879 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 10:50:53,951 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 10:50:53,951 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8657 self.table_name = 'help_text' self.record_state = 2
+2025-04-14 10:50:53,951 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 10:50:53,951 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:51:22,464 - DEBUG - ['>>shell   /mnt/WIN_D/PhotoDB/14/dscn2816.jpg']
+2025-04-14 10:51:22,465 - DEBUG - cmd_exec cmd = 'shell' 
+ cmd_args = ['/mnt/WIN_D/PhotoDB/14/dscn2816.jpg']
+2025-04-14 10:51:41,060 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:51:41,060 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:51:41,115 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8657' self.table_name = 'help_info' 
+2025-04-14 10:51:41,251 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:51:41,251 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 10:51:41,314 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8657' self.table_name = 'help_text' 
+2025-04-14 10:51:41,314 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:51:41,314 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-04-14 10:51:41,314 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-04-14 10:51:41,314 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
+2025-04-14 10:51:41,314 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-04-14 10:51:41,386 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-04-14 10:51:41,386 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 10:51:41,386 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-04-14 10:51:41,387 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-04-14 10:51:41,387 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 10:51:41,387 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-04-14 10:51:47,745 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "audio" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 10:51:47,746 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "audio" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 10:51:51,360 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:51:51,360 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_info' 
+2025-04-14 10:51:51,361 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8658
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+2025-04-14 10:51:51,361 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 10:51:51,421 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 10:51:51,422 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8658 self.table_name = 'help_info' self.record_state = 2
+2025-04-14 10:51:51,422 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 10:51:51,422 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_text' 
+2025-04-14 10:51:51,423 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486b10><
+custom_info for a QSqlTableModel 
+    tableName()         = help_text
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8658
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'text_data' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'text_data':  new_record.indexOf( i_name ) = 2 
+2025-04-14 10:51:51,423 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 10:51:51,423 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 10:51:51,484 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 10:51:51,485 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8658 self.table_name = 'help_text' self.record_state = 2
+2025-04-14 10:51:51,486 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 10:51:51,487 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:51:51,487 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-04-14 10:51:51,492 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-04-14 10:51:51,493 - ERROR - send_topic_update needs fixing !! just reenabled 
+2025-04-14 10:51:51,493 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-04-14 10:52:02,838 - DEBUG - ['>>shell   /mnt/WIN_D/_my_stuff/MyEquipment/Commercial/Eico/324/Eico324ManualGifs1.odt', '/mnt/WIN_D/_my_stuff/MyEquipment/Commercial/Eico/377/EIC_11_model_377_Gifs/EicoAudioGifs.odt', '/mnt/WIN_D/_my_stuff/MyEquipment/Commercial/Eico/EIC_11/EicoAudioGifs.odt', '/mnt/WIN_D/_my_stuff/MyEquipment/Commercial/Eico/EIC_11_model_377/EicoAudioGifs.odt']
+2025-04-14 10:52:02,839 - DEBUG - cmd_exec cmd = 'shell' 
+ cmd_args = ['/mnt/WIN_D/_my_stuff/MyEquipment/Commercial/Eico/324/Eico324ManualGifs1.odt']
+2025-04-14 10:53:21,640 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:53:21,641 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:53:21,706 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8281' self.table_name = 'help_info' 
+2025-04-14 10:53:21,708 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 10:53:21,709 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 10:53:21,779 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8281' self.table_name = 'help_text' 
+2025-04-14 10:53:21,780 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 10:53:21,780 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-04-14 10:53:21,783 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-04-14 10:53:21,783 - ERROR - send_topic_update needs fixing !! just reenabled 
+2025-04-14 10:53:21,783 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-04-14 10:53:50,064 - DEBUG - ['>>shell /mnt/WIN_D/russ/2022/HiFiGuide.odt']
+2025-04-14 10:53:50,064 - DEBUG - cmd_exec cmd = 'shell' 
+ cmd_args = ['/mnt/WIN_D/russ/2022/HiFiGuide.odt']
+2025-04-14 13:12:02,317 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "fluent" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 13:12:02,319 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "fluent" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 13:12:09,748 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:12:09,748 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:12:09,805 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8280' self.table_name = 'help_info' 
+2025-04-14 13:12:09,808 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:12:09,808 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:12:09,809 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8280' self.table_name = 'help_text' 
+2025-04-14 13:12:09,809 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:12:09,810 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-04-14 13:12:09,820 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-04-14 13:12:09,820 - ERROR - send_topic_update needs fixing !! just reenabled 
+2025-04-14 13:12:09,821 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-04-14 13:12:15,365 - DEBUG - ['>>shell  /mnt/WIN_D/calibre_library/computer_python/Unknown/Fluent Python, 2nd Edition (266)/Fluent Python, 2nd Edition - Unknown.pdf', '', 'very little example code I did some time ago,,,, is there another place', '/mnt/WIN_D/russ/0000/python00/python3/_examples/ex_fluent.py', '', '---- source code', '', "fluentpython/example-code-2e: Example code for Fluent Python, 2nd edition (O'Reilly 2022)", 'https://github.com/fluentpython/example-code-2e', '', '']
+2025-04-14 13:12:15,365 - DEBUG - cmd_exec cmd = 'shell' 
+ cmd_args = ['/mnt/WIN_D/calibre_library/computer_python/Unknown/Fluent', 'Python,', '2nd', 'Edition', '(266)/Fluent', 'Python,', '2nd', 'Edition', '-', 'Unknown.pdf']
+2025-04-14 13:28:48,445 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:28:48,445 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:28:48,446 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8448' self.table_name = 'help_info' 
+2025-04-14 13:28:48,447 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:28:48,447 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:28:48,448 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8448' self.table_name = 'help_text' 
+2025-04-14 13:28:48,448 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:28:48,448 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-04-14 13:28:48,448 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-04-14 13:28:48,448 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
+2025-04-14 13:28:48,448 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-04-14 13:28:48,531 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-04-14 13:28:48,532 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 13:28:48,532 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-04-14 13:28:48,534 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-04-14 13:28:48,534 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 13:28:48,535 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-04-14 13:31:29,369 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:31:29,369 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_info' 
+2025-04-14 13:31:29,370 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8659
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+2025-04-14 13:31:29,370 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 13:31:29,440 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 13:31:29,441 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8659 self.table_name = 'help_info' self.record_state = 2
+2025-04-14 13:31:29,441 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 13:31:30,515 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_text' 
+2025-04-14 13:31:30,516 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486b10><
+custom_info for a QSqlTableModel 
+    tableName()         = help_text
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8659
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'text_data' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'text_data':  new_record.indexOf( i_name ) = 2 
+2025-04-14 13:31:30,517 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:31:30,517 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 13:31:30,588 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 13:31:30,589 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8659 self.table_name = 'help_text' self.record_state = 2
+2025-04-14 13:31:30,590 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 13:31:30,590 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:31:30,591 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-04-14 13:31:30,591 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-04-14 13:31:30,591 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='prior' update.db
+2025-04-14 13:31:30,591 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-04-14 13:31:30,660 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487380>
+2025-04-14 13:31:30,661 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487920>
+2025-04-14 13:31:30,662 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487ec0>
+2025-04-14 13:31:30,662 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a44d0>
+2025-04-14 13:31:30,662 - Level 25 - prior i_field = <custom_widgets.CQComboBox object at 0x7f7bc64a4a70>
+2025-04-14 13:31:30,662 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a4b00>
+2025-04-14 13:31:30,663 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a50a0>
+2025-04-14 13:31:30,663 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a5640>
+2025-04-14 13:31:30,663 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a5be0>
+2025-04-14 13:31:30,664 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6180>
+2025-04-14 13:31:30,664 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6720>
+2025-04-14 13:31:30,664 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6cc0>
+2025-04-14 13:31:30,664 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a7260>
+2025-04-14 13:31:30,665 - Level 25 - prior i_field = <custom_widgets.CQDateEdit object at 0x7f7bc64a7800>
+2025-04-14 13:31:30,665 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-04-14 13:31:30,666 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 13:31:30,666 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-04-14 13:31:30,666 - Level 25 - prior i_field = <custom_widgets.CQTextEdit object at 0x7f7bc64a7a40>
+2025-04-14 13:31:30,667 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a7ad0>
+2025-04-14 13:31:30,667 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-04-14 13:31:30,667 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 13:31:30,668 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-04-14 13:32:41,876 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:32:41,876 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_info' 
+2025-04-14 13:32:41,878 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8660
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+2025-04-14 13:32:41,878 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 13:32:41,949 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 13:32:41,949 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8660 self.table_name = 'help_info' self.record_state = 2
+2025-04-14 13:32:41,950 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 13:32:42,712 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_text' 
+2025-04-14 13:32:42,714 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486b10><
+custom_info for a QSqlTableModel 
+    tableName()         = help_text
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8660
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'text_data' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'text_data':  new_record.indexOf( i_name ) = 2 
+2025-04-14 13:32:42,714 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:32:42,714 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 13:32:43,015 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 13:32:43,015 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8660 self.table_name = 'help_text' self.record_state = 2
+2025-04-14 13:32:43,015 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 13:32:43,016 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:33:31,754 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:33:31,755 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:33:31,819 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8660' self.table_name = 'help_info' 
+2025-04-14 13:33:31,821 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:33:31,821 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:33:31,891 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8660' self.table_name = 'help_text' 
+2025-04-14 13:33:31,892 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:34:48,474 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:34:48,474 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:34:48,475 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8660' self.table_name = 'help_info' 
+2025-04-14 13:34:48,476 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:34:48,476 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:34:48,476 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8660' self.table_name = 'help_text' 
+2025-04-14 13:34:48,477 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:34:48,477 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-04-14 13:34:48,477 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-04-14 13:34:48,477 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='prior' update.db
+2025-04-14 13:34:48,477 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-04-14 13:34:48,557 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487380>
+2025-04-14 13:34:48,558 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487920>
+2025-04-14 13:34:48,559 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487ec0>
+2025-04-14 13:34:48,559 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a44d0>
+2025-04-14 13:34:48,560 - Level 25 - prior i_field = <custom_widgets.CQComboBox object at 0x7f7bc64a4a70>
+2025-04-14 13:34:48,560 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a4b00>
+2025-04-14 13:34:48,560 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a50a0>
+2025-04-14 13:34:48,560 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a5640>
+2025-04-14 13:34:48,561 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a5be0>
+2025-04-14 13:34:48,561 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6180>
+2025-04-14 13:34:48,561 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6720>
+2025-04-14 13:34:48,561 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6cc0>
+2025-04-14 13:34:48,562 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a7260>
+2025-04-14 13:34:48,562 - Level 25 - prior i_field = <custom_widgets.CQDateEdit object at 0x7f7bc64a7800>
+2025-04-14 13:34:48,562 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-04-14 13:34:48,562 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 13:34:48,563 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-04-14 13:34:48,563 - Level 25 - prior i_field = <custom_widgets.CQTextEdit object at 0x7f7bc64a7a40>
+2025-04-14 13:34:48,564 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a7ad0>
+2025-04-14 13:34:48,564 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-04-14 13:34:48,565 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 13:34:48,565 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-04-14 13:36:01,550 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:36:01,550 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_info' 
+2025-04-14 13:36:01,551 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8661
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+2025-04-14 13:36:01,551 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 13:36:01,639 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 13:36:01,639 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8661 self.table_name = 'help_info' self.record_state = 2
+2025-04-14 13:36:01,641 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 13:36:04,015 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_text' 
+2025-04-14 13:36:04,015 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486b10><
+custom_info for a QSqlTableModel 
+    tableName()         = help_text
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8661
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'text_data' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'text_data':  new_record.indexOf( i_name ) = 2 
+2025-04-14 13:36:04,015 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:36:04,016 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 13:36:04,099 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 13:36:04,099 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8661 self.table_name = 'help_text' self.record_state = 2
+2025-04-14 13:36:04,099 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 13:36:04,099 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:37:09,096 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:37:09,096 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:37:09,097 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8661' self.table_name = 'help_info' 
+2025-04-14 13:37:09,098 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:37:09,098 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:37:09,098 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8661' self.table_name = 'help_text' 
+2025-04-14 13:37:09,099 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:37:09,099 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-04-14 13:37:09,099 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-04-14 13:37:09,099 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='prior' update.db
+2025-04-14 13:37:09,099 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-04-14 13:37:09,373 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487380>
+2025-04-14 13:37:09,373 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487920>
+2025-04-14 13:37:09,374 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487ec0>
+2025-04-14 13:37:09,374 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a44d0>
+2025-04-14 13:37:09,374 - Level 25 - prior i_field = <custom_widgets.CQComboBox object at 0x7f7bc64a4a70>
+2025-04-14 13:37:09,374 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a4b00>
+2025-04-14 13:37:09,374 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a50a0>
+2025-04-14 13:37:09,374 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a5640>
+2025-04-14 13:37:09,374 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a5be0>
+2025-04-14 13:37:09,374 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6180>
+2025-04-14 13:37:09,374 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6720>
+2025-04-14 13:37:09,374 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6cc0>
+2025-04-14 13:37:09,374 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a7260>
+2025-04-14 13:37:09,375 - Level 25 - prior i_field = <custom_widgets.CQDateEdit object at 0x7f7bc64a7800>
+2025-04-14 13:37:09,375 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-04-14 13:37:09,375 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 13:37:09,375 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-04-14 13:37:09,375 - Level 25 - prior i_field = <custom_widgets.CQTextEdit object at 0x7f7bc64a7a40>
+2025-04-14 13:37:09,375 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a7ad0>
+2025-04-14 13:37:09,375 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-04-14 13:37:09,375 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 13:37:09,375 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-04-14 13:37:45,685 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:37:45,686 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_info' 
+2025-04-14 13:37:45,688 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8662
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+2025-04-14 13:37:45,689 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 13:37:45,765 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 13:37:45,765 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8662 self.table_name = 'help_info' self.record_state = 2
+2025-04-14 13:37:45,766 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 13:37:46,933 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_text' 
+2025-04-14 13:37:46,933 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486b10><
+custom_info for a QSqlTableModel 
+    tableName()         = help_text
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8662
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'text_data' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'text_data':  new_record.indexOf( i_name ) = 2 
+2025-04-14 13:37:46,933 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:37:46,933 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 13:37:47,005 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 13:37:47,005 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8662 self.table_name = 'help_text' self.record_state = 2
+2025-04-14 13:37:47,006 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 13:37:47,006 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:39:04,076 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:39:04,077 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:39:04,077 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8662' self.table_name = 'help_info' 
+2025-04-14 13:39:04,078 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:39:04,078 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:39:04,155 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8662' self.table_name = 'help_text' 
+2025-04-14 13:39:04,155 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:39:07,538 - DEBUG - ['>>Py Example 7-13. Demo of itemgetter to sort a list of tuples (data from Example 2-8)', 'metro_data = [', '', "    ('Tokyo', 'JP', 36.933, (35.689722, 139.691667)),", "    ('Delhi NCR', 'IN', 21.935, (28.613889, 77.208889)),", "    ('Mexico City', 'MX', 20.142, (19.433333, -99.133333)),", "    ('New York-Newark', 'US', 20.104, (40.808611, -74.020386)),", "    ('São Paulo', 'BR', 19.649, (-23.547778, -46.635833)),     ]", '', 'from operator import itemgetter', '', 'for city in sorted(metro_data, key=itemgetter(1)):', '', '', '    print(city)', '']
+2025-04-14 13:39:07,539 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['Example', '7-13.', 'Demo', 'of', 'itemgetter', 'to', 'sort', 'a', 'list', 'of', 'tuples', '(data', 'from', 'Example', '2-8)']
+2025-04-14 13:40:01,677 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:40:01,678 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:40:01,681 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8662' self.table_name = 'help_info' 
+2025-04-14 13:40:01,684 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:40:01,685 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:40:01,686 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8662' self.table_name = 'help_text' 
+2025-04-14 13:40:01,687 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:40:01,687 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-04-14 13:40:01,688 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-04-14 13:40:01,688 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='prior' update.db
+2025-04-14 13:40:01,689 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-04-14 13:40:01,776 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487380>
+2025-04-14 13:40:01,777 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487920>
+2025-04-14 13:40:01,777 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487ec0>
+2025-04-14 13:40:01,778 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a44d0>
+2025-04-14 13:40:01,778 - Level 25 - prior i_field = <custom_widgets.CQComboBox object at 0x7f7bc64a4a70>
+2025-04-14 13:40:01,779 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a4b00>
+2025-04-14 13:40:01,779 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a50a0>
+2025-04-14 13:40:01,780 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a5640>
+2025-04-14 13:40:01,780 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a5be0>
+2025-04-14 13:40:01,780 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6180>
+2025-04-14 13:40:01,781 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6720>
+2025-04-14 13:40:01,781 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6cc0>
+2025-04-14 13:40:01,782 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a7260>
+2025-04-14 13:40:01,782 - Level 25 - prior i_field = <custom_widgets.CQDateEdit object at 0x7f7bc64a7800>
+2025-04-14 13:40:01,783 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-04-14 13:40:01,783 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 13:40:01,783 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-04-14 13:40:01,784 - Level 25 - prior i_field = <custom_widgets.CQTextEdit object at 0x7f7bc64a7a40>
+2025-04-14 13:40:01,785 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a7ad0>
+2025-04-14 13:40:01,785 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-04-14 13:40:01,785 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 13:40:01,786 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-04-14 13:41:09,491 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:41:09,492 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_info' 
+2025-04-14 13:41:09,492 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8663
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+2025-04-14 13:41:09,492 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 13:41:09,592 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 13:41:09,592 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8663 self.table_name = 'help_info' self.record_state = 2
+2025-04-14 13:41:09,593 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 13:41:11,493 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_text' 
+2025-04-14 13:41:11,495 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486b10><
+custom_info for a QSqlTableModel 
+    tableName()         = help_text
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8663
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'text_data' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'text_data':  new_record.indexOf( i_name ) = 2 
+2025-04-14 13:41:11,495 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:41:11,496 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 13:41:11,653 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 13:41:11,653 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8663 self.table_name = 'help_text' self.record_state = 2
+2025-04-14 13:41:11,653 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 13:41:11,654 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:41:11,657 - DEBUG - ['>>search 7-13', '']
+2025-04-14 13:41:11,657 - DEBUG - cmd_exec cmd = 'search' 
+ cmd_args = ['7-13']
+2025-04-14 13:41:11,657 - DEBUG - base document search_me criteria = '7-13'
+2025-04-14 13:41:11,657 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:41:11,657 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:41:11,658 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8663' self.table_name = 'help_info' 
+2025-04-14 13:41:11,659 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:41:11,659 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:41:11,659 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8663' self.table_name = 'help_text' 
+2025-04-14 13:41:11,660 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:41:11,664 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "13", "7" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 13:41:11,666 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "13", "7" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-04-14 13:41:39,741 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:41:39,742 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:41:39,746 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8663' self.table_name = 'help_info' 
+2025-04-14 13:41:39,749 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:41:39,750 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:41:39,751 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8663' self.table_name = 'help_text' 
+2025-04-14 13:41:39,752 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:41:39,753 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-04-14 13:41:39,753 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-04-14 13:41:39,754 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='prior' update.db
+2025-04-14 13:41:39,754 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-04-14 13:41:39,851 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487380>
+2025-04-14 13:41:39,852 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487920>
+2025-04-14 13:41:39,852 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc6487ec0>
+2025-04-14 13:41:39,852 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a44d0>
+2025-04-14 13:41:39,852 - Level 25 - prior i_field = <custom_widgets.CQComboBox object at 0x7f7bc64a4a70>
+2025-04-14 13:41:39,852 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a4b00>
+2025-04-14 13:41:39,852 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a50a0>
+2025-04-14 13:41:39,852 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a5640>
+2025-04-14 13:41:39,852 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a5be0>
+2025-04-14 13:41:39,852 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6180>
+2025-04-14 13:41:39,852 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6720>
+2025-04-14 13:41:39,852 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a6cc0>
+2025-04-14 13:41:39,852 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a7260>
+2025-04-14 13:41:39,852 - Level 25 - prior i_field = <custom_widgets.CQDateEdit object at 0x7f7bc64a7800>
+2025-04-14 13:41:39,853 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-04-14 13:41:39,853 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 13:41:39,853 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-04-14 13:41:39,853 - Level 25 - prior i_field = <custom_widgets.CQTextEdit object at 0x7f7bc64a7a40>
+2025-04-14 13:41:39,853 - Level 25 - prior i_field = <custom_widgets.CQLineEdit object at 0x7f7bc64a7ad0>
+2025-04-14 13:41:39,853 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-04-14 13:41:39,853 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-04-14 13:41:39,853 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-04-14 13:42:17,023 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:42:17,023 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_info' 
+2025-04-14 13:42:17,024 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486a80><
+custom_info for a QSqlTableModel 
+    tableName()         = help_info
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8664
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'type' 
+    ix_col = 3:     new_record.fieldName( ix_col ) = 'sub_system' 
+    ix_col = 4:     new_record.fieldName( ix_col ) = 'system' 
+    ix_col = 5:     new_record.fieldName( ix_col ) = 'key_words' 
+    ix_col = 6:     new_record.fieldName( ix_col ) = 'edit_ts' 
+    ix_col = 7:     new_record.fieldName( ix_col ) = 'table_name' 
+    ix_col = 8:     new_record.fieldName( ix_col ) = 'column_name' 
+    ix_col = 9:     new_record.fieldName( ix_col ) = 'java_type' 
+    ix_col = 10:     new_record.fieldName( ix_col ) = 'java_name' 
+    ix_col = 11:     new_record.fieldName( ix_col ) = 'java_package' 
+    ix_col = 12:     new_record.fieldName( ix_col ) = 'title' 
+    ix_col = 13:     new_record.fieldName( ix_col ) = 'is_example' 
+    ix_col = 14:     new_record.fieldName( ix_col ) = 'can_execute' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'type':  new_record.indexOf( i_name ) = 2 
+    i_name = 'sub_system':  new_record.indexOf( i_name ) = 3 
+    i_name = 'system':  new_record.indexOf( i_name ) = 4 
+    i_name = 'key_words':  new_record.indexOf( i_name ) = 5 
+    i_name = 'edit_ts':  new_record.indexOf( i_name ) = 6 
+    i_name = 'table_name':  new_record.indexOf( i_name ) = 7 
+    i_name = 'column_name':  new_record.indexOf( i_name ) = 8 
+    i_name = 'java_type':  new_record.indexOf( i_name ) = 9 
+    i_name = 'java_name':  new_record.indexOf( i_name ) = 10 
+    i_name = 'java_package':  new_record.indexOf( i_name ) = 11 
+    i_name = 'title':  new_record.indexOf( i_name ) = 12 
+    i_name = 'is_example':  new_record.indexOf( i_name ) = 13 
+    i_name = 'can_execute':  new_record.indexOf( i_name ) = 14 
+2025-04-14 13:42:17,024 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 13:42:17,088 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 13:42:17,088 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8664 self.table_name = 'help_info' self.record_state = 2
+2025-04-14 13:42:17,089 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 13:42:19,117 - Level 25 - document_manager update_new_record_v3  self.table_name  = 'help_text' 
+2025-04-14 13:42:19,117 - Level 25 - 
+Info About >>>> update_new_record_v3 after filter to empty 
+object is instance of <class 'PyQt5.QtSql.QSqlTableModel'> and type <class 'PyQt5.QtSql.QSqlTableModel'>
+>>>>>>>>>>    ><PyQt5.QtSql.QSqlTableModel object at 0x7f7bc6486b10><
+custom_info for a QSqlTableModel 
+    tableName()         = help_text
+    rowCount()          = 0
+    database().databaseName()          = /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db
+    model.isDirty()     = False
+    model.filter()      = id = 8664
+    rows....
+    For a record .. anything new here -- columns differ 
+    ix_col = 0:     new_record.fieldName( ix_col ) = 'id' 
+    ix_col = 1:     new_record.fieldName( ix_col ) = 'id_old' 
+    ix_col = 2:     new_record.fieldName( ix_col ) = 'text_data' 
+    i_name = 'id':  new_record.indexOf( i_name ) = 0 
+    i_name = 'id_old':  new_record.indexOf( i_name ) = 1 
+    i_name = 'text_data':  new_record.indexOf( i_name ) = 2 
+2025-04-14 13:42:19,117 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:42:19,118 - Level 25 - update_new_record_v3 prior to insertRecord {model.rowCount() = } 
+2025-04-14 13:42:19,190 - Level 25 - update_new_record_v3 post to insertRecord {model.rowCount() = } 
+2025-04-14 13:42:19,190 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_new_record_v3   self.current_id = 8664 self.table_name = 'help_text' self.record_state = 2
+2025-04-14 13:42:19,191 - Level 25 - 
+update_new_record_v3 at very end 
+2025-04-14 13:42:19,191 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:42:51,293 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:42:51,293 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:42:51,294 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8664' self.table_name = 'help_info' 
+2025-04-14 13:42:51,295 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:42:51,295 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:42:51,295 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8664' self.table_name = 'help_text' 
+2025-04-14 13:42:51,296 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:42:51,296 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-04-14 13:42:51,299 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-04-14 13:42:51,300 - ERROR - send_topic_update needs fixing !! just reenabled 
+2025-04-14 13:42:51,300 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-04-14 13:43:04,223 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 13:43:04,223 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:43:04,224 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8448' self.table_name = 'help_info' 
+2025-04-14 13:43:04,225 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 13:43:04,225 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 13:43:04,288 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8448' self.table_name = 'help_text' 
+2025-04-14 13:43:04,288 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 15:45:27,706 - INFO - Document Base   validate....   done for self.subwindow_name = 'HelpSubWindow'
+2025-04-14 15:45:27,706 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 15:45:27,710 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8448' self.table_name = 'help_info' 
+2025-04-14 15:45:27,713 - Level 25 - update_record_fetched  self.record_state  = 1
+2025-04-14 15:45:27,714 - Level 25 - field_to_record i_field.field_name = 'text_data' 
+2025-04-14 15:45:27,715 - Level 25 - data_manager   model_submit_all submitAll ok: DataManager.update_record_fetched_v1 id_value = '8448' self.table_name = 'help_text' 
+2025-04-14 15:45:27,716 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'

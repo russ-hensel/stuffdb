@@ -81,8 +81,11 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
     why
         -- lots of changes in custom widgets edits -- have be redone, better
              smaller  simpler
+            **fixed search from help
+            ** run from github
+            ** mode from command line
 
-             ---->clean up dead stuff
+              ** clean up dead stuff
 
              think upgrad to data doct is done, but needs to be tested
                    keep the old for a while
@@ -91,7 +94,8 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
              ---- fix text tab for base or at least non help
                    better for now
 
-            --- try old converted db
+            --- try old converted db  -- seems to work about as well as the
+                      db is good, there is a lot to do here.
 
 ---- ver69
 

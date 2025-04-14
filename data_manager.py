@@ -14,7 +14,6 @@ if __name__ == "__main__":
     main.main()
 
 
-
 import logging
 
 
@@ -29,7 +28,7 @@ import info_about
 import string_util
 
 logger              = logging.getLogger( )
-LOG_LEVEL           = 5 # level for more debug    higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
+LOG_LEVEL           = 25 # level for more debug    higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
 
 # may also be defined in base doc or somewher else this should be reconciled
 RECORD_NULL         = 0
@@ -135,7 +134,7 @@ class DataManager(   ):
         """
         self.key_word_table_name    = key_word_table
         db                          = self.model.database()
-        self.key_word_obj           = key_words.KeyWords(  key_word_table,  db )
+        self.key_word_obj           = key_words.KeyWords( key_word_table, db )
 
     # -------------------------------------
     def add_field( self,
@@ -347,7 +346,8 @@ class DataManager(   ):
                 self.field_to_record(  record )
                 model.setRecord( 0, record)  # model.setRecord(0, record) chat says required
                 #model.submitAll()
-                ok   = self.model_submit_all( model, f"DataManager.update_record_fetched_v1 {id_value = } {self.table_name = } ")
+                ok   = self.model_submit_all( model,
+                             f"DataManager.update_record_fetched_v1 {id_value = } {self.table_name = } ")
                 model.select()
             else:
                 msg   = ( f"update_record_fetched_v3 for {id_value} got 0 records " )
@@ -358,7 +358,7 @@ class DataManager(   ):
             msg   = ( f"update_record_fetched_v3 for id_value = >{id_value}< was falsy " )
             logging.error( msg )
             1/0   # pretty poor
-            #model.setFilter("")  # seems wrong
+
 
     # ---------------------------
     def update_new_record( self ):
@@ -455,8 +455,6 @@ def delete_record_by_id(model, id_value):
             return
     print("Record not found.")
 
-
-
         """
         model    = self.model
         for row in range(model.rowCount()):
@@ -465,11 +463,11 @@ def delete_record_by_id(model, id_value):
 
                 model.removeRow(row)
                 if model.submitAll():
-                    debug_msg  = ("Record deleted successfully!")
+                    debug_msg  = ( "Record deleted successfully!" )
                     logging.log( LOG_LEVEL,  debug_msg, )
 
                 else:
-                    debug_msg  = (f"Failed to delete record:  {model.lastError().text() }" )
+                    debug_msg  = ( f"Failed to delete record:  {model.lastError().text() }" )
                     logging.log( LOG_LEVEL,  debug_msg, )
 
         self.record_state = RECORD_NULL
@@ -596,7 +594,6 @@ def delete_record_by_id(model, id_value):
         and concatinate into one string
         self.field_list.append( edit_field )
         """
-
         #rint( "get_kw_string" )
         a_str  = " "
         for i_edit in self.key_word_field_list:
@@ -637,28 +634,6 @@ def delete_record_by_id(model, id_value):
         self.update_db()
         # will come back record null
         # more here inc changing record state
-        return
-
-        # older code may have some validity  -- move transaction way up
-
-
-        model  = self.model
-
-        # Loop through the rows in reverse order and delete them
-        for row in range(model.rowCount() - 1, -1, -1 ):
-            model.removeRow(row)
-
-        # tehee is no view here we are more like a form that we may need to clear self.view.show()
-
-        if model.submitAll():
-            model.select()  # Refresh the model to reflect changes in the view
-        else:
-            model.database().rollback()  # Rollback if submitAll fails
-            msg     = ( f"data_manager submitAll fail rollback {self.table_name = }")
-            logging.error( msg )
-        for i_sub_tab in self.sub_tab_list:
-            if i_sub_tab:
-                i_sub_tab.delete_all()
 
     # ------------------------
     def record_to_field(self, record ):
@@ -718,7 +693,7 @@ def delete_record_by_id(model, id_value):
         """
         reset_fields or preset field might be better
         add from_prior here
-        what it says, read
+        what it says, read{i_field.ct_prior = }
         what fields, need a bunch of rename here
         clear_fields  clear_fields  -- or is this default
         !! but should users be able to?? may need on add -- this may be defaults
@@ -731,13 +706,14 @@ def delete_record_by_id(model, id_value):
             if option == "default":
                 for i_field in self.field_list:
                     # i_field.clear_data( to_prior = to_prior )
-                    i_field.ct_default(  )
+                    i_field.set_default(  )
 
             elif option == "prior":
                 for i_field in self.field_list:
                     pass   # debug
-                    print( f"{i_field = } {i_field.ct_prior = }")
-                    i_field.ct_prior(  )
+                    debug_msg = ( f"prior {i_field = }")
+                    logging.log( LOG_LEVEL, debug_msg )
+                    i_field.set_prior(  )
         except:
             pass
             if option == "default":
@@ -748,9 +724,9 @@ def delete_record_by_id(model, id_value):
             elif option == "prior":
                 for i_field in self.field_list:
                     pass   # debug
-                    print( f"{i_field = } {i_field.ct_prior = }")
+                    debug_msg( f"{i_field = }")
+                    logging.log( LOG_LEVEL, debug_msg )
                     i_field.set_prior(  )
-
 
     # ------------------------------
     def __str__( self ):
@@ -802,7 +778,5 @@ def delete_record_by_id(model, id_value):
         a_str   = string_util.to_columns( a_str, ["key_word_obj",
                                            f"{self.key_word_obj}" ] )
         return a_str
-
-
 
 # ---- eof
