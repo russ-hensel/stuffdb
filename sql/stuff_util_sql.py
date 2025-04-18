@@ -33,8 +33,6 @@ from PyQt5.QtWidgets import (
     QMdiSubWindow,
     )
 
-
-
 # ---- imports
 import parameters
 import qsql_utils
@@ -51,31 +49,41 @@ App              = None
 DB_CONNECTION    = None
 
 #------------
-def create_connection(   ):
+def create_connection( use_temp = False  ):
     """
     Create a SQLite database connection.
     part of setup always use
+    can choose database here
     """
     global DB_CONNECTION
     if DB_CONNECTION is not None:
         DB_CONNECTION.close()
         DB_CONNECTION    = None  # or delete?
 
-    db_file_name    = parameters.PARAMETERS.db_file_name
-    print( f"create_connection for {db_file_name}")
+    if not use_temp:
+        db_file_name    = parameters.PARAMETERS.db_file_name
+        db_type         = parameters.PARAMETERS.db_type
+        print( f"\n>>>>>>>>>>>>\nparameters_create_connection for {db_file_name}\n<<<<<<<<<<<<")
 
+    else:
+        import parms_temp
+        a_parms_temp    = parms_temp.ParmsTemp()
+        db_file_name    = a_parms_temp.db_file_name
+        db_type         = a_parms_temp.db_type
+
+        print( f"parms_temp_create_connection for {db_file_name}")
 
     # if    db_file_name !=  ':memory:':
     #     # delete for a fresh start
     #     delete_db_file( db_file_name )
 
     # !! may need parameters particurlarry for the db type
-    db              = QSqlDatabase.addDatabase( parameters.PARAMETERS.db_type, db_file_name )
+    db              = QSqlDatabase.addDatabase( db_type, db_file_name )
     db.setDatabaseName( db_file_name )   # is this really the file name
 
     # next kills it ?  --- now seems ok may still be issues
     #self.db         = QSqlDatabase.database( "qt_example_db" )
-    DB_CONNECTION         = db
+    DB_CONNECTION   = db
 
     if not db.open():
         print(f"SampleDB Error: Unable to establish a database connection.{db_file_name}")
@@ -84,23 +92,56 @@ def create_connection(   ):
         return None
     return db
 
-    def  end_connection(   ):
-        global  DB_CONNECTION
-        DB_CONNECTION.close( )
-        DB_CONNECTION = None
 
 
-#--------------
-#def drop_table(   db, table_name   ):
+def  end_connection(   ):
+    global  DB_CONNECTION
+    DB_CONNECTION.close( )
+    DB_CONNECTION = None
+
+# ----------------------------------
+def run_sql_select( db, sql, max  = 100 ):
     """
     what it says
+
     """
-    1/0 # !! write this
+    what = ( "begin  print_record_count ")
+    print( f"{what} -- begins")
+    record_count  = 0
+
+
+    query = QSqlQuery( db )
+
+    query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
+
+    # print( "select result" )
+
+    ix          = 0
+    while query.next():
+        ix              += 1
+        field_0        = query.value(0)
+        field_1        = query.value(1)
+        field_2        = query.value(2)
+        field_3        = query.value(3)
+        field_4        = query.value(4)
+        field_5        = query.value(5)   # index past end, no error just get None
+
+        print(f"record:{ix} {field_0 = }  {field_1 = }  {field_2 = } {field_3 = } {field_4 = } {field_5 = } ")
+
+        if ix >= max:
+            print( f"{what} hit max {max =}")
+            break
+
+    # print( f" print_record_count {ix = } ")
+    print( f"{what} -- ended")
+
+
 
 def create_db( db, table_name_list  ):
     """
     what it says
     """
+    1/0
     for i_table_name in table_name_list:
         create_table(   db, i_table_name   )
 
@@ -110,6 +151,7 @@ def create_db( db, table_name_list  ):
 def key_gen_for( db, table_name ):
     """
     unclear what this was supposed to do needs to be looked into
+    just checking if we already have a key gen for some table.
     return count for table name
     what it says
     way more stuff than needed
@@ -192,7 +234,39 @@ def insert_key_gen( db, table_name, value  ):
     print( f"end {what}")
 
 # -----------------------------
-def insert_key_gen_init( db, table_name   ):
+def init_key_gen( db, table_name, init_value   ):
+    """
+    will delete old value if exists and init with new value
+    not safe but this whole thing is not
+    ============ ok run from help
+    """
+    what            = "init_key_gen"
+    print( f"begin_init_key_gen {table_name} {init_value}")
+
+    query           = QSqlQuery( db )
+
+    sql             = "DELETE FROM key_gen WHERE table_name = '{table_name}'"
+
+    query_ok        =  qsql_utils.query_exec_error_check(
+                 query = query, sql = sql, raise_except = True )
+
+    print( "old value, if any, deleted" )
+
+
+
+    sql       = ( 'INSERT INTO key_gen (  '
+                     'table_name,   key_value )'
+                     f' VALUES (  "{table_name}",   {init_value}  )'   )
+
+    query_ok    =  qsql_utils.query_exec_error_check(
+                     query = query, sql = sql, raise_except = True )
+
+
+    print( f"end {what}")
+
+
+# -----------------------------
+def insert_key_gen_init_old( db, table_name   ):
     """
     may not want to use this as a lot of hardcode
     table name is ignored
@@ -204,7 +278,15 @@ def insert_key_gen_init( db, table_name   ):
     what            = "insert_key_gen_init"
     print( f"begin {what}")
 
+
     query           = QSqlQuery( db )
+
+
+
+
+
+
+
     begin_sql       = ( 'INSERT INTO key_gen (  '
                                  'table_name,   key_value )  ' )
     queries = [
@@ -285,7 +367,7 @@ def create_table(   db, table_name   ):
 
 #--------------
 # def delete_table( db, table_name ):
-def drop_table(   db, table_name   ):
+def drop_table( db, table_name, confirm = True   ):
     """
     delete or drop a table
     """
@@ -294,9 +376,11 @@ def drop_table(   db, table_name   ):
     sql         = f"DROP TABLE IF EXISTS {table_name}"
     print( sql )
 
-    user_input = input( "Enter something to continue: ")
+    if confirm: # else just blast thru
+        user_input = input( "Enter something to continue: ")
 
     query.prepare( sql )
+
 
     query_ok    =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
 
@@ -362,6 +446,7 @@ def print_record_count( db, table_name ):
     """
     what it says
     will only return one record
+    seems wrong seems to get max id
     """
     print( "begin  print_record_count ")
 
@@ -370,9 +455,71 @@ def print_record_count( db, table_name ):
 
     query = QSqlQuery( db )
 
+    # sql = f"""
+    #     SELECT COUNT(*) AS executable_count
+    #         FROM {table_name}
+
+    #         """    # WHERE can_execute = 'Y';
+
+
+    # sql = f"""
+    #          SELECT COUNT(*) FROM {table_name} """
+
+    # print( sql )
+
+    # query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
+
+    # print( "select result" )
+
+    # ix          = 0
+    # while query.next():
+    #     ix              += 1
+    #     field_0        = query.value(0)
+    #     field_1        = query.value(1)
+    #     field_2        = query.value(2)
+    #     field_3        = query.value(3)
+    #     field_4        = query.value(4)
+    #     field_5        = query.value(5)   # index past end, no error just get None
+
+    #     #print(f"record:{ix} {field_0 = }  {field_1 = }  {field_2 = } {field_3 = } {field_4 = } {field_5 = } ")
+    #     print(f"record count {field_0 = }   <<<<============== ")
+    #     if ix >= max_ix:
+    #         break
+
+    # print( f" print_record_count {ix = } ")
+
+    count    = None
+    if not query.exec_( f'SELECT COUNT(*) FROM "{table_name}"'):
+        print(f"Query failed: {query.lastError().text()}")
+        #return False
+
+    # Fetch the result
+    if query.next():
+        count = query.value(0)  # Get the count from the first column
+        print(f"Number of records: {count}")
+        #return True
+
+    print("No result returned")
+    #return False
+
+
+    return count
+
+# ----------------------------------
+def get_max_id( db, table_name ):
+    """
+    what it says
+    will only return one record
+    """
+    what = ( "get_max_id")
+    print( f"{what}")
+    record_count  = 0
+    max_ix        = 100000
+
+    query = QSqlQuery( db )
+
     sql = f"""
-        SELECT COUNT(*) AS executable_count
-            FROM {table_name}
+        SELECT MAX(id) FROM  {table_name};
 
             """    # WHERE can_execute = 'Y';
 
@@ -386,18 +533,15 @@ def print_record_count( db, table_name ):
     while query.next():
         ix              += 1
         field_0        = query.value(0)
-        field_1        = query.value(1)
-        field_2        = query.value(2)
-        field_3        = query.value(3)
-        field_4        = query.value(4)
-        field_5        = query.value(5)   # index past end, no error just get None
 
-        #print(f"record:{ix} {field_0 = }  {field_1 = }  {field_2 = } {field_3 = } {field_4 = } {field_5 = } ")
+        print(f"record:{ix} {field_0 = }")
         print(f"record count {field_0 = }   <<<<============== ")
         if ix >= max_ix:
             break
 
-    print( f"end   print_record_count  ")
+    print( f"end   {what}  ")
+    return field_0    # will be the max
+
 
 # ----------------------------------
 def add_missing_text( db, table_name ):
@@ -752,10 +896,10 @@ def insert_stuff_sample_data( db, ):
 
 # ====================================================================
 
-def  do_it():
+def  do_it( use_temp ):
     # ---- run manuallually from here =====================================
     global DB_CONNECTION
-    create_connection()
+    create_connection( use_temp = True )
     data_dict.build_it()
     app                 = QApplication( [] )
     qsql_utils.APP      = app
@@ -811,13 +955,13 @@ def  do_it():
 
     # ---- drop and create beware
     # drop_table(   DB_CONNECTION, table_name = table_name )
-    create_table( DB_CONNECTION, table_name = table_name )
+    #create_table( DB_CONNECTION, table_name = table_name )
 
     print( "some stuff move to chekc and fix ")
 
     #test_query( DB_CONNECTION, table_name = table_name )
     #print_missing_text( DB_CONNECTION, table_name = table_name )
-    #print_record_count( DB_CONNECTION, table_name = table_name )
+    print_record_count( DB_CONNECTION, table_name = table_name )
     #add_missing_text( DB_CONNECTION, table_name = table_name )
     #test_query( DB_CONNECTION, table_name = table_name )
 
@@ -842,21 +986,21 @@ def  do_it():
 
 
 
-def  init_as_module():
-    """ make auto on import"""
-    print( "ran init_as_module" )
-    global DB_CONNECTION
-    create_connection()
-    data_dict.build_it()
-    #app                 = QApplication( [] )
+# def  init_as_module( use_temp = False ):
+#     """ make auto on import"""
+#     print( "ran init_as_module" )
+#     global DB_CONNECTION
+#     create_connection( use_temp = True )
+#     data_dict.build_it()
+#     #app                 = QApplication( [] )
 
-init_as_module()   # not quite sure why here and should be
+# init_as_module( use_temp = True )   # not quite sure why here and should be
 
 
 # --------------------
 if __name__ == "__main__":
 
-    do_it()
+    do_it( use_temp = True )
 
 
 # # --------------------

@@ -16,6 +16,7 @@ if __name__ == "__main__":
 # ---- version
 __version__   = "Ver 70: 2025 04 09.01"
 
+# ---- imports
 import datetime
 import inspect
 import logging
@@ -24,16 +25,10 @@ import random
 import sys
 import time
 
-# ---- imports
+
 import traceback
 
-import app_logging
-import data_dict
-#import   stuffdb_def
-import dict_main
-import text_edit_ext
-import wat_inspector
-from app_global import AppGlobal
+
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import (PYQT_VERSION_STR,
                           QT_VERSION_STR,
@@ -53,7 +48,7 @@ from PyQt5.QtGui import (QIcon,
                          QPainter,
                          QPixmap)
 from PyQt5.QtPrintSupport import QPrintDialog, QPrinter
-# ---- QtSql
+
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
@@ -75,6 +70,14 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
+
+from app_global import AppGlobal
+import app_logging
+import data_dict
+#import   stuffdb_def
+import dict_main
+import text_edit_ext
+import wat_inspector
 import key_gen
 #import   mdi_management
 import main_window
@@ -84,10 +87,6 @@ import sql_util
 
 # ---- end imports
 
-# or put in app_global ? "That is a No Go",
-
-# ---------------
-# from stuff_main_window import MainWindow
 
 # -----------------------------
 def delete_file( file_name ):

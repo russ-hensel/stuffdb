@@ -151,6 +151,7 @@ def create_db( db, table_name_list  ):
     """
     what it says
     """
+    1/0
     for i_table_name in table_name_list:
         create_table(   db, i_table_name   )
 
@@ -736,32 +737,37 @@ def check_key_words_for_dups( db, table_name ):
         if ix >= max_ix:
             break
 
-
-# ---- run from here =====================================
-db    =     stuff_util_sql.create_connection()
-data_dict.build_it()
-app                 = QApplication( [] )
-qsql_utils.APP      = app
+def  run_direct( ):
 
 
-
-# ---- run command --- check parameters
-# make sure there is a key_gen table run form stuff_util
-#redo_help_files( DB_CONNECTION )
-
-
-redo_people_tables( db )
-#redo_photoshow_tables( db )
-#redo_photo_tables( db )
-
-# redo_plant_tables( db )
-#redo_planting_tables( db )
-
-#redo_stuff_tables( db )
-# ---- clean up
-db.close()
-#print( "done")
+    # ---- run from here =====================================
+    db    =     stuff_util_sql.create_connection( use_temp = False )
+    data_dict.build_it()
+    app                 = QApplication( [] )
+    qsql_utils.APP      = app
 
 
+
+    # ---- run command --- check parameters
+    # make sure there is a key_gen table run form stuff_util
+    #redo_help_files( DB_CONNECTION )
+
+
+    redo_people_tables( db )
+    #redo_photoshow_tables( db )
+    #redo_photo_tables( db )
+
+    # redo_plant_tables( db )
+    #redo_planting_tables( db )
+
+    #redo_stuff_tables( db )
+    # ---- clean up
+    db.close()
+    #print( "done")
+
+# --------------------
+if __name__ == "__main__":
+
+    run_direct( use_temp = True )
 
 # ---- eof

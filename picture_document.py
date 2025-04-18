@@ -690,7 +690,9 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         # ---- name
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "name", )
+                                                field_name     = "name",
+                                                is_keep_prior_enabled  = True )
+
         self.name_field     = edit_field
         edit_field.is_keep_prior_enabled        = True
         edit_field.setPlaceholderText( "name" )
@@ -700,9 +702,10 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         # ---- title
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "title", )
+                                                field_name     = "title",
+                                                is_keep_prior_enabled  = True )
         self.title_field     = edit_field
-        edit_field.is_keep_prior_enabled        = True
+        #edit_field.is_keep_prior_enabled        = True
         edit_field.setPlaceholderText( "title" )
         self.data_manager.add_field( edit_field, is_key_word = True )
         layout.addWidget( edit_field, columnspan = 4 )
@@ -710,7 +713,8 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         # ---- descr
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "descr", )
+                                                field_name     = "descr",
+                                                is_keep_prior_enabled  = True )
         self.descr_field     = edit_field
         edit_field.is_keep_prior_enabled        = True
         edit_field.setPlaceholderText( "descr" )
@@ -720,9 +724,9 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         # ---- add_kw
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "add_kw", )
+                                                field_name     = "add_kw",
+                                                is_keep_prior_enabled  = True )
         self.add_kw_field     = edit_field
-        edit_field.is_keep_prior_enabled        = True
         edit_field.setPlaceholderText( "add_kw" )
         self.data_manager.add_field( edit_field, is_key_word = True )
         layout.addWidget( edit_field, columnspan = 4 )
@@ -730,7 +734,8 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         # ---- cmnt
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "cmnt", )
+                                                field_name     = "cmnt",
+                                                is_keep_prior_enabled  = True )
         self.cmnt_field     = edit_field
         edit_field.setPlaceholderText( "cmnt" )
         self.data_manager.add_field( edit_field, is_key_word = False )
@@ -1809,6 +1814,7 @@ class PictureBrowseSubTab( QWidget ):
     # --------------------------------------
     def move_to_pic( self, index: QModelIndex):
         """
+        consider a full rename to current standards
         move picture file to correct directory and
         names to the form, then save as file is moved
         may link to double click?
@@ -1856,10 +1862,10 @@ class PictureBrowseSubTab( QWidget ):
             # Iterate over the selected rows
             for i_index in selected_indexes:
                 row = i_index.row()
-                msg       = (f"move_to_picSelected row: {row = }")
+                msg       = ( f"move_to_picSelected row: {row = }" )
                 logging.debug( msg )
 
-                break   # only get one
+                break   # only get one file
 
         if row == -1:
             debug_msg       = ( "move_to_pic no selected row")
@@ -1880,6 +1886,8 @@ class PictureBrowseSubTab( QWidget ):
         file_name_path_name = file_name_path_src.name
         file_name_path_dest = Path().joinpath( db_root, db_sub, file_name_path_name )
 
+        # path_parent_dest    = file_name_path_dest.parent
+
         # now need to get access to detail table may be my parent check if we need all
         parent_window    = self.parent_window
         form_id          = parent_window.id_field.get_raw_data()
@@ -1897,6 +1905,8 @@ class PictureBrowseSubTab( QWidget ):
         msg    = ( f"{msg}\n    {file_name_path_name = }  ")
         msg    = ( f"{msg}\n    {file_name_path_src =  }  ")
         msg    = ( f"{msg}\n    {file_name_path_dest = } ")
+        #msg    = ( f"{msg}\n    {path_parent_dest = } ")
+
         logging.debug( msg )
 
         if not form_file == "":
@@ -1913,15 +1923,22 @@ class PictureBrowseSubTab( QWidget ):
             logging.debug( msg )
             return
 
-        # parent_window.sub_dir_field.set_preped_data( db_sub )
-        parent_window.file_field.set_preped_data( str( file_name_path_name ),  is_changed = True )
+        # parent_window.sub_dir_field.set_preped_data( db_sub )   --- maybe afte move works
+        parent_window.file_field.set_preped_data( str( file_name_path_name ), is_changed = True )
+
+        if not file_name_path_src.exists():
+            msg    = "that odd {} does not exist!!!!!!!!!!!!!!!!"
+            logging.error( msg )
+            return
 
         try:
             shutil.move( file_name_path_src, file_name_path_dest )
 
         except Exception as a_except:
             # !! do we message here or let it go up the chain
-            msg       = ( f"Exception move_to_pic shutil.move {file_name_path_src} -> {file_name_path_dest}  {a_except = }" )
+            msg       = ( f"Exception move_to_pic shutil.move "
+                          f"\n    {file_name_path_src} -> {file_name_path_dest}"
+                          f"\n    {a_except = }" )
             logging.error( msg )
             raise app_exceptions.ApplicationError( msg )
             #1/0

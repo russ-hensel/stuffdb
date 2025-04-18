@@ -64,8 +64,7 @@ class Parameters( ):
 
         #self.mode_new_db()
         #self.mode_github()
-        #self.mode_python_ex_on_theprof()
-        self.mode_build_me()
+        self.mode_python_ex_on_theprof()
         #self.mode_imported_on_theprof()
 
         #self.mode_builddb_on_theprof()
@@ -90,47 +89,17 @@ class Parameters( ):
 
 
     # -------
-    def mode_new_user( self ):
+    def new_user_mode( self ):
         """
         a mode for the new user, pretty much empty,
         a new user may experiment here.
         """
-        self.mode               = "mode_new_userr"
+        self.mode               = "mode new_user"
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
             # the type of database, so far we only support SQLite
         self.db_file_name       = "./data/python_ex.db"
-
-
-    # -------
-    def mode_build_me( self ):
-        """
-        a mode for testing of pictures with the new build_me database
-        """
-        self.mode               = "mode_build_me"
-
-        # ---- type and location of the db file
-        self.db_type            = "QSQLITE"
-            # the type of database, so far we only support SQLite
-        self.db_file_name       = "./data/python_ex.db"
-
-
-        self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/build_me.db"
-
-#
-        # ---- pictures
-        self.picture_browse         = "/mnt/WIN_D/temp_photo/source"
-            # browsing starts from here see PictureDocument
-
-        # picture to use when a valid picture is not found or does not exist
-        #self.pic_nf_file_name       = "./misc/404.png"
-
-        self.picture_db_root        = "/mnt/WIN_D/temp_photo/dest"
-            # all pictures once in the db should be under this directory
-
-        self.picture_db_sub         = "/99"
-            # subdir for above used when adding new pictures
 
     # -------
     def mode_github( self ):
@@ -745,7 +714,6 @@ print( f"bash a_shell_template still needs writing { 0 = }"
                             'RasPi',
                             'RshPy',              # subsystem the project
                             'Russ',
-                            'SQL',
                             'StuffDB',
                             'TBD',
                             'Tools',

@@ -248,8 +248,14 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget  = QLabel( "Key Words" )
         grid_layout.addWidget( widget )
 
-        widget                    = cw.CQLineEdit(
+
+        # ---- can we have history
+        widget                    = cw.CQHistoryComboBox(
                                        field_name = "key_words" )
+
+
+        # widget                    = cw.CQLineEdit(
+        #                                field_name = "key_words" )
         self.key_words_widget     = widget
         widget.setPlaceholderText( "key_words"  )
         self.critera_widget_list.append( widget )
@@ -710,6 +716,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "title",
+                                                is_keep_prior_enabled  = True
                                                        )
         self.title_field     = edit_field
         edit_field.is_keep_prior_enabled        = True
@@ -722,7 +729,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "key_words",
-                                                is_keep_prior_enabled        = True
+                                                is_keep_prior_enabled  = True
                                                  )
         self.key_words_field     = edit_field
         # this is too late
@@ -749,7 +756,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         edit_field                  = cw.CQComboBox(
                                                 parent         = None,
                                                 field_name     = "system",
-                                                        )
+                                                is_keep_prior_enabled        = True   )
         self.system_field     = edit_field
         edit_field.setPlaceholderText( "system" )
         edit_field.clear()

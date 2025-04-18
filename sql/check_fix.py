@@ -45,54 +45,54 @@ import stuff_util_sql
 
 # ---- end imports
 
-temp  = parameters.Parameters()
-print( parameters.PARAMETERS )
+#temp  = parameters.Parameters()
+#print( parameters.PARAMETERS )
 
 
 App              = None
 DB_CONNECTION    = None
 
-#------------
-def create_connection(   ):
-    """
-    Create a SQLite database connection.
-    part of setup always use
-    """
-    global DB_CONNECTION
-    if DB_CONNECTION is not None:
-        DB_CONNECTION.close()
-        DB_CONNECTION    = None  # or delete?
+# #------------
+# def create_connection(   ):
+#     """
+#     Create a SQLite database connection.
+#     part of setup always use
+#     """
+#     global DB_CONNECTION
+#     if DB_CONNECTION is not None:
+#         DB_CONNECTION.close()
+#         DB_CONNECTION    = None  # or delete?
 
-    db_file_name    = parameters.PARAMETERS.db_file_name
-    print( f"create_connection for {db_file_name}")
+#     db_file_name    = parameters.PARAMETERS.db_file_name
+#     print( f"create_connection for {db_file_name}")
 
 
-    # if    db_file_name !=  ':memory:':
-    #     # delete for a fresh start
-    #     delete_db_file( db_file_name )
+#     # if    db_file_name !=  ':memory:':
+#     #     # delete for a fresh start
+#     #     delete_db_file( db_file_name )
 
-    # !! may need parameters particurlarry for the db type
-    db              = QSqlDatabase.addDatabase( parameters.PARAMETERS.db_type, db_file_name )
-    db.setDatabaseName( db_file_name )   # is this really the file name
+#     # !! may need parameters particurlarry for the db type
+#     db              = QSqlDatabase.addDatabase( parameters.PARAMETERS.db_type, db_file_name )
+#     db.setDatabaseName( db_file_name )   # is this really the file name
 
-    # next kills it ?  --- now seems ok may still be issues
-    #self.db         = QSqlDatabase.database( "qt_example_db" )
-    DB_CONNECTION         = db
+#     # next kills it ?  --- now seems ok may still be issues
+#     #self.db         = QSqlDatabase.database( "qt_example_db" )
+#     DB_CONNECTION         = db
 
-    if not db.open():
-        print(f"SampleDB Error: Unable to establish a database connection.{db_file_name}")
-        print(f"may need to change to an absolute path for the db for connect to work {1}")
-        1/0
-        return None
-    return db
+#     if not db.open():
+#         print(f"SampleDB Error: Unable to establish a database connection.{db_file_name}")
+#         print(f"may need to change to an absolute path for the db for connect to work {1}")
+#         1/0
+#         return None
+#     return db
 
-def  end_connection_maybe(   ):
-    global  DB_CONNECTION
-    DB_CONNECTION.close( )
-    DB_CONNECTION = None
+# def  end_connection_maybe(   ):
+#     global  DB_CONNECTION
+#     DB_CONNECTION.close( )
+#     DB_CONNECTION = None
 
 # ------------
-def update_table_key_gen( db, table_name, key_value   ):
+def update_table_key_gen_think_in_sql_util( db, table_name, key_value   ):
     """
     what it says
         not tested yet  --- ready to test
@@ -421,7 +421,7 @@ def check_key_words_for_dups( db, table_name ):
     # if table_name == None:
     #     table_name = "stuff"
 
-    query = QSqlQuery( DB_CONNECTION )
+    query = QSqlQuery( db )
 
     sql         = f"SxxxELECT * FROM {table_name}"
 
@@ -459,13 +459,14 @@ def tables_check_key_words_for_dups( db,   ):
         check_key_words_for_dups( db, table_name = i_table )
 
 
-class DbCheck( ):
+class DbCheck(   ):
 
     """set up to run externally  """
-    def __init__( self ):
+    def __init__( self, db ):
         """ """
-        self.db     = create_connection()
-        data_dict.build_it()
+        #db     = su.create_connection()
+        # should be done externally data_dict.build_it()
+        self.db     = db
 
     # -------------------
     def tables_check_key_words_for_dups( self ):

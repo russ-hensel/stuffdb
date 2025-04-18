@@ -41,7 +41,7 @@ from functools import partial
 
 # ---- Qt
 from PyQt5 import QtGui
-
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtCore import QDate, QDateTime, QTime
 
 
@@ -484,7 +484,6 @@ class CQEditBase(   ):
         # next noet here as only appropriate for some edits
         # self.returnPressed.connect( self.on_return_pressed )
 
-
     # ---- dict oriented ----------------
     #----------------
     def edit_to_dict( self, a_dict, format = None ):
@@ -774,10 +773,8 @@ class CQEditBase(   ):
 
     #------------
     # ---- events  not clear if all implemented ------------
-
     def call_on_return_pressed( self, ):
         self.on_return_pressed()
-
 
     #-----------------------------
     def on_return_pressed( self ):
@@ -1017,7 +1014,6 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         else:
             self.set_prior      = a_partial
 
-
         #self.is_field_valid     = # default is all pass
 
         # ---- in out conversion
@@ -1191,10 +1187,9 @@ class CQComboBox( QComboBox, CQEditBase ):
         start with non editable
     """
     def __init__(self,
-                 parent             = None,
-                 field_name         = None,
-                 display_type       = "string",
-                 db_type            = "string" ):
+                 parent                 = None,
+                 field_name             = None,
+                 is_keep_prior_enabled  = False):
 
         """
         read it
@@ -1346,6 +1341,7 @@ class CQComboBox( QComboBox, CQEditBase ):
     def setPlaceholderText( self, ignoered ):
         """so we can call without harm """
         pass
+
     # --------------------------
     def returnPressed( self ):
         """so we can call without harm """
@@ -1376,6 +1372,245 @@ class CQComboBox( QComboBox, CQEditBase ):
         # more    = CQEditBase.__str__( self, )
         # a_str   = f"{a_str}\n{more}"
         return a_str
+
+
+class CQHistoryComboBox( QComboBox, CQEditBase ):
+    """
+    Claud got me started
+    A QComboBox subclass that allows text entry and maintains a history of entered text.
+    The history is presented as dropdown options when the user clicks the dropdown arrow.
+
+    """
+
+    textSubmitted = pyqtSignal(str)  # Signal emitted when text is submitted
+
+    def __init__(self,
+                 parent                 = None,
+                 field_name             = None,
+                 is_keep_prior_enabled  = False):
+
+        """
+        read it
+        in   -- into the widget
+        out  -- out to the record
+        """
+        #super(   ).__init__(   )   # seems to go to CQEditBase ???
+
+        QLineEdit.__init__( self, None  )     # need arg ?  # parent
+
+        CQEditBase.__init__( self,
+                        parent             = None,  # parent
+                        field_name         = field_name,
+                               )
+
+
+    # def __init__(self, parent=None, max_history=10):
+    #     """
+    #     Initialize the HistoryComboBox.
+
+    #     Args:
+    #         parent: Parent widget
+    #         max_history: Maximum number of history items to store
+    #     """
+        # super().__init__(parent)
+
+        # Enable editing
+        self.setEditable(True)
+
+        # Set insert policy to not add duplicates automatically
+        self.setInsertPolicy(QComboBox.NoInsert)
+
+        # Store maximum history size
+        self.max_history = 10
+
+        # Connect signals
+        self.lineEdit().returnPressed.connect(self.add_current_text_to_history)
+
+
+        #self.default_value         = "default-value"     # deprecate
+        self.prior_value           = ""  # something of a valid type
+        #self.textEdited.connect(self.on_text_changed )  #  text is sent new_text
+        #self.textChanged.connect(self.on_text_changed)
+            #-----------------------------
+        self.null_surogatexxx          = ""
+        # ---- set functions
+        #a_partial           = partial( self.do_ct_value, "do_ct_value!!" )
+        a_partial           = partial( self.set_value, "" )
+        self.set_default    = a_partial
+
+        self.set_prior      = self.set_pass
+        #self.validate       = self.validate_all_ok
+
+        # in out conversion need same for dict
+        self.rec_to_edit_cnv    =  self.cnv_str_to_str
+        self.edit_to_rec_cnv    =  self.cnv_str_to_str
+
+        self.setPlaceholderText( self.field_name )   # can we set on combo
+        #self.addItems( [ "", "atest", "bbbbbb", "cccccc", ] )
+
+    def add_current_text_to_history(self):
+        """Add the current text to the history if not empty and not a duplicate."""
+        text = self.currentText().strip()
+
+        if not text:
+            return
+
+        # Check if the text is already in the history
+        index = self.findText(text)
+
+        if index >= 0:
+            # If it exists, remove it so we can add it to the top
+            self.removeItem(index)
+
+        # Insert at the beginning
+        self.insertItem(0, text)
+
+        # If we've exceeded the maximum history size, remove the oldest item
+        if self.count() > self.max_history:
+            self.removeItem(self.count() - 1)
+
+        # Keep the current text instead of clearing it
+        # Set the current index to -1 to ensure the text remains visible
+        self.setCurrentIndex(-1)
+        self.setCurrentText(text)
+
+        # Emit signal with the submitted text
+        self.textSubmitted.emit(text)
+
+    def keyPressEvent(self, event):
+        """
+        Handle key press events to add text to history when Enter is pressed.
+        """
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            #self.add_current_text_to_history()
+            self.call_on_return_pressed()
+
+        # Pass the event to the parent class
+        super().keyPressEvent(event)
+
+    def get_history(self):
+        """Get the current history as a list of strings."""
+        return [self.itemText(i) for i in range(self.count())]
+
+    def set_history(self, history_list):
+        """Set the history from a list of strings."""
+        self.clear()
+        for item in reversed(history_list):
+            if item.strip():
+                self.addItem(item)
+
+    def clear_history(self):
+        """Clear the history."""
+        self.clear()
+
+    def get_text(self):
+        """Get the current text in the edit field."""
+        return self.currentText()
+
+    def set_text(self, text, add_to_history=True):
+        """
+        Set the text in the edit field.
+
+        Args:
+            text: Text to set
+            add_to_history: If True, also adds the text to history
+        """
+        if add_to_history and text.strip():
+            # Temporarily store the text
+            stored_text = text.strip()
+
+            # Check if the text is already in the history
+            index = self.findText(stored_text)
+
+            if index >= 0:
+                # If it exists, remove it so we can add it to the top
+                self.removeItem(index)
+
+            # Insert at the beginning
+            self.insertItem(0, stored_text)
+
+            # If we've exceeded the maximum history size, remove the oldest item
+            if self.count() > self.max_history:
+                self.removeItem(self.count() - 1)
+
+            # Set the current index to -1 to show the text in the edit field
+            # without selecting an item from the dropdown
+            self.setCurrentIndex(-1)
+
+            # Make sure the text is set correctly
+            self.setCurrentText(stored_text)
+        else:
+            # Just set the text without adding to history
+            self.setCurrentText(text)
+
+    #----------------------------
+    def set_preped_data( self, a_string,   is_changed = None ):
+        """
+        specialize for this edit
+        what about prior value
+
+        a prepped data is data in the format for the edit and
+        formatted and ready for the edit.
+
+        arg
+            is_changed     None      leave is_changed as it was
+                           True        is_changed set to True
+                           False        is_changed set to False
+                           other       undefined behavior
+        mutates
+
+            changes contents of edit
+            may change self.is_changed
+            self.prior_value  -- so far unchanged, this is probably wrong
+
+
+        """
+        # next !! debug
+        if a_string == None:
+            a_string   = self.null_surogate
+            msg        = f"line edit using null_surrogate for {self.field_name}"
+
+            logging.debug( msg )
+        elif not isinstance( a_string, str ):
+            self_field_name   = self.field_name
+            msg = f"set_prepped_data error a_string, not a string {self.field_name = }  return for now inspect then break"
+            logging.debug( msg )
+            return
+            wat_inspector.go(
+                msg            = msg,
+                # inspect_me     = self.people_model,
+                a_locals       = locals(),
+                a_globals      = globals(), )
+            breakpoint()
+
+        # self.setText( a_string  )   #
+        #self.setCurrentText( a_string )
+        self.set_text(  a_string, add_to_history =True)
+
+            # with prior there ? depending on is_changed ??
+        self.prior_value  = a_string
+        if is_changed is not None:
+            self.is_changed = is_changed
+
+    #----------------------------
+    def get_raw_data( self, ):
+        """'
+        make get edit data in future
+        final step from set_data should always be a string for
+        this edit
+        """
+        #data  = self.text()
+        data  = self.currentText()
+        self.add_current_text_to_history(   )
+        return data
+
+    # --------------------------
+    def setPlaceholderText( self, ignoered ):
+        """
+        so we can call without harm
+        this widget cannot have placholder text
+        """
+        pass
 
 
 #-------------------------------

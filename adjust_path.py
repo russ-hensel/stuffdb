@@ -50,6 +50,7 @@ src_root         = "/mnt/WIN_D/russ/0000/python00/python3"
 
 
 # ---- ./ path
+sys.path.insert( 1, f"{src_root}/_projects/stuffdb" )
 sys.path.insert( 1, f"./libs" )   # for installation off dev machines
 sys.path.insert( 1, f"./data_dict_src" )   # for installation off dev machines
 sys.path.insert( 1, f"./sql" )   # for installation off dev machines
@@ -66,7 +67,7 @@ sys.path.insert( 1, f"{src_root}/_examples" )
 
 sys.path.insert( 1, f"{src_root}/_projects/stuffdb" )
 sys.path.insert( 1, f"{src_root}/_projects/stuffdb/data_dict_src" )
-
+sys.path.insert( 1, f"{src_root}/_projects/stuffdb/sql" )
 
 sys.path.insert( 1, f"{src_root}/_projects/qt5_by_example" )
 sys.path.insert( 1, f"{src_root}/_projects/qt5_by_example/info_about_src" )
