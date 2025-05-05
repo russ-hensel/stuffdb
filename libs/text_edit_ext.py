@@ -415,7 +415,7 @@ class TextEditExt( object ):
         # ---- idle and idle file
         elif cmd == "idle":   # want a one line and may line
             msg     = ( "  >>idle in process ................................")
-            logging.error( msg, )
+            logging.debug( msg, )
 
             self.idle_exe.idle_on_temp_file( code_lines )
 
@@ -605,13 +605,11 @@ class IdleExe( object ):
         sh_lines        = [ f"conda activate {self.venv}", f"idle  {self.file_name_temp_py}" ]
         self.write_file_sh( sh_lines )
 
-        subprocess.run(["bash", self.file_name_temp_sh ])
-        # shell_file( self.file_name_temp_sh )
+        #subprocess.run(  ["bash", self.file_name_temp_sh ] )
+        #    # blocking
+        subprocess.Popen(["bash", self.file_name_temp_sh] )
+            # non blocking --- see help
 
-        # dest_dir     = "/etc"
-
-        # a_command   = "nemo"
-        # proc = Popen( [ a_command, dest_dir] )
 
     def idle_file( self, file_name ):
         """
@@ -820,8 +818,6 @@ def shell_file( file_name ):
         subprocess.call(('xdg-open', file_name ) )
 
 # Usage
-
-
 
 # # ------------------------
 # def cmd_exec( text_edit ):

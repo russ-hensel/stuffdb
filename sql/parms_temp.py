@@ -41,23 +41,6 @@ class ParmsTemp( ):
     manages parameter values: use it like an ini file but it is code
     """
     # -------
-    def choose_mode( self ):
-        """
-        typically choose one mode
-            and if you wish add the plus_test_mode
-            if you comment all out all modes you get the default mode which should
-            run, perhaps not in the way you want
-        """
-        # #breakpoint( )
-        # if self.mode_from_command_line():
-        #     return
-
-        # note  = """
-        # if you set the mode from the command line you will not
-        # get here"""
-
-
-
 
 
 
@@ -189,7 +172,9 @@ class ParmsTemp( ):
         "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex (another copy).db",
         "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex (copy).db",
         "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db",
-        self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/build_me.db"
+        self.db_file_name      =  "/tmp/ramdisk/temp2.db"
+
+
 
         # this is the name of a program: its executable with path info.
         # to be used in opening an external editor
@@ -325,6 +310,7 @@ print( f"bash a_shell_template still needs writing { 0 = }"
         """
         #AppGlobal.parameters       = self   # register as a global -- phase out
         self.mode_default()
+        self.something = "something"
         #
 
         #rint( self ) # for debugging
@@ -396,7 +382,7 @@ print( f"bash a_shell_template still needs writing { 0 = }"
        # a_str   = string_util.to_columns( a_str, ["help_file",    f"{self.help_file}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["parameter_dir", f"{self.parameter_dir}" ] )
+
         a_str   = string_util.to_columns( a_str, ["icon", f"{self.icon}" ] )
 
 

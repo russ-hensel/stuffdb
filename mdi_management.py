@@ -30,7 +30,6 @@ if __name__ == "__main__":
 
 # ---- imports
 
-
 #from   functools import partial
 import collections
 import functools
@@ -277,6 +276,7 @@ class MdiManagement():
         """
         what it says, read
         !! may need more for minimized documents
+        midi_management.show_document( sub_window )
         """
         sub_window.show()
         sub_window.setFocus()
@@ -343,6 +343,48 @@ class MdiManagement():
         main_window.window_menu.addAction( action )
 
     # -------------------------
+    def get_docs_for_class( self, window_class ):
+        """
+        docs      = AppGlobal.mdi_management.get_docs_for_class( window_class )
+
+        what it says, read
+
+        what:
+             self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
+                                       "action_id":  None }   # title action_id
+
+        """
+        docs    = []
+        for i_doc in  self.window_dict.keys():   # !! better a comp
+            if type( i_doc ) == window_class :
+                docs.append( i_doc )
+
+        return docs
+
+
+    # -------------------------
+    def get_help_docs( self, ):
+        """
+        docs      = AppGlobal.mdi_management.get_help_docs()
+
+        what it says, read
+          may replace !! get_album_doc
+              may generalize even more
+
+         does this matter
+
+         self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
+                                       "action_id":  None }   # title action_id
+
+        """
+        docs    = []
+        for i_doc in  self.window_dict.keys():   # !! better a comp
+            if type( i_doc ) == help_document.HelpDocument:
+                docs.append( i_doc )
+
+        return docs
+
+    # -------------------------
     def get_stuff_docs(self, ):
         """
         album_docs      = AppGlobal.mdi_management..get_album_docs()
@@ -364,6 +406,29 @@ class MdiManagement():
                 docs.append( i_doc )
 
         return docs
+
+    # -------------------------
+    def get_picture_docs(self, ):
+        """
+        picture_docs      = AppGlobal.mdi_management..get_picture_docs()
+
+        what it says, read
+          may replace !! get_album_doc
+              may generalize even more
+
+         does this matter
+
+         self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
+                                       "action_id":  None }   # title action_id
+
+
+        """
+        picture_docs    = []
+        for i_doc in  self.window_dict.keys():   # !! better a comp
+            if type( i_doc ) == picture_document.PictureDocument:
+                picture_docs.append( i_doc )
+
+        return picture_docs
 
     # -------------------------
     def get_album_docs(self, ):
@@ -519,46 +584,53 @@ class MdiManagement():
         #     pass
 
     # -------------------------
-    def make_document( self,  window_type ):
+    def make_document( self, window_class, instance_ix = 0 ):
         """
         from chat_sub window.py
             then from document_maker which will be gone
+            why not use class and simplify this whole thing
         """
-        msg              = f"add_subwindow for window_type {window_type }"
+        #msg              = f"add_subwindow for window_type {window_type } {instance_ix}"
         # mdi_area       = self.main_window.mdi_area
 
-        if    window_type == "help":
-            sub_window      = help_document.HelpDocument()
+        if instance_ix != 0:
+            docs    = self.get_docs_for_class( window_class )
+            for i_doc in docs:
+                if i_doc.instance_ix  == instance_ix:
+                    self.show_document( i_doc )
+                    return
 
-        # elif  window_type == "help0":
-        #     sub_window      = help_document0.HelpDocument()
+        sub_window      = window_class( instance_ix )
 
-        elif  window_type == "picture":
-            sub_window      = picture_document.PictureDocument()
+        # # elif  window_type == "help0":
+        # #     sub_window      = help_document0.HelpDocument()
 
-        elif  window_type == "album":
-            sub_window      = album_document.AlbumDocument()
+        # elif  window_type == "picture":
+        #     sub_window      = picture_document.PictureDocument( instance_ix  )
 
-        elif  window_type == "stuff":
-            sub_window      = stuff_document.StuffDocument()
+        # elif  window_type == "album":
+        #     sub_window      = album_document.AlbumDocument( instance_ix  )
 
-        elif  window_type == "planting":
-            sub_window      = planting_document.PlantingDocument()
+        # elif  window_type == "stuff":
+        #     sub_window      = stuff_document.StuffDocument( instance_ix  )
 
-        elif  window_type == "plant":
-            sub_window      = plant_document.PlantDocument()
+        # elif  window_type == "planting":
+        #     sub_window      = planting_document.PlantingDocument( instance_ix  )
 
-        # elif  window_type == "criteria":
-        #     sub_window      = CriteriaSubWindow()
+        # elif  window_type == "plant":
+        #     sub_window      = plant_document.PlantDocument(instance_ix  )
 
-
-        elif  window_type == "people":
-            sub_window      = people_document.PeopleDocument()
+        # # elif  window_type == "criteria":
+        # #     sub_window      = CriteriaSubWindow()
 
 
-        else:
-            1/0
-            #sub_window      = CriteriaSubWind
+        # elif  window_type == "people":
+        #     sub_window      = people_document.PeopleDocument( instance_ix )
+
+
+        # else:
+        #     1/0
+        #     #sub_window      = CriteriaSubWind
 
 
     def plant_container_update( self, update_type, table_id, table_info ):

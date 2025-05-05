@@ -132,19 +132,18 @@ class PlantDocument( base_document_tabs.DocumentBase ):
     """
     for the plant table....
     """
-    def __init__(self, ):
+    def __init__(self, instance_ix = 0 ):
         """
         the usual
         """
-        super().__init__()
-
+        super().__init__( instance_ix )
 
         self.detail_table_name  = "plant"
         self.text_table_name    = "plant_text"  # text tables always id and text_data
         self.subwindow_name     = "Plant Document"
 
-        self.setWindowTitle( self.subwindow_name )
         self._build_gui()
+        self.__init_2__()
 
     # --------------------------------
     def get_topic( self ):
@@ -1052,7 +1051,7 @@ class PlantDetailTab( base_document_tabs.DetailTabBase  ):
                         self.data_manager.current_record  )
 
     # ----------------------------
-    def fetch_detail_row( self, id = None ):
+    def fetch_detail_row_promoted( self, id = None ):
         """
         Args:
             id can be external or as chat has it fetched
@@ -1061,7 +1060,7 @@ class PlantDetailTab( base_document_tabs.DetailTabBase  ):
             None.
         !! could be promoted ... most has been
         """
-        id      = self.id_field.text()
+        #id      = self.id_field.text()
         ##self.detail_table_id    = id
         #rint( f"PlantDocumentDetaiTab fetch_row { id=}")
         self.fetch_detail_row_by_id( id )

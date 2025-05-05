@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
 
+# pylint: disable=C0325,E0611,W0201
+"""
+  disable=E221,E201,E202,C0325,E0611,W0201
 
 """
 # ---- tof
@@ -11,7 +13,6 @@ if __name__ == "__main__":
     import main
     main.main()
 # --------------------
-
 
 import functools
 import logging
@@ -76,7 +77,7 @@ import key_words
 import parameters
 import qt_sql_query
 
-# move to parameters
+
 SYSTEM_LIST     = parameters.PARAMETERS.systems_list
 
 
@@ -87,23 +88,21 @@ LOG_LEVEL       = 5   # higher is more
 # ----------------------------------------
 class HelpDocument( base_document_tabs.DocumentBase ):
     """
-    for the stuff table....
+    for the help tables....
     """
-    def __init__(self,  ):
+    def __init__(self, instance_ix = 0 ):
         """
         the usual
         """
-        super().__init__()
+        super().__init__( instance_ix )
 
         self.detail_table_name  = "help_info"
         self.text_table_name    = "help_text"  # text tables always id and text_data
         self.help_filename      = "help_doc.txt"
         self.subwindow_name     = "HelpSubWindow"
-        self.setWindowTitle( self.subwindow_name )
-
-        AppGlobal.mdi_management.update_menu_item( self )
 
         self._build_gui()
+        self.__init_2__()
 
     # ------------------------------------------
     def _build_gui( self, ):
@@ -174,6 +173,28 @@ class HelpDocument( base_document_tabs.DocumentBase ):
                                   self.detail_table_name )
         self.detail_tab.copy_prior_row( next_key )
         self.text_tab.copy_prior_row(   next_key )
+
+    #----------------------------
+    def on_tab_changedPromoted( self, index ):
+        """
+        will kick off criteria select if ...
+        what it says, read it
+        !!
+        extend
+        """
+        # debug_msg   = ( "on_tab_changed need validate update db but may be"
+        #                " redundant in some cases so perhaps provide a mechanism to skip" )
+        # logging.debug( debug_msg )
+        super().on_tab_changed( index )
+
+        if index == self.criteria_tab_index:
+            self.criteria_tab.key_words_widget.setFocus()
+        # old_index                = self.current_tab_index
+        # self.current_tab_index   = index
+        # #self.tab_page_info()
+        # if old_index == 0 and index != 0:  # !=0 happens at construct
+        #     self.criteria_tab.criteria_select_if( )
+
 
     # ---- sub window interactions ---------------------------------------
      # ------------------------------------------
@@ -257,6 +278,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         # widget                    = cw.CQLineEdit(
         #                                field_name = "key_words" )
         self.key_words_widget     = widget
+        #self.key_word_widget        = None      # set to value in gui if used
         widget.setPlaceholderText( "key_words"  )
         self.critera_widget_list.append( widget )
         #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
@@ -371,7 +393,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         model                           = help_document.list_tab.list_model
 
         # ---- try this to clear
-        model.setFilter( f"id = -99" )
+        model.setFilter( "id = -99" )
         model.select()
 
         #rint( "begin channel_select for the list")
@@ -530,6 +552,17 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         #self.criteria_select_if()    # may need to select is changed
         self.criteria_select()
 
+    # -----------------------------
+    def clear_criteria( self ):
+        """
+        What it says, read
+        extend
+        we should be able to generalize this
+        """
+        super().clear_criteria(   )
+        self.key_words_widget.setFocus()
+
+
 # ----------------------------------------
 class HelpListTab( base_document_tabs.ListTabBase  ):
 
@@ -594,26 +627,15 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
         box_layout_1    =  QVBoxLayout( page )
 
-        if False:
-            placer      = gui_qt_ext.PlaceInGrid(
-                                central_widget  = box_layout_1,
-                                a_max           = max_col,
-                                by_rows         = False  )
-
-            layout      = placer
-
-        else:
-            layout      = gui_qt_ext.CQGridLayout( col_max = 12,  )
-            box_layout_1.addLayout( layout )
-            # CQGridLayout
+        layout      = gui_qt_ext.CQGridLayout( col_max = 12,  )
+        box_layout_1.addLayout( layout )
+        # CQGridLayout
 
 # layout.setColumnStretch(0, 1)  # First column takes 1 part of horizontal space
 # layout.setColumnStretch(1, 2)  # Second column takes 2 parts (wider than first)
 # layout.setRowStretch(0, 2)     # First row takes 2 parts of vertical space
 # layout.setRowStretch(1, 1)
 
-
-        tab_layout      = layout
 
         # ----fields
         self._build_fields( layout  )
@@ -703,8 +725,8 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
                                                 field_name     = "id_old",
                                                  )
         self.id_old_field     = edit_field
-        edit_field.rec_to_edit_cnv    = edit_field.cnv_int_to_str
-        edit_field.edit_to_rec_cnv    = edit_field.cnv_str_to_int
+        # edit_field.rec_to_edit_cnv    = edit_field.cnv_int_to_str
+        # edit_field.edit_to_rec_cnv    = edit_field.cnv_str_to_int
         edit_field.setReadOnly( True )
         edit_field.setPlaceholderText( "id_old" )
         # still validator / default func  None
@@ -1021,7 +1043,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         text_layout.addWidget ( widget,     )
 
     # ----------------------------
-    def fetch_detail_row( self,  a_id = None ):
+    def fetch_detail_rowpromoted( self,  a_id = None ):
         """
         Args:
             id can be external or as that has it fetched
@@ -1030,7 +1052,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
             None.
         !! could be promoted
         """
-        id      = self.id_field.text()
+        a_id          = self.id_field.text()
         debug_msg     = ( f"fetch_row { a_id = }")
         logging.log( LOG_LEVEL,  debug_msg, )
 
@@ -1057,7 +1079,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         # edit_ts  = self.edit_ts_field.text()
         # edit_ts  = "self.edit_ts_field.text()"   # !! test
 
-        self.default_new_row(  next_key )
+        self.default_new_row( next_key )
 
     # -----------------------
     def __str__( self ):
@@ -1078,6 +1100,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 # ----------------------------------------
 class HelpHistorylTab( base_document_tabs.HistoryTabBase  ):
     """
+    The usual history tab
     """
     def __init__(self, parent_window ):
         """

@@ -21,6 +21,7 @@ import logging
 #import sqlite3
 import time
 import traceback
+import subprocess
 
 import data_dict
 import gui_qt_ext
@@ -103,11 +104,11 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
     for the photoshow table....
     """
     # --------------------------------------
-    def __init__(self, ):
+    def __init__(self, instance_ix = 0 ):
         """
         the usual
         """
-        super().__init__()
+        super().__init__( instance_ix )
 
         self.detail_table_name  = "photoshow"
         # text tables always id and text_data
@@ -116,7 +117,13 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         self.subwindow_name     = "Album Document"
 
         # --- migyt be promotabale to __post_init
-        self.setWindowTitle( self.subwindow_name )
+
+        # !! perhaps in ancestor to a post innit
+        title       = self.subwindow_name
+        if instance_ix !=0:
+            title  += f" {instance_ix}"
+
+        self.setWindowTitle( title )
         AppGlobal.mdi_management.update_menu_item( self )
 
         self._build_gui()
@@ -221,7 +228,7 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
 
     # ---- capture events ----------------------------
     # ------------------------------------------
-    def on_history_clicked( self, index: QModelIndex ):
+    def on_history_clickedxxx( self, index: QModelIndex ):
         """
         !! finish me
         Args:
@@ -253,7 +260,7 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         self.detail_tab.id_field.setText( str( db_key )  )
 
     # ------------------------------------------
-    def on_list_double_clicked( self, index: QModelIndex ):
+    def on_list_double_clickedxxxxx( self, index: QModelIndex ):
         """
         !! not currently used so promote? -- or delete
         what it says, read
@@ -270,7 +277,7 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
 
     # ---- sub window interactions ---------------------------------------
     # -------------------------------------
-    def default_new_row( self ):
+    def default_new_rowxxxxxx( self ):
         """
         defaults values for a new row in the detail and the
         text tabs
@@ -601,7 +608,6 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
     # ----------------------------------------
     def __init__(self, parent_window  ):
         """
-
         Args:
             parent_window (TYPE): DESCRIPTION.
 
@@ -626,13 +632,6 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
         self.max_col    = max_col
 
         box_layout_1    =  QVBoxLayout( page )
-
-        # placer          = gui_qt_ext.PlaceInGrid(
-        #                     central_widget  = box_layout_1,
-        #                     a_max           = max_col,
-        #                     by_rows         = False  )
-
-        # tab_layout      = placer
 
         placer          = gui_qt_ext.CQGridLayout( col_max = max_col )
 
@@ -1014,11 +1013,8 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
     def add_photo_to_show( self, photo_dict ):
         """
         may except on no show selected
-
-
          self.detail_tab
         picture_sub_tab
-
 
         """
         debug_msg = ( "Album_detail_tab  add_photo_to_show probably comes from a picture_document  ")
@@ -1473,6 +1469,15 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         main_layout.addLayout( photo_layout )
 
+        # # ---- "Copy File Name" comes out at bottom
+        # label           = "Copy File Name?????"
+        # widget          = QPushButton( label )
+        # # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
+        # # widget.clicked.connect( connect_to )
+        # #widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
+        # main_layout.addWidget( widget, )
+
+
         model       = self.model
         view        = self.view
 
@@ -1483,7 +1488,8 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         view.setColumnWidth(  ix_col, 50)  # Set column 0 width to 100 pixels
 
         ix_col      = 1
-        view.setColumnHidden( ix_col, True )  # might or might not change cloumn numbers -- beware in all of order of operations
+        view.setColumnHidden( ix_col, True )  # might or might not change
+            # cloumn numbers -- beware in all of order of operations
 
         ix_col      = 2
         view.setColumnHidden( ix_col, True )
@@ -1491,7 +1497,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         ix_col      = 3
         model.setHeaderData(  ix_col, Qt.Horizontal, "Seq" )
         view.setColumnWidth(  ix_col, 50)  # Set column 0 width to 100 pixels
-        # view.setColumnHidden( ix_col, True )  # might or might not change cloumn numbers -- beware in all of order of operations
+        # view.setColumnHidden( ix_col, True )
         ix_col      += 1
         view.setColumnHidden( ix_col, True )
 
@@ -1529,31 +1535,45 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         self.photo_viewer   = a_photo_viewer
         photo_layout.addWidget( a_photo_viewer )
 
-        # ---- buttons -
-        button_layout          = QHBoxLayout( self )
+        # ----
+        button_layout       = QHBoxLayout( self )
         main_layout.addLayout( button_layout )
 
-        widget         = QPushButton('Next>')
-        connect_to     = functools.partial( self.prior_next, 1 )
+        widget          = QPushButton('Next>')
+        connect_to      = functools.partial( self.prior_next, 1 )
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
 
         #
-        widget        = QPushButton( '<Prior')
-        connect_to     = functools.partial( self.prior_next, -1 )
+        widget          = QPushButton( '<Prior')
+        connect_to      = functools.partial( self.prior_next, -1 )
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
 
         #
-        widget        = QPushButton( '!!Copy FN')
-        # connect_to     = functools.partial( self.prior_next, -1 )
-        # widget.clicked.connect( connect_to )
+        widget        = QPushButton( 'Delete')
+        widget.clicked.connect( self.delete_selected )
         button_layout.addWidget( widget )
 
         #
-        widget        = QPushButton( '!!Jump to Pic')
+        widget        = QPushButton( 'Copy FN')
+        widget.clicked.connect( self.copy_file_name )
+        button_layout.addWidget( widget )
+
+        #
+        widget        = QPushButton( 'Shell')
         # connect_to     = functools.partial( self.prior_next, -1 )
-        # widget.clicked.connect( connect_to )
+        widget.clicked.connect( self.shell_file_name )
+        button_layout.addWidget( widget )
+
+        # ---- edit
+        widget        = QPushButton( 'Edit')
+        widget.clicked.connect( self.edit_file_name )
+        button_layout.addWidget( widget )
+
+        #
+        widget        = QPushButton( 'Jump to Pic')
+        widget.clicked.connect( self.open_picture_document )
         button_layout.addWidget( widget )
 
         # # Create buttons for CRUD operations
@@ -1743,11 +1763,11 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         if delta = 0 go to zero if it exists --- no
         could add second argument is_absolute or not_delta
         """
-        view    = self.view
-        model   = self.model
+        view                    = self.view
+        model                   = self.model
         #prior_list_ix    = self.list_ix  # ng
-        no_rows                   = model.rowCount()
-        list_ix                   = self.list_ix
+        no_rows                 = model.rowCount()
+        list_ix                 = self.list_ix
 
         if absolute:
             new_list_ix           = delta
@@ -1978,7 +1998,6 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         # self.view.setModel(model)
 
         # self.view.show()
-
 
     # ------------------------------------------
     def add_row_still_not_working_chat_says(self, data_in_dict ):
@@ -2221,9 +2240,6 @@ https://stackoverflow.com/questions/72576673/updating-a-relational-column-in-qsq
         self.view.show()
 
 
-
-
-
     # ------------------------------------------
     def add_row_model(self, data_dict ):
     # # ------------------------------------------
@@ -2351,6 +2367,192 @@ https://stackoverflow.com/questions/72576673/updating-a-relational-column-in-qsq
         # self.data_to_model_photo( photo_dict )
         # print( "!! add_photo_to_show  submitAll  ")
         # self.model.submitAll()
+
+    # ------------------------------------------
+    def delete_selected( self,    ):
+        """
+        testing selection no delete
+        right now only 1 can be selected, may change
+        transaction seems incomplete
+        """
+
+        if not base_document_tabs.is_delete_ok():
+            return
+
+        debug_msg = ( f"delete_selected {1 = }")
+        logging.debug( debug_msg )
+
+        view            = self.view
+        # Assuming `view` is your QTableView
+        selection_model = view.selectionModel()
+        if selection_model:
+            selected_indexes = selection_model.selectedRows()
+
+            for index in selected_indexes:
+                row     = index.row()  # Get the row number
+                msg     = ( f"Selected row: {row = }" )
+                logging.debug(  msg )
+
+
+        model           = self.model
+        column_name = "id"
+
+        # Get the column index for the column name
+        column = model.fieldIndex( column_name )
+
+        if column == -1:
+            msg = ( f"Column '{column_name}' not found in the model." )
+            logging.debug(  msg )
+        else:
+            # Retrieve the QModelIndex for the specified cell
+            index = model.index( row, column)
+
+            # Get the data from the model at the specified index
+            a_id    = model.data(index)
+            msg     = ( f"Value at   {row = },   '{column_name = }': {a_id = }" )
+            logging.debug(  msg )
+
+
+        # return   #======================================= for now
+
+        # ---- the delete  may not be done
+        model           = self.model
+        db              = model.database()
+        # if not db.transaction():
+        #     msg  = ("Failed to start transaction: {db.lastError().text()} "  )
+        #     logging.error( msg )
+
+        table_name      = self.table_name
+        query           = QSqlQuery( db )
+
+        sql             = f"""DELETE FROM {table_name} WHERE id = ? """
+
+        query.prepare( sql )
+
+        if not query.prepare(sql):
+            msg = (f"Prepare failed: {query.lastError().text()}")
+            logging.error( msg )
+
+        query.addBindValue( a_id )
+
+        if not query.exec_():
+            msg = (f"Execution failed: {query.lastError().text()}")
+            logging.error( msg )
+        else:
+            pass
+            #print("Insert successful.")
+
+        self.select_by_id ( self.album_id )
+        return
+
+    # ------------------------------------------
+    def get_selected_row( self, ):
+        """
+        what it says
+
+        not right for multiple selections or none !
+
+        """
+        view            = self.view
+
+        selection_model = view.selectionModel()
+        if selection_model:
+            selected_indexes = selection_model.selectedRows()
+
+            for index in selected_indexes:
+                row     = index.row()  # Get the row number
+                msg     = ( f"Selected row: {row = }" )
+                logging.debug(  msg )
+        else:
+            1/0
+
+        return row
+
+    # ------------------------------------------
+    def get_file_name( self,    ):
+        """
+        get the file name
+        """
+
+
+        row          = self.get_selected_row()
+
+        file_name    = self.get_data_for_column( row, "file"  )
+        sub_dir      = self.get_data_for_column( row, "sub_dir" )
+
+        file_name   = base_document_tabs.build_pic_filename( file_name, sub_dir )
+        return file_name
+
+    # ------------------------------------------
+    def copy_file_name( self,    ):
+        """
+        get the file name into the clipboard
+        """
+        file_name   = self.get_file_name()
+        QApplication.clipboard().setText( file_name )
+
+    # ------------------------------------------
+    def shell_file_name( self,    ):
+        """
+        get the file name into the clipboard
+        """
+        file_name   = self.get_file_name()
+        subprocess.call(('xdg-open', file_name ) )  # linux only for now
+        #subprocess.Popen([ "bash", file_name ])
+
+    # ------------------------------------------
+    def edit_file_name( self,    ):
+        """
+        get the file name into the clipboard
+        """
+        file_name   = self.get_file_name()
+
+        editor      = AppGlobal.parameters.picture_editor
+
+        subprocess.Popen([ editor, file_name ])
+        QApplication.clipboard().setText( file_name )
+
+    # ------------------------------------------
+    def open_picture_document( self,    ):
+        """
+        what it says
+            if none open, if multiple open
+            what about save
+        """
+
+        picture_docs    = AppGlobal.mdi_management.get_picture_docs()
+        if  len( picture_docs ) == 0:
+            1/0
+
+        picture_doc     = picture_docs[ 0 ]
+        row             = self.get_selected_row()
+        a_id            = self.get_data_for_column( row, "photo_id"  )
+        picture_doc.select_record( a_id  )
+
+        AppGlobal.mdi_management.show_document( picture_doc )
+
+    # ------------------------------------------
+    def get_data_for_column( self, row, column_name  ):
+        """
+        may want to make more reusuable and promote
+        """
+        model           = self.model
+
+        column = model.fieldIndex( column_name )
+
+        if column == -1:
+            msg = ( f"get_data_for_column Column '{column_name}' not found in the model." )
+            logging.error(  msg )
+        else:
+            # Retrieve the QModelIndex for the specified cell
+            index   = model.index( row, column)
+
+            # Get the data from the model at the specified index
+            data    = model.data(index)
+            # msg     = ( f"Value at   {row = },   '{column_name = }': {data = }" )
+            # logging.debug(  msg )
+
+        return data
 
     # ------------------------------------------
     def inspect( self,  ):

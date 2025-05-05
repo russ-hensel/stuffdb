@@ -37,12 +37,12 @@ from PyQt5.QtWidgets import (
 import parameters
 import qsql_utils
 import data_dict
-
+import stuff_util_sql   as su
 
 # ---- end imports
 
 temp  = parameters.Parameters()
-print( parameters.PARAMETERS )
+# print( parameters.PARAMETERS )
 
 
 App              = None
@@ -447,6 +447,8 @@ def print_record_count( db, table_name ):
     what it says
     will only return one record
     seems wrong seems to get max id
+
+
     """
     print( "begin  print_record_count ")
 

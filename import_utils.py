@@ -18,11 +18,13 @@ Search for the following in the code below:
 
 """
 
+# ---- Imports
+
 
 import os
 import pprint
 import shutil
-import sqlite3
+
 import stat
 import time
 import traceback
@@ -30,55 +32,7 @@ import traceback
 from datetime import datetime
 from pathlib import Path
 
-import db_create
-import ex_helpers
-import ex_helpers as ex_h
-#import ia_qt
-# ---- QtCore
-from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import QIntValidator, QStandardItem, QStandardItemModel
-# ---- QtSql
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
-# ----QtWidgets Boxs, Dialogs
-# ----QtWidgets layouts
-# ----QtWidgets big
-# ----QtWidgets
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGridLayout,
-                             QHBoxLayout,
-                             QInputDialog,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QSpinBox,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
 
-# ---- Imports
-
-
-#import code_gen
-#import code_gen_sql_create
 
 
 """
@@ -100,7 +54,7 @@ def string_to_int( num_string ):
      because of blanks
      import_utils.string_to_int(    )
     """
-    if num_string == "":
+    if ( num_string == "") or num_string is None:
         return 0
     else:
         return int( num_string )
@@ -133,7 +87,7 @@ def string_to_timestamp( date_string, date_format ):
         may except
     """
     # return time.time  # if problem on None
-    if   date_string == "":
+    if  ( date_string == "" ) or date_string is None:
         return None   # for binding to Null
     try:
 

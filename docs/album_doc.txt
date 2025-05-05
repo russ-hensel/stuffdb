@@ -1,3 +1,7 @@
+
+Moved into the db
+
+
 Albums are collections of pictures in some particular order which have been given
 some name.
 
@@ -6,30 +10,30 @@ This document has the following Tabs and Sub Tabs
 
 Criteria
     Works like any other Criteria Tab, but specialized for Albums
-    
+
 List
-    Works linke any other List Tab, show the Albums that meet the 
+    Works linke any other List Tab, show the Albums that meet the
     criteria on the Criteria Tab
-    
+
 Detail
     The main part of this tab is similar to other Detail Tabs,
     this one specialized for albums.  It differences quite a bit
     in its sub tabs.
-    
+
     Picture Sub Tab
-    
+
     This hold the list of pictures which have been assigned to this
     album.  You can navigate through them with the next and prior
     buttons or by clicking on any given row.
-    
+
     You may use this tab to delete pictures from an album.
     perhaps a delete button?
-    
-    
+
+
     Adding pictures to an Album.
-    
+
     More to come.
-    
+
 Picture Tab
     Displays the same picture as in the Picture Sub Tab but in
     more space. You can navigate the pictures with the next and prior
@@ -38,27 +42,15 @@ Picture Tab
 
 History Tab
     Works like any other History Tab, but specialized for Albums
-    
-    
-    
+
+
+
 Adding pictures to an Album
     Adding pictures to an album is not doen from this document but
     from a Picture Document.  This is because the Picture document
-    has better facilities for finding and manipulating individual 
+    has better facilities for finding and manipulating individual
     pictures.
-    
+
     To do this first open one Album for the target of the pictures
     then go to a Picture Document.  See further directions
     in the help topic for the Picture Documents.
-    
-    
-    
-    
-     
-
-
-
-
-
-
-

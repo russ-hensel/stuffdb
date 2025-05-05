@@ -43,12 +43,13 @@ import data_dict
 import key_word_indexer
 import stuff_util_sql
 
+
 # ---- end imports
 
 #temp  = parameters.Parameters()
 #print( parameters.PARAMETERS )
 
-
+data_dict.build_it()
 App              = None
 DB_CONNECTION    = None
 
@@ -564,8 +565,8 @@ class DbCheck(   ):
                   " +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" )
 
         print( warn )
-        stuff_util_sql.drop_table( DB_CONNECTION, table_name = key_word_table_name )
-        stuff_util_sql.create_table( DB_CONNECTION, table_name = key_word_table_name )
+        stuff_util_sql.drop_table(   self.db, table_name = key_word_table_name )
+        stuff_util_sql.create_table( self.db, table_name = key_word_table_name )
 
         a_key_word_indexer    = key_word_indexer.KeyWordIndexer(  self.db,
                                               base_table_name,
@@ -579,7 +580,7 @@ class DbCheck(   ):
 
 # ====================================================================
 
-def  do_it_left_over():
+def  do_it_left_over_nomoreuse ():
     # ---- run from here =====================================
     create_connection()
     data_dict.build_it()

@@ -42,14 +42,26 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
 ----
 
 ----
----- ver70
+
+    ====>    album picture display broken
+
+    add photo does not insert current default should do under clear
+    look at importing pictures and shows......
+
+
+
+---- ver73
+
+        been a while
+        album in fair shape for first pass
+        usual time to clean up
+
+---- ver7?
 
     why
         custom_widget have been greatly changed, breakin changes
         now wok back into all the windows, this will take some time
         and may break a lot
-
-
 
         update the data dicts for the rest first pass
             to do
@@ -74,6 +86,17 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
                 people_document_edit   -- seems to be on old edits does it work?
                         skip events for now
                         contact info
+
+---- ver72
+
+    why
+        -- may be ready for photo import --- made cleanup see
+
+        "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/import/photo/photo_cnv.csv",
+"/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/import/photo/photo_for_cnv.csv"
+
+        immport code needs update should be no tweans, tweaks done in photo_cnv.csv",
+        fix import to test or ram db should be a next task
 
 
 ---- ver71

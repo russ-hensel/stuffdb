@@ -32,8 +32,6 @@ def build_it( a_data_dict ):
                                              edit_to_rec_cnv      = "cnv_str_to_int",
                                              edit_to_dict_cnv     = "cnv_str_to_int",
 
-
-
                                              display_type   = "integer",
                                              max_len        = None,
                                              default_func   = None,
@@ -130,8 +128,8 @@ def build_it( a_data_dict ):
     # ---- dt_enter
     a_column_dict = data_dict.ColumnDict(    column_name    = "dt_enter",
                                              db_type        = "INTEGER",
-                                             detail_edit_class    = "custom_widgets.CQDateEdit",
-                                             form_edit            = "custom_widgets.CQDateEdit",
+                                             detail_edit_class    = "cw.CQDateEdit",
+                                             form_edit            = "cw.CQDateEdit",
                                              rec_to_edit_cnv      = "cnv_int_to_qdate",
                                              dict_to_edit_cnv     = "cnv_int_to_qdate",
                                              edit_to_rec_cnv      = "cnv_qdate_to_int",
@@ -184,13 +182,25 @@ def build_it( a_data_dict ):
                                              default_func= None,   )
     a_table_dict.add_column( a_column_dict )
 
-    # # ---- dt_item
-    # a_column_dict = data_dict.ColumnDict(    column_name    = "dt_item",
-    #                                          db_type        = "INTEGER",
-    #                                          display_type   = "timestamp",
-    #                                          max_len        = None,
-    #                                          default_func= None,   )
-    # a_table_dict.add_column( a_column_dict )
+    # ---- dt_item
+    a_column_dict = data_dict.ColumnDict(    column_name    = "dt_item",
+                                              db_type        = "INTEGER",
+                                              display_type   = "timestamp",
+                                              form_col_span      = 1,
+
+
+                                             rec_to_edit_cnv      = "cnv_int_to_qdate",
+                                             dict_to_edit_cnv     = "cnv_int_to_qdate",
+                                             edit_to_rec_cnv      = "cnv_qdate_to_int",
+                                             edit_to_dict_cnv     = "cnv_qdate_to_int",
+
+                                             detail_edit_class  = "custom_widgets.CQDateEdit",
+                                             form_edit          = "custom_widgets.CQDateEdit",
+
+
+                                              max_len        = None,
+                                              default_func= None,   )
+    a_table_dict.add_column( a_column_dict )
 
     # ---- c_name
     a_column_dict = data_dict.ColumnDict(    column_name    = "c_name",
@@ -238,7 +248,8 @@ def build_it( a_data_dict ):
                                              max_len        = None,
                                              default_func   = None,
                                              display_order      = 42,
-                                             form_col_span      = 4, )
+                                             form_col_span      = 4,
+                                             form_make_ref   = True )
     a_table_dict.add_column( a_column_dict )
 
     # ---- sub_dir
@@ -247,8 +258,10 @@ def build_it( a_data_dict ):
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
-                                             display_order      = 40,
-                                             form_col_span      = 2, )
+                                             display_order         = 40,
+                                             is_keep_prior_enabled = True,
+                                             form_col_span      = 2,
+                                             form_make_ref   = True )
     a_table_dict.add_column( a_column_dict )
 
     # ---- photo_url

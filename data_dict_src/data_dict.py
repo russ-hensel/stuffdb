@@ -24,7 +24,7 @@ import custom_widgets
 
 # ---- end imports
 
-__VERSION__   = "2025_04_01"
+__VERSION__   = "not maintained"
 
 DATA_DICT     = None  # created on import
 SKIP          = "THIS IS A VALUE INDICATING A SKIP"
@@ -645,6 +645,7 @@ class TableDict(  ):
 
             edit_to_rec_cnv         = i_column.edit_to_rec_cnv
             edit_to_dict_cnv        = i_column.edit_to_dict_cnv
+            form_make_ref           = i_column.form_make_ref
 
 
             # self.edit_to_rec            = edit_to_rec    # string name of function
@@ -668,13 +669,14 @@ class TableDict(  ):
                 #args  = f'{indent}parent = None, \n            r_field_name = "{i_name}", r_type = "integer", f_type = "string" '
                 args  = "see below"
                 line_list.append( f'{indent_2}parent         = None, ' )
-                line_list.append( f'{indent_2}field_name     = "{field_name}", ) ' )
+                line_list.append( f'{indent_2}field_name     = "{field_name}",   ' )
                 # next defaults to False so only really need if true
-                line_list.append( f'{indent_2}is_keep_prior_enabled     = "{is_keep_prior_enabled}", ) ' )
+                line_list.append( f'{indent_2}is_keep_prior_enabled     = {is_keep_prior_enabled}, ) ' )
 
-                # ---- create instance with field name
+                # ---- form_make_ref create instance with field name
                 # self.id_old_field         = edit_field
-                line_list.append( f'{indent_1}self.{field_name}_field     = edit_field' )
+                if form_make_ref:
+                    line_list.append( f'{indent_1}self.{field_name}_field     = edit_field' )
 
                 # ---- rec_to_edit_cnv
                 value     = get_value( field_name       = field_name,
@@ -721,10 +723,9 @@ class TableDict(  ):
                     line_list.append( f'{indent_1}edit_field.is_keep_prior_enabled        = {value}' )
 
                 if topic_colunm_order >=0:
-                    line_list.append( f'{indent_1}self.topic_edits.append( (edit_field, {topic_column_order} ) ) ' )
+                    line_list.append( f'{indent_1}self.topic_edits.append( (edit_field, {topic_colunm_order} ) ) ' )
 
                 line_list.append( f'{indent_1}edit_field.setPlaceholderText( "{placeholder_text}" ) ' )
-
 
 
 
@@ -1106,12 +1107,13 @@ class ColumnDict(  ):
                  edit_to_rec            = None,
                  form_col_span          = None,    # defaulted later
                  form_read_only         = None,    # what it says on detail edit fields None defaults to False
+                 form_make_ref          = False,   # when code generating create a self. reference
                  rec_to_edit_cnv        = None,
                  edit_to_rec_cnv        = None,
                  edit_to_dict_cnv       = None,
                  dict_to_edit_cnv       = None,
 
-                 is_keep_prior_enabled  = None,
+                 is_keep_prior_enabled  = False,
 
                  # rec_to_edit         = "rec_to_edit_str_to_str",
                  # edit_to_rec         = "edit_to_rec_str_to_str",
@@ -1138,7 +1140,7 @@ class ColumnDict(  ):
         self.edit_to_rec_cnv        = edit_to_rec_cnv
         self.edit_to_dict_cnv       = edit_to_dict_cnv
         self.dict_to_edit_cnv       = dict_to_edit_cnv
-
+        self.form_make_ref          = form_make_ref
         # # ---- edit_to_rec....
         # if edit_to_rec is None and rec_to_edit is None:
         #     if  db_type  == "INTEGER":
@@ -1171,7 +1173,7 @@ class ColumnDict(  ):
 
         # if form_edit is None:
         #     form_edit      = "CQLineEdit"
-        self.form_edit     =  form_edit
+        self.form_edit      =  form_edit
 
         self.display_type   =  display_type
 

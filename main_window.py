@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# pylint: disable=E221,E201,E202,C0325,E0611,W0201,W0612
 """
 main window container for the mdi
 
@@ -21,7 +22,7 @@ import traceback
 
 import app_logging
 # ------- local
-import gui_qt_ext
+#import gui_qt_ext
 import psutil
 import show_parameters
 #import    document_maker
@@ -66,6 +67,15 @@ import mdi_management
 import parameters
 import stuffdb
 import combo_dict_ext
+
+# mover limited might be better !!
+from  help_document       import HelpDocument
+from    album_document    import AlbumDocument
+from   plant_document     import PlantDocument
+from   planting_document  import PlantingDocument
+from   stuff_document     import StuffDocument
+from   people_document    import PeopleDocument
+from   picture_document   import PictureDocument
 
 # ------------------------------------------
 class StuffdbMainWindow( QMainWindow ):
@@ -326,14 +336,14 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         menu.addAction( action )
 
-        # ----
+        # ---- "Doc->Str"
         action          = QAction( "Doc->Str", self )
         connect_to      = functools.partial(  self.go_active_sub_window_func,
                                               "doc_str"     )
         action.triggered.connect( connect_to )
         menu.addAction( action )
 
-        # ----
+        # ---- "Tab->Str"
         action          = QAction( "Tab->Str", self )
         connect_to      = functools.partial(  self.go_active_sub_window_func,
                                               "tab_str"     )
@@ -357,46 +367,161 @@ class StuffdbMainWindow( QMainWindow ):
 
         menu.addSeparator()
 
-        # ---- Open
+        # ---- Open --------------------------------------
         menu_open       = menubar.addMenu( "Open" )
         self.menu_open  = menu_open
 
-        action          = QAction( "Album", self )
-        connect_to      = functools.partial( self.add_subwindow, window_type = "album" )
+        # ---- open 1 ............................
+        # !! make list of classes and change to loop
+        instance_ix     = 1
+        action          = QAction( "Album 1", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                 window_class   = AlbumDocument,
+                                                 instance_ix    = instance_ix )
         action.triggered.connect( connect_to )
         menu_open.addAction( action )
 
-        action          = QAction( "Help", self )
-        connect_to      = functools.partial( self.add_subwindow, window_type = "help" )
+        action          = QAction( "Help 1", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                 window_class   = HelpDocument,
+                                                 instance_ix    = instance_ix )
         action.triggered.connect( connect_to )
         menu_open.addAction( action )
 
-        action          = QAction( "People", self )
-        connect_to      = functools.partial( self.add_subwindow, window_type = "people" )
+        action          = QAction( "People 1", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class   = PeopleDocument,
+                                                instance_ix    = instance_ix )
         action.triggered.connect( connect_to )
         menu_open.addAction( action )
 
-        action          = QAction( "Picture", self )
-        connect_to      = functools.partial( self.add_subwindow, window_type = "picture" )
+        action          = QAction( "Picture 1", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class   = PictureDocument,
+                                                instance_ix    = instance_ix )
         action.triggered.connect( connect_to )
         menu_open.addAction( action )
 
-        action          = QAction( "Plant", self )
-        connect_to      = functools.partial( self.add_subwindow, window_type = "plant" )
+        action          = QAction( "Plant 1 ", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class   = PlantDocument,
+                                                instance_ix    = instance_ix )
         action.triggered.connect( connect_to )
         menu_open.addAction( action )
 
-        action          = QAction( "Planting", self )
-        connect_to      = functools.partial( self.add_subwindow, window_type = "planting" )
+        action          = QAction( "Planting 1", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class   = PlantingDocument,
+                                                instance_ix    = instance_ix )
         action.triggered.connect( connect_to )
         menu_open.addAction( action )
 
-        action          = QAction( "Stuff", self )
-        connect_to      = functools.partial( self.add_subwindow, window_type = "stuff" )
+        action          = QAction( "Stuff 1", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class   = StuffDocument,
+                                                instance_ix    = instance_ix )
         action.triggered.connect( connect_to )
         menu_open.addAction( action )
 
         menu_open.addSeparator()
+        # ---- open 2 ............................
+        instance_ix     = 2
+        action          = QAction( "Album 2", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                 window_class   = AlbumDocument,
+                                                 instance_ix    = instance_ix )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+        action          = QAction( "Help 2", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                 window_class   = HelpDocument,
+                                                 instance_ix    = instance_ix )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+        action          = QAction( "People 2", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class   = PeopleDocument,
+                                                instance_ix    = instance_ix )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+        action          = QAction( "Picture 2", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class   = PictureDocument,
+                                                instance_ix    = instance_ix )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+        action          = QAction( "Plant 2", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class   = PlantDocument,
+                                                instance_ix    = instance_ix )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+        action          = QAction( "Planting 2", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class   = PlantingDocument,
+                                                instance_ix    = instance_ix )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+        action          = QAction( "Stuff 2", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class   = StuffDocument,
+                                                instance_ix    = instance_ix )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+        menu_open.addSeparator()
+        # ---- open  .........................
+        # could have doen with instance_ix = 0
+
+
+        action          = QAction( "Album", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class =  AlbumDocument  )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+        action          = QAction( "Help", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class = HelpDocument )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+        action          = QAction( "People", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class = PeopleDocument )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+        action          = QAction( "Picture", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class = PictureDocument )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+        action          = QAction( "Plant", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class = PlantDocument )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+        action          = QAction( "Planting", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class = PlantingDocument )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+        action          = QAction( "Stuff", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                window_class = StuffDocument )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
 
         # ---- Configuration
         a_menu          = menubar.addMenu("Configuration")
@@ -615,12 +740,12 @@ class StuffdbMainWindow( QMainWindow ):
             pass
 
     # ---------------------------------------
-    def add_subwindow( self, window_type = None ):
+    def add_subwindow( self, window_class, instance_ix = 0 ):
         """
         indirect because of order of creation
         might otherwise be circular
         """
-        AppGlobal.mdi_management.make_document( window_type = window_type )
+        AppGlobal.mdi_management.make_document( window_class = window_class, instance_ix = instance_ix )
 
     # ---------------------------------------
     def search_me( self, criteria = None ):
@@ -668,7 +793,8 @@ class StuffdbMainWindow( QMainWindow ):
             msg     = f"format-exc       >>{s_trace}<<"
             logging.error( msg )
 
-            msg     = f"looking for function and got exception \n    >>{a_function_name = }<< in {active_window = }"
+            msg     = ( "looking for function and got exception \n "
+                      f"   >>{a_function_name = }<< in {active_window = }" )
             logging.error( msg )
 
         #     #raise  # to re raise same

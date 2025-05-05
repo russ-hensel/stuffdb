@@ -142,22 +142,18 @@ class PlantingDocument( base_document_tabs.DocumentBase ):
     """
     for the planting table....
     """
-    def __init__(self, ):
+    def __init__(self, instance_ix = 0 ):
         """
         the usual
         """
-        super().__init__()
+        super().__init__( instance_ix )
 
         self.detail_table_name  = "planting"
         self.text_table_name    = "planting_text"  # text tables always id and text_data
         self.subwindow_name     = "PlantingSubWindow"
 
-        self.setWindowTitle( self.subwindow_name )
-        AppGlobal.mdi_management.update_menu_item( self )
-        # combo_dict_ext.build_it( AppGlobal.qsql_db_access.db )
-            # maybe move to main window ??
         self._build_gui()
-
+        self.__init_2__()
     # --------------------------------
     @property
     def topic( self ):

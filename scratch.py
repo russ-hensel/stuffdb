@@ -1,5 +1,12 @@
 
 
+# ---------------------- some problem getting this to run
+# import adjust_path
+# import  fluent_python_helpers as fph
+
+
+# deck = fph.FrenchDeck()
+
 
 
 

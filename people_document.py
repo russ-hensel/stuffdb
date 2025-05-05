@@ -124,11 +124,11 @@ class PeopleDocument( base_document_tabs.DocumentBase ):
     """
     for the people table....
     """
-    def __init__(self, ):
+    def __init__(self, instance_ix = 0 ):
         """
         the usual
         """
-        super().__init__()
+        super().__init__( instance_ix )
 
         self.db                     = AppGlobal.qsql_db_access.db
 
@@ -138,8 +138,8 @@ class PeopleDocument( base_document_tabs.DocumentBase ):
         self.help_filename          = "people_doc.txt"
         self.subwindow_name         = "PeopleDccument"
 
-        self.setWindowTitle( self.subwindow_name )
         self._build_gui()
+        self.__init_2__()
 
     # --------------------------------
     def get_topic( self ):
@@ -152,8 +152,8 @@ class PeopleDocument( base_document_tabs.DocumentBase ):
         record_state    = self.detail_tab.data_manager.record_state
 
         if record_state:
-            topic    = f"{topic} {self.record_state = }"
-        topic    = f"{topic} {self.detail_tab.l_name_field .text()}"
+            topic    = f"{topic} {record_state = }"
+        topic    = f"{topic} {self.detail_tab.l_name_field.text()}"
 
         return   topic
 
@@ -1310,13 +1310,11 @@ class PeopleTextTab( base_document_tabs.TextTabBase  ):
             None.
 
         """
-        # self.table_name          = "stuff"  not needed we get fro parent
-
         super().__init__( parent_window )
-        self.tab_name            = "PeopleTextTab"
+        self.tab_name         = "PeopleTextTab"
 
-        self.table              = "people_text"
-        self.table_name         = self.table   # !! eliminate one or other
+        self.table            = "people_text"
+        self.table_name       = self.table   # !! eliminate one or other
 
         self.post_init()
 

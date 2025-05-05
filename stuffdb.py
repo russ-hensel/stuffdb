@@ -3,7 +3,7 @@
 
 # ---- tof
 """
-
+the true main for the stuffdb, but launch from main
 
 """
 # --------------------
@@ -14,7 +14,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver 70: 2025 04 09.01"
+__version__   = "Ver 73: 2025 05 03.01"
 
 # ---- imports
 import datetime
@@ -24,11 +24,11 @@ import os
 import random
 import sys
 import time
-
-
 import traceback
 
-
+from PyQt5.QtWidgets import (
+                             QMessageBox,
+                                 )
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import (PYQT_VERSION_STR,
                           QT_VERSION_STR,
@@ -75,7 +75,7 @@ from app_global import AppGlobal
 import app_logging
 import data_dict
 #import   stuffdb_def
-import dict_main
+#import dict_main
 import text_edit_ext
 import wat_inspector
 import key_gen
@@ -84,9 +84,8 @@ import main_window
 import parameters
 import qsql_db_access
 import sql_util
-
+#import parameter_check
 # ---- end imports
-
 
 # -----------------------------
 def delete_file( file_name ):
@@ -107,7 +106,6 @@ def delete_file( file_name ):
 
     # else:
     #     print( f"file already gone  {file_name}                ")
-
 
 # ============================================
 class App( ):
@@ -183,6 +181,8 @@ class App( ):
         AppGlobal.logger.debug( "self.q_app.exec_() next" )
         a_wat_inspector  = wat_inspector.WatInspector( self.q_app )
         # dialog       = wat_inspector.DisplayWat( self.q_app )
+        #QTimer.singleShot(0, parameter_check.check_new_pictures  )
+        QTimer.singleShot(0, self.parameters.startup_function  )
         self.q_app.exec_()   # perhaps move to run method
 
     # --------------------------------------------
@@ -254,6 +254,18 @@ class App( ):
         """
         # a_filename = self.starting_dir  + os.path.sep + "parameters.py"
         AppGlobal.os_open_txt_file(  self.parameters.gui_text_log_fn )
+
+    # ---- autostart functions for parameters
+    # ----------------------------------------------
+    def welcome_msg( self,  ):
+
+     #PARAMETERS   = parameters.PARAMETERS
+
+        msg      = ( "{Hello")
+        QMessageBox.information( AppGlobal.main_window,
+                                     "welcome msg ", msg )
+
+
 
 def main():
     app         = App(   )

@@ -452,6 +452,8 @@ class CQEditBase(   ):
                  is_keep_prior_enabled  = None   ):  # perhaps last should be false or is it defaulted later
         """
         read it
+        appears to be a mixin as it is only used to add methods to other classes
+
         should always be called by descendants all args required
         but having trouble with inherit so added defaults
         may check some for none and except

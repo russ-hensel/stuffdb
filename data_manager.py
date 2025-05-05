@@ -16,7 +16,6 @@ if __name__ == "__main__":
 
 import logging
 
-
 # --------------------
 # ---- import
 from PyQt5.QtSql import QSqlRecord
@@ -28,7 +27,7 @@ import info_about
 import string_util
 
 logger              = logging.getLogger( )
-LOG_LEVEL           = 25 # level for more debug    higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
+LOG_LEVEL           =  5 # level for more debug    higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
 
 # may also be defined in base doc or somewher else this should be reconciled
 RECORD_NULL         = 0

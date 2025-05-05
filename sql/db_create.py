@@ -97,8 +97,6 @@ DB_CONNECTION    = None
 
 # print( DB_FILE_NAME )
 
-
-
 # ---- general purpose -------------------------------------
 def create_connection( db_fn = None ):
     """
@@ -458,7 +456,7 @@ if __name__ == "__main__":
     """
     """
     1/0
-    this is obsolete, move over to stuff_util_sql instesd
+    print( "this is obsolete, move over to stuff_util_sql instesd" )
     # ---- run manually --------------------------
     # nire at tio
     PARM            = "X"

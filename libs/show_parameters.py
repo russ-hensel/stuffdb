@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
 #import sys
 
-from app_global import AppGlobal
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtSql import (QSqlDatabase,
                          QSqlDriver,
@@ -52,7 +52,7 @@ from PyQt5.QtWidgets import (QApplication,
 # import  tracked_qsql_relational_table_model
 
 import parameters
-
+from   app_global import AppGlobal
 
 class DisplayParameters( QDialog ):
     """
@@ -78,7 +78,7 @@ class DisplayParameters( QDialog ):
         qt_xpos     = 10
         qt_ypos     = 10
         qt_width    = 1000
-        qt_height   = 500
+        qt_height   = 600
         self.tab_help_dict   = { }
         self.setGeometry(  qt_xpos,
                            qt_ypos ,
@@ -109,7 +109,7 @@ class DisplayParameters( QDialog ):
         cursor = text_edit.textCursor()
         cursor.insertText( parm_text )
 
-        cursor.movePosition(cursor.Start)  # Move cursor to the start (top)
+        cursor.movePosition(cursor.Start)
         text_edit.setTextCursor(cursor)
         text_edit.ensureCursorVisible()
 
@@ -120,6 +120,5 @@ class DisplayParameters( QDialog ):
         self.save_button        = a_widget
         a_widget.clicked.connect( self.accept )
         button_layout.addWidget( a_widget )
-
 
 # ---- eof
