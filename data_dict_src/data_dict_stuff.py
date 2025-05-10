@@ -58,6 +58,7 @@ def build_it( a_data_dict ):
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func= None, )
+    a_table_dict.add_column( a_column_dict )
 
     # ---- text_data
     a_column_dict = data_dict.ColumnDict(    column_name    = "text_data",
@@ -121,8 +122,6 @@ def build_it( a_data_dict ):
                                              dict_to_edit_cnv     = "cnv_int_to_str",
                                              edit_to_rec_cnv      = "cnv_str_to_int",
                                              edit_to_dict_cnv     = "cnv_str_to_int",
-
-
                                              display_type   = "integer",
                                              max_len            = None,
                                              default_func       = None,
@@ -327,17 +326,18 @@ def build_it( a_data_dict ):
 
     # ---- cmnt
     a_column_dict = data_dict.ColumnDict(    column_name    = "cmnt",
-                                             db_type        = "VARCHAR(10)",
+                                             db_type        = "VARCHAR(250)",
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func       = None,
                                              col_head_text      = "Comment",
                                              col_head_width     = 20,
                                              col_head_order     = 2, )
+    a_table_dict.add_column( a_column_dict )
 
     # ---- status
     a_column_dict = data_dict.ColumnDict(    column_name    = "status",
-                                             db_type        = "VARCHAR(250)",
+                                             db_type        = "VARCHAR(20)",
                                              display_type   = "string",
                                              display_order  =  38,
                                              max_len        = None,
@@ -354,6 +354,18 @@ def build_it( a_data_dict ):
                                              col_head_text      = "In ID Old",
                                              col_head_width     = 20,
                                              col_head_order     = 30, )
+    a_table_dict.add_column( a_column_dict )
+
+    # ---- id_in   the new one
+    a_column_dict = data_dict.ColumnDict(    column_name    = "id_in",
+                                             display_order          = 31,
+                                             form_col_span          = 1,
+                                             db_type                = "INTEGER",
+                                             form_read_only       = True,
+                                             rec_to_edit_cnv      = "cnv_int_to_str",
+                                             dict_to_edit_cnv     = "cnv_int_to_str",
+                                             edit_to_rec_cnv      = "cnv_str_to_int",
+                                             edit_to_dict_cnv     = "cnv_str_to_int", )
     a_table_dict.add_column( a_column_dict )
 
     # ---- dt_item
@@ -504,31 +516,68 @@ def build_it( a_data_dict ):
 
     # ---- "id",
     a_column_dict = data_dict.ColumnDict( column_name  = "id",
-                                          db_type      = "VARCHAR(15)",
+                                             display_order  =  0,
+                                             form_col_span     = 1,
+                                             db_type              = "INTEGER",
+                                             form_read_only       = True,
                                              rec_to_edit_cnv      = "cnv_int_to_str",
                                              dict_to_edit_cnv     = "cnv_int_to_str",
                                              edit_to_rec_cnv      = "cnv_str_to_int",
                                              edit_to_dict_cnv     = "cnv_str_to_int",
+                                             display_type   = "integer",
+                                             max_len            = None,
+                                             default_func       = None,
+                                             col_head_text      = "ID",
+                                             col_head_width     = 10,
+                                             col_head_order     = 1, )
+    a_table_dict.add_column( a_column_dict )
+
+    # ---- "id",
+    a_column_dict = data_dict.ColumnDict( column_name  = "id_old",
+                                          db_type      = "VARCHAR(15)",
+                                             # rec_to_edit_cnv      = "cnv_int_to_str",
+                                             # dict_to_edit_cnv     = "cnv_int_to_str",
+                                             # edit_to_rec_cnv      = "cnv_str_to_int",
+                                             # edit_to_dict_cnv     = "cnv_str_to_int",
                                              form_read_only       = True,
-                                          display_type = "string",
-                                          max_len        = None,
-                                          default_func   = None,
-                                         col_head_text      = "ID",
+                                             display_type = "string",
+                                             max_len        = None,
+                                             default_func   = None,
+                                             col_head_text      = "ID Old",
                                              col_head_width     = 20,
                                              col_head_order     = 2, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "stuff_id",
     a_column_dict = data_dict.ColumnDict( column_name  = "stuff_id",
-                                          db_type      = "VARCHAR(15)",
+                                             form_col_span        = 1,
+                                             db_type              = "INTEGER",
                                              form_read_only       = True,
-                                          display_type = "string",
+                                             rec_to_edit_cnv      = "cnv_int_to_str",
+                                             dict_to_edit_cnv     = "cnv_int_to_str",
+                                             edit_to_rec_cnv      = "cnv_str_to_int",
+                                             edit_to_dict_cnv     = "cnv_str_to_int",
+                                             display_type   = "integer",
+                                             max_len            = None,
+                                             default_func       = None,
+                                             col_head_text      = "Stuff ID",
+                                             col_head_width     = 10,
+                                             col_head_order     = 4, )
+
+    a_table_dict.add_column( a_column_dict )
+
+    # ---- "stuff_id",
+    a_column_dict = data_dict.ColumnDict( column_name  = "stuff_id_old",
+                                          db_type      = "VARCHAR(15)",
+                                          form_read_only       = True,
+                                          display_type     = "string",
                                           max_len        = None,
                                           default_func   = None,
-                                           col_head_text      = "Stuff ID",
-                                             col_head_width     = 20,
-                                             col_head_order     = 2, )
+                                          col_head_text      = "Stuff ID Old",
+                                          col_head_width     = 15,
+                                             col_head_order     = 6, )
     a_table_dict.add_column( a_column_dict )
+
 
     # ---- "event_dt",
     a_column_dict = data_dict.ColumnDict( column_name  = "event_dt",
@@ -542,7 +591,7 @@ def build_it( a_data_dict ):
                                           default_func   = None,
                                            col_head_text      = "Date",
                                              col_head_width     = 20,
-                                             col_head_order     = 2, )
+                                             col_head_order     = 12, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "dlr",
@@ -553,7 +602,7 @@ def build_it( a_data_dict ):
                                           default_func   = None,
                                            col_head_text      = "$ Amount",
                                              col_head_width     = 20,
-                                             col_head_order     = 2, )
+                                             col_head_order     = 20, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "cmnt",
@@ -564,7 +613,7 @@ def build_it( a_data_dict ):
                                           default_func   = None,
                                            col_head_text      = "Comment",
                                              col_head_width     = 20,
-                                             col_head_order     = 2, )
+                                             col_head_order     = 30, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "type",
@@ -575,7 +624,7 @@ def build_it( a_data_dict ):
                                           default_func   = None,
                                            col_head_text      = "Type",
                                              col_head_width     = 20,
-                                             col_head_order     = 2, )
+                                             col_head_order     = 40, )
     a_table_dict.add_column( a_column_dict )
 
 

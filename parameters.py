@@ -66,7 +66,11 @@ class Parameters( ):
         #self.mode_github()
         #self.mode_python_ex_on_theprof()
         #self.mode_imported_on_theprof()
-        #self.mode_build_me()
+        self.mode_build_me()
+
+        self.mode_ramdisk_temp2()
+
+
         #self.mode_imported_on_theprof()
 
         #self.mode_builddb_on_theprof()
@@ -152,6 +156,28 @@ class Parameters( ):
 
     # ---- ---->> Methods:  one for each mode
     # -------
+    def mode_ramdisk_temp2( self ):
+        """
+        /tmp/ramdisk/temp2.db
+        """
+        self.mode               = "mode_new_db"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/tmp/ramdisk/temp2.db"
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
+                # self.picture_db_root    = "/mnt/WIN_D/PhotoDB/" my reeal pics
+        self.picture_db_sub     = "/99"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        self.logging_level      = logging.DEBUG   # ERROR
+
+    # -------
     def mode_new_db( self ):
         """
         make directories the real pictures
@@ -207,6 +233,8 @@ class Parameters( ):
         self.picture_db_root    = "/mnt/WIN_D/temp_photo"
         self.picture_db_root    = "/mnt/WIN_D/PhotoDB"
 
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo/dest"
+
         self.picture_db_sub     = "/test_deleteinram "
         self.picture_db_sub     = "/99/new_test"
 
@@ -214,6 +242,8 @@ class Parameters( ):
             # all pictures should be under this directory
         # ---- file  and path names
         self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+        self.picture_browse     = "/mnt/WIN_D/temp_photo/source"
+
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"

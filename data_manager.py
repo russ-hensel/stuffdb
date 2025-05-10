@@ -352,7 +352,7 @@ class DataManager(   ):
                 msg   = ( f"update_record_fetched_v3 for {id_value} got 0 records " )
                 logging.error( msg )
 
-                1/0   # pretty poor
+                # 1/0   # pretty poor  !!
         else:
             msg   = ( f"update_record_fetched_v3 for id_value = >{id_value}< was falsy " )
             logging.error( msg )

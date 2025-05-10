@@ -1,42 +1,31 @@
-2025-05-05 13:06:18,326 - CRITICAL - Root logger is set up. Modules can now log using logging.getLogger().
-2025-05-05 13:06:18,326 - INFO - config_logger call was: logging.info
-2025-05-05 13:06:18,327 - DEBUG - QsqlDbAccess  init_db()
-2025-05-05 13:06:18,330 - DEBUG - connection_name = 'qt_sql_default_connection'
-2025-05-05 13:06:18,413 - Notice - 
-2025-05-05 13:06:18,413 - Notice - ============================
-2025-05-05 13:06:18,413 - Notice - 
-2025-05-05 13:06:18,413 - Notice - Application: Stuff DB in QT Ver 73: 2025 05 03.01 in mode mode_github_example_code_on_theprofand version  Ver 73: 2025 05 03.01
-2025-05-05 13:06:18,413 - Notice - 
-2025-05-05 13:06:18,413 - Notice - command line arg + 0  =  main.py)
-2025-05-05 13:06:18,413 - Notice - command line arg + 1  =  mode_github_example_code_on_theprof)
-2025-05-05 13:06:18,413 - Notice - current directory /mnt/WIN_D/for_github/stuffdb
-2025-05-05 13:06:18,414 - Notice - Time now: 2025-05-05 17:06:18
-2025-05-05 13:06:18,414 - DEBUG - self.q_app.exec_() next
-2025-05-05 13:06:20,101 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
-2025-05-05 13:06:20,107 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
-2025-05-05 13:06:20,107 - DEBUG - post_init DetailTabBase  HelpDetailTab  
-2025-05-05 13:06:20,114 - ERROR - ------------------------ monkey_patch_here re-examine this--------------------------
-2025-05-05 13:06:20,118 - DEBUG - set_size_pos--------------------------------------  
-2025-05-05 13:06:27,104 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n     \n     ORDER BY  lower(help_info.title) ASC  '
-2025-05-05 13:06:27,128 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n     \n     ORDER BY  lower(help_info.title) ASC  '
-2025-05-05 13:06:27,916 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-05-05 13:06:27,917 - DEBUG - update_db record null no action, return help_info
-2025-05-05 13:06:27,917 - DEBUG - update_db record null no action, return help_text
-2025-05-05 13:06:27,917 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-05-05 13:06:27,918 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-05-05 13:06:27,922 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-05-05 13:06:27,923 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-05-05 13:06:27,923 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-05-05 13:06:32,314 - INFO - forget_document begin 
->>>>>>>>>>* HelpDocument  *<<<<<<<<<<<<
-
->>>>>>>>>>* DocumentBase  *<<<<<<<<<<<<
-        criteria_tab                  
->>>>>>>>>>* CriteriaTabBase *<<<<<<<<<<<<
-        detail_tab                    
->>>>>>>>>>* HelpDetailTab *<<<<<<<<<<<<
-        key_word_table_name           help_key_word                 
-        detail_notebook               <PyQt5.QtWidgets.QTabWidget object at 0x7fbbbd104830>
-        enable_send_topic_update      False                         
-        text_tab                      None                           !! update closed_topics 
-2025-05-05 13:06:32,315 - DEBUG - HelpSubWindow 1 has been closed
+2025-05-09 20:02:27,122 - CRITICAL - Root logger is set up. Modules can now log using logging.getLogger().
+2025-05-09 20:02:27,123 - INFO - config_logger call was: logging.info
+2025-05-09 20:02:27,123 - DEBUG - QsqlDbAccess  init_db()
+2025-05-09 20:02:27,127 - DEBUG - connection_name = 'qt_sql_default_connection'
+2025-05-09 20:02:27,238 - Notice - 
+2025-05-09 20:02:27,238 - Notice - ============================
+2025-05-09 20:02:27,238 - Notice - 
+2025-05-09 20:02:27,238 - Notice - Application: Stuff DB in QT Ver 73: 2025 05 03.01 in mode mode_github_example_code_on_theprofand version  Ver 73: 2025 05 03.01
+2025-05-09 20:02:27,238 - Notice - 
+2025-05-09 20:02:27,239 - Notice - command line arg + 0  =  main.py)
+2025-05-09 20:02:27,239 - Notice - command line arg + 1  =  mode_github_example_code_on_theprof)
+2025-05-09 20:02:27,239 - Notice - current directory /mnt/WIN_D/for_github/stuffdb
+2025-05-09 20:02:27,239 - Notice - Time now: 2025-05-10 00:02:27
+2025-05-09 20:02:27,239 - DEBUG - self.q_app.exec_() next
+2025-05-09 20:02:29,098 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
+2025-05-09 20:02:29,102 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
+2025-05-09 20:02:29,102 - DEBUG - post_init DetailTabBase  HelpDetailTab  
+2025-05-09 20:02:29,106 - ERROR - ------------------------ monkey_patch_here re-examine this--------------------------
+2025-05-09 20:02:29,109 - DEBUG - set_size_pos--------------------------------------  
+2025-05-09 20:02:40,629 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "import", "event" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-05-09 20:02:40,645 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "import", "event" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-05-09 20:02:42,845 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-05-09 20:02:42,846 - DEBUG - update_db record null no action, return help_info
+2025-05-09 20:02:42,846 - DEBUG - update_db record null no action, return help_text
+2025-05-09 20:02:42,847 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-05-09 20:02:42,847 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-05-09 20:02:42,856 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-05-09 20:02:42,856 - ERROR - send_topic_update needs fixing !! just re-enabled 
+2025-05-09 20:02:42,857 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-05-09 20:04:50,032 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-05-09 20:04:50,109 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'

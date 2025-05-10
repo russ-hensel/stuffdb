@@ -6,7 +6,6 @@
     to run along with sql utils
 
 
-
 """
 
 
@@ -40,9 +39,6 @@ class ParmsTemp( ):
     """
     manages parameter values: use it like an ini file but it is code
     """
-    # -------
-
-
 
     # ------->> default mode, always call
     def mode_default( self ):
@@ -114,10 +110,6 @@ class ParmsTemp( ):
         # icon for running app
         self.icon               = r"./misc/icon_red.png"
 
-        self.icon               =  "./misc/binocular.png"
-        self.icon               =  "./misc/iconfinder_database_103466.png"
-        self.icon               =  "./misc/db_red_on_yellow.png"
-
 
         self.text_edit_font     = ("Arial", 12)
 
@@ -172,38 +164,16 @@ class ParmsTemp( ):
         "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex (another copy).db",
         "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex (copy).db",
         "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db",
-        self.db_file_name      =  "/tmp/ramdisk/temp2.db"
+        self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/build_me.db"
+        self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db"
+        self.db_file_name      = "/tmp/ramdisk/temp.db"
+        self.db_file_name      = "/tmp/ramdisk/temp2.db"
 
-
-
-        # this is the name of a program: its executable with path info.
-        # to be used in opening an external editor
-        self.ex_editor         =  r"D:\apps\Notepad++\notepad++.exe"    # russ win 10
-        self.ex_editor         = "xed"
-
-        self.text_editor       = "xed"
-
-        self.text_editor_list  = [ "xed", "gedit" ]
-
-        # control button for editing the readme file
-        self.readme_fn          = "readme_rsh.txt"   # or None to suppress in gui
-            # a readme file accessible from the main menu
-
-        # or anything else ( will try to shell out may or may not work )
-        self.help_fn       =  "./docs/help.txt"   #  >>. this is the path to our main .py file self.py_path + "/" +
-        self.help_path     =  "./docs"
 
         self.idle_venv     = "py_12_misc"   # idle will open in this python venv
             # path leading to all docs and help
 
         #self.help_file       =  "http://www.opencircuits.com/Python_Smart_ClipBoard"
-
-        self.poll_delta_t      = 200      # 200 ok at least on win longer does not fix linux prob
-        self.poll_delta_t      = 100
-            # how often we poll for clip changes, in ms,
-            # think my computer works well as low as 10ms
-
-        self.auto_run           = True  # run code examples -- !! what but needed
 
         # ---- templates  a bit odd to control left margin -- !! change to textwrap
         self.text_templates     = {}
@@ -310,7 +280,6 @@ print( f"bash a_shell_template still needs writing { 0 = }"
         """
         #AppGlobal.parameters       = self   # register as a global -- phase out
         self.mode_default()
-        self.something = "something"
         #
 
         #rint( self ) # for debugging
@@ -364,88 +333,18 @@ print( f"bash a_shell_template still needs writing { 0 = }"
         a_str   = string_util.to_columns( a_str, ["db_type",
                                            f"{self.db_type}" ] )
 
-        a_str   = string_util.to_columns( a_str, ["logger_id", f"{self.logger_id}" ] )
-        a_str   = string_util.to_columns( a_str, ["logging_level", f"{self.logging_level}" ] )
-        a_str   = string_util.to_columns( a_str, ["pylogging_fn",    f"{self.pylogging_fn}" ] )
-
-        a_str   = string_util.to_columns( a_str, [ "log_mode",
-                                                  f"{self.log_mode}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, [ "delete_log_on_start -- deprecate for log_mode",
-                                                  f"{self.delete_log_on_start}" ] )
+        # a_str   = string_util.to_columns( a_str, ["parameter_dir", f"{self.parameter_dir}" ] )
+        # a_str   = string_util.to_columns( a_str, ["icon", f"{self.icon}" ] )
 
 
-        # a_str   = string_util.to_columns( a_str, ["gui_text_log_fn", f"{self.gui_text_log_fn}" ] )
+        # a_str   = string_util.to_columns( a_str, ["computername", f"{self.computername}" ] )
+        # a_str   = string_util.to_columns( a_str, ["our_os", f"{self.our_os}" ] )
+        # a_str   = string_util.to_columns( a_str, ["py_path", f"{self.py_path}" ] )
+        # a_str   = string_util.to_columns( a_str, ["set_default_path_here", f"{self.set_default_path_here}" ] )
+        # a_str   = string_util.to_columns( a_str, ["poll_delta_t", f"{self.poll_delta_t}" ] )
 
-        a_str   = string_util.to_columns( a_str, ["readme_fn", f"{self.readme_fn}" ] )
-       # a_str   = string_util.to_columns( a_str, ["help_file",    f"{self.help_file}" ] )
-
-
-
-        a_str   = string_util.to_columns( a_str, ["icon", f"{self.icon}" ] )
-
-
-        a_str   = string_util.to_columns( a_str, ["computername", f"{self.computername}" ] )
-        a_str   = string_util.to_columns( a_str, ["our_os", f"{self.our_os}" ] )
-        a_str   = string_util.to_columns( a_str, ["py_path", f"{self.py_path}" ] )
-        a_str   = string_util.to_columns( a_str, ["set_default_path_here", f"{self.set_default_path_here}" ] )
-        a_str   = string_util.to_columns( a_str, ["poll_delta_t", f"{self.poll_delta_t}" ] )
-
-
-
-        a_str   = string_util.to_columns( a_str, ["help_fn",
-                                           f"{self.help_fn}" ] )
-        a_str   = string_util.to_columns( a_str, ["help_path",
-                                           f"{self.help_path}" ] )
-
-        # a_str   = string_util.to_columns( a_str, ["log_gui_text",
-        #                                    f"{self.log_gui_text}" ] )
-        a_str   = string_util.to_columns( a_str, ["opening_dir",
-                                           f"{self.opening_dir}" ] )
-        a_str   = string_util.to_columns( a_str, ["os_win",
-                                           f"{self.os_win}" ] )
-        a_str   = string_util.to_columns( a_str, ["picture_browse",
-                                           f"{self.picture_browse}" ] )
-
-
-        a_str   = string_util.to_columns( a_str, ["picture_db_root",
-                                           f"{self.picture_db_root}" ] )
-        a_str   = string_util.to_columns( a_str, ["picture_db_sub",
-                                           f"{self.picture_db_sub}" ] )
-
-        a_str   = string_util.to_columns( a_str, ["pic_nf_file_name",
-                                           f"{self.pic_nf_file_name}" ] )
-
-
-        a_str   = string_util.to_columns( a_str, ["platform",
-                                           f"{self.platform}" ] )
-        a_str   = string_util.to_columns( a_str, ["qt_height",
-                                           f"{self.qt_height}" ] )
-        a_str   = string_util.to_columns( a_str, ["qt_width",
-                                           f"{self.qt_width}" ] )
-        a_str   = string_util.to_columns( a_str, ["qt_xpos",
-                                           f"{self.qt_xpos}" ] )
-        a_str   = string_util.to_columns( a_str, ["qt_ypos",
-                                           f"{self.qt_ypos}" ] )
-
-
-        a_str   = string_util.to_columns( a_str, ["wat_qt_height",
-                                           f"{self.wat_qt_height}" ] )
-        a_str   = string_util.to_columns( a_str, ["wat_qt_width",
-                                           f"{self.wat_qt_width}" ] )
-        a_str   = string_util.to_columns( a_str, ["wat_qt_xpos",
-                                           f"{self.wat_qt_xpos}" ] )
-        a_str   = string_util.to_columns( a_str, ["wat_qt_ypos",
-                                           f"{self.wat_qt_ypos}" ] )
-
-
-        a_str   = string_util.to_columns( a_str, ["running_on",
-                                           f"{self.running_on}" ] )
-
-        return a_str
-
-        #---- sort into above
 
 
         return a_str
@@ -454,7 +353,7 @@ print( f"bash a_shell_template still needs writing { 0 = }"
 
 # something like this for creating on import
 # ---------------
-def create_if_needed( ):
+def create_if_needed_disabled( ):
     pass
 #     global PARAMETERS
 #     if not PARAMETERS:

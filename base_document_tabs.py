@@ -169,7 +169,7 @@ def model_submit_all( model, msg ):
     return ok
 
 #-------------------------
-def build_pic_filename( file_name, sub_dir    ):
+def build_pic_filename( *, file_name, sub_dir    ):
     """
     Returns:
         filename if exists else default from parameters
@@ -180,7 +180,7 @@ def build_pic_filename( file_name, sub_dir    ):
     """
     # for debugging may need this
     if type( sub_dir ) != str:
-        msg    = "build_pic_filename bad subdir look at self.ix_sub_dir"
+        msg    = "based_document_tabs build_pic_filename bad subdir look at self.ix_sub_dir"
         logging.error( msg )
         # import inspect  # for debug i
         # import logging
@@ -190,20 +190,21 @@ def build_pic_filename( file_name, sub_dir    ):
 
         return None
 
-    root         = AppGlobal.parameters.picture_db_root
+    root            = AppGlobal.parameters.picture_db_root
 
     if file_name == "":
         return None
-    file_name        = file_name.strip()
-    sub_dir          = sub_dir.strip()
 
-    full_file_name   = f"{root}/{sub_dir}/{file_name}".replace( "\\", "/" )
-    full_file_name   = full_file_name.replace( "///", "/" )
+    file_name       = file_name.strip()
+    sub_dir         = sub_dir.strip()
+
+    full_file_name  = f"{root}/{sub_dir}/{file_name}".replace( "\\", "/" )
+    full_file_name  = full_file_name.replace( "///", "/" )
         # just in case we have dups !! this is crude
-    full_file_name   = full_file_name.replace( "//", "/" )
+    full_file_name  = full_file_name.replace( "//", "/" )
         # just in case we have dups
 
-    debug_msg       = f"build_pic_filename {full_file_name = }"
+    debug_msg       = f"build_pic_filename full_file_name build_pic_filename {full_file_name = }"
     logging.debug( debug_msg )
 
     return full_file_name
@@ -3125,14 +3126,14 @@ class PictureListSubTabBase( QWidget  ):
         self.list_ix        = new_list_ix
         # fn_index               = self.query_model_read.index( new_list_ix, 1 )
         # file_name              = self.query_model_read.data( fn_index, Qt.DisplayRole )
-        ix_fn                =  2  # column number
-        ix_sub_dir           =  3
+        ix_fn                =  3  # column number
+        ix_sub_dir           =  2
         #fn_item               =  model.item( self.list_ix,  ix_fn )  # may need to be model or ....
 
         sub_dir              = model.data( model.index( self.list_ix, ix_sub_dir ) )
         file_name            = model.data( model.index( self.list_ix, ix_fn ) )
         # combine next two ??
-        fn_item              = build_pic_filename( file_name, sub_dir )
+        fn_item              = build_pic_filename( file_name = file_name, sub_dir = sub_dir )
         fn_item              = fix_pic_filename( fn_item )
         index                = self.model.index( self.list_ix, 0)
 

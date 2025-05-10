@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# ---- tof
 """
 Created on Mon Jul 29 08:52:16 2024
+
+        should still be useful for import code
+        generation but if used move over to data dict
+
 
 todo!!
         add to columnms like stuff or call from util

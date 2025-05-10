@@ -112,28 +112,23 @@ from help
 
 
 #>>Py -------- create the tables --------  beware of use_temp --- then go set up key gen
+# run in spyder if still modifying code
 import adjust_path
-import check_fix
 import stuff_util_sql   as su
 import data_dict
+import py_helpers
 
+use_temp         = True
+db                     = su.create_connection( use_temp = use_temp )
+data_dict.build_it()
 
-db                       = su.create_connection( use_temp = True )
-a_db_checker    = check_fix.DbCheck( db )    # just an object create does not really do anything
+#table_name      = "stuff"
+table_name      = "stuff_text"
+#table_name      = "stuff_key_word"
+#table_name      = "stuff_event"
 
-# next should actually fix the key word index table -- will it create it --- probably not
-
-table          = "help_info"
-kw_table   =  "help_key_word"
-
-table          = "photo"
-table          = "photoshow"
-
-
-kw_table   =  table + "_key_word"
-
-a_db_checker.fix_key_word_index(  base_table_name = table,    key_word_table_name = kw_table )
-
-
-print( "done ")
-
+# ---- drop and create beware read first
+#ret   = py_helpers.confirm_continue(  f"drop and create next {use_temp = }" )
+su.drop_table(   db,   table_name = table_name, confirm = False  )
+       # need confirm = False if running from help else probably better not
+su.create_table( db,   table_name = table_name )

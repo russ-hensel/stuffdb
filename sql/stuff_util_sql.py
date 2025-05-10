@@ -9,7 +9,6 @@ Created on Mon Jan 20 17:41:10 2025
 
 # ---- tof
 
-
 # ---- imports
 import adjust_path
 # ---- begin pyqt from import_qt.py
@@ -49,11 +48,13 @@ App              = None
 DB_CONNECTION    = None
 
 #------------
-def create_connection( use_temp = False  ):
+def create_connection( use_temp = True  ):
     """
     Create a SQLite database connection.
     part of setup always use
     can choose database here
+    import stuff_util_sql as su
+
     """
     global DB_CONNECTION
     if DB_CONNECTION is not None:

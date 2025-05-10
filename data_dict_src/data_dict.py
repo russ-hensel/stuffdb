@@ -537,8 +537,6 @@ class TableDict(  ):
 
         return column_list
 
-
-
     #------------------------------------------------
     def to_history_list(self,    ):
         """
@@ -624,7 +622,6 @@ class TableDict(  ):
         column_list           = self.columns[ : ] # make copy
         column_list.sort( key = lambda i_column: i_column.display_order   )
 
-
         for ix_column, i_column in enumerate( column_list ):
             i_type          = i_column.db_type
             i_db_type       = i_column.db_type
@@ -646,11 +643,6 @@ class TableDict(  ):
             edit_to_rec_cnv         = i_column.edit_to_rec_cnv
             edit_to_dict_cnv        = i_column.edit_to_dict_cnv
             form_make_ref           = i_column.form_make_ref
-
-
-            # self.edit_to_rec            = edit_to_rec    # string name of function
-            # self.rec_to_edit            = rec_to_edit
-
 
 
             if  True:
@@ -1053,6 +1045,110 @@ class TableDict(  ):
 
         return sql
 
+    #---------------------------
+    def sql_to_insert_bind( self, debug = True ):
+        """
+        what it says, read
+
+        """
+        what           = "sql_to_insert_bind ---- code gen"
+        column_list    = []
+
+        line_list    = []
+        #rint( name_list )
+        indent_1     = 12 * " "
+        indent_2     = 40 * " "  + indent_1
+
+        line_list.append(  '' )
+        line_list.append(  f'{indent_1}# ---- {what}  ' )
+        line_list.append(  '' )
+
+        line_list.append(  f'{indent_1}sql        =   """INSERT INTO    {self.table_name} ( ' )
+
+        ntc             = ","
+        ix_max          = len( self.columns ) -1
+
+        for ix_column, i_column in enumerate( self.columns ):
+            i_type          = i_column.db_type
+            i_db_type       = i_column.db_type
+            i_field_name      = i_column.column_name
+
+            if ix_column == ix_max:
+                ntc = ""
+
+            line_list.append(  f"{indent_1}{i_field_name}{ntc}", )
+
+        line_list.append(  f'{indent_1} ) """' )
+
+        # ---- second pass
+        line_list.append(  f"{indent_1}   " )
+        line_list.append(  f"{indent_1}VALUES ( " )
+
+        ntc             = ","
+        ix_max          = len( self.columns ) -1
+
+        for ix_column, i_column in enumerate( self.columns ):
+            i_type          = i_column.db_type
+            i_db_type       = i_column.db_type
+            i_field_name      = i_column.column_name
+            i_edit_in_type  = i_column.edit_in_type
+
+            if ix_column == ix_max:
+                ntc = ""
+
+            line_list.append(  f"{indent_1}:{i_field_name}{ntc}"  )
+        line_list.append(  f'{indent_1} ) ' )
+
+        # ---- third pass
+        line_list.append(  f"{indent_1} " )
+        line_list.append(  f"{indent_1}query.prepare( sql )   " )
+        line_list.append(  f"{indent_1} " )
+        #line_list.append(  f"{indent_1}VALUES ( " )
+
+        ntc             = ","
+        ix_max          = len( self.columns ) -1
+
+        for ix_column, i_column in enumerate( self.columns ):
+            i_type          = i_column.db_type
+            i_db_type       = i_column.db_type
+            i_field_name      = i_column.column_name
+
+            if ix_column == ix_max:
+                ntc = ""
+
+            line_list.append(  f'{indent_1}query.bindValue( ":{i_field_name}", {i_field_name} )'   )
+
+
+        a_str       = "\n".join( line_list )
+        return a_str
+
+    #----------------------------------
+    def splits_to_bind( self, debug = True ):
+        """
+        what it says, read
+        first written for stuff_events
+
+        """
+        what           = "splits_to_bind ---- code gen "
+        column_list    = []
+        line_list      = []
+
+        indent_1       = 12 * " "
+
+        line_list.append(  '' )
+        line_list.append(  f'{indent_1}# ---- {what} - will need editing -------------------------------' )
+        line_list.append(  '' )
+        line_list.append(  f'{indent_1}ix_adj = -1 ' )
+        line_list.append(  '' )
+
+        for ix_column, i_column in enumerate( self.columns ):
+            i_field_name        = i_column.column_name
+            line_list.append(  f"{indent_1}{i_field_name}          = import_utils.no_quotes( splits[ {ix_column} + ix_adj ] ) "  )
+
+        a_str       = "\n".join( line_list )
+        return a_str
+
+    # ------------------------------
     def __str__( self, ):
         """ """
         a_str       = "\n\n Table Dict "
@@ -1063,6 +1159,7 @@ class TableDict(  ):
             # a_str   =  f"{a_str}\n    # ---- {i_column.column_name}  "
             # a_str   =  f"{a_str}\n     {i_column}  "
         return a_str
+
 
 # ----------------------------------------
 class ColumnDict(  ):
