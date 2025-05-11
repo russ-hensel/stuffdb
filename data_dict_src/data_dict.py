@@ -382,7 +382,6 @@ class TableDict(  ):
 
         return name_to_ix_dict
 
-
     #------------------------------------------------
     def get_detail_columns(self,    ):
         """
@@ -739,9 +738,6 @@ class TableDict(  ):
 
                 line_list.append( f'{indent_1}layout.addWidget( edit_field, columnspan = {form_col_span} ) ' )
 
-
-
-
        # edit_field.setReadOnly( True )
 
                 # self.form_read_only         = form_read_only
@@ -879,8 +875,6 @@ class TableDict(  ):
         a_str       = "\n".join( line_list )
         return a_str
 
-
-
     #------------------------------------------------
     def to_upgrade_self(self,    ):
         """
@@ -1013,17 +1007,7 @@ class TableDict(  ):
 
             a_str      = f'{a_str}\n    a_table_dict.add_column( a_column_dict )'
 
-                 # column_name        = None,
-                 # db_type            = None,   # for sql
-                 # # db_convert_type    = None,    # for record to field looks same as edit_in_type
-                 # edit_in_type       = None,    # for missing sql types and edit input type
-                 #                               # some confusion with db_type
-                 # form_edit          = None,    # edit to be used, pretty much auto for most fields plus Int but not dates
-                 # display_type       = None,
-                 # display_order          = COLUMN_ORDER,
-                 # max_len                = None,
-                 # default_func           = None,
-        #rint( a_str )
+
         return a_str
 
     #---------------------------
@@ -1078,7 +1062,7 @@ class TableDict(  ):
 
             line_list.append(  f"{indent_1}{i_field_name}{ntc}", )
 
-        line_list.append(  f'{indent_1} ) """' )
+
 
         # ---- second pass
         line_list.append(  f"{indent_1}   " )
@@ -1097,7 +1081,8 @@ class TableDict(  ):
                 ntc = ""
 
             line_list.append(  f"{indent_1}:{i_field_name}{ntc}"  )
-        line_list.append(  f'{indent_1} ) ' )
+        line_list.append(  f'{indent_1} ) """' )
+        #line_list.append(  f'{indent_1} ) ' )
 
         # ---- third pass
         line_list.append(  f"{indent_1} " )
@@ -1117,6 +1102,9 @@ class TableDict(  ):
                 ntc = ""
 
             line_list.append(  f'{indent_1}query.bindValue( ":{i_field_name}", {i_field_name} )'   )
+
+        line_list.append(  '' )
+        line_list.append(  f'{indent_1}# ---- {what} ends  ' )
 
 
         a_str       = "\n".join( line_list )
@@ -1144,6 +1132,10 @@ class TableDict(  ):
         for ix_column, i_column in enumerate( self.columns ):
             i_field_name        = i_column.column_name
             line_list.append(  f"{indent_1}{i_field_name}          = import_utils.no_quotes( splits[ {ix_column} + ix_adj ] ) "  )
+
+        line_list.append(  '' )
+        line_list.append(  f'{indent_1}# ---- {what} ends  ' )
+
 
         a_str       = "\n".join( line_list )
         return a_str

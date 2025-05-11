@@ -1348,7 +1348,6 @@ class ListTabBase( DetailTabBase ):
 
         """
         super().__init__( parent_window  )
-        #self.list_ix            = 5
 
     # ------------------------------------------
     def _build_gui( self, ):
@@ -1432,7 +1431,7 @@ class ListTabBase( DetailTabBase ):
         full of chat tries and retries
 
         """
-           # Iterate from bottom to top to avoid shifting row indices
+        # Iterate from bottom to top to avoid shifting row indices
 
         model    = self.list_model
 
@@ -1458,8 +1457,6 @@ class ListTabBase( DetailTabBase ):
                            f" after removeRows: {model.rowCount()}")
                 else:
                     print("ListTabBase_delete_row_by_id Failed to remove row.")
-
-
 
                 model.rowsRemoved.emit( QModelIndex(), row, row)
                 model.layoutChanged.emit()
@@ -2253,7 +2250,6 @@ class HistoryTabBase( QWidget ):
 
         debug_msg  = (f"HistoryTabBase_delete_row_by_id No row found with id = {id_to_delete}")
         logging.log( LOG_LEVEL,  debug_msg, )
-
 
 # ==================================
 class TextTabBase( DetailTabBase  ):
@@ -3146,8 +3142,7 @@ class PictureListSubTabBase( QWidget  ):
         selection_model.select( index, selection_model.Select | selection_model.Rows )
 
         view                    = self.view
-        # Optionally, scroll to the selected row
-        self.view.scrollTo( index )
+        view.scrollTo( index )
 
         #file_name  = fn_item.text() if fn_item is not None else ""
         file_name       = fn_item
@@ -3169,6 +3164,7 @@ class PictureListSubTabBase( QWidget  ):
         if other_picture_tab:
             other_picture_tab.display_file( file_name )
 
+    # ------------------------------------
     def set_headers( self ):
         """
         what it says, read

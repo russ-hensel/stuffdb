@@ -672,3 +672,5 @@
 2025-05-11 09:08:53,633 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
 2025-05-11 09:09:16,420 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
 2025-05-11 09:09:17,964 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-05-11 09:16:56,019 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-05-11 09:16:56,021 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
