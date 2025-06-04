@@ -465,13 +465,13 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- "phone_old",
-    a_column_dict = data_dict.ColumnDict( column_name  = "phone",
+    a_column_dict = data_dict.ColumnDict( column_name  = "phone_old",
                                              display_order  =  40,
                                           db_type      = "VARCAR(35)",
                                           display_type = "error",
                                           max_len        = None,
                                           default_func   = None,
-                                          col_head_text      = "Phone",
+                                          col_head_text      = "Phone Old",
                                           col_head_width     = 40, )
     a_table_dict.add_column( a_column_dict )
 
@@ -485,15 +485,15 @@ def build_it( a_data_dict ):
                                           col_head_width     = 50, )
     a_table_dict.add_column( a_column_dict )
 
-    # # ---- "phone",
-    # a_column_dict = data_dict.ColumnDict( column_name  = "phone",
-    #                                       db_type      = "VARCAR(100)",
-    #                                       display_type = "error",
-    #                                       max_len        = None,
-    #                                       default_func   = None,
-    #                                       col_head_text      = "Phone",
-    #                                       col_head_width     = 100, )
-    # a_table_dict.add_column( a_column_dict )
+    # ---- "phone",
+    a_column_dict = data_dict.ColumnDict( column_name  = "phone",
+                                          db_type      = "VARCAR(100)",
+                                          display_type = "error",
+                                          max_len        = None,
+                                          default_func   = None,
+                                          col_head_text      = "Phone",
+                                          col_head_width     = 100, )
+    a_table_dict.add_column( a_column_dict )
 
     # ---- "autodial",
     a_column_dict = data_dict.ColumnDict( column_name  = "autodial",

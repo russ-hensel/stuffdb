@@ -18,24 +18,15 @@ if __name__ == "__main__":
     main.main()
 # --------------------
 
-# # --------------------
-# if __name__ == "__main__":
-#     #----- run the full app
-#     import main_qt
-#     #main.main()
-
 
 # --------------------
 # ---- imports
-import functools
+#import functools
 import logging
 import pdb
 import traceback
 import time
-#import subprocess
-#from   subprocess import run
-#from   subprocess import Popen, PIPE, STDOUT
-#import datetime
+
 from datetime import datetime
 from functools import partial
 

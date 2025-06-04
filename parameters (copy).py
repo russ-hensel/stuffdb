@@ -160,7 +160,7 @@ class Parameters( ):
         """
         /tmp/ramdisk/temp2.db
         """
-        self.mode               = "mode_ramdisk_temp2"
+        self.mode               = "mode_new_db"
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
@@ -176,13 +176,6 @@ class Parameters( ):
         self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
 
         self.logging_level      = logging.DEBUG   # ERROR
-
-        # control initial size and position with:
-        self.qt_width           = 1400
-        self.qt_height          = 800
-        self.qt_xpos            = 50
-        self.qt_ypos            = 50
-
 
     # -------
     def mode_new_db( self ):

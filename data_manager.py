@@ -29,7 +29,7 @@ import string_util
 logger              = logging.getLogger( )
 LOG_LEVEL           =  5 # level for more debug    higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
 
-# may also be defined in base doc or somewher else this should be reconciled
+# may also be defined in base doc or somewher else this should be reconciled  data_manager.RECORD_NULL
 RECORD_NULL         = 0
 RECORD_FETCHED      = 1
 RECORD_NEW          = 2

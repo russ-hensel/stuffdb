@@ -107,13 +107,12 @@ import data_dict
 import gui_qt_ext
 import wat_inspector
 from   app_global import AppGlobal
-
+import data_manager
 # ---- end imports
 
 LOG_LEVEL   = 30    # higher is more
 logger      = logging.getLogger( )
 PARAMETERS  = parameters.PARAMETERS
-
 
 
 # ----------------------------------------
@@ -1357,12 +1356,14 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
     # -----------------------------
     def add_to_show( self, ):
         """
-        # change name to add to album when ewe get farther along
+        # change name to add to album when we get farther along
         add a picture to a show -- which must be open in another window
         query.addBindValue( data_in_dict["photo_id"]  )
         """
         # dict is a bit odd  --- some is wrong all we really need i photo_id
         #photo_id      =  int( self.id_field.text() )  # may be available elsewhere   this worul db test
+
+        # next looks a little messed up think photo_id is only needed data element because we will refetch
         photo_id      =  self.data_manager.current_id
         photo_fn      =  self.file_field.text()
         row_dict            = { "photo_name":               "from photo sub_window",
@@ -1451,7 +1452,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         # self.sub_dir_field.text()
         # self.file_field.text()
 
-        full_file_name  = base_document_tabs.build_pic_filename( self.file_field.text(), self.sub_dir_field.text() )
+        full_file_name  = base_document_tabs.build_pic_filename( file_name = self.file_field.text(), sub_dir = self.sub_dir_field.text() )
 
         msg       = ( f"picture_document.get_picture_file_name{full_file_name}")
         logging.debug( msg )
@@ -1774,7 +1775,7 @@ class PictureBrowseSubTab( QWidget ):
         album_target    = album_docs[ 0 ]
         record_state    = album_target.detail_tab.data_manager.record_state
 
-        if record_state == 0:
+        if record_state == data_manager.RECORD_NULL:
             msg     = "For this to work you need an item in your Album Document."
             raise app_exceptions.ReturnToGui( msg )
 

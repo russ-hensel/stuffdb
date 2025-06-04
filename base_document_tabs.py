@@ -3,8 +3,6 @@
 # pylint: disable=E221,E201,E202,C0325,E0611,W0201,W0612
 """
 
-
-
 """
 
 # ---- tof
@@ -31,9 +29,10 @@ import string_util
 import text_edit_ext
 #import table_model
 import wat_inspector
-from app_global import AppGlobal
-from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-# ---- begin pyqt from import_qt.py
+from app_global     import AppGlobal
+from PyQt5.QtCore   import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+from PyQt5.QtCore   import Qt, QDateTime
+from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtGui import (QFont,
                          QIntValidator,
                          QStandardItem,
@@ -169,7 +168,7 @@ def model_submit_all( model, msg ):
     return ok
 
 #-------------------------
-def build_pic_filename( *, file_name, sub_dir    ):
+def build_pic_filename( *, file_name, sub_dir ):
     """
     Returns:
         filename if exists else default from parameters
@@ -275,6 +274,14 @@ def table_widget_no_edit( table_widget  ):
             if item is not None:
                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
 
+# -----------------------------------
+class DateFormatDelegate( QStyledItemDelegate ):
+    def displayText(self, value, locale):
+
+        # Assuming the integer is a Unix timestamp in seconds
+        date = QDateTime.fromSecsSinceEpoch(int(value ) )
+        return date.toString("yyyy-MM-dd")  # Customize format as needed
+        #return super().displayText(value, locale)
 
 # -----------------------------------
 class ReadOnlySqlTableModel( QSqlTableModel ):
@@ -682,7 +689,6 @@ class DocumentBase( QMdiSubWindow ):
             next_key
             option      "default",
                         "prior   use prior on edits
-
         """
         self.update_db()
         debug_msg   = ( "DocumentBase new_record first validate, then save, "
@@ -762,7 +768,6 @@ class DocumentBase( QMdiSubWindow ):
 
         only this update_db should validate, the rest
         should assume this one has use self.validate to check all
-
         """
         try:
             is_bad   = self.validate( )
@@ -1160,9 +1165,6 @@ class DetailTabBase( QWidget ):
         logging.debug( debug_msg )
 
         self.data_manager.delete_all()
-        # model  = self.tab_model
-
-
 
         # for i_sub_tab in self.sub_tab_list:
         #     if i_sub_tab:
@@ -1713,7 +1715,6 @@ class SubTabBaseOld( QWidget ):
         use in
             moving to stuff event
             PictureSubjectSubTab( stuffdb_tabbed_sub_window.StuffdbSubTabTab  ):
-
         """
         super().__init__()
         self.parent_window  = parent_window
@@ -2831,8 +2832,6 @@ class StuffdbPictureTab_not_photo( QWidget ):
         #placer.new_row()
         self.filename_widget  = widget
         tab_layout.place( widget )
-
-        #self.display_file()
 
         button_layout          = QHBoxLayout( )
         tab_layout.addLayout( button_layout )

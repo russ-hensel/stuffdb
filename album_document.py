@@ -91,9 +91,8 @@ import custom_widgets as cw
 import key_words
 import picture_viewer
 import qt_sql_query
-
-
-
+import app_exceptions
+import data_manager
 # ---- end imports
 LOG_LEVEL  = 10
 
@@ -115,8 +114,6 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         self.text_table_name    = "photoshow_text"
         self.help_filename      = "album_doc.txt"
         self.subwindow_name     = "Album Document"
-
-        # --- migyt be promotabale to __post_init
 
         # !! perhaps in ancestor to a post innit
         title       = self.subwindow_name
@@ -141,7 +138,6 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         # # Main notebook with  tabs
         main_notebook           = self.tab_folder   # create in parent
         self.main_notebook      = main_notebook
-
 
         # ---- tab building
         ix                        = -1
@@ -1483,43 +1479,11 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         view.setEditTriggers(QTableView.NoEditTriggers) # no editiong
 
-        ix_col      = 0
-        model.setHeaderData(  ix_col, Qt.Horizontal, "ID" )
-        view.setColumnWidth(  ix_col, 50)  # Set column 0 width to 100 pixels
+        debug_col = True
+        if debug_col:
+            self.col_head_no()
+        self.col_head_names()
 
-        ix_col      = 1
-        view.setColumnHidden( ix_col, True )  # might or might not change
-            # cloumn numbers -- beware in all of order of operations
-
-        ix_col      = 2
-        view.setColumnHidden( ix_col, True )
-
-        ix_col      = 3
-        model.setHeaderData(  ix_col, Qt.Horizontal, "Seq" )
-        view.setColumnWidth(  ix_col, 50)  # Set column 0 width to 100 pixels
-        # view.setColumnHidden( ix_col, True )
-        ix_col      += 1
-        view.setColumnHidden( ix_col, True )
-
-        ix_col      += 1
-        model.setHeaderData(  ix_col, Qt.Horizontal, "Camera" )
-        view.setColumnWidth(  ix_col, 80)  # Set column 0 width to 100 pixels
-
-        ix_col      += 1
-        model.setHeaderData(  ix_col, Qt.Horizontal, "File" )
-        view.setColumnWidth(  ix_col, 180)  # Set column 0 width to 100 pixels
-
-        ix_col      += 1
-        model.setHeaderData(  ix_col, Qt.Horizontal, "Photo ID" )
-        view.setColumnWidth(  ix_col, 80)  # Set column 0 width to 100 pixels
-
-        ix_col      += 1
-        model.setHeaderData(  ix_col, Qt.Horizontal, "SubDir" )
-        view.setColumnWidth(  ix_col, 80)  # Set column 0 width to 100 pixels
-
-        ix_col      += 1
-        model.setHeaderData(  ix_col, Qt.Horizontal, "Name" )
-        view.setColumnWidth(  ix_col, 120)  # Set column 0 width to 100 pixels
 
         # ---- view   -- built with model here layout only
         # self.view           = QTableView()
@@ -1530,7 +1494,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         # photo_layout.addWidget( self.view_read )
         self.create_context_menu()
 
-        # ---- picturee viewer
+        # ---- picture viewer
         a_photo_viewer      = picture_viewer.PictureViewer( self )
         self.photo_viewer   = a_photo_viewer
         photo_layout.addWidget( a_photo_viewer )
@@ -1576,6 +1540,11 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         widget.clicked.connect( self.open_picture_document )
         button_layout.addWidget( widget )
 
+        #
+        widget        = QPushButton( 'Copy to Album')
+        widget.clicked.connect( self.copy_to_album )
+        button_layout.addWidget( widget )
+
         # # Create buttons for CRUD operations
         # widget        = QPushButton('AddDlg')
         # # add_button    = widget
@@ -1614,11 +1583,6 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         widget.clicked.connect(self.get_max_seq)
         button_layout.addWidget( widget )
 
-        # #
-        # widget        = QPushButton( 'inspect')
-        # widget.clicked.connect( self.inspect )
-        # button_layout.addWidget( widget )
-
         #
         widget        = QPushButton( 'inspect')
         widget.clicked.connect( self.inspect )
@@ -1628,10 +1592,9 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
     def _build_model( self, ):
         """
         what it says, read
-        does both the model and perhaps the view
+        does both the model the view
 
         revised based on qt_by_example
-
 
         if you change the model then  self.ix_sub_dir  needs to be changed ... perhaps others
 
@@ -1643,11 +1606,27 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         self.model.setTable( "photo_in_show" )
             # primry table id sequence  photo_id  photo_show_id  photo_in_show_id
 
-        # Setting the relation to include `file` and `sub_dir`
+        # Setting the relation to include `file` and `sub_dir.....`
+        # if you change this there are a bunch of other changes to make
         self.model.setRelation(
             self.model.fieldIndex( "photo_id" ),       # column in primary table used for join
-            QSqlRelation( "photo", "id", "camera, file, photo_id, sub_dir, name" )
+            QSqlRelation( "photo", "id", "camera, dt_item, file, photo_id, sub_dir, name" )
         )
+
+        # coordinate with above
+        self.id_col_ix          = 0
+        self.seq_col_ix         = 3
+        self.dt_item_col_ix     = 6
+        self.file_col_ix        = 7
+
+        self.sub_dir_col_ix     = 9
+        self.name_col_ix        = 10
+
+
+
+        #self.dt_item_col_ix   = 1
+
+
 
         # Set filter for the specific `photo_show_id`
         # self.model.setFilter( f"photo_show_id = {10028}" )
@@ -1658,20 +1637,83 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         self.model.select()
 
         # ---- view -- see up in gui ??
-        # Setup table view and add it to the layout
         view            = QTableView()
         self.view       = view
         view.setModel( self.model )
 
         view.setEditTriggers(QTableView.DoubleClicked | QTableView.SelectedClicked)
 
-    # ------------------------------------------
-    def _build_model_old( self, ):
+    # --------------------
+    def col_head_names(self):
         """
-        deleted
-        what it says, read
-        from russ_qrm and some more chat
+
+
         """
+        # start using these  self.dt_item_col_ix   = 1
+        model    = self.model
+        view     = self.view
+
+        model.setHeaderData(  self.id_col_ix, Qt.Horizontal, "ID" )
+        view.setColumnWidth(  self.id_col_ix, 50)  # Set ix_col  width in pixels
+        view.setColumnHidden( self.id_col_ix, True )
+
+        # ix_col      = 1
+        # view.setColumnHidden( ix_col, True )  # might or might not change
+        #     # cloumn numbers -- beware in all of order of operations
+
+        # ix_col      = 2
+        # view.setColumnHidden( ix_col, True )
+
+
+        model.setHeaderData(  self.seq_col_ix, Qt.Horizontal, "Seq" )
+        view.setColumnWidth(  self.seq_col_ix, 50)
+
+        print( f"{self.dt_item_col_ix = }")
+        delegate = base_document_tabs.DateFormatDelegate( view )
+        view.setItemDelegateForColumn( self.dt_item_col_ix, delegate)
+        model.setHeaderData(  self.dt_item_col_ix, Qt.Horizontal, "Dt Item" )
+        view.setColumnWidth(  self.dt_item_col_ix, 100)
+
+        # # view.setColumnHidden( ix_col, True )
+        # ix_col      += 1
+        # view.setColumnHidden( ix_col, True )
+
+        # ix_col      += 1
+        # model.setHeaderData(  ix_col, Qt.Horizontal, "Camera" )
+        # view.setColumnWidth(  ix_col, 80)
+
+        # ix_col      += 1
+        # model.setHeaderData(  ix_col, Qt.Horizontal, "File" )
+        # view.setColumnWidth(  ix_col, 180)
+
+        # ix_col      += 1    #  7 perhaps
+        # model.setHeaderData(  ix_col, Qt.Horizontal, "Photo ID" )
+        # view.setColumnWidth(  ix_col, 80)
+
+        # ix_col      += 1
+        # model.setHeaderData(  ix_col, Qt.Horizontal, "SubDir" )
+        # view.setColumnWidth(  ix_col, 80)
+
+        # ix_col      += 1
+        model.setHeaderData(  self.name_col_ix  , Qt.Horizontal, "Name" )
+        view.setColumnWidth(  self.name_col_ix  , 120)
+
+    # --------------------
+    def col_head_no(self):
+        """
+        what it says -- for debug only
+        6 is date
+        7 is file
+        0 is id
+        3 is sequence
+        9 is subdir
+        """
+        model    = self.model
+        view     = self.view
+        for ix_col in range( 7 ):
+            model.setHeaderData(  ix_col, Qt.Horizontal, str( ix_col ) )
+            view.setColumnWidth(  ix_col, 80)  # Set column 0 width to  pixels
+
 
     # --------------------
     def create_context_menu(self):
@@ -1829,9 +1871,9 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         # # debug explore model
         # for ix_col in range( 15 ): # 10 works
         #     data               =  model.data( model.index( self.list_ix, ix_col ) ) # row col
-        #     print( f"album picture sub tab prior_next: {ix_col = } / { data  = }")
+        #     print( f"album picture sub tab prior_next: {ix_col = } / { data  = }")  file_name, sub_dir
 
-        file_name   = base_document_tabs.build_pic_filename( file_name, sub_dir )
+        file_name   = base_document_tabs.build_pic_filename( file_name = file_name, sub_dir = sub_dir )
         file_name   = base_document_tabs.fix_pic_filename( file_name )
 
         #rint( f"change to prior next 0 {file_name = }" )
@@ -1846,6 +1888,8 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
     # ------------------------------------------
     def add_photo_test(self):
         """
+        this is old ready to delete, only photo id now matters
+
         what it says,
         add a record just into seq fields regardless of style
         from russ qrm
@@ -1929,6 +1973,10 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
     # ------------------------------------------
     def add_row(self, data_in_dict ):
         """
+        !! add flag for reselect or not for optimization
+        need to modify all callers
+
+
         give up on relational table doing job alone
         use an QSqlQuery and do immediate update
         come back and look at later perhaps
@@ -1951,7 +1999,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         sequence        = self.get_max_seq( ) + 1
 
         # ---- so now all the data in lined uup
-        query   = QSqlQuery( db )
+        query           = QSqlQuery( db )
 
         sql     = """INSERT INTO photo_in_show (
             id,
@@ -2001,244 +2049,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
     # ------------------------------------------
     def add_row_still_not_working_chat_says(self, data_in_dict ):
-    # # ------------------------------------------
-    # def data_to_model_photo(self, data_dict ):
-        """
-        what it says - read    ???? what
-        now modeled on qt_sql....
-        this will do an update or an insert
-        what needs to be in data dict, see below
-            this figures out
-            the key
-            the seq_no
-            the album_id
-        it needs the data_dict
-
-This is a question about pyqt5 in python.
-
-I have 2 tables created with:
-
-CREATE TABLE photo_in_show  (
-id  INTEGER,
-sequence  INTEGER,
-photo_id  INTEGER,
-photo_show_id  INTEGER )
-
-
-
-CREATE TABLE photo  (
-id  INTEGER,
-name  VARCHAR(150),
-file  VARCHAR(100),
-sub_dir  VARCHAR(25),",
-photo_url  VARCHAR(75),
-camera  VARCHAR(20) )
-
-
-I also have a
-
-        # Create the model and set up the relation for file and sub_dir
-        self.model = QSqlRelationalTableModel(self)
-
-        self.model.setTable( "photo_in_show" )
-            # primry table id sequence  photo_id  photo_show_id  photo_in_show_id
-
-        # Setting the relation to include file and sub_dir
-        self.model.setRelation(
-            self.model.fieldIndex( "photo_id" ),       # column in primary table used for join
-            QSqlRelation( "photo", "id", "camera, file, photo_id, sub_dir, name" )
-        )
-
-I try to add a row and update with:
-
-        row         = model.rowCount()  # Index for the new row
-        model.insertRow( row )
-
-        model.setData(model.index( row, model.fieldIndex( "id" )),     key )
-
-        # primary table -- save
-        model.setData(model.index( row, model.fieldIndex( "photo_show_id" )),  self.album_id )
-        model.setData(model.index( row, model.fieldIndex( "sequence" )),       sequence )
-        model.setData(model.index( row, model.fieldIndex( "photo_id" )),        photo_id  )
-
-        # secondary table -- is there even any point
-        model.setData(model.index( row, model.fieldIndex( "file" )),           photo_file  )
-        model.setData(model.index( row, model.fieldIndex( "name" )),           photo_name  )
-        model.setData(model.index( row, model.fieldIndex( "sub_dir" )),        photo_sub_dir  )
-
-
-        # update and select
-        if not model.submitAll():
-            print("add_via_chat Error saving data:", model.lastError().text())
-
-        else:
-            print("Data added successfully.")
-
-    all the variables key  .... self.album_id .... phot_sub_dir are well defined.
-
-    still no new record/row is added to the table photo_in_show.  Can you see
-    anything wrong?
-ChatGPT said:
-ChatGPT
-
-The issue lies in the way you are attempting to insert and update data in a QSqlRelationalTableModel. Specifically:
-
-    Relations and Visible Columns:
-        When you set a relation using QSqlRelation, the QSqlRelationalTableModel replaces the foreign key column (photo_id) with the data from the related table (camera, file, photo_id, sub_dir, name) in the view. However, the foreign key (photo_id) is still required for the actual database update.
-        Columns from the related table (file, name, sub_dir) are read-only in this model. Setting them via setData has no effect, as they are not writable in the context of the primary table.
-
-    Insertions in Relational Models:
-        You need to ensure that only columns in the primary table (photo_in_show) are updated. Any attempt to modify columns from the related table (photo) will not work.
-
-
-        ot work.
-
-    Field Index Lookup:
-        Using fieldIndex for related columns like file, name, or sub_dir will return -1, as these are not directly part of the primary table.
-
-Corrected Code
-
-Here’s how you can correctly insert a new row into the photo_in_show table:
-
-# Insert a new row into the primary table
-row = model.rowCount()  # Index for the new row
-model.insertRow(row)
-
-# Set values for columns in the primary table
-model.setData(model.index(row, model.fieldIndex("id")), key)
-model.setData(model.index(row, model.fieldIndex("photo_show_id")), self.album_id)
-model.setData(model.index(row, model.fieldIndex("sequence")), sequence)
-model.setData(model.index(row, model.fieldIndex("photo_id")), photo_id)
-
-# Submit changes to the database
-if not model.submitAll():
-    print("Error saving data:", model.lastError().text())
-else:
-    print("Data added successfully.")
-
-# Refresh the model to reflect changes
-model.select()
-
-Key Points:
-
-    Only Update Columns in the Primary Table:
-        Update columns such as id, photo_show_id, sequence, and photo_id because they belong to the photo_in_show table.
-        Do not try to set values for columns from the related table (file, name, sub_dir). These are managed through the relation and cannot be updated directly.
-
-    Avoid setData on Related Table Columns:
-        Columns like file, name, and sub_dir are visible in the view due to the relation but cannot be modified through the QSqlRelationalTableModel.
-
-    Relation Handling:
-        The photo_id in the primary table must match the id in the related table. Ensure photo_id is correctly set to reference an existing id in the photo table.
-
-    Submit and Refresh:
-        Call submitAll() to commit changes to the database.
-        Call select() to refresh the model and reflect any changes.
-
-Additional Debugging Tips:
-
-    Check Field Indices:
-
-print("Field indices:")
-for i in range(model.columnCount()):
-    print(i, model.headerData(i, Qt.Horizontal))
-
-Ensure the indices for id, photo_show_id, sequence, and photo_id match your expectations.
-
-Log Errors:
-
-    if not model.submitAll():
-        print("Error:", model.lastError().text())
-
-If this does not resolve your issue, verify:
-
-    The database connection is active and writable.
-    The photo_id value corresponds to an existing id in the photo table.
-
-Update foreign key in Qt QSqlRelationalTableModel - Stack Overflow
-https://stackoverflow.com/questions/71546401/update-foreign-key-in-qt-qsqlrelationaltablemodel
-
-QSqlRelationalTableModel does not update | Qt Forum
-https://forum.qt.io/topic/75274/qsqlrelationaltablemodel-does-not-update/3
-
-Newest 'qsqlrelationaltablemodel' Questions - Stack Overflow
-https://stackoverflow.com/questions/tagged/qsqlrelationaltablemodel?tab=newest&pagesize=50
-
-python - Updating a relational column in QSqlRelationalTableModel (PyQt6) - Stack Overflow
-https://stackoverflow.com/questions/72576673/updating-a-relational-column-in-qsqlrelationaltablemodel-pyqt6
-
-        """
-        model           = self.model
-        db              = model.database()
-        if not db.transaction():
-            msg  = ("Failed to start transaction:  {db.lastError().text()}" )
-            logging.error( msg )
-
-        table_name      = self.table_name   #  photo_in_show
-
-        key             = AppGlobal.key_gen.get_next_key( self.table_name )
-
-        sequence        = self.get_max_seq( ) + 1
-
-        # ---- so now all the data in lined uup
-
-        # # ---- inspect
-        # self_view       = self.view
-        # self_model      = model
-
-        # wat_inspector.go(
-        #       msg            = "add_row(self, data_dict ):",
-        #       a_locals       = locals(),
-        #       a_globals      = globals(), )
-
-        #rint( "this is code after first inspect -----------------------------------------")
-
-
-        row         = model.rowCount()  # Index for the new row
-        model.insertRow( row )
-
-        model.setData(model.index( row, model.fieldIndex( "id" )),     key )
-
-        # primary table -- save
-        model.setData(model.index( row, model.fieldIndex( "photo_show_id" )),  self.album_id )
-        model.setData(model.index( row, model.fieldIndex( "sequence" )),       sequence )
-        model.setData(model.index( row, model.fieldIndex( "photo_id" )),       data_in_dict["photo_id"] )
-
-        # secondary table -- is there even any point
-        model.setData(model.index( row, model.fieldIndex( "file" )),           data_in_dict["photo_file"] )
-        model.setData(model.index( row, model.fieldIndex( "name" )),           data_in_dict["photo_name"] )
-        model.setData(model.index( row, model.fieldIndex( "sub_dir" )),        data_in_dict["photo_sub_dir"] )
-
-        debug_msg = ( "ending inspect  -----------------------------------------")
-        logging.debug( debug_msg )
-
-        self_view       = self.view
-        wat_inspector.go(
-              msg            = "add_row(self, data_dict ) end no update or select",
-              a_locals       = locals(),
-              a_globals      = globals(), )
-
-        #rint( "after try inspect again  -----------------------------------------")
-
-        # update and select
-        if not model.submitAll():
-            debug_msg = ("add_via_chat Error saving data:", model.lastError().text())
-            logging.debug( debug_msg )
-
-        else:
-            debug_msg = ("Data added successfully.")
-            logging.debug( debug_msg )
-
-        if not db.commit():
-            debug_msg = ("Database commit failed:", db.lastError().text())
-            logging.debug( debug_msg )
-
-        # Set up a view to display the data  --- do we need this ?? try without
-        # view = QTableView()
-        self.view.setModel(model)
-
-        self.view.show()
-
+        """deleted see backup for what i tried  """
 
     # ------------------------------------------
     def add_row_model(self, data_dict ):
@@ -2473,14 +2284,12 @@ https://stackoverflow.com/questions/72576673/updating-a-relational-column-in-qsq
         """
         get the file name
         """
-
-
         row          = self.get_selected_row()
 
         file_name    = self.get_data_for_column( row, "file"  )
         sub_dir      = self.get_data_for_column( row, "sub_dir" )
 
-        file_name   = base_document_tabs.build_pic_filename( file_name, sub_dir )
+        file_name   = base_document_tabs.build_pic_filename( file_name = file_name, sub_dir = sub_dir )
         return file_name
 
     # ------------------------------------------
@@ -2530,6 +2339,109 @@ https://stackoverflow.com/questions/72576673/updating-a-relational-column-in-qsq
         picture_doc.select_record( a_id  )
 
         AppGlobal.mdi_management.show_document( picture_doc )
+
+    # --------------------------------------
+    def copy_pic_setup( self,  ):
+        """
+        check that the setup is ok
+
+        have a single album to add the pictures to
+
+        return -- album document....
+        raise  some exception if error
+        """
+        detail_tab      = self.parent_window
+        document        = detail_tab.parent_window
+
+        album_docs      = AppGlobal.mdi_management.get_album_docs()
+        len_album_docs  = len( album_docs )
+
+        if len_album_docs !=  2:
+            msg     = f"For this to work you need 2 Album Document open, you have {len_album_docs}."
+            raise app_exceptions.ReturnToGui( msg )
+
+        album_target = None
+        for i_album_doc in album_docs:
+            if i_album_doc.instance_ix != document.instance_ix:
+                album_target = i_album_doc
+                break
+
+        if album_target is None:
+                msg     = f"Problem: I cannot find a target album, this should not happen ."
+                raise app_exceptions.ReturnToGui( msg )
+
+        record_state    = album_target.detail_tab.data_manager.record_state
+
+        if record_state == data_manager.RECORD_NULL:   # not 0 look it up
+            msg     = "For this to work you need an item in your target Album Document."
+            raise app_exceptions.ReturnToGui( msg )
+
+        #rint( f"!!!!!!Error still need to check it has a record {record_state}")
+        # ---- are files present
+        # if self.model.rowCount() < 1:
+        #     msg       = ( "For this to work you need to have some files in this tab.")
+        #     logging.debug( msg )
+        #     raise app_exceptions.ReturnToGui( msg )
+
+        return album_target
+
+    # --------------------------------------
+    def copy_to_album( self,  ):
+        """
+        copy pictures to another album
+        for now all at end of items in the other album
+        """
+        try:
+            album_target = self.copy_pic_setup()
+
+        except app_exceptions.ReturnToGui as an_except:
+            msg       = f"{str( an_except)}"
+            logging.debug( msg )
+            QMessageBox.information( AppGlobal.main_window,
+                                     "That is a No Go", msg )
+            return
+
+        model       = self.model   # QSqlRelationalTableModel(self)
+        #ix_debug    = 0
+        # start with all later with some selections
+
+        for ix_row in range( model.rowCount() ):
+            self.add_to_album( album_target, ix_row )
+
+
+        # msg         = ( "\n maybe finished return ++++++++++++++++++++++++++++++++++++++++++++")
+        # logging.debug( msg )
+
+    # -----------------------------
+    def add_to_album( self, album_target, ix_row ):
+    #def add_to_show( self, ): in picture detail, now movdify above
+        """
+        will add one to the show need to call over and over
+        took from picture detail  was add_to_show
+        # change name to add to album when ewe get farther along
+        add a picture to a show -- which must be open in another window
+        query.addBindValue( data_in_dict["photo_id"]  )
+        """
+
+        model         = self.model
+        # dict is a bit odd  --- some is wrong all we really need i photo_id
+        #photo_id      =  int( self.id_field.text() )  # may be available elsewhere   this worul db test
+        photo_id_ix   = 7
+        photo_id      =  model.data( model.index( ix_row, photo_id_ix))
+        #photo_fn      =  self.file_field.text()
+        # may want to double check but seems now only photo id matters set rest to None, drop weh it works
+        row_dict            = { "photo_name":               "from album_picture_sub_tab",
+                                "photo_fn":                  None,
+                                "photo_id":                  photo_id,
+                                "photoshow_photo_id":        None,
+                               }
+
+        #photo_target     = AppGlobal.mdi_management.get_album_doc()
+        #photo_target   = AppGlobal.add_photo_target
+
+        print( "add commented out for now -- check stuff above with debug {photo_id} = " )
+        album_target.add_photo_to_show( row_dict )
+                # perhaps in album picture sub tab
 
     # ------------------------------------------
     def get_data_for_column( self, row, column_name  ):

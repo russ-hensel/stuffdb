@@ -72,8 +72,6 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
-
-
 import album_document
 import help_document
 import people_document
@@ -91,10 +89,7 @@ logger          = logging.getLogger( )
 #for custom logging level at module
 LOG_LEVEL  = 20   # higher is more
 
-# maybe not the best choice for location
 
-
-# MenuInfo   = collections.namedtuple( 'MenuInfo', "window, menu_item" )
 
 #mdi_management
 TopicData   = collections.namedtuple(   "TopicData", "table, id, topic" )
@@ -110,7 +105,6 @@ TopicData   = collections.namedtuple(   "TopicData", "table, id, topic" )
 
 NOT_FOR_SUBJECTS   = {  picture_document.PictureDocument, album_document.AlbumDocument,  }
 # the above document should not be the subjects of pictures
-
 
 
 #TOPIC_DELETED      = "topic_del"

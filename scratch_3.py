@@ -5,7 +5,7 @@ import    adjust_path
 import  data_dict
 
 
-table_name   = "stuff_event"
+table_name      = "stuff_event"
 table_name      = "photo_subject"
 table_name      = "photo_subject"
 table_name      = "photo_subject"

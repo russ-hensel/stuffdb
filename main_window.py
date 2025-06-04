@@ -69,8 +69,8 @@ import stuffdb
 import combo_dict_ext
 
 # mover limited might be better !!
-from  help_document       import HelpDocument
-from    album_document    import AlbumDocument
+from   help_document      import HelpDocument
+from   album_document     import AlbumDocument
 from   plant_document     import PlantDocument
 from   planting_document  import PlantingDocument
 from   stuff_document     import StuffDocument

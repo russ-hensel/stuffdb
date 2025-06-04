@@ -71,11 +71,6 @@ TEST_STR    = ">>>>test<<<<"
 NULL_STR    = ""
 
 
-
-
-
-
-
 # ----------------------------------------
 def redefine_constants_string( line_join = None ):
     """
