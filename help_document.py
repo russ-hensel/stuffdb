@@ -249,6 +249,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         widget                  = cw.CQLineEdit(
                                              field_name = "table_id" )
+        self.id_field           = widget
         self.critera_widget_list.append( widget )
         #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget, )    # columnspan = 3 )
@@ -277,8 +278,8 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         # widget                    = cw.CQLineEdit(
         #                                field_name = "key_words" )
-        self.key_words_widget     = widget
-        #self.key_word_widget        = None      # set to value in gui if used
+        #self.key_words_widget     = widget   # !! think can drop these
+        self.key_word_widget        = None      # set to value in gui if used
         widget.setPlaceholderText( "key_words"  )
         self.critera_widget_list.append( widget )
         #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
@@ -519,8 +520,45 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         help_document.main_notebook.setCurrentIndex( help_document.list_tab_index )
         self.critera_is_changed = False
 
+    def search_me_new(self, criteria ):
+        """
+        see a promoted version in base
+        external search should be overridden maybe in each document type
+        for now just key words
+
+            save
+            activate criteria tab
+            clear criteria
+            set value of key words with criteria
+                self.key_words_widget
+            run criteria select
+        """
+        parent_window    = self.parent_window
+        parent_window.update_db()
+
+        #criteria  = criteria.strip()
+        key_words    = criteria[ "key_words" ]
+
+        # msg   = f"made it to help document {criteria =}"
+        # logging.debug( msg )
+
+        # tab_widget.setCurrentIndex( tab_index )
+        tab_index     = parent_window.criteria_tab_index
+
+        parent_window.tab_folder.setCurrentIndex(  tab_index )
+        self.clear_criteria()
+
+
+        self.key_words_widget.set_data( key_words )
+
+        # mayb this maybe not
+        #self.criteria_select_if()    # may need to select is changed
+        self.criteria_select()
+
+
+
     # -----------------------------
-    def search_me(self, criteria ):
+    def search_me_old(self, criteria ):
         """
         external search should be overridden in each document type
         for now just key words
@@ -546,6 +584,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         parent_window.tab_folder.setCurrentIndex(  tab_index )
         self.clear_criteria()
 
+
         self.key_words_widget.set_data( criteria )
 
         # mayb this maybe not
@@ -558,9 +597,15 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         What it says, read
         extend
         we should be able to generalize this
+        might make default in ancestor, overrid if desired
+        or pass a field name
+
+        !! use       get_criteria_widget  no self.key_words_widget
+
         """
         super().clear_criteria(   )
-        self.key_words_widget.setFocus()
+        widget   = self.get_criteria_widget( "key_words" )
+        widget.setFocus()
 
 
 # ----------------------------------------

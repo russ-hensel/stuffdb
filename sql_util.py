@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+
+
+not sure of role in stuffdb
+    incldes errors which are not called by stuffdb
+    not sure what to do with it
+    for now just keep
+
+
 dup of yt_scrape..... but in process of change
 
 from easy db db_objects
@@ -12,9 +20,6 @@ this is just sql lite, no alchemy or qt
 
 
 """
-
-
-
 
 import collections
 import logging
@@ -33,8 +38,6 @@ from app_global import AppGlobal
 #from   app_global import AppGlobal
 #import file_writers
 #import file_readers
-
-
 
 
 # ----------------------------------------
@@ -193,7 +196,7 @@ class SqlRunner(   ):
     # ----------------------------------------------
     def define_table ( self, table_name, sql, allow_drop = False ):
         """
-        appears to be valennal sqllite
+        appears to be valennal SQLite
         table_name
         sql         sql that creates the table
         return
@@ -281,8 +284,6 @@ class SqlRunner(   ):
                                            f"{self.write_row}" ] )
         a_str = f"{a_str}\n__________ End SqlRunner __________"
         return a_str
-
-
 
    # ----------------------------------------------
     def confirm_continue( self, info_msg,  a_title, msg, ):   #  help_mode = False
@@ -487,7 +488,6 @@ class SqlRunner(   ):
         self.commit_connection()
         self.close_connection()
         self.end_time = time.time()
-
 
     # ----------------------------------------------
     def select_and_output_old( self,  ):
@@ -1362,7 +1362,7 @@ class TableInfo( object ):
         """
         Arg:
         Return:
-        Args:  table_info   -- where table_info will be stored, normally the caller build_from_table_inof
+        Args:  table_info   -- where table_info will be stored, normally the caller build_from_table_info
         may move to Table Info or a factory
         This can generate all ( or most of ) a blank TableInfo by reading a file.
         result in self.table_info     FileReaderToDataDict.file_to_data_dict()
@@ -1487,7 +1487,7 @@ class RowObject( object ):
         """
         continues __init__
         but might be used by itself perhaps
-        created an edit dict which has a coumnn name and data ... data is a list, index in init
+        created an edit dict which has a column name and data ... data is a list, index in init
         """
         table_data_dict   = self.table_info.table_data_dict      # local name may or may not help
         # could just copy and rinit the data but no
@@ -1512,7 +1512,7 @@ class RowObject( object ):
     def column_name_valid( self, column_name,  ):
         """
         Purpose:
-            but is this for dup check existance checke what
+            but is this for dup check existence check what
             see name, note that proper cap of column name is required.
             perhaps better in table access !! also check against module reserved words
             !! also need table name valid
@@ -1559,7 +1559,7 @@ class RowObject( object ):
         for i_colum_name in data_info:
             values    = self.edit_dict[ i_colum_name ]       # hope we get a new one each time
             if values[ self.ix_db_value ] == values[ self.ix_new_value ]:
-                    print( f"need update on {i_colum_name}" )
+                    print( f"need update on {i_column_name}" )
 
     # -----------------------------------
     def make_insert_sql( self, ):
@@ -1585,7 +1585,7 @@ class RowObject( object ):
         for i_col_name in col_names:
 #            if i_col_name == "ROWID":
 #                continue
-            # ?? looks like I contracted several lines to 1 comment out unneded
+            # ?? looks like I contracted several lines to 1 comment out unneeded
             dict_val     = self.edit_dict[ i_col_name ]
             data         = dict_val[ self.ix_new_value ]
             data_list.append( self.edit_dict[ i_col_name ][ self.ix_new_value ] )
@@ -1595,7 +1595,7 @@ class RowObject( object ):
         data_list    = ( tuple( data_list ), )
         #print( data_list )
 
-        # these are not really my attribjtes !! delete
+        # these are not really my attributes !! delete
         self.full_sql    = full_sql
         self.data_list   = data_list
 
@@ -1629,7 +1629,7 @@ class RowObject( object ):
         data_list             = []
 
         for i_col_name in col_names:
-            # ?? looks like I contracted several lines to 1 comment out unneded
+            # ?? looks like I contracted several lines to 1 comment out unneeded
             dict_val     = self.edit_dict[ i_col_name ]
             data         = dict_val[ self.ix_new_value ]
             data         = fix_null( data )
@@ -1674,7 +1674,7 @@ class RowObject( object ):
             data_list             = tuple( data_list )
             #print( data_list )
 
-        # these are not really my attribjtes !! delete
+        # these are not really my attributes !! delete
         self.full_sql    = full_sql
         self.data_list   = data_list
 
@@ -1902,7 +1902,7 @@ class TableAccess( object ):
     def compare_two( self, id_1, id_2  ):  # output only for fields that have data
         """
         !! implement out to file with default to None
-        print down in clolumns ... will have to figure out wrap text .. maybe even html
+        print down in columns ... will have to figure out wrap text .. maybe even html
         make_select_from_info(
         """
         sql_base    = self.make_select_from_info()
@@ -1946,7 +1946,7 @@ class TableAccess( object ):
         if fails return none or raise and except??
         Returns:  a RowObject
         Raises:
-            SideEffects: does not set self.row_object, so later we might have several??
+            Side Effects: does not set self.row_object, so later we might have several??
 
         !! move in with select where ??
         """
@@ -2051,7 +2051,7 @@ class TableAccess( object ):
     #--------------------------------
     def edit_one_record_1( self, key_value, edit_file_name ):
         """
-        retireve a record, write to file, then read the file and update
+        retrieve a record, write to file, then read the file and update
         probably needs to be divided into 2 functions
         because of init we do not need db_file_name or table_name
         table_access.edit_one_record_1()
@@ -2108,7 +2108,7 @@ class TableAccess( object ):
 #    def edit_one_record_2( self, key_value, edit_file_name ):
     def edit_one_record_2( self,   ):
         """
-        retireve a record, write to file, then read the file and update
+        retrieve a record, write to file, then read the file and update
         probably needs to be divided into 2 functions
         because of init we do not need db_file_name or table_name
         Args:  ?? record key
@@ -2211,7 +2211,7 @@ class TableAccess( object ):
     def parse_operator( self, operator_data  ):
         """
         !! think obsolete, or move ??
-        seperate operator from the data -- quote the data ??
+        separate operator from the data -- quote the data ??
         return tuple ( ok, operator, data )   operator may have case shift, data should not
         """
         msg_debug = f"operator_data = {operator_data}"
@@ -2301,7 +2301,7 @@ def get_table_list( db_filename  ):
     con.close()
     # cursor.close()
     print( a_list )
-    # what looks like simplifying a list of tuples to a list of strings, do with comphrension
+    # what looks like simplifying a list of tuples to a list of strings, do with comprehension
     for i_name in a_list:
         AppGlobal.print_debug( i_name )
         a_name, = i_name
@@ -2323,7 +2323,7 @@ def is_reserved_word( a_word ):
     """
     for checking if column names table names  are reserved words do not use for other words ?
     return tuple ( True, the_word )
-    the word may differe in case ?? is this what we want
+    the word may differ in case ?? is this what we want
     is_ok, new_word  = db_objects.is_reserved_word( a_word )
     """
     a_word   = a_word.lower()

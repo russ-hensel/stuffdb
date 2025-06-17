@@ -1,7 +1,63 @@
 this is help for stuff_db_qt
 
 
-Watch out overlaps with general document help  ---- move merge .... 
+Most help for the system has been moved into the system itsself and a collection
+of HelpDocuments, but to use the HelpDocuments you may need a bit of help
+not using the Documents
+
+HelpDocuments are a place for you to build your own knowledge base of help topics
+but the system coams with a predefind set of topics about itself.
+
+
+Using HelpDocuments to get help with the system.
+
+    Open a help document from the Open Menu.
+
+    on the criteria tab enter some key words to indicated what you want help with:
+        for example "Add pictures to album"
+
+
+    to help you there are some special key words
+
+        HowTo ( or just howto ) for how to topics
+
+        AlbumDocument ( or lower case ) for topics about album documents -- a bit
+              more specific than "album document"
+
+    key word search is not sensitive to capitilization, and for simple plurals
+    formed with an s it is also insensitive
+
+    A powerful feature of HelpDocuments is the ability of the text to search
+    for other help document.  This is indicated by:
+
+        >>search   some key words to search on
+
+    if you click anwhere on such a line and press the ">>" button, the HelpDocument
+
+    will do a key word search on itself and show you a list of the relavant documents
+
+
+    The following search key words may be useful
+
+
+        Purpose of the StuffDb
+
+
+
+
+
+
+
+
+
+
+
+
+
+===========================
+
+
+Watch out overlaps with general document help  ---- move merge ....
 
 
 

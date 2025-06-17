@@ -20,7 +20,7 @@ import logging
 import os
 import traceback
 
-import app_logging
+
 # ------- local
 #import gui_qt_ext
 import psutil
@@ -67,6 +67,7 @@ import mdi_management
 import parameters
 import stuffdb
 import combo_dict_ext
+import app_logging
 
 # mover limited might be better !!
 from   help_document      import HelpDocument
@@ -76,6 +77,9 @@ from   planting_document  import PlantingDocument
 from   stuff_document     import StuffDocument
 from   people_document    import PeopleDocument
 from   picture_document   import PictureDocument
+
+from   db_management_subwindow   import DbManagementSubWindow
+
 
 # ------------------------------------------
 class StuffdbMainWindow( QMainWindow ):
@@ -100,9 +104,30 @@ class StuffdbMainWindow( QMainWindow ):
                           parameters.qt_ypos ,
                           parameters.qt_width,
                           parameters.qt_height  )
-
+        self.assign_icon()
         self.build_gui( )
         combo_dict_ext.build_it( AppGlobal.qsql_db_access.db )
+        if AppGlobal.parameters.set_maximized:
+            self.setWindowState(Qt.WindowMaximized)
+
+    # -------------------------
+    def assign_icon( self,  ):
+        """
+        what it says read:
+            use often to see if we can hold on to icon
+            self.assign_icon()
+
+            in mdi....   self.main_window.assign_icon()
+        """
+        icon    = QIcon(  parameters.PARAMETERS.icon  )
+        self.setWindowIcon(icon)
+        #self.setWindowIcon(QIcon("path/to/your/icon.png"))
+        # Optionally, set WM class (may help with some window managers)
+        self.setProperty("X11BypassWindowManagerHint", False)
+
+        AppGlobal.controller.assign_icon()
+
+
 
     # -------------------------
     def build_gui( self,  ):
@@ -123,8 +148,7 @@ class StuffdbMainWindow( QMainWindow ):
         self.build_menu()
         a_mdi_management.window_menu    = self.window_menu
 
-        icon    = QIcon(  parameters.PARAMETERS.icon  )
-        self.setWindowIcon(icon)
+        self.assign_icon()
 
         self.build_toolbar()
 
@@ -373,6 +397,16 @@ class StuffdbMainWindow( QMainWindow ):
 
         # ---- open 1 ............................
         # !! make list of classes and change to loop
+        instance_ix     = 1
+        action          = QAction( "DB Maint", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                 window_class   = DbManagementSubWindow,
+                                                 instance_ix    = instance_ix )
+        action.triggered.connect( connect_to )
+        menu_open.addAction( action )
+
+
+
         instance_ix     = 1
         action          = QAction( "Album 1", self )
         connect_to      = functools.partial( self.add_subwindow,
@@ -751,9 +785,11 @@ class StuffdbMainWindow( QMainWindow ):
     def search_me( self, criteria = None ):
         """
         for now search comming from text widget
+
+        criteria is same sort of dict as is build by each windows search
         """
         #AppGlobal.mdi_management.make_document( window_type = window_type )
-        print( "here_we are in search_me )))))))))))))))))))))))))))))))))))))))))))))))")
+        # print( "here_we are in search_me )))))))))))))))))))))))))))))))))))))))))))))))")
         asw     = self.get_active_subwindow(  )
         asw.search_me( criteria )
 

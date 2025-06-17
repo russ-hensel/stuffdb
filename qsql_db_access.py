@@ -26,6 +26,8 @@ if __name__ == "__main__":
 import logging
 import sqlite3
 
+import time
+
 from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
 from PyQt5.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
 from PyQt5.QtSql import QSqlDatabase, QSqlError, QSqlQuery, QSqlTableModel
@@ -117,7 +119,8 @@ class QsqlDbAccess(   ):
         logging.log( LOG_LEVEL,  debug_msg, )
 
         # Use the sqlite3 module to connect to the same database
-        sqlite_conn = sqlite3.connect( db_file_name )
+        sqlite_conn         = sqlite3.connect( db_file_name )
+        self.sqlite_conn    = sqlite_conn
 
         # this is a chat lie
         #assert sqlite_conn == self.db.nativeHandle(), "Connections are not the same!"
@@ -142,7 +145,7 @@ class QsqlDbAccess(   ):
         conn.set_trace_callback(log_sql_callback)
 
         """
-
+        self.optimize_1()
         # # ia_qt.q_sql_database( self.db,
         #                               msg           = "in init_db()",
         #                               include_dir    = False) )
@@ -175,11 +178,9 @@ class QsqlDbAccess(   ):
             )
 
         msg      = f"get_connection for { AppGlobal.parameters.db_fn}"
-        print( msg )
-        AppGlobal.logger.debug( msg )
+        logging.debug( msg )
 
         return self.connection
-
 
     # -------------------------------------------
     def query_exec_model(self, query, model,  msg = None ):
@@ -212,5 +213,101 @@ class QsqlDbAccess(   ):
             return False
 
         return True
+
+
+    # --------------------------------
+    def optimize_1( self, ):
+        """
+        from grok edited
+
+        Optimize SQLite database settings for performance.
+
+        """
+        # Connect to the database
+        conn        = self.sqlite_conn
+        cursor      = conn.cursor()
+
+        # Apply PRAGMA settings for performance
+        try:
+            # Set synchronous mode to NORMAL for a balance of speed and safety
+            cursor.execute("PRAGMA synchronous = NORMAL;")
+
+            # Enable Write-Ahead Logging for better concurrency
+            cursor.execute("PRAGMA journal_mode = WAL;")
+
+            # # Increase cache size to ~100 MB (assuming 4 KB page size)
+            # cursor.execute("PRAGMA cache_size = 25000;")  # 25,000 pages
+
+            # # Store temporary tables in memory
+            # cursor.execute("PRAGMA temp_store = MEMORY;")
+
+            # # Set exclusive locking mode for single-user applications
+            # cursor.execute("PRAGMA locking_mode = EXCLUSIVE;")
+
+            # # Set busy timeout to 5 seconds to handle contention
+            # cursor.execute("PRAGMA busy_timeout = 5000;")
+
+            # # Set page size to 8192 (must be set before creating tables or use VACUUM)
+            # cursor.execute("PRAGMA page_size = 8192;")
+
+            # # Apply the new page size by running VACUUM (rebuilds the database)
+            # cursor.execute("VACUUM;")
+
+            # Optimize query planning (run periodically)
+            cursor.execute("PRAGMA optimize;")
+
+            # Commit PRAGMA changes
+            conn.commit()
+
+        except sqlite3.Error as e:
+            print(f"Error applying PRAGMA settings: {e}")
+            conn.rollback()
+            return
+
+        finally:
+            conn.commit()
+
+        # # Example: Create a table and index
+        # try:
+        #     # Create a sample table
+        #     cursor.execute("""
+        #         CREATE TABLE IF NOT EXISTS users (
+        #             id INTEGER PRIMARY KEY,
+        #             name TEXT,
+        #             email TEXT
+        #         );
+        #     """)
+
+        #     # Create an index on the email column for faster queries
+        #     cursor.execute("CREATE INDEX IF NOT EXISTS idx_email ON users(email);")
+
+        #     # Example: Batch insert with a transaction
+        #     start_time = time.time()
+        #     cursor.execute("BEGIN TRANSACTION;")
+        #     # Insert multiple rows in a single statement
+        #     rows = [(i, f"User {i}", f"user{i}@example.com") for i in range(1, 1001)]
+        #     cursor.executemany("INSERT INTO users (id, name, email) VALUES (?, ?, ?);", rows)
+        #     cursor.execute("COMMIT;")
+        #     print(f"Inserted 1000 rows in {time.time() - start_time:.2f} seconds")
+
+        #     # Example: Query with index
+        #     cursor.execute("SELECT * FROM users WHERE email = ?;", ("user500@example.com",))
+        #     result = cursor.fetchone()
+        #     print(f"Query result: {result}")
+
+        #     # Example: Analyze query plan
+        #     cursor.execute("EXPLAIN QUERY PLAN SELECT * FROM users WHERE email = ?;",
+        #                   ("user500@example.com",))
+        #     query_plan = cursor.fetchall()
+        #     print("Query Plan:", query_plan)
+
+        # except sqlite3.Error as e:
+        #     print(f"Error during table operations: {e}")
+        #     conn.rollback()
+
+        # finally:
+        #     # Close the connection
+        #     conn.close()
+
 
 # ---- eof

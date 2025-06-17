@@ -14,14 +14,14 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver 73: 2025 05 03.01"
+__version__   = "Ver .073: 2025 06 15.01"
 
 # ---- imports
 import datetime
 import inspect
 import logging
 import os
-import random
+#import random
 import sys
 import time
 import traceback
@@ -104,8 +104,28 @@ def delete_file( file_name ):
             print( error )
             print( f"delete_file os.remove threw error on file {file_name} file probably does not exist this should be ok?")
 
+
     # else:
     #     print( f"file already gone  {file_name}                ")
+
+class StuffApplication(QtWidgets.QApplication):
+    """
+    from gok then modified
+    to let me manage the uncaught exeeptions
+
+    not doing what I want for now
+    """
+    def notify(self, receiver, event):
+        try:
+            return super().notify(receiver, event)
+        except Exception as e:
+            # Log or print the exception
+            print(f"\n================================== Exception in event handler: {e} ===========================\n")
+            traceback.print_exc()
+            # Optionally re-raise or handle
+            raise  # Re-raise to stop execution or debug
+            # return False  # Or return False to stop event propagation
+
 
 # ============================================
 class App( ):
@@ -122,12 +142,15 @@ class App( ):
         """
         self.version           = __version__
         self.app_name          = f"Stuff DB in QT {__version__}"
-        #self.app_version       = self.version   # get rid of dupe at some point... app_version in gui_ext
         self.app_url           = "www.where"
+
         # clean out dead
         AppGlobal.controller   = self
         text_edit_ext.STUFF_DB = self
         self.gui               = None
+
+
+
 
         # ---- wat inspector
 
@@ -143,7 +166,11 @@ class App( ):
         print( "========= StuffDb restart =================" )
 
         self.q_app              = QApplication( []  )
+        #self.q_app              = StuffApplication( []  )
+
         AppGlobal.q_app         = self.q_app
+        self.assign_icon( )
+
 
         self.parameters         = parameters.Parameters( )
         AppGlobal.parameters    = self.parameters
@@ -174,16 +201,23 @@ class App( ):
         AppGlobal.main_window   = self.main_window
         self.main_window.show()
 
-        #rint( f"{AppGlobal.logger = }")
-
         self.prog_info()
-        #rint( f"{AppGlobal.logger = }")
-        AppGlobal.logger.debug( "self.q_app.exec_() next" )
+
         a_wat_inspector  = wat_inspector.WatInspector( self.q_app )
-        # dialog       = wat_inspector.DisplayWat( self.q_app )
-        #QTimer.singleShot(0, parameter_check.check_new_pictures  )
+
         QTimer.singleShot(0, self.parameters.startup_function  )
         self.q_app.exec_()   # perhaps move to run method
+
+    # -------------------------
+    def assign_icon( self,  ):
+        """
+        what it says read:
+            use often to see if we can hold on to icon
+            self.assign_icon()
+
+            in mdi....   self.main_window.assign_icon()
+        """
+        self.q_app.setWindowIcon( QIcon( parameters.PARAMETERS.icon ) )
 
     # --------------------------------------------
     def prog_info( self,  ):
@@ -264,8 +298,6 @@ class App( ):
         msg      = ( "{Hello")
         QMessageBox.information( AppGlobal.main_window,
                                      "welcome msg ", msg )
-
-
 
 def main():
     app         = App(   )

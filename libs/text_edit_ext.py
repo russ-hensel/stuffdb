@@ -13,11 +13,11 @@ text edit extensions
             have it created the edit need method
                  for it and change the inti
                  _obj   = TextEditExt( parameters )
-                  self.text_edit = TextEcitExt.build_text_edit()
+                  self.text_edit = TextEditExt.build_text_edit()
 
                   then build other stuff
 
-            block indent and outdent
+            block indent and out-dent
 
         widget                  = QLineEdit()
         self.line_edit          = widget
@@ -42,14 +42,14 @@ text_edit_ext.    ( )
 # ---- imports
 
 import os
-from   subprocess import Popen
+#from   subprocess import Popen
+from collections import defaultdict
 
 # ---- Qt
+from PyQt5 import QtCore
 from PyQt5.QtGui import QIntValidator, QStandardItem, QStandardItemModel, QTextCursor
 from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import QTextCursor, QTextDocument
-
-
+from PyQt5.QtGui import  QTextDocument
 
 
 from PyQt5.QtWidgets import (QAction,
@@ -83,9 +83,10 @@ from PyQt5.QtWidgets import (QAction,
 
 import webbrowser
 import logging
-import os
+
 import platform
 import subprocess
+import string_util
 
 
 # ---- local imports
@@ -107,14 +108,25 @@ SCAN_LINES          = 100
 
 TEXT_EDIT_EXT       = None
 
+# # !! delete
+# KEY_DICT    = { "sys":      "system",
+#                 "system":    "system",
+#                 "subsys":    "sub_system",
+#                 "name": "name",
+#                 "id": "id",
 
-class TextEditExt( object ):
+#                 }
+
+
+
+
+class TextEditExt( ):
     """
     About this class.....
     self.text_edit_ext_obj         = text_edit_ext.TextEditExt( AppGlobal.parameters, entry_widget)
     """
     #----------- init -----------
-    def __init__(self, parameters, text_edit  ):
+    def __init__( self, parameters, text_edit ):
         """
         Usual init see class doc string
         """
@@ -127,7 +139,7 @@ class TextEditExt( object ):
         self.last_position    = 0
         self.idle_exe         = IdleExe()
 
-        msg   = ( "------------------------ monkey_patch_here re-examine this--------------------------" )
+        msg   = ( "------------------------ monkey_patch_here reexamine this--------------------------" )
         logging.error( msg )
 
         text_edit.text_edit_ext_obj  = self
@@ -139,10 +151,19 @@ class TextEditExt( object ):
             msg   = ( f"second instance of TextEditExt created move all methods in this object ?  {1  = }  ")
             logging.error( msg )
 
+        self.set_custom_context_menu( text_edit )
+
+    #----------------------------
+    def foo( self ):
+            # Example function to be called from context menu
+            msg   = ("Foo action triggered!")
+            print( msg )
+
+
     # ------------------------------------------
     def get_template_ddl_values(self):
         """
-        get the list of dropdown value from the
+        get the list of drop-down value from the
         parameter templates
 
         """
@@ -157,7 +178,7 @@ class TextEditExt( object ):
     def get_template_by_key( self, key ):
         """
         what it says
-            when a dropdown needs a text item
+            when a drop-down needs a text item
 
         """
         text_templates      = self.parameters.text_templates
@@ -169,9 +190,9 @@ class TextEditExt( object ):
     def build_up_template_widgets( self,   ):
         """
         what it says
-            perhap we should change to create
+            perhaps we should change to create
             and even return its button ??
-            ddl_widget,  ddl_button_widget  =    self.tex_....build_up_template_widgets
+            ddl_widget,  ddl_button_widget  =    self.txt_....build_up_template_widgets
         """
 
         #self.text_edit_ext_obj.set_up_widget( widget )
@@ -185,7 +206,7 @@ class TextEditExt( object ):
         widget.setMinimumWidth( 200 )
 
         # # these work but in some case seem only to work with a lambda
-        # widget.currentIndexChanged.connect( self.conbo_currentIndexChanged )
+        # widget.currentIndexChanged.connect( self.combo_currentIndexChanged )
         # widget.currentTextChanged.connect(  self.combo_currentTextChanged  )
         #widget.currentTextChanged.connect(self.current_text_changed)
 
@@ -210,13 +231,55 @@ class TextEditExt( object ):
         #rint( text )
         self.insert_text_at_cursor( text )
 
+
+    #-----------------------------------
+    def smart_paste_clipboard( self, ):
+        """
+        what it says
+
+        consider strip out tabs....
+        detect line contentns and prefix with >> ...
+        string_util.begins_with_url( a_string )
+
+        may want to make more advanced, look at file extension
+        .txt  .py????
+
+        /home/russ/anaconda.sh
+
+         ~/russ/anaconda.sh
+
+    Google Calendar - June 2025
+    https://calendar.google.com/calendar/u/0/r
+
+
+        """
+        text            = QApplication.clipboard().text( )
+        splits          = text.split( "\n" )
+        new_lines       = []
+
+        for i_line in splits:
+            ii_line      = i_line
+
+            if string_util.begins_with_url( i_line ):
+                ii_line  = f">>url {i_line}"
+
+            elif string_util.begins_with_file_name( i_line ):
+                ii_line  = f">>text {i_line}"
+
+            new_lines.append( ii_line )
+
+        new_lines.append( "the end")
+        new_text = "\n".join( new_lines )
+
+
+        self.insert_text_at_cursor( new_text )
+
     #-----------------------------------
     def paste_clipboard( self, ):
         """
         what it says
         """
         text    = QApplication.clipboard().text( )
-
         self.insert_text_at_cursor( text )
 
     # ------------------------
@@ -270,10 +333,14 @@ class TextEditExt( object ):
 
             if found:
                 self.last_position = text_edit.textCursor().position()
+                text_edit.ensureCursorVisible()  # Scroll to the found text
 
             else:
-                # Reset position if end is reached and no match
+                # grok code
                 self.last_position = 0
+                cursor.setPosition(self.last_position)
+                text_edit.setTextCursor(cursor)
+                text_edit.ensureCursorVisible()  # Optional: Scroll to top if reset
 
     # ---------------------
     def search_up( self, search_line_edit ):
@@ -282,7 +349,7 @@ class TextEditExt( object ):
         the line_edit contains the string that is the target
         direction of search is up
         case insensitive
-        may need to protect against trying to start beyon end !!
+        may need to protect against trying to start beyond end !!
         as user may have deleted some text
 
         """
@@ -296,12 +363,130 @@ class TextEditExt( object ):
 
             if found:
                 self.last_position = text_edit.textCursor().position()
+                text_edit.ensureCursorVisible()  # Scroll to the found text
+
             else:
                 self.last_position = text_edit.document().characterCount()
+                cursor.setPosition( self.last_position )
+                text_edit.setTextCursor(cursor)
+                text_edit.ensureCursorVisible()  # Optional: Scroll to top if reset
 
+    #----------------------------
+    def set_custom_context_menu( self, widget ):
+        """
+        what it says
+        """
+        widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        widget.customContextMenuRequested.connect( self.show_context_menu )
+        self.context_widget   = widget # for later use in menu
+
+    # ---------------------------------------
+    def show_context_menu( self, pos ):
+        """
+        from chat, refactor please !!
+        !! needs extension
+
+        """
+        widget = self.context_widget
+        menu   = QMenu( widget )
+
+        # Add standard actions
+        undo_action = menu.addAction("Undo")
+        undo_action.triggered.connect(widget.undo)
+        menu.addSeparator()
+
+        cut_action = menu.addAction("Cut")
+        cut_action.triggered.connect(widget.cut)
+        copy_action = menu.addAction("Copy")
+        copy_action.triggered.connect(widget.copy)
+        paste_action = menu.addAction("Paste")
+        paste_action.triggered.connect(widget.paste)
+        menu.addSeparator()
+
+        select_all_action = menu.addAction("Select All")
+        select_all_action.triggered.connect(widget.selectAll)
+        menu.addSeparator()
+
+        # Add custom action
+        foo_action = menu.addAction("Smart Paste")
+        foo_action.triggered.connect(self.smart_paste_clipboard )
+
+        # Enable/disable actions based on context
+        cursor = widget.textCursor()
+        has_selection = cursor.hasSelection()
+        can_undo = widget.document().isUndoAvailable()
+        can_paste = QApplication.clipboard().text() != ""
+
+        undo_action.setEnabled(can_undo)
+        cut_action.setEnabled(has_selection)
+        copy_action.setEnabled(has_selection)
+        paste_action.setEnabled(can_paste)
+
+        # Show the context menu
+        menu.exec_(widget.mapToGlobal(pos))
+
+    # ----------------------------------
+    def parse_search_partxxxx( self, criteria, part ):
+        """
+
+        still needs error check
+        """
+        splits    = part.split( "=" )
+        key       = (splits[0].strip()).lower()
+        value     = splits[1].strip()
+        # may need type conversion when get to dates
+        key       = KEY_DICT[key]
+        criteria[key] = value
+
+
+    # ----------------------------------
+    def parse_search_stuffdbxxxx( self, a_string ):
+        """
+        >>search jeoe sue   /sys=python /subsys=qt
+        change to a dict
+
+        cirteria = {key_words: "joe" "sue" }
+
+        """
+        criteria    = defaultdict( None )
+        parts       = a_string.split( "/" )
+        key_words   = parts[0].strip()
+        criteria[ "key_words" ] = key_words
+
+        for i_part in parts[ 1: ]:
+            try:
+                self.parse_search_part( criteria, i_part  )
+            except ValueError as error:
+                # Access the error message
+                error_message = str(error)
+                msg  = (f"Parse >>search Caught an error: {error_message}")
+                msg_box             = QMessageBox()
+                msg_box.setIcon( QMessageBox.Information )
+                msg_box.setText( msg )
+                msg_box.setWindowTitle( "Sorry that is a No Go " )
+                msg_box.setStandardButtons( QMessageBox.Ok )
+
+        print( criteria )
+
+        return criteria
+
+    #------------------------------------
+    def search_stuffdbxxxx(self, cmd, args ):
+        """
+        first just for window we are in then others later
+        """
+
+        criteria    = self.parse_search_stuffdb( args )
+
+        # if command is search need to search window w
+
+        STUFF_DB.main_window.search_me( criteria )  # cmd_args rest of line
+
+
+    #------------------------------------
     def strip_lines_in_selection(self, ):
         """
-        claud says
+        Claude says
         Gets selected text from a QTextEdit, strips leading and trailing spaces from each line,
         and replaces the original selection with the processed text.
 
@@ -337,7 +522,7 @@ class TextEditExt( object ):
     # # ----- cmd_ext, migrate to this !! todo
     # def cmd_ext( self ):
     #     """ """
-    #     cmd_ext( self, ) # other things make this call more direcly
+    #     cmd_ext( self, ) # other things make this call more directly
 
 
     # ------------------------
@@ -345,6 +530,7 @@ class TextEditExt( object ):
         """
         execute command parsed out of text
 
+        !! change to use marker
         py
         sh
         url
@@ -420,15 +606,14 @@ class TextEditExt( object ):
             self.idle_exe.idle_on_temp_file( code_lines )
 
         elif cmd == "idle_file":   # want a one line and may line
-
             file_name     = cmd_args[0]
             self.idle_exe.idle_file( file_name  )
             pass  # debug
 
         # ---- text
         elif cmd == "text":
-             file_name     = cmd_args[0]
-             AppGlobal.os_open_txt_file( file_name )
+            file_name     = cmd_args[0]
+            AppGlobal.os_open_txt_file( file_name )
 
         elif cmd == "url":
             filename     = cmd_args[0]
@@ -441,35 +626,48 @@ class TextEditExt( object ):
 
         # ---- shell
         elif cmd == "shell":
-            #file_name     = cmd_args[0]  # older change to nex t
+            #file_name     = cmd_args[0]  # older change to next t
             file_name     = arg_1
             shell_file( file_name )
     \
-        # ---- search
-        elif cmd == "search":
+        # ---- search  !! should not have in this object move to stuff db
+        # as a plugin of some source
+        elif cmd.startswith( "search" ):
             # msg   = ( "implementing >>search")
             # logging.debug( msg )
-
+            #breakpoint( )
             if  STUFF_DB  is None:
                 msg   = ( f"cannot do search as {STUFF_DB  = }  ")
                 logging.error( msg )
+                # !! put up dialog
                 return
 
             else:
-                # msg   = ( f"you need to implement >>search {STUFF_DB  = }  ")
-                # logging.debug( msg )
-                STUFF_DB.main_window.search_me( " ".join( cmd_args ) )  # cmd_args rest of line
-            # = None  # may be monkey patched in
-            #                     # this wold be the app
-            #                     # STUFF_DB.main_window may be what you want
-            #                     # go_active_sub_window_func
+                AppGlobal.mdi_management.do_db_search( cmd,  cmd_args )
+
+
+            #     # msg   = ( f"you need to implement >>search {STUFF_DB  = }  ")
+            #     # logging.debug( msg )
+            #     new_args =  []  # drop after #
+            #     for i_arg in cmd_args:
+            #         if i_arg.startswith( "#" ):
+            #             break
+            #         new_args.append( i_arg )
+            #         key_words   = " ".join( new_args )
+            #     self.search_stuffdb( cmd,do_db_search
+            # " ".join( new_args ))
+            #     #STUFF_DB.main_window.search_me( " ".join( new_args ) )  # cmd_args rest of line
+            # # = None  # may be monkey patched in
+            # #                     # this wold be the app
+            # #                     # STUFF_DB.main_window may be what you want
+            # #                     # go_active_sub_window_func
 
 
         elif cmd == "xxx":
             pass
 
         else:
-            msg   = ( f"{cmd = } \n {cmd_args = }")
+            msg   = ( f"{cmd = } \n {cmd_args = }" )
             logging.error( msg )
         # next case based on command cmd
 
@@ -495,7 +693,7 @@ class ShellExe( object ):
                                    if i_code_line.strip() != "" ]
 
         #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}")
-        # line one == 0 is a comment add echo in fron and quote
+        # line one == 0 is a comment add echo in front and quote
         code_lines_new[ 0 ]    = f"echo '{code_lines_new[ 0 ]}'   "
 
         #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}")
@@ -556,7 +754,7 @@ class ShellExe( object ):
             cmd_list    = self.build_echo( cmd_list )
 
         if add_newline:
-            cmd_str     = "\n".join( cmd_list )   # may still want to stip exec bash  !!
+            cmd_str     = "\n".join( cmd_list )   # may still want to strip exec bash  !!
 
         else:
             cmd_str     = ";".join( cmd_list )
@@ -567,7 +765,7 @@ class ShellExe( object ):
 
         return cmd_str
 
-class IdleExe( object ):
+class IdleExe( ):
     """
     for executing shell commands that begin as a list
     this may need refactoring
@@ -580,13 +778,13 @@ class IdleExe( object ):
         self.file_name_temp_py  = "temp_py.py"
         self.file_name_temp_sh  = "temp_sh.sh"
 
-
     #--------
     def write_file_py( self, code_lines, file_name = None ):
         """ """
         file_name    = self.file_name_temp_py
 
-        with open( file_name, 'w' ) as a_file:    # wa will append so file should be deleted time to time w will overwrite
+        with open( file_name, 'w' ) as a_file:
+                # wa will append so file should be deleted time to time w will overwrite
             a_file.writelines(f"{line}\n" if not line.endswith("\n") else line for line in code_lines )
 
     #--------
@@ -619,7 +817,7 @@ class IdleExe( object ):
         sh_lines        = [ f"conda activate {self.venv}", f"idle  {file_name}" ]
         self.write_file_sh( sh_lines )
 
-        subprocess.run(["bash", self.file_name_temp_sh ])
+        subprocess.run(["bash", self.file_name_temp_sh ])  # !! define check
         # next is wrong because we need the environment set up
         #subprocess.run([ "idle", file_name ])
 
@@ -671,7 +869,7 @@ def get_snippet_lines( text_edit, do_undent = True  ):
             consective_blank_lines  += 1
 
         else:
-             consective_blank_lines  = 0
+            consective_blank_lines  = 0
 
         if selected_text.strip().lower().startswith( MARKER ):
             #rint( f"hit the top of marked text {ix =}")
@@ -707,7 +905,7 @@ def get_snippet_lines( text_edit, do_undent = True  ):
              consective_blank_lines  = 0
 
         if consective_blank_lines  > 3:
-            msg = f"scan down blank line limit {consective_blank_lines}"
+            #msg = f"scan down blank line limit {consective_blank_lines}"
             #rint( msg )
             break
 
@@ -736,7 +934,6 @@ def get_snippet_lines( text_edit, do_undent = True  ):
         lines   = undent_lines( lines )
 
     return lines
-
 
 #  --------
 def copy_all_text( self, text_edit ):
@@ -788,7 +985,6 @@ def qt_exec( text_edit ):
     this is like the wat inspector but is not it
     >>
 
-
     """
     code_lines      = get_snippet_lines( text_edit  )
     debug_msg       = ( code_lines )
@@ -825,10 +1021,6 @@ def shell_file( file_name ):
 #     execute command parsed out of text
 
 
-#     """
+#     """/mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/rshlib_qt/text_edit_ext.py
 
 # ---- eof
-
-
-
-

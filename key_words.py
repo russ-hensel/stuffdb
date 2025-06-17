@@ -11,6 +11,7 @@ Created on Sun Jun 30 16:13:31 2024
 
 import logging
 import re
+import time
 
 # ---- local imports
 import string_util
@@ -201,8 +202,10 @@ class KeyWords(   ):
     def compute_add_delete( self, table_id  ):
         """
         process a string to key words for adds and deletes
-        and run the inserts and deletes
+        and run the inserts and deletes to the db
 
+        Returns
+            mutated db
         """
         #rint( self )
         self.key_words_for_delete       = self.old_key_words - self.new_key_words
@@ -286,24 +289,6 @@ class KeyWords(   ):
                     print( f"Record {i_key_word} inserted successfully!" )
 
     # --------------------------------------
-    def split_on_caps_and_whitespace_bak_1( self, a_string ):
-        """
-        chat says
-            chat_cammel_split.py
-        Returns:
-            split_words in a list
-        """
-        # Split based on whitespace
-        words = re.split( r'\s+', a_string )
-
-        # Split based on embedded capitest_string capital letters
-        split_words = []
-        for word in words:
-            split_words.extend(re.findall(r'[a-z]+|[A-Z]+(?![a-z])|[A-Z][a-z]*', word))
-
-        return split_words
-
-    # --------------------------------------
     def split_on_caps_and_whitespace( self, s ):
         """
         a result from deep seek
@@ -337,10 +322,15 @@ class KeyWords(   ):
         """
         what it says, bad way to use argument id
         new jan 20 does it work ?
+        think works, may be slow, insert timing
+        turn on off with parameters
 
         think finds duplicates in key words that should not be there
         we can redo the key word index in bulk with....
         """
+
+        perf_start   = time.perf_counter()
+
         is_ok       = True
         query       = QSqlQuery( self.db )
 
@@ -365,6 +355,12 @@ class KeyWords(   ):
         if not is_ok:
             msg  = (f"check_id_for_error think frequency should be one ID: {a_id = }  { name = }  {frequency = }  ")
             logging.error( msg )
+
+        perf_end   = time.perf_counter()
+        delta_perf = perf_end - perf_start
+
+        msg          = f"check_id_for_error elapsed perf_counter { delta_perf }"
+        logging.info( msg )
 
     # --------------------------------------
     def __str__( self,   ):

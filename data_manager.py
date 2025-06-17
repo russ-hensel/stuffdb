@@ -13,7 +13,7 @@ if __name__ == "__main__":
     import main
     main.main()
 
-
+import time
 import logging
 
 # --------------------
@@ -268,6 +268,8 @@ class DataManager(   ):
         from russ crud was in phototexttab, probably universal
         might want to move key word stuff
         """
+        perf_start   = time.perf_counter()
+
         if   self.record_state   == RECORD_NULL:
             msg      = ( f"update_db record null no action, return {self.table_name}")
             logging.debug( msg )
@@ -279,6 +281,7 @@ class DataManager(   ):
             self.update_new_record()
             if self.key_word_table_name:
                 self.key_word_obj.string_to_new(( self.get_kw_string()) )
+                    # probably key_words.KeyWords
 
         elif  self.record_state   == RECORD_FETCHED:
             self.update_record_fetched()
@@ -295,12 +298,18 @@ class DataManager(   ):
             logging.error( msg )
             1/0
 
-        # or move up into the 2 cases might be better just 2 lines
+        # or move up into the 2 cases might be better just 2 lines ?? why not delete
         if ( ( self.record_state in [ RECORD_NEW, RECORD_FETCHED ] ) and
                                     ( self.key_word_table_name ) ):
             self.key_word_obj.compute_add_delete( self.current_id  )
+                # key_words.KeyWords
         #rint( f"update_db record state now:  {self.record_state = } ")
         #rint( "what about other tabs and subtabs")
+        perf_end   = time.perf_counter()
+        delta_perf = perf_end - perf_start
+
+        msg          = f"update_db elapsed perf_counter { delta_perf }"
+        logging.info( msg )
 
     # ---------------------------
     def update_record_fetched(self):
@@ -413,11 +422,11 @@ class DataManager(   ):
         debug_msg       = "update_new_record_v3 post to insertRecord {model.rowCount() = } "
         logging.log( LOG_LEVEL,  debug_msg, )
 
-        ok              = self.model_submit_all( model, ( f"DataManager.update_new_record_v3 "
-                                                f" { self.current_id = } {self.table_name = }"
-                                                f" {self.record_state = }" ) )
+        ok              = self.model_submit_all( model,
+                            ( f"DataManager.update_new_record_v3 "
+                              f" { self.current_id = } {self.table_name = }"
+                              f" {self.record_state = }" ) )
 
-        self.record_state = RECORD_FETCHED
         # msg      =  f"New record saved! { self.current_id = } "
         # rint( msg )
         #QMessageBox.information(self, "Save New", msg )

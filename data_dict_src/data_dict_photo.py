@@ -31,7 +31,7 @@ def build_it( a_data_dict ):
                                              dict_to_edit_cnv     = "cnv_int_to_str",
                                              edit_to_rec_cnv      = "cnv_str_to_int",
                                              edit_to_dict_cnv     = "cnv_str_to_int",
-
+                                             form_make_ref   = True,
                                              display_type   = "integer",
                                              max_len        = None,
                                              default_func   = None,
@@ -59,6 +59,8 @@ def build_it( a_data_dict ):
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
+                                             is_key_word        = True,
+                                             form_make_ref      = True,
                                              is_keep_prior_enabled = True,
                                              col_head_text      = "Name",
                                              col_head_width     = 30,
@@ -113,7 +115,7 @@ def build_it( a_data_dict ):
                                              db_type        = "VARCHAR(15)",
                                              display_type   = "string",
                                              max_len        = None,
-                                             default_func= None,   )
+                                             default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
     # ---- author
@@ -134,8 +136,6 @@ def build_it( a_data_dict ):
                                              dict_to_edit_cnv     = "cnv_int_to_qdate",
                                              edit_to_rec_cnv      = "cnv_qdate_to_int",
                                              edit_to_dict_cnv     = "cnv_qdate_to_int",
-
-
 
                                              display_type   = "timestamp",
                                              max_len        = None,
@@ -171,6 +171,7 @@ def build_it( a_data_dict ):
                                              default_func= None,
                                              display_order      = 38,
                                              form_col_span      = 4,
+
                                               )
     a_table_dict.add_column( a_column_dict )
 
@@ -222,7 +223,8 @@ def build_it( a_data_dict ):
                                              col_head_width     = 10,
                                              col_head_order     = 12,
                                              display_order      = 25,
-                                             form_col_span      = 4,  )
+                                             form_col_span      = 4,
+                                             form_make_ref   = True)
     a_table_dict.add_column( a_column_dict )
 
     # ---- tag
@@ -359,7 +361,8 @@ def build_it( a_data_dict ):
                                   display_type   = "string",
                                   max_len        = None,
                                   default_func= None,
-                                  placeholder_text   = "this is a long text\\nfield\\ncan hold many lines",)
+                                  placeholder_text   =
+                                  "this is a long text\\nfield\\ncan hold many lines",)
 
     a_table_dict.add_column( a_column_dict )
 

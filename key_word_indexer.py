@@ -217,22 +217,33 @@ class KeyWordIndexer(   ):
     def loop_thru( self ):
         """
         """
+        debug_msg     = ( "KeyWordIndexer.loop_thru()" )
+        logging.log( LOG_LEVEL,  debug_msg, )
+
         sql  = self.get_sql( self.table_name )
 
         #print( f"loop_thru    {sql = } ")
         query       = QSqlQuery( self.db )
 
         if not query.exec_( sql ):
-            error = query.lastError()
-            print( f"Error executing query: {error.text()}")
-            print( f"Driver error: {error.driverText()}")
-            print( f"Database error: {error.databaseText()}")
+            error   = query.lastError()
+
+            msg     = ( f"KeyWordIndexer.loop_thru() Error executing query: {error.text()}")
+            logging.error( msg, )
+
+            msg     = ( f"Driver error: {error.driverText()}")
+            logging.error( msg, )
+
+            msg     = ( f"Database error: {error.databaseText()}")
+            logging.error( msg, )
 
         ix    = 0
         #rint( "query loop ")
         while query.next():
             ix   += 1
-            print( f"on record {ix}" )
+
+            # debug_msg     = ( f"on record {ix}" )
+            # logging.log( LOG_LEVEL,  debug_msg, )
 
             row_data = [ str( query.value(i) ) for i in range(query.record().count())]
 
@@ -258,34 +269,6 @@ class KeyWordIndexer(   ):
             akwp.compute_add_delete( table_id  )
 
 
-# #--------------------------
-# def run_indexer_on_help( ):
-#     """
-#     --- now in seperater file/dir
-#     seems to work
-#     """
-#     1/0 # phase out use from some other file
-#     db_fn       = "/tmp/ramdisk/help_info.db"
-#     db          =  db_create.create_connection( db_fn )
-#     db_create.delete_table_help_key_word( db )
-#     db_create.create_table_help_key_word( db )
-#     a_kwi     = KeyWordIndexer( db = db, table_name =  "help_info", kw_table_name = "help_key_word"   )
-#     a_kwi.loop_thru()
-
-# # ---------------------
-# def run_indexer_on_stuff( ):
-#     """
-#     close to working but not quite  --- now in seperater file/dir
-#     """
-#     1/0 # phase out use from some other file
-#     db_fn       = ""
-#     1/0
-#     db          =  db_create.create_connection( db_fn )
-#     db_create.delete_table_stuff_key_word( db )
-#     db_create.create_table_stuff_key_word( db )
-#     a_kwi     = KeyWordIndexer( db = db, table_name =  "stuff"   )
-#     a_kwi.loop_thru()
-
 # --------------------
 if __name__ == "__main__":
     #run_indexer_on_help()
@@ -293,7 +276,5 @@ if __name__ == "__main__":
     # ---- run manually  no see table_key woprd indexer --------------------------
 
     print( "running manually ---------- disconnect other stuff please  ---------")
-
-
 
 # ---- eof -----------------------------------------

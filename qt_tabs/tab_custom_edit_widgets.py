@@ -8,7 +8,7 @@ Created on Sun Dec 15 12:41:16 2024
 
 KEY_WORDS:      some stuff rsh custom for stuffdb edit qq text line
 CLASS_NAME:     CustomEditWidgetTab
-WIDGETS:        CQLineEdit CQTextEdit  CQDateEdit  Broken
+WIDGETS:        CQLineEdit CQTextEdit  CQDateEdit
 STATUS:         works 5/10
 TAB_TITLE:      RSHCustomEditWidgets
 
@@ -104,6 +104,8 @@ import parameters
 import utils_for_tabs as uft
 import wat_inspector
 import custom_widgets
+import tab_base
+
 
 # ---- end imports
 
@@ -129,15 +131,19 @@ def set_groupbox_style( groupbox ):
     """)
 
 #  --------
-class CustomEditWidgetTab( QWidget ) :
+class CustomEditWidgetTab( tab_base.TabBase ) :
     def __init__(self):
         """
 
         """
         super().__init__()
-        self.help_file_name     =  uft.to_help_file_name( __name__ )
-        self.mutate_ix          = 0
-        #max_mutate_ix           = 4
+
+
+        self.mutate_dict[0]    = self.mutate_0
+        self.mutate_dict[1]    = self.mutate_1
+        self.mutate_dict[2]    = self.mutate_2
+        # self.mutate_dict[3]    = self.mutate_3
+
         self._build_gui()
 
     # ------------------------------
@@ -600,8 +606,29 @@ class CustomEditWidgetTab( QWidget ) :
         #self.date_critera_widget.set_date_default()
         self.date_edit_widget.set_data_default()
 
+    # --------------------------
+    def mutate_0( self, arg  ):
+        """
+        !!What it says
+        these functions may be out of date
+        """
+        print_func_header( "mutate_2" )
 
 
+        #self.date_critera_widget.set_date_default()
+        self.date_edit_widget.set_data_default()
+
+    # --------------------------
+    def mutate_1( self, arg  ):
+        """
+        !!What it says
+        these functions may be out of date
+        """
+        print_func_header( "mutate_2" )
+
+
+        #self.date_critera_widget.set_date_default()
+        self.date_edit_widget.set_data_default()
     # --------------------------
     def mutate_2( self, arg  ):
         """

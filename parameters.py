@@ -54,21 +54,24 @@ class Parameters( ):
         """
         #breakpoint( )
         if self.mode_from_command_line():
+
             return
 
         note  = """
         if you set the mode from the command line you will not
         get here"""
 
-        self.mode_temp_db_in_ram()
+        #self.mode_temp_db_in_ram()
 
         #self.mode_new_db()
         #self.mode_github()
         #self.mode_python_ex_on_theprof()
         #self.mode_imported_on_theprof()
-        self.mode_build_me()
+        #self.mode_build_me()
 
-        self.mode_ramdisk_temp2()
+        self.mode_ramdisk_temp3()
+
+        self.tweak_test_add_pictures()
 
 
         #self.mode_imported_on_theprof()
@@ -156,7 +159,7 @@ class Parameters( ):
 
     # ---- ---->> Methods:  one for each mode
     # -------
-    def mode_ramdisk_temp2( self ):
+    def mode_ramdisk_temp3( self ):
         """
         /tmp/ramdisk/temp2.db
         """
@@ -165,7 +168,7 @@ class Parameters( ):
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
 
-        self.db_file_name       = "/tmp/ramdisk/temp2.db"
+        self.db_file_name       = "/tmp/ramdisk/temp3.db"
 
         self.picture_db_root    = "/mnt/WIN_D/temp_photo"
         self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
@@ -209,6 +212,26 @@ class Parameters( ):
 
         self.logging_level      = logging.DEBUG   # ERROR
 
+
+    # -------
+    def tweak_test_add_pictures( self ):
+        """
+        make directories the real pictures
+        but not the new pictures for testing
+        """
+        self.mode               =  self.mode  + " + tweak_test_add_pictures"
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo/dest"
+
+
+
+
+        self.picture_db_sub     = ""
+        self.picture_db_sub     = "/alaska"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo/source"
+
+
     # -------
     def mode_add_real_pictures( self ):
         """
@@ -217,49 +240,14 @@ class Parameters( ):
         """
         self.mode               =  self.mode  + "mode_add_real_pictures"
         self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+
         self.picture_db_sub     = "/test_delete add real"
         self.picture_db_sub     = "/99/new_test"
             # all pictures should be under this directory
         # ---- file  and path names
         self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
 
-    # -------
-    def mode_temp_db_in_ram( self ):
-        """
-        a mode for the help info while still in dev
-        later will export data then re-import and
-        perhaps re-key
-        """
-        self.mode               = "mode_temp_db_in_ram"
-        # but do they use the same units ?
-        self.qt_width           = 1200
-        self.qt_height          = 700    # 700 most of win height
-        self.qt_xpos            = 50
-        self.qt_ypos            = 50
 
-        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
-        self.picture_db_root    = "/mnt/WIN_D/PhotoDB"
-
-        self.picture_db_root    = "/mnt/WIN_D/temp_photo/dest"
-
-        self.picture_db_sub     = "/test_deleteinram "
-        self.picture_db_sub     = "/99/new_test"
-
-
-            # all pictures should be under this directory
-        # ---- file  and path names
-        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
-        self.picture_browse     = "/mnt/WIN_D/temp_photo/source"
-
-
-        # ---- type and location of the db file
-        self.db_type            = "QSQLITE"
-            # the type of database, so far we only support SQLite
-
-
-        self.db_file_name       = "/tmp/ramdisk/temp2.db"
-
-        self.logging_level      = logging.DEBUG   # ERROR  DEBUG
 
     # -------
     def mode_builddb_on_theprof( self ):
@@ -489,8 +477,6 @@ class Parameters( ):
         self.db_type                = "QSQLITE"
         self.db_file_name      = "/tmp/ramdisk/ramdisk.db"
 
-
-
     # -------
     def running_on_tweaks(self,  ):
         """
@@ -637,6 +623,9 @@ class Parameters( ):
         self.doc_qt_height      = 600
         self.doc_qt_xpos        = 20
         self.doc_qt_ypos        = 20
+
+        self.set_maximized      = True   # maximize main window on startup
+        self.set_doc_maximized  = True
 
         # icon for running app
         self.icon               = r"./misc/icon_red.png"
@@ -790,6 +779,7 @@ class Parameters( ):
                             'Programming',
                             'Python',
                             'RasPi',
+                            'QTBook',
                             'RshPy',              # subsystem the project
                             'Russ',
                             'SQL',
@@ -823,6 +813,9 @@ class Parameters( ):
             else:
                 print( f"unknown_mode_string {mode_string =}")
                 1/0   # !! fix better
+
+            print( f"============== mode set from command line {mode_string = } ===================")
+                # consider popup
             return True
 
         return False

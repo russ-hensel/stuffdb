@@ -72,6 +72,7 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
+# !! think we just use the document so shorten see main_window
 import album_document
 import help_document
 import people_document
@@ -79,15 +80,33 @@ import picture_document
 import plant_document
 import planting_document
 import stuff_document
+import db_management_subwindow  # db_management_subwindow.DbManagementSubWindow( )
 
 import string_util
 
+from collections import defaultdict
 
+# Create a defaultdict with int as default_factory (defaults to 0)
+counter = defaultdict(int)
 # ---- imports end
 
 logger          = logging.getLogger( )
 #for custom logging level at module
 LOG_LEVEL  = 20   # higher is more
+
+SEARCH_COMMAND_DICT                     = defaultdict( lambda: None )
+SEARCH_COMMAND_DICT["search_help"   ]   = help_document.HelpDocument
+SEARCH_COMMAND_DICT["search_stuff"  ]   = stuff_document.StuffDocument
+SEARCH_COMMAND_DICT["search_pics"   ]   = picture_document.PictureDocument
+
+# !! perhaps change to default
+SEARCH_CRITERIA_DICT    = defaultdict( lambda: None )
+
+SEARCH_CRITERIA_DICT["sys"]     =  "system"
+#SEARCH_CRITERIA_DICT["system"]  =    "system"
+SEARCH_CRITERIA_DICT["subsys"]  = "sub_system"
+#SEARCH_CRITERIA_DICT["name"]    =  "name"
+SEARCH_CRITERIA_DICT["id"]      =  "id",
 
 
 
@@ -103,7 +122,7 @@ TopicData   = collections.namedtuple(   "TopicData", "table, id, topic" )
 # print( an_example.window )
 
 
-NOT_FOR_SUBJECTS   = {  picture_document.PictureDocument, album_document.AlbumDocument,  }
+NOT_FOR_SUBJECTS   = { picture_document.PictureDocument, album_document.AlbumDocument,  }
 # the above document should not be the subjects of pictures
 
 
@@ -161,6 +180,8 @@ class MdiManagement():
     """
     manage the mdi interface.  Need to fix the dyslexia
     mid
+    look for creation in main_window
+    AppGlobal.mdi_management        = a_mdi_management
     """
     def __init__( self, main_window ):
         self.main_window       = main_window
@@ -188,6 +209,7 @@ class MdiManagement():
         # bad name for just a dict
 
         self.plant_containers   = { None: "", 1: "1one", 2: "2two" }
+        self.text_edit_search   = TextEditSearch( self, AppGlobal.parameters,   )
 
 
     # -------------------------
@@ -220,9 +242,6 @@ class MdiManagement():
         del self.window_dict[ window_id ]    # not sure still need window_dict
         window_id  = None  # this does not matter but all othere reverences do
 
-
-
-
     # --------------------------------------
     def cascade_documents( self, ):
         """
@@ -231,6 +250,9 @@ class MdiManagement():
         """
         mdi_area       = self.main_window.mdi_area
         mdi_area.cascadeSubWindows()
+        self.main_window.assign_icon()   # reassign to see if we can keep it
+
+
         # cascade_action = QAction("Cascade", self)
         # cascade_action.triggered.connect(self.mdi_area.cascadeSubWindows)
         # window_menu.addAction(cascade_action)
@@ -336,6 +358,25 @@ class MdiManagement():
 
         main_window.window_menu.addAction( action )
 
+
+
+    # -------------------------
+    def get_a_doc_for_class( self, window_class, open = True ):
+        """
+        a_doc      = AppGlobal.mdi_management.get_a_doc_for_class( window_class )
+
+        what it says, read
+
+        if open = true open one if necessary
+
+        """
+        docs  = self.get_docs_for_class(  window_class )
+        if len( docs ) == 0: # then need to open one
+            a_doc   = self.make_document( window_class, instance_ix = 1 )
+        else:
+            a_doc   = docs[0]
+        return a_doc
+
     # -------------------------
     def get_docs_for_class( self, window_class ):
         """
@@ -361,6 +402,7 @@ class MdiManagement():
         """
         docs      = AppGlobal.mdi_management.get_help_docs()
 
+        !! why not get_docs_for_class
         what it says, read
           may replace !! get_album_doc
               may generalize even more
@@ -478,6 +520,14 @@ class MdiManagement():
         QMessageBox.information( AppGlobal.main_window,   "Info", msg )
 
     # -------------------------
+    def do_db_search( self, cmd, args, ):
+        """
+        what it says, read
+            just a relay to text....
+        """
+        self.text_edit_search.do_db_search( cmd, args, )
+
+    # -------------------------
     def menu_item_clicked(self, name):
         """
         what it says, read.... more coming maybe
@@ -580,9 +630,13 @@ class MdiManagement():
     # -------------------------
     def make_document( self, window_class, instance_ix = 0 ):
         """
-        from chat_sub window.py
-            then from document_maker which will be gone
-            why not use class and simplify this whole thing
+        better name open_document
+        if instance already open just show it
+
+            instance    for a particular instance
+        changed api an now return the instance
+
+        do we have registration issues
         """
         #msg              = f"add_subwindow for window_type {window_type } {instance_ix}"
         # mdi_area       = self.main_window.mdi_area
@@ -592,41 +646,21 @@ class MdiManagement():
             for i_doc in docs:
                 if i_doc.instance_ix  == instance_ix:
                     self.show_document( i_doc )
-                    return
+                    return i_doc
 
-        sub_window      = window_class( instance_ix )
+        # create it if above fails
+        sub_window      = window_class( instance_ix )  # sub window is a doc
 
-        # # elif  window_type == "help0":
-        # #     sub_window      = help_document0.HelpDocument()
+        # because sometims missing -- grok fix
+        sub_window.setWindowFlags(Qt.SubWindow | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint)
+        if AppGlobal.parameters.set_doc_maximized:
+            sub_window.showMaximized()
 
-        # elif  window_type == "picture":
-        #     sub_window      = picture_document.PictureDocument( instance_ix  )
+        self.show_document
+        self.main_window.assign_icon()   # reassign to see if we can keep it
+        return sub_window
 
-        # elif  window_type == "album":
-        #     sub_window      = album_document.AlbumDocument( instance_ix  )
-
-        # elif  window_type == "stuff":
-        #     sub_window      = stuff_document.StuffDocument( instance_ix  )
-
-        # elif  window_type == "planting":
-        #     sub_window      = planting_document.PlantingDocument( instance_ix  )
-
-        # elif  window_type == "plant":
-        #     sub_window      = plant_document.PlantDocument(instance_ix  )
-
-        # # elif  window_type == "criteria":
-        # #     sub_window      = CriteriaSubWindow()
-
-
-        # elif  window_type == "people":
-        #     sub_window      = people_document.PeopleDocument( instance_ix )
-
-
-        # else:
-        #     1/0
-        #     #sub_window      = CriteriaSubWind
-
-
+    #--------------------------------
     def plant_container_update( self, update_type, table_id, table_info ):
         """first warn, then change
         if we used signals and slots we would go directly to the detail
@@ -666,6 +700,130 @@ class MdiManagement():
             logging.error(    debug_msg, )
 
         pass  # debugging
+
+        self.show_document( sub_window  )
+        return sub_window
+
+
+
+class TextEditSearch( ):
+    """
+    About this class.....
+    self.text_edit_ext_obj         = text_edit_ext.TextEditExt( AppGlobal.parameters, entry_widget)
+    """
+    #----------- init -----------
+    def __init__( self, mdi_management, parameters,   ):
+        """
+        Usual init see class doc string
+        """
+        # this is the constructor run when you create
+        # like  app = AppClass( 55 )
+        self.parameters       = parameters
+        self.mdi_management   = mdi_management
+
+        # msg   = ( f"second instance of TextEditExt created move all methods in this object ?  {1  = }  ")
+        # logging.error( msg )
+
+
+    # ----------------------------------
+    def parse_search_part( self, criteria, part ):
+        """
+
+        still needs error check
+        mutates
+            criteria, hence no return
+        """
+        splits    = part.split( "=", 1 )
+        if len( splits ) < 2:
+            msg    = "{part =} is not valid for a criteria so ..."
+            raise ValueError( msg )
+
+        key0      = (splits[0].strip()).lower()
+        value     = splits[1].strip()
+        # may need type conversion when get to dates
+        key       = SEARCH_CRITERIA_DICT[key0]
+        if  key is None:
+            key  = key0
+        criteria[key] = value
+        #return criteria
+
+    # ----------------------------------
+    def parse_search( self, a_string ):
+        """
+        >>search jeoe sue   /sys=python /subsys=qt
+        change to a dict
+
+        cirteria = {key_words: "joe" "sue" }
+
+        """
+        criteria    = defaultdict( None )
+        parts       = a_string.split( "/" )
+        key_words   = parts[0].strip()
+        criteria[ "key_words" ] = key_words
+
+        for i_part in parts[ 1: ]:
+            try:
+                self.parse_search_part( criteria, i_part  )
+            except ValueError as error:
+                # Access the error message
+                error_message = str(error)
+                msg  = (f"Parse >>search Caught an error: {error_message}")
+                msg_box             = QMessageBox()
+                msg_box.setIcon( QMessageBox.Information )
+                msg_box.setText( msg )
+                msg_box.setWindowTitle( "Sorry that is a No Go " )
+                msg_box.setStandardButtons( QMessageBox.Ok )
+                msg_box.exec_()
+                return criteria
+        # print( criteria )
+
+        return criteria
+
+
+    #------------------------------------
+    def do_db_search(self, cmd, args, ):
+        """
+        perhaps throw some exceptions back here to end the search !!
+        cmd has been .lowrer()
+        """
+        # strip off comment if any ?? save the comment ?
+        #     # logging.debug( msg )
+        mdi_area    = self.mdi_management.main_window.mdi_area
+        new_args    =  []  # drop after #
+        for i_arg in args:
+            if i_arg.startswith( "#" ):
+                break
+            new_args.append( i_arg )
+        # put the search sting back together
+        search_string    = " ".join( new_args )
+        criteria         = self.parse_search( search_string )
+
+        # need to send criteria to the right document/sub_window
+        if cmd == "search":
+            # get current window
+            target_subwindow    = mdi_area.activeSubWindow() # grok says
+        else:  # zz
+            # breakpoint()
+            # determine window type
+            window_class        = SEARCH_COMMAND_DICT[ cmd ]
+            if window_class is None:
+                msg     = ( f"{cmd = } not a valid search command" )
+                #raise ValueError( f"{cmd = } not a valid search command" )
+
+                msg_box         = QMessageBox()
+                msg_box.setIcon( QMessageBox.Information )
+                msg_box.setText(  msg  )
+                msg_box.setWindowTitle( "Sorry that is a No Go " )
+                msg_box.setStandardButtons( QMessageBox.Ok )
+                msg_box.exec_()
+                return
+
+            target_subwindow    = self.mdi_management.get_a_doc_for_class(  window_class, open = True )
+
+        # !! bring focus to window
+        target_subwindow.search_me( criteria )
+
+
 
 
 # ---- eof

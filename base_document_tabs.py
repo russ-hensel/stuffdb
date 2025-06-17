@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# pylint: disable=E221,E201,E202,C0325,E0611,W0201,W0612
+# sssspylint: disable=E221,E201,E202,C0325,E0611,W0201,W0612
+# pylint: disable=E202,C0325,E0611,W0201,W0612,
 """
 
 """
@@ -18,7 +19,7 @@ import inspect
 import logging
 import pprint
 import subprocess
-from functools import partial
+#from functools import partial
 from pathlib import Path
 
 import data_dict
@@ -31,6 +32,7 @@ import text_edit_ext
 import wat_inspector
 from app_global     import AppGlobal
 from PyQt5.QtCore   import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+from PyQt5.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
 from PyQt5.QtCore   import Qt, QDateTime
 from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtGui import (QFont,
@@ -46,6 +48,7 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
+
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
                              QApplication,
@@ -106,7 +109,7 @@ RECORD_FETCHED      = 1
 RECORD_NEW          = 2
 RECORD_DELETE       = 3
 
-WIDTH_MULP          = 8 # for some column widths
+WIDTH_MULP          = 8  # for some column widths
 
 #   stuffdb_tabbed_sub_window.
 
@@ -132,15 +135,15 @@ def open_python_file_in_idle( python_filename, ): # conda_env ):
         None
 
     """
-    script_filename   =  "temp_idle_script.sh"  # first time around set to executable ??  add ./ ??
-    conda_env         =  "py_12_misc"
+    script_filename   = "temp_idle_script.sh"  # first time around set to executable ??  add ./ ??
+    conda_env         = "py_12_misc"
     # script_path        = Path( script_filename )
     # script_path_abs    = script_path.absolute()
 
     # !!!!!!!!!!!!!!!!!!!!!! next seems missing look at help and old code
     sh_text            = open_in_idle_string( python_filename, conda_env  )
 
-    with open( script_filename, 'w') as a_file: # a will append  w will overwrite
+    with open( script_filename, 'w') as a_file:  # a will append  w will overwrite
         a_file.write( sh_text )
 
     ret    =    subprocess.Popen( [ f"./{script_filename}",  ]   )
@@ -156,7 +159,7 @@ def model_submit_all( model, msg ):
     debug_loc        = "model_submit_all"
     if model.submitAll():
         debug_msg        = f"{debug_loc} >>> {msg = }  "
-        logging.error( debug_msg )   #logging.log( LOG_LEVEL,  debug_msg, )
+        logging.error( debug_msg )   # logging.log( LOG_LEVEL,  debug_msg, )
         ok   = True
 
     else:
@@ -178,12 +181,12 @@ def build_pic_filename( *, file_name, sub_dir ):
         return None if fails
     """
     # for debugging may need this
-    if type( sub_dir ) != str:
+    if type( sub_dir ) is not str:
         msg    = "based_document_tabs build_pic_filename bad subdir look at self.ix_sub_dir"
         logging.error( msg )
         # import inspect  # for debug i
         # import logging
-        debug_loc       = f"build_pic_filename"
+        debug_loc       = "build_pic_filename"
         debug_msg       = f"{debug_loc} >>> bad subdir look at self.ix_sub_dir  {sub_dir = }"
         logging.error( debug_msg )
 
@@ -203,13 +206,13 @@ def build_pic_filename( *, file_name, sub_dir ):
     full_file_name  = full_file_name.replace( "//", "/" )
         # just in case we have dups
 
-    debug_msg       = f"build_pic_filename full_file_name build_pic_filename {full_file_name = }"
-    logging.debug( debug_msg )
+    # debug_msg       = f"build_pic_filename full_file_name build_pic_filename {full_file_name = }"
+    # logging.debug( debug_msg )
 
     return full_file_name
 
 #-------------------------
-def fix_pic_filename( filename   ):
+def fix_pic_filename( filename ):
     """
     Returns:
         filename if exists else default from parameters
@@ -235,16 +238,14 @@ def is_delete_ok(   ):
         is_ok
     if not base_document_tabs.is_delete_ok():
         return
-
-
     """
     msg_box = QMessageBox()
     msg_box.setWindowTitle("Your choice")
     msg_box.setText("Delete ok?")
 
     # Adding buttons
-    choice_no  = msg_box.addButton("No - delete",  QMessageBox.ActionRole)
-    choice_yes = msg_box.addButton("Yes - delete", QMessageBox.ActionRole)
+    choice_no  = msg_box.addButton( "No - key data",  QMessageBox.ActionRole )
+    choice_yes = msg_box.addButton( "Yes - delete data", QMessageBox.ActionRole )
 
     msg_box.setModal(True)
 
@@ -259,7 +260,7 @@ def is_delete_ok(   ):
     return is_ok
 
 # -------------------------------
-def table_widget_no_edit( table_widget  ):
+def table_widget_no_edit( table_widget ):
     """
     think makes all of a table widget non editable
     from chat
@@ -275,7 +276,20 @@ def table_widget_no_edit( table_widget  ):
                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
 
 # -----------------------------------
+class CursorContext:
+    """
+    chat context manager
+    base_document_tabs.CursorContext
+    """
+    def __enter__(self):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        QApplication.restoreOverrideCursor()
+
+
+# -----------------------------------
 class DateFormatDelegate( QStyledItemDelegate ):
+    """for table integer to date formats """
     def displayText(self, value, locale):
 
         # Assuming the integer is a Unix timestamp in seconds
@@ -283,17 +297,60 @@ class DateFormatDelegate( QStyledItemDelegate ):
         return date.toString("yyyy-MM-dd")  # Customize format as needed
         #return super().displayText(value, locale)
 
+# from PyQt5.QtWidgets import QStyledItemDelegate
+# from PyQt5.QtCore import Qt, QDateTime
+
+class DateTimeFormatDelegate( QStyledItemDelegate ):
+    """for table integer to datetime formats """
+    def displayText(self, value, locale):
+        #if value.isValid():
+            # Convert integer (Unix timestamp in seconds) to QDateTime
+            date_time = QDateTime.fromSecsSinceEpoch(int( value ) )
+            # Format as yyyy-MM-dd hh:mm:ss for text sorting to match time order
+            return date_time.toString("yyyy-MM-dd hh:mm:ss")
+        #return super().displayText(value, locale)
+
+# # Apply delegate to the specific column (e.g., column index 2)
+# delegate = DateTimeFormatDelegate(view)
+# view.setItemDelegateForColumn(2, delegate)
+
+class TableModelDateTimeDelegate(QStyledItemDelegate):
+    """
+    for a qabstract table model from grok, slightly modified
+    """
+    def __init__(self, date_column=0, parent=None):
+        super().__init__(parent)
+        self.date_column = date_column  # Column index with integer timestamps
+
+    def displayText(self, value, locale):
+        # Convert integer timestamp to datetime string for the specified column
+        # if isinstance( value, int ):
+            try:
+                # works
+                value   = int( value )
+                dt      = QDateTime.fromSecsSinceEpoch(value)
+                return dt.toString("yyyy-MM-dd hh:mm:ss")
+
+                # in a line??  -- think failed
+                #dt      = QDateTime.fromSecsSinceEpoch( int( value ) ).toString("yyyy-MM-dd hh:mm:ss")
+
+            except:
+                return str(value)  # Fallback if conversion fails
+            return str(value)
+
 # -----------------------------------
 class ReadOnlySqlTableModel( QSqlTableModel ):
     """
     from chat -- test me  use for list, something similar for history
+
     !! think not needed can disable all in view i think
     """
+
     def __init__(self, parent=None, db=None):
         """
         from chat
         """
-        super(ReadOnlySqlTableModel, self).__init__(parent, db)
+        super( ReadOnlySqlTableModel, self).__init__(parent, db)
 
     # -----------------------
     def flags(self, index):
@@ -306,6 +363,7 @@ class ReadOnlySqlTableModel( QSqlTableModel ):
 # ----------------------------------------
 class DocumentBase( QMdiSubWindow ):
     """
+    this is the base for all documents in this application
     """
     def __init__(self, instance_ix = 0 ):
         """
@@ -321,7 +379,7 @@ class DocumentBase( QMdiSubWindow ):
 
         mdi_area                = AppGlobal.main_window.mdi_area
             #we could return the subwindow for parent to add
-        sub_window              = self
+        #sub_window              = self
             # sub_window.setWindowTitle( "this title may be replaced " )
         self.db                 = AppGlobal.qsql_db_access.db
 
@@ -341,7 +399,6 @@ class DocumentBase( QMdiSubWindow ):
         #                                     # may be created in the detail tab
         self.history_tab        = None
         self.picture_tab        = None
-
 
         # these and tab references should be created by the particular document
         # this works only for non movable tabs
@@ -381,6 +438,10 @@ class DocumentBase( QMdiSubWindow ):
         AppGlobal.mdi_management.update_menu_item( self )
         self.set_size_pos()
 
+        # consider using self.icon in mainwindow or mdi management
+        icon    = QIcon(  parameters.PARAMETERS.icon  )
+        self.setWindowIcon(icon)
+
     # --------------------------------
     def set_size_pos( self ):
         """
@@ -402,9 +463,9 @@ class DocumentBase( QMdiSubWindow ):
         qt_height           = my_parameters.doc_qt_height
 
         self.setGeometry(  qt_xpos,
-                            qt_ypos ,
-                            qt_width,
-                            qt_height  )
+                           qt_ypos,
+                           qt_width,
+                           qt_height  )
 
     # --------------------------------
     def get_topic( self ):
@@ -499,7 +560,8 @@ class DocumentBase( QMdiSubWindow ):
         if old_index == 0 and index != 0:  # !=0 happens at construct
             self.criteria_tab.criteria_select_if( )
 
-        if ( index == self.criteria_tab_index ) and ( self.criteria_tab.key_words_widget is not None   ):
+        if ( ( index == self.criteria_tab_index ) and
+             ( self.criteria_tab.key_words_widget is not None ) ):
             self.criteria_tab.key_words_widget.setFocus()
 
     # --------------------------------
@@ -515,6 +577,7 @@ class DocumentBase( QMdiSubWindow ):
     @pyqtSlot()
     def on_close( self ):
         """
+        just debug for now
         """
         debug_msg  = (f"{self.windowTitle()} has been closed")
         logging.debug( debug_msg )
@@ -565,7 +628,7 @@ class DocumentBase( QMdiSubWindow ):
             new_list_ix  =  no_rows -1
 
         elif new_list_ix < 0:
-            new_list_ix  =  0
+            new_list_ix = 0
             # debug_msg     = f"set_list_to_detail_ix new_
                 # list_ix {no_rows = } {new_list_ix = } tired to index before start"
             # logging.debug( debug_msg )
@@ -623,12 +686,12 @@ class DocumentBase( QMdiSubWindow ):
         no_rows             = history_table.rowCount()
 
         if new_list_ix >= no_rows:
-            new_list_ix  =  no_rows -1
+            new_list_ix = no_rows -1
             msg     = f"new_history_ix {no_rows = } {new_list_ix = } tried to index past end"
             logging.error( msg )
 
         elif new_list_ix < 0:
-            new_list_ix  =  0
+            new_list_ix = 0
             debug_msg     = ( f"new_history_ix {no_rows = } {new_list_ix = } "
                               "tired to index before start" )
             logging.debug( debug_msg )
@@ -641,8 +704,8 @@ class DocumentBase( QMdiSubWindow ):
         id_data                 = int( item.text() )
         # id_index                =  history_table.index( new_list_ix, 0 )
         # id_data                 =  history_table.data( id_index, Qt.DisplayRole )
-        debug_msg               = (  "next_history_to_detail  try to get db_"
-                                    f"key { new_list_ix = },  {id_data = }" )
+        debug_msg               = ( "next_history_to_detail  try to get db_"
+                                    f"key {new_list_ix = },  {id_data = }" )
         logging.debug( debug_msg )
 
         history_tab.select_row( new_list_ix )
@@ -704,7 +767,7 @@ class DocumentBase( QMdiSubWindow ):
         logging.log( LOG_LEVEL,  debug_msg, )
 
         self.detail_tab.new_record( next_key = None, option = option )
-        next_key  = self.detail_tab.data_manager.current_id
+        next_key    = self.detail_tab.data_manager.current_id
 
         if  self.text_tab is not None:  # using next key from above
             self.text_tab.new_record( next_key, option = option  )
@@ -735,7 +798,7 @@ class DocumentBase( QMdiSubWindow ):
         logging.debug( debug_msg )
 
         debug_msg    = ( "DocumentBase_delete convert to loop?? !! may need "
-                          "to check record state ")
+                         "to check record state ")
         logging.debug( debug_msg )
 
         if self.detail_tab is not None:
@@ -770,7 +833,7 @@ class DocumentBase( QMdiSubWindow ):
         should assume this one has use self.validate to check all
         """
         try:
-            is_bad   = self.validate( )
+            self.validate( )
 
         except cw.ValidationIssue as an_except:
             msg     = an_except.args[0]
@@ -860,7 +923,7 @@ class DocumentBase( QMdiSubWindow ):
 
         # self.detail_to_history()
 
-        tab_folder     = self.tab_folder  #  QTabWidget
+        tab_folder     = self.tab_folder  # QTabWidget
         current_ix     = tab_folder.currentIndex()
         if current_ix not in [ self.detail_tab_index, self.text_tab_index, self.picture_tab_index, ]:
             tab_folder.setCurrentIndex( self.detail_tab_index )
@@ -871,13 +934,13 @@ class DocumentBase( QMdiSubWindow ):
         Generate a popup -- see message
         consider add more info later
         """
-        msgbox      =  QMessageBox()
+        msgbox      = QMessageBox()
         msgbox.setWindowTitle("Confirm Delete")
         msgbox.setIcon( QMessageBox.Warning)
         msgbox.setText("Do you want to Delete this Record")
-        botonyes =  QPushButton("Yes")
+        botonyes = QPushButton("Yes")
         msgbox.addButton(botonyes, QMessageBox.YesRole)
-        botonno =  QPushButton("No")
+        botonno = QPushButton("No")
         msgbox.addButton(botonno, QMessageBox.NoRole)
         msgbox.exec_()
         if msgbox.clickedButton() == botonno:
@@ -886,7 +949,7 @@ class DocumentBase( QMdiSubWindow ):
             return True
 
     # ---------------------------------------
-    def record_to_history_table( self, record  ):
+    def record_to_history_table( self, record ):
         """
         what it says, mostly focused on the detail tab
         """
@@ -897,6 +960,7 @@ class DocumentBase( QMdiSubWindow ):
         """
         externally driven search perhaps from text
         need to add what type of document
+        now criteria just a sting -- better make it a dict like get criteria
         """
         msg     = ( f"base document search_me {criteria = }")
         logging.debug( msg )
@@ -934,7 +998,7 @@ class DocumentBase( QMdiSubWindow ):
         """
         links to main menu bar for debug
         """
-        debug_msg   = ( f"data_manager_inspect will call debug_to_log  ")
+        debug_msg   = ( "data_manager_inspect will call debug_to_log  ")
         logging.debug( debug_msg )
         # make some locals for inspection
         # self_detail_tab         = self.detail_tab
@@ -1020,6 +1084,7 @@ class DetailTabBase( QWidget ):
     """
     used for detail tabs and.....
     """
+
     def __init__(self, parent_window ):
         """
         lots of variable may not be used .... clean up later
@@ -1036,7 +1101,7 @@ class DetailTabBase( QWidget ):
 
         # tab for a list of photos
         #self.sub_tab_list        = []        # will be called on select
-              # and delete with our id here  self.sub_tab_list.append()   or parent_window.    ......
+              # and delete with our id here  self.sub_tab_list.append()   or parent_windo..
         self.tab_name            = "DetailTabBase -- >> tab failed to set<<< and... "
         # self.field_list          = []  # may not be used, but will be checked
             # check that children do not also implement this
@@ -1272,7 +1337,7 @@ class DetailTabBase( QWidget ):
         logging.error( msg )
         # return
         debug_msg   = ( f" send_topic_update  <<<<<<<<<{ self.tab_name = } "
-                         f" <<<<<<<<<<<<<<<<<<<< { self.enable_send_topic_update = } " )
+                        f" <<<<<<<<<<<<<<<<<<<< { self.enable_send_topic_update = } " )
         logging.debug( debug_msg )
 
         # AppGlobal.mdi_management.send_topic_update(
@@ -1285,7 +1350,7 @@ class DetailTabBase( QWidget ):
             current_id    = self.data_manager.current_id
             send_signals.send_topic_update(
                 #table = self.table_name,  table_id = self.current_id, info = self.parent_window.topic )
-                table = self.table_name,  table_id = current_id, info = "topic info na" )
+                table = self.table_name, table_id = current_id, info = "topic info na" )
 
     # ------------------------
     def prior_next_picture( self, delta ):
@@ -1424,7 +1489,7 @@ class ListTabBase( DetailTabBase ):
         self.parent_window.criteria_tab.criteria_select()
 
         debug_msg  = (  "ListTabBase_delete_row_by_id Deletion loop_"
-                       f"complete (in model only id = {id_to_delete} ).")
+                        f"complete (in model only id = {id_to_delete} ).")
         logging.log( LOG_LEVEL,  debug_msg, )
 
     #-------------------------------
@@ -1441,7 +1506,7 @@ class ListTabBase( DetailTabBase ):
             # Should print False see next
 
         debug_msg  = (  "ListTabBase_delete_row_by_id begin  "
-                       f"{model.rowCount() = } {model.isReadOnly() = }")
+                        f"{model.rowCount() = } {model.isReadOnly() = }")
         logging.log( LOG_LEVEL,  debug_msg, )
 
         for row in reversed(range(model.rowCount())):
@@ -1467,12 +1532,11 @@ class ListTabBase( DetailTabBase ):
                 # bottomRight     = model.index(row, model.columnCount() - 1)
                 # model.dataChanged.emit( topLeft, bottomRight )
 
-
         debug_msg  = ( f"ListTabBase_delete_row_by_id end  {model.rowCount() = } ).")
         logging.log( LOG_LEVEL,  debug_msg, )
 
-        debug_msg  = (  "ListTabBase_delete_row_by_id Deletion loop_complete"
-                       f" (in model only id = {id_to_delete} ).")
+        debug_msg  = (  f"ListTabBase_delete_row_by_id Deletion loop_complete"
+                        f" (in model only id = {id_to_delete} ).")
         logging.log( LOG_LEVEL,  debug_msg, )
 
 # ----------------------------------------
@@ -1516,7 +1580,7 @@ class SubTabBase( QWidget ):
         debug_msg   = ( "update_db  SubTabBase this simple? db commit here?? ")
         logging.debug( debug_msg )
 
-        model       =  self.model  # QSqlTableModel
+        model       = self.model  # QSqlTableModel
         model.submitAll()
         self.db.commit()
 
@@ -1594,7 +1658,7 @@ class SubTabBase( QWidget ):
 
         """
         next_key      = AppGlobal.key_gen.get_next_key(
-                                  self.detail_table_name )
+                        self.detail_table_name )
         self.detail_tab.default_new_row( next_key )
         self.text_tab.default_new_row(   next_key )
 
@@ -1614,7 +1678,7 @@ class SubTabBase( QWidget ):
             row         = self.model.rowCount()
             self.model.insertRow(row)
 
-            model.non_editable_columns  = { 99 } # beyond all columns -- delete soon
+            model.non_editable_columns = { 99 }  # beyond all columns -- delete soon
 
             self.fix_add_keys( form_data )  # mutable dict so no return needed.
 
@@ -1982,6 +2046,51 @@ class CriteriaTabBase( QWidget ):
         self.criteria_changed_widget.setText( f"criteria_changed {is_changed = }" )
 
     # -----------------------------
+    def get_criteria_widget( self, field_name ):
+        """
+        """
+        for i_criteria in self.critera_widget_list:
+            if i_criteria.field_name == field_name:
+                return i_criteria
+        raise ValueError( f"get_criteria_widget no widget for {field_name} found")
+
+    # -----------------------------
+    def put_criteria( self, criteria, ):   #clear = True ):
+        """
+        Put criteria into the fields, be silent on errors
+        fields need to be dynamic as may not exist for all criteria
+        clear not implemented
+
+        but I can loop thru fields to find the right one see criteria get
+
+        see code like
+
+                for i_criteria in self.critera_widget_list:
+                    i_criteria.build_criteria( criteria_dict )
+
+        """
+        # !! implement clear
+        self.clear_criteria()
+        for field_name, value in criteria.items():
+            try:
+                widget = self.get_criteria_widget( field_name )
+                widget.set_data( value )
+
+            except ValueError as error:
+                # Access the error message
+                # make a function for msg box
+                error_message   = str(error)
+
+                msg             = (f"Caught an error: {error_message} probably "
+                                   f"{field_name = } is not valid for a crteria")
+                msg_box         = QMessageBox()
+                msg_box.setIcon( QMessageBox.Information )
+                msg_box.setText(  msg  )
+                msg_box.setWindowTitle( "Sorry that is a No Go " )
+                msg_box.setStandardButtons( QMessageBox.Ok )
+                msg_box.exec_()
+
+    # -----------------------------
     def get_criteria( self ):
         """
         What it says, read
@@ -2027,8 +2136,33 @@ class CriteriaTabBase( QWidget ):
         self.key_words_widget.set_data( QApplication.clipboard().text( ) )
         QApplication.clipboard().text( )
         self.criteria_select()
+
     # -----------------------------
     def search_me(self, criteria ):
+        """
+
+        """
+        parent_window    = self.parent_window
+        parent_window.update_db()
+
+
+        # msg   = f"made it to help document {criteria =}"
+        # logging.debug( msg )
+
+        # tab_widget.setCurrentIndex( tab_index )
+        tab_index     = parent_window.criteria_tab_index
+
+        parent_window.tab_folder.setCurrentIndex(  tab_index )
+        self.clear_criteria()
+
+        self.put_criteria( criteria )
+
+        # mayb this maybe not
+        #self.criteria_select_if()    # may need to select is changed
+        self.criteria_select()
+
+    # -----------------------------
+    def search_me_old(self, criteria ):
         """
         external search should be overridden in each document type
         not implemented better
@@ -2706,16 +2840,21 @@ class StuffdbPictureTab(  DetailTabBase   ):
         button_layout       = QHBoxLayout(   )
         tab_layout.addLayout( button_layout )
 
-        if picture_sub_tab:   # because picture doe not have this
-            widget          = QPushButton('Next>')
-            connect_to      = functools.partial( picture_sub_tab.prior_next, 1 )
-            widget.clicked.connect( connect_to )
-            button_layout.addWidget( widget )
+        if picture_sub_tab:
+
+            # because picture doe not have this
 
             widget          = QPushButton( '<Prior')
             connect_to      = functools.partial( picture_sub_tab.prior_next, -1 )
             widget.clicked.connect( connect_to )
             button_layout.addWidget( widget )
+
+            widget          = QPushButton('Next>')
+            connect_to      = functools.partial( picture_sub_tab.prior_next, 1 )
+            widget.clicked.connect( connect_to )
+            button_layout.addWidget( widget )
+
+
 
         a_widget        = QPushButton( "fit" )
         a_widget.clicked.connect(  self.fit_in_view )
@@ -2969,17 +3108,16 @@ class PictureListSubTabBase( QWidget  ):
 
         view.setModel( self.model )
 
-        view.setEditTriggers(QTableView.NoEditTriggers) # no editing
+        view.setEditTriggers(QTableView.NoEditTriggers)
 
-        # ---- buttons -- test picture select
-        widget         = QPushButton('Next>')
-        connect_to     = functools.partial( self.prior_next, 1 )
+        # ---- buttons
+        widget        = QPushButton( '<Prior')
+        connect_to     = functools.partial( self.prior_next, -1 )
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
 
-        #
-        widget        = QPushButton( '<Prior')
-        connect_to     = functools.partial( self.prior_next, -1 )
+        widget         = QPushButton('Next>')
+        connect_to     = functools.partial( self.prior_next, 1 )
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
 

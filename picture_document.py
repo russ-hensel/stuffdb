@@ -296,6 +296,8 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
     def _build_tab( self,   ):
         """
         what it says, read
+
+        need to have instance var for put_criteria
         """
         page        = self
         layout      = QHBoxLayout( page )
@@ -313,6 +315,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         widget                  = cw.CQLineEdit(
                                                 field_name = "table_id"   )
+        self.id_field           = widget
         self.critera_widget_list.append( widget )
         #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget, )    # columnspan = 3 )
@@ -334,6 +337,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         widget                  = cw.CQLineEdit(
                                                 field_name = "key_words"   )
+        self.key_words_field    = widget
         self.critera_widget_list.append( widget )
         grid_layout.addWidget( widget, columnspan = 3 )
 
@@ -739,12 +743,10 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
             layout.addItem( widget, 0, ix  )  # row column
 
 
-
-
         # ---- code_gen: TableDict.to_build_form not maintained for photo -- begin table entries -----------------------
 
         # ---- id
-        edit_field                  = cw.CQLineEdit(
+        edit_field                      = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "id",
                                                 is_keep_prior_enabled     = False, )
@@ -752,6 +754,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
         edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
         edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
+        self.id_field                     = edit_field
         edit_field.setReadOnly( True )
         edit_field.is_keep_prior_enabled        = False
         edit_field.setPlaceholderText( "id" )
@@ -776,7 +779,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
                                                 is_keep_prior_enabled     = True, )
         edit_field.is_keep_prior_enabled        = True
         edit_field.setPlaceholderText( "name" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
+        self.data_manager.add_field( edit_field, is_key_word = True )
         layout.addWidget( edit_field, columnspan = 4 )
 
         # ---- title
@@ -1080,6 +1083,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         self.name_field     = edit_field
         edit_field.is_keep_prior_enabled        = True
         edit_field.setPlaceholderText( "name" )
+        self.name_field     = edit_field
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 4 )
 
@@ -1364,18 +1368,18 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         #photo_id      =  int( self.id_field.text() )  # may be available elsewhere   this worul db test
 
         # next looks a little messed up think photo_id is only needed data element because we will refetch
-        photo_id      =  self.data_manager.current_id
-        photo_fn      =  self.file_field.text()
-        row_dict            = { "photo_name":               "from photo sub_window",
+        photo_id        =  self.data_manager.current_id
+        photo_fn        =  self.file_field.text()
+        row_dict        = { "photo_name":               "from photo sub_window",
                                 "photo_fn":                  photo_fn,
                                 "photo_id":                  photo_id,
                                 "photoshow_photo_id":        photo_id,
                                }
 
-        photo_target     = AppGlobal.mdi_management.get_album_doc()
+        photo_target    = AppGlobal.mdi_management.get_album_doc()
         #photo_target   = AppGlobal.add_photo_target
         if   photo_target is not None:
-            msg       = ( f"add_to_show_zzz check target has a current id  {photo_target = }")
+            msg       = ( f"add_to_show check target has a current id  {photo_target = }")
             logging.debug( msg )
             msg       = ( f"add_to_show maybe album should do update   {photo_target = }")
             logging.debug( msg )
@@ -1643,6 +1647,10 @@ class PictureBrowseSubTab( QWidget ):
         table_view          = QTableView()
         self.table_view     = table_view
         # self.set_column_width()
+        # ---- timedateformatting
+        date_column         = 1
+        delegate            = base_document_tabs.TableModelDateTimeDelegate( date_column = date_column, parent=self )
+        table_view.setItemDelegateForColumn( date_column, delegate )
 
         # Connect the clicked signal to a slot
         table_view.clicked.connect( self.on_row_clicked )
@@ -1728,7 +1736,13 @@ class PictureBrowseSubTab( QWidget ):
     # --------------------------------------
     def move_all_setup( self,  ):
         """
-        check that the setup is ok
+        check that the setup is ok.
+            check target directory exists
+            a picture with a title.... but no file to start
+            album open
+            picutre state should not be null
+
+        old
         have picture in the current document
             perhaps has a title...
             has a file
@@ -1741,20 +1755,39 @@ class PictureBrowseSubTab( QWidget ):
         """
         detail_tab          = self.parent_window
 
-        # ---- picture_db_sub
+        # ---- picture_db_sub exists
         picture_db_sub      = detail_tab.sub_dir_field.get_raw_data().strip( )
+        if picture_db_sub.startswith( "/" ): # remove leading /
+            picture_db_sub  = picture_db_sub[ 1: ]
         picture_db_root     = PARAMETERS.picture_db_root
         picture_dir_path    = Path().joinpath( picture_db_root, picture_db_sub  )
 
+        record_state    = detail_tab.data_manager.record_state
+
+        if record_state == data_manager.RECORD_NULL:
+            msg     = "For this to work you need an item in your Picture Document (with no filenam)."
+            raise app_exceptions.ReturnToGui( msg )
+
+
         if not picture_dir_path.exists( ):  # may want to apply other places
-            msg       = ( f"The current directory values are not valid {picture_db_sub = }")
+            msg       = ( f"The current directory values are not valid (building picture_dir_path)\n"
+                          f"    {picture_db_sub = }\n    {picture_db_root = }\n    { picture_dir_path = }" )
             #logging.debug( msg )
             raise app_exceptions.ReturnToGui( msg )
 
         # ---- current filename
         current_filename    = detail_tab.file_field.get_raw_data().strip( )
-        if current_filename == "":
-            msg       = ( "For this to work you need to have a file_name for the current picture ")
+        if current_filename != "":
+            msg       = ( "For this to work you need should not "
+                          "have a filename for the current picture; perhaps add a picture ")
+            #logging.debug( msg )
+            raise app_exceptions.ReturnToGui( msg )
+
+        # ---- check name = title
+        current_filename    = detail_tab.file_field.get_raw_data().strip( )
+        if current_filename != "":
+            msg       = ( "For this to work you need should not "
+                          "have a filename for the current picture; perhaps add a picture ")
             #logging.debug( msg )
             raise app_exceptions.ReturnToGui( msg )
 
@@ -1792,7 +1825,19 @@ class PictureBrowseSubTab( QWidget ):
     def move_all( self,  ):
         """
         move all picture files to new picture documents
+            want to change this to require
+                see setup
+
+        may want to change to selected rows
+
+
         """
+        msg   = ( "move_all begin ^^^^^^^^^^^^^^^^^^^^^^^   call move to pic  but add to album in process  ")
+        logging.debug( msg )
+
+        document        = self.parent_window.parent_window
+        detail_tab      = self.parent_window
+
         try:
             album_target = self.move_all_setup()
 
@@ -1805,28 +1850,37 @@ class PictureBrowseSubTab( QWidget ):
 
         model       = self.model
         ix_debug    = 0
-        while True:
-            if model.rowCount() == 0:
-                break
 
-            # ix_debug +=1
-            # if ix_debug > 3:
-            #     msg    = "move_all  hit temp debug limit move_all"
-            #     logging.debug( msg )
-            #     break
-            # need to add a record
-            self.parent_window.parent_window.add_copy()  # document =
-            msg   = ( "move_all ^^^^^^^^^^^^^^^^^^^^^^^   call move to pic  but add to album in process  ")
-            logging.debug( msg )
+        on_first_row      = True
 
-            index    = model.get_index_for_row( 0 ) # always get the top row
-            self.move_to_pic( index )   # will send off to move_to_pic
+        # need wait cursor may want to disable whole window or is it
 
-            detail_tab      = self.parent_window
-            detail_tab.add_to_show()
-                # data_in_dict["photo_id"]
-                # photo_dict    = data_in_dict["photo_id"]
-                # album_target.add_photo_to_show( photo_dict )
+        with base_document_tabs.CursorContext():
+            while True:
+                if model.rowCount() == 0:
+                    break
+
+                if on_first_row:  # rest based on add copy
+                    document.update_db()
+                    on_first_row   = False
+
+                else:
+                    # ix_debug +=1
+                    # if ix_debug > 3:
+                    #     msg    = "move_all  hit temp debug limit move_all"
+                    #     logging.debug( msg )
+                    #     break
+                    # need to add a record
+                    document.add_copy()  # document =
+
+
+                index    = model.get_index_for_row( 0 ) # always get the top row
+                self.move_to_pic( index )   # will send off to move_to_pic
+
+                detail_tab.add_to_show()
+                    # data_in_dict["photo_id"]
+                    # photo_dict    = data_in_dict["photo_id"]
+                    # album_target.add_photo_to_show( photo_dict )
 
         msg         = ( "\n maybe finished return ++++++++++++++++++++++++++++++++++++++++++++")
         logging.debug( msg )
@@ -2230,11 +2284,9 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         view_other.doubleClicked.connect( self.on_row_other_dclicked )
         view_other.setModel( model_other)
 
-
         view_other.setColumnWidth(0, 100)  # Column,  pixels wide
         view_other.setColumnWidth(1, 100)
         view_other.setColumnWidth(2, 500)
-
 
         debug_msg     =  ( "!! _build_gui set indexer tuple next probably wrong -- or not special tab ")
         logging.log( LOG_LEVEL,  debug_msg, )
@@ -2373,7 +2425,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
     #-------------------------------------
     def topics_changed( self, topic_dict ):
         """
-        dec   2024 looks like may still work but needs list of dicts? zzz
+        dec   2024 looks like may still work but needs list of dicts?
         should not be able to add dups, since it is
         based on a dict it should not unless implementation is changed
         sent from mdi_manager  -- but my not be best
@@ -3174,9 +3226,6 @@ class PictureAlbumtSubTab(  QWidget  ):
         page            = self
 
         layout          = QVBoxLayout( page )
-        button_layout   = QHBoxLayout()
-
-        layout.addLayout( button_layout )
 
         view            = QTableView()
         self.view       = view
@@ -3186,6 +3235,14 @@ class PictureAlbumtSubTab(  QWidget  ):
         self.set_headers()
 
         layout.addWidget( view )
+
+        button_layout   = QHBoxLayout()
+        layout.addLayout( button_layout )
+
+        widget        = QPushButton('!!Jump to Album')
+        #add_button    = widget
+        #widget.clicked.connect(self.loop_thru_subjects )
+        button_layout.addWidget( widget )
 
     # ---------------------------------
     def _build_model( self, ):
@@ -3248,7 +3305,7 @@ class PictureAlbumtSubTab(  QWidget  ):
         """
         the usual, read
         """
-        debug_msg    = ( "select_by_id PictureAlbumtSubTab  ")
+        debug_msg    = ( "PictureAlbumSubTab select_by_id PictureAlbumtSubTab  ")
         logging.log( LOG_LEVEL,  debug_msg, )
 
         model           = self.model
@@ -3263,15 +3320,22 @@ class PictureAlbumtSubTab(  QWidget  ):
             logging.log( LOG_LEVEL,  debug_msg, )
 
         if True:  # verbose debug -- should change to logging
-            print(f"select_by_id Database open: {self.db.isOpen()}")
-            print( "select_by_id now do a query and show id's" )
+            debug_msg =  (f"select_by_id Database open: {self.db.isOpen()}")
+            logging.log( LOG_LEVEL,  debug_msg, )
+
+            debug_msg =  ( "select_by_id now do a query and show id's" )
+            logging.log( LOG_LEVEL,  debug_msg, )
+
             query = QSqlQuery(self.db)
             query.exec_("SELECT * FROM photo_in_show WHERE photo_id = 1023")
             while query.next():
-                print( f'{query.value("photo_show_id")} ' )  # Check if rows exist
+                debug_msg =  ( f'{query.value("photo_show_id")} ' )  # Check if rows exist
+                logging.log( LOG_LEVEL,  debug_msg, )
 
-            print( "select_by_id now do a QSqlQueryModel and show rows returned" )
-            model = QSqlQueryModel(self)
+            debug_msg =  ( "select_by_id now do a QSqlQueryModel and show rows returned" )
+            logging.log( LOG_LEVEL,  debug_msg, )
+
+            model      = QSqlQueryModel(self)
             model.setQuery(f"""
                 SELECT photoshow.name, photoshow.id, photo_in_show.photo_id,
                        photo_in_show.sequence, photo_in_show.photo_show_id
@@ -3280,8 +3344,8 @@ class PictureAlbumtSubTab(  QWidget  ):
                 WHERE photo_in_show.photo_id = {a_id}
             """, self.db)
 
-            print(f"select_by_id Rows returned: {model.rowCount()}")
-
+            debug_msg =  (f"check table select_by_id Rows returned: {model.rowCount()}")
+            logging.log( LOG_LEVEL,  debug_msg, )
 
     # ------------------------------------------
     def delete_all(self):
@@ -3317,8 +3381,6 @@ CREATE TABLE  photoshow    (
      type  VARCHAR(20),
      web_site_dir  VARCHAR(240)
         """
-
-
         model   = self.model
         view    = self.view
 
@@ -3326,7 +3388,7 @@ CREATE TABLE  photoshow    (
         view.setEditTriggers(QTableView.NoEditTriggers)
 
         ix_col  = 0
-        model.setHeaderData( ix_col, Qt.Horizontal , "ID")    #  Qt.Horizontal (for column headers) or Qt.Vertical
+        model.setHeaderData( ix_col, Qt.Horizontal , "ID")
         view.setColumnWidth( ix_col, 50  )
 
         ix_col  = 1

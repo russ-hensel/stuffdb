@@ -45,7 +45,42 @@ def count_leading_spaces( a_string ):
     return leading_spaces
 
 # ---- is functions -------------------------------
-def is_url( a_string,  ):
+def begins_with_url( a_string, ):
+    """
+    it_is  = string_util.begins_with_url( a_string )
+    """
+    parts       = a_string.split()
+    if len( parts ) == 0: # pretty much null string
+        return False
+    test_url    = parts[0]
+    #test_url   = (a_string.split() ).[0])  #.strip()     # parse off using whitespace  and strip
+
+    for i_prefix in URL_VALID_PREFIXS:
+        if test_url.find( i_prefix ) == 0:    # find str2 in str1 !! better bings with
+            return  True
+
+    return False
+
+# ---- is functions -------------------------------
+def begins_with_file_name( a_string, ):
+    """
+    it_is  = string_util.begins_with_url( a_string )
+    """
+    parts       = a_string.split()
+    if len( parts ) == 0: # pretty much null string
+        return False
+    test_file_name    = parts[0]
+    #test_url   = (a_string.split() ).[0])  #.strip()     # parse off using whitespace  and strip
+
+    if test_file_name.startswith( "/") or test_file_name.startswith( "~/"):
+        if "." in test_file_name:
+            return  True
+
+    return False
+
+
+# -------------------------------------
+def is_url( a_string, ):
     """
     !! seee if moved to clip_utils
 

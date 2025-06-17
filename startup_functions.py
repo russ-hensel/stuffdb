@@ -20,8 +20,6 @@ def  say_hello():
 
 
 
-
-
 def default_startup():
     """
     may be called on startup, sort of forget how
@@ -32,7 +30,7 @@ def default_startup():
     parameter_check.check_parameters()
 
     # here because of timing issues
-    from app_global import AppGlobal
+    from app_global    import AppGlobal
     from help_document import HelpDocument
 
     AppGlobal.main_window.add_subwindow( window_class = HelpDocument, instance_ix = 1 )

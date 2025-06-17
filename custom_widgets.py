@@ -663,6 +663,9 @@ class CQEditBase(   ):
              a_partial           = partial( self.do_ct_value, "" )
 
         """
+        # # for conditional debug
+        # if self.field_name == "sub_dir":
+        #     breakpoint()
         #rint( "set_data_to_default_value {a_value = }" )
         self.set_preped_data( a_value, is_changed = True )
         # debug_msg   = ( f"do_ct_value {self.field_name}")

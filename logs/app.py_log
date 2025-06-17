@@ -1,423 +1,160 @@
-2025-06-02 12:52:16,097 - CRITICAL - Root logger is set up. Modules can now log using logging.getLogger().
-2025-06-02 12:52:16,097 - INFO - config_logger call was: logging.info
-2025-06-02 12:52:16,097 - DEBUG - QsqlDbAccess  init_db()
-2025-06-02 12:52:16,098 - DEBUG - connection_name = 'qt_sql_default_connection'
-2025-06-02 12:52:16,140 - Notice - 
-2025-06-02 12:52:16,140 - Notice - ============================
-2025-06-02 12:52:16,140 - Notice - 
-2025-06-02 12:52:16,140 - Notice - Application: Stuff DB in QT Ver 73: 2025 05 03.01 in mode mode_github_example_code_on_theprofand version  Ver 73: 2025 05 03.01
-2025-06-02 12:52:16,140 - Notice - 
-2025-06-02 12:52:16,140 - Notice - command line arg + 0  =  main.py)
-2025-06-02 12:52:16,140 - Notice - command line arg + 1  =  mode_github_example_code_on_theprof)
-2025-06-02 12:52:16,140 - Notice - current directory /mnt/WIN_D/for_github/stuffdb
-2025-06-02 12:52:16,140 - Notice - Time now: 2025-06-02 16:52:16
-2025-06-02 12:52:16,140 - DEBUG - self.q_app.exec_() next
-2025-06-02 12:52:18,100 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
-2025-06-02 12:52:18,103 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
-2025-06-02 12:52:18,103 - DEBUG - post_init DetailTabBase  HelpDetailTab  
-2025-06-02 12:52:18,110 - ERROR - ------------------------ monkey_patch_here re-examine this--------------------------
-2025-06-02 12:52:18,114 - DEBUG - set_size_pos--------------------------------------  
-2025-06-02 12:52:29,244 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "select", "click" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-02 12:52:29,246 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "select", "click" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-02 12:52:35,611 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "select" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-02 12:52:40,790 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 12:52:40,791 - DEBUG - update_db record null no action, return help_info
-2025-06-02 12:52:40,791 - DEBUG - update_db record null no action, return help_text
-2025-06-02 12:52:40,791 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 12:52:40,791 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-02 12:52:40,793 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-02 12:52:40,793 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-02 12:52:40,794 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-02 13:11:14,949 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "main", "window" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-02 13:11:20,620 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 13:11:20,622 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 13:11:20,622 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
-2025-06-02 13:11:20,622 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
-2025-06-02 13:11:20,622 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
-2025-06-02 13:11:20,622 - DEBUG - DataManager new_record    help_info  should we create the record here ??
-2025-06-02 13:11:22,150 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
-2025-06-02 13:11:22,150 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-02 13:11:22,151 - DEBUG - DataManager new_record    help_text  should we create the record here ??
-2025-06-02 13:11:22,153 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
-2025-06-02 13:11:22,153 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-02 13:11:22,154 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
-2025-06-02 15:05:21,862 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "document", "album" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-02 15:05:23,981 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 15:05:25,073 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 15:05:25,073 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-02 15:05:25,080 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-02 15:05:25,081 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-02 15:05:25,081 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-02 15:05:43,945 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 15:05:44,013 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 15:08:54,020 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "pylint" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-02 15:08:56,159 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 15:08:56,161 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 15:08:56,161 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-02 15:08:56,162 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-02 15:08:56,162 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-02 15:08:56,162 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-02 16:23:44,152 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 16:23:46,132 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 16:23:46,133 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
-2025-06-02 16:23:46,133 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
-2025-06-02 16:23:46,133 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
-2025-06-02 16:23:46,133 - DEBUG - DataManager new_record    help_info  should we create the record here ??
-2025-06-02 16:23:46,205 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
-2025-06-02 16:23:46,205 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-02 16:23:46,205 - DEBUG - DataManager new_record    help_text  should we create the record here ??
-2025-06-02 16:23:46,206 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
-2025-06-02 16:23:46,206 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-02 16:23:46,207 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
-2025-06-02 16:24:06,946 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 16:24:07,643 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 16:24:58,700 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "main", "window" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-02 16:25:11,323 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "maximize" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-02 16:25:13,557 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 16:25:13,563 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 16:25:13,563 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-02 16:25:13,573 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-02 16:25:13,573 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-02 16:25:13,574 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-02 16:25:39,572 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "main", "window" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-02 16:25:45,779 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 16:25:45,993 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 16:25:48,305 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "main", "window" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-02 16:25:49,271 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 16:25:49,276 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-02 16:25:49,277 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-02 16:25:49,284 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-02 16:25:49,284 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-02 16:25:49,285 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-02 16:25:49,287 - DEBUG - record_to_table found row 3 in future update maybe for now skip adding by return 
-2025-06-03 06:34:10,710 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 06:34:10,712 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:18:44,366 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "qsqltable" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 07:18:57,428 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:18:57,430 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:18:57,430 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 07:18:57,433 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 07:18:57,433 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 07:18:57,433 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 07:19:01,235 - DEBUG - ['>>search sql table', '', '']
-2025-06-03 07:19:01,235 - DEBUG - cmd_exec cmd = 'search' 
- cmd_args = ['sql', 'table']
-2025-06-03 07:19:01,236 - DEBUG - base document search_me criteria = 'sql table'
-2025-06-03 07:19:01,236 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:19:01,319 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:19:01,320 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "table", "sql" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 07:19:18,240 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:19:18,242 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:19:18,242 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 07:19:18,247 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 07:19:18,247 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 07:19:18,247 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 07:19:41,646 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:19:41,722 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:19:41,722 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
-2025-06-03 07:19:41,722 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
-2025-06-03 07:19:41,722 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='prior' update.db
-2025-06-03 07:19:41,722 - DEBUG - DataManager new_record    help_info  should we create the record here ??
-2025-06-03 07:19:41,794 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
-2025-06-03 07:19:41,794 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-03 07:19:41,795 - DEBUG - DataManager new_record    help_text  should we create the record here ??
-2025-06-03 07:19:41,795 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
-2025-06-03 07:19:41,795 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-03 07:19:41,795 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
-2025-06-03 07:36:02,596 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "set" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 07:36:06,790 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:36:09,750 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:36:09,750 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 07:36:09,756 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 07:36:09,757 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 07:36:09,757 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 07:36:26,336 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:36:26,338 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:36:26,338 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 07:36:26,340 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 07:36:26,340 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 07:36:26,340 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 07:36:42,736 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:36:42,870 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:36:42,870 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 07:36:42,882 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 07:36:42,882 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 07:36:42,883 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 07:38:03,823 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "ex", "set" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 07:38:09,106 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:38:09,108 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:38:09,108 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
-2025-06-03 07:38:09,108 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
-2025-06-03 07:38:09,108 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='prior' update.db
-2025-06-03 07:38:09,108 - DEBUG - DataManager new_record    help_info  should we create the record here ??
-2025-06-03 07:38:09,188 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
-2025-06-03 07:38:09,188 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-03 07:38:09,189 - DEBUG - DataManager new_record    help_text  should we create the record here ??
-2025-06-03 07:38:09,190 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
-2025-06-03 07:38:09,191 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-03 07:38:09,191 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
-2025-06-03 07:40:13,148 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 07:40:13,627 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 08:01:45,674 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "except" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 08:01:51,045 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 08:01:51,047 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 08:01:51,048 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 08:01:51,051 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 08:01:51,051 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 08:01:51,051 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 08:32:38,169 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "dict", "example" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 08:32:44,597 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "dict" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 08:32:55,320 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 08:32:55,402 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 08:32:55,402 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 08:32:55,405 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 08:32:55,406 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 08:32:55,406 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 08:33:07,538 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "in", "dict" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 08:33:10,770 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 08:33:10,836 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 08:33:10,836 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 08:33:10,838 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 08:33:10,838 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 08:33:10,838 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 08:33:48,860 - DEBUG - ['>>Py find if a key is in a dictionary', '', '', 'msg     = " use in to find if key is included in  the dict"', 'is_in     = "one_key"  in { "one_key":  1, "two_key"   : 2, "three_key" : 3 }', 'print( f"did we find it? { is_in = }" )', '', '']
-2025-06-03 08:33:48,861 - DEBUG - cmd_exec cmd = 'py' 
- cmd_args = ['find', 'if', 'a', 'key', 'is', 'in', 'a', 'dictionary']
-2025-06-03 09:39:36,669 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "document", "album" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 09:39:41,214 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 09:39:43,207 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 09:39:43,207 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 09:39:43,213 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 09:39:43,213 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 09:39:43,213 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 09:59:47,990 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "download", "wiki" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 09:59:50,611 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 09:59:52,599 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 09:59:52,599 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 09:59:52,602 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 09:59:52,602 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 09:59:52,602 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 10:06:23,779 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "shit" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 10:06:26,098 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 10:06:26,100 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 10:06:26,101 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 10:06:26,103 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 10:06:26,103 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 10:06:26,103 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 10:06:40,593 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 10:06:40,811 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 10:38:35,558 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "kabota" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 10:38:41,718 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "tractor" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 10:38:44,147 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 10:38:44,149 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 10:38:44,149 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 10:38:44,151 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 10:38:44,151 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 10:38:44,151 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 10:42:48,625 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 10:42:49,226 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 10:42:49,226 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 10:42:49,228 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 10:42:49,228 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 10:42:49,228 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 10:42:57,927 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 10:42:58,059 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 10:42:58,059 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 10:42:58,061 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 10:42:58,061 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 10:42:58,061 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 10:43:35,613 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "predator" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-03 10:43:37,707 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 10:43:38,520 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 10:43:38,521 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-03 10:43:38,526 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-03 10:43:38,526 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-03 10:43:38,526 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-03 10:45:52,539 - DEBUG - ['>>shell   /mnt/WIN_D/_my_stuff/Garden/SmallEngines/preditor/6.5 HP (212cc) OHV Horizontal Shaft Gas Engine, EPA.pdf']
-2025-06-03 10:45:52,539 - DEBUG - cmd_exec cmd = 'shell' 
- cmd_args = ['/mnt/WIN_D/_my_stuff/Garden/SmallEngines/preditor/6.5', 'HP', '(212cc)', 'OHV', 'Horizontal', 'Shaft', 'Gas', 'Engine,', 'EPA.pdf']
-2025-06-03 10:46:45,105 - DEBUG - ['>>shell   /mnt/WIN_D/_my_stuff/Garden/SmallEngines/preditor/69730.pdf', '', '']
-2025-06-03 10:46:45,106 - DEBUG - cmd_exec cmd = 'shell' 
- cmd_args = ['/mnt/WIN_D/_my_stuff/Garden/SmallEngines/preditor/69730.pdf']
-2025-06-03 11:47:11,429 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 11:47:13,645 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 11:47:13,645 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
-2025-06-03 11:47:13,645 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
-2025-06-03 11:47:13,645 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
-2025-06-03 11:47:13,645 - DEBUG - DataManager new_record    help_info  should we create the record here ??
-2025-06-03 11:47:13,905 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
-2025-06-03 11:47:13,905 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-03 11:47:13,905 - DEBUG - DataManager new_record    help_text  should we create the record here ??
-2025-06-03 11:47:13,906 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
-2025-06-03 11:47:13,906 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-03 11:47:13,906 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
-2025-06-03 11:57:37,609 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 11:57:40,006 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 11:57:40,007 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
-2025-06-03 11:57:40,008 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
-2025-06-03 11:57:40,008 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
-2025-06-03 11:57:40,008 - DEBUG - DataManager new_record    help_info  should we create the record here ??
-2025-06-03 11:57:40,078 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
-2025-06-03 11:57:40,079 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-03 11:57:40,080 - DEBUG - DataManager new_record    help_text  should we create the record here ??
-2025-06-03 11:57:40,081 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
-2025-06-03 11:57:40,081 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-03 11:57:40,082 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
-2025-06-03 11:58:01,422 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-03 11:58:01,996 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 07:14:12,183 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "document", "album" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-04 07:14:18,702 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 07:14:18,704 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 07:14:18,704 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-04 07:14:18,708 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-04 07:14:18,709 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-04 07:14:18,709 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-04 07:14:18,711 - DEBUG - record_to_table found row 12 in future update maybe for now skip adding by return 
-2025-06-04 07:35:41,436 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "in", "dict" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-04 07:35:44,564 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 07:35:46,540 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 07:35:46,540 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-04 07:35:46,542 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-04 07:35:46,542 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-04 07:35:46,542 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-04 07:35:46,543 - DEBUG - record_to_table found row 11 in future update maybe for now skip adding by return 
-2025-06-04 07:36:51,135 - DEBUG - ['>>Py', '', '', 'msg     = " use in to find if key is included in  the dict"', 'is_in     = "one_key"  in { "one_key":  1, "two_key"   : 2, "three_key" : 3 }', 'for i_key   in is_in:', '    print( f"{i_key}" )', 'print( f"did we find it? { is_in = }" )']
-2025-06-04 07:36:51,136 - DEBUG - cmd_exec cmd = 'py' 
- cmd_args = []
-2025-06-04 07:38:01,160 - DEBUG - ['>>Py', '', '', '#msg     = " use in to find if key is included in  the dict"', 'a_dict    =  { "one_key":  1, "two_key"   : 2, "three_key" : 3 }', 'for i_key   in a_dict.keys():', '    print( f"{i_key}" )', 'print( f"did we find it? { is_in = }" )']
-2025-06-04 07:38:01,161 - DEBUG - cmd_exec cmd = 'py' 
- cmd_args = []
-2025-06-04 07:38:11,585 - DEBUG - ['>>Py', '', '', '#msg     = " use in to find if key is included in  the dict"', 'a_dict    =  { "one_key":  1, "two_key"   : 2, "three_key" : 3 }', 'for i_key   in a_dict.keys():', '    print( f"{i_key}" )', '#print( f"did we find it? { is_in = }" )']
-2025-06-04 07:38:11,585 - DEBUG - cmd_exec cmd = 'py' 
- cmd_args = []
-2025-06-04 07:38:18,121 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 07:38:18,203 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:08:52,734 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "spyder" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-04 08:08:59,417 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:08:59,506 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:08:59,506 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-04 08:08:59,510 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-04 08:08:59,511 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-04 08:08:59,511 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-04 08:09:15,907 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:09:16,046 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:09:16,047 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
-2025-06-04 08:09:16,047 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
-2025-06-04 08:09:16,047 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='prior' update.db
-2025-06-04 08:09:16,047 - DEBUG - DataManager new_record    help_info  should we create the record here ??
-2025-06-04 08:09:16,108 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
-2025-06-04 08:09:16,109 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-04 08:09:16,109 - DEBUG - DataManager new_record    help_text  should we create the record here ??
-2025-06-04 08:09:16,109 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
-2025-06-04 08:09:16,110 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-04 08:09:16,110 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
-2025-06-04 08:12:51,317 - DEBUG - ['>>bash', 'ls     ~/.config/spyder-py3/', '', 'ls     /home/russ/.config/spyder', '']
-2025-06-04 08:12:51,317 - DEBUG - cmd_exec cmd = 'bash' 
- cmd_args = []
-2025-06-04 08:12:51,318 - DEBUG - "run_code_lines in shellext    >>shell code_lines_new =["echo '>>bash'   ", "echo 'ls     ~/.config/spyder-py3/'", 'ls     ~/.config/spyder-py3/', "echo 'ls     /home/russ/.config/spyder'", 'ls     /home/russ/.config/spyder']
-2025-06-04 08:12:51,318 - DEBUG - about to os.system cmd_str = 'gnome-terminal -- bash -c "echo \'>>bash\'   ;echo \'ls     ~/.config/spyder-py3/\';ls     ~/.config/spyder-py3/;echo \'ls     /home/russ/.config/spyder\';ls     /home/russ/.config/spyder; echo \'exec bash\' ;exec bash" '
-2025-06-04 08:15:29,297 - DEBUG - ['>>bash see where spyder stores its stuff, but may need to activate a venv first', 'spyder --paths', '', '']
-2025-06-04 08:15:29,298 - DEBUG - cmd_exec cmd = 'bash' 
- cmd_args = ['see', 'where', 'spyder', 'stores', 'its', 'stuff,', 'but', 'may', 'need', 'to', 'activate', 'a', 'venv', 'first']
-2025-06-04 08:15:29,298 - DEBUG - "run_code_lines in shellext    >>shell code_lines_new =["echo '>>bash see where spyder stores its stuff, but may need to activate a venv first'   ", "echo 'spyder --paths'", 'spyder --paths']
-2025-06-04 08:15:29,298 - DEBUG - about to os.system cmd_str = 'gnome-terminal -- bash -c "echo \'>>bash see where spyder stores its stuff, but may need to activate a venv first\'   ;echo \'spyder --paths\';spyder --paths; echo \'exec bash\' ;exec bash" '
-2025-06-04 08:17:07,251 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:17:08,057 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:33:23,885 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:33:23,888 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:33:23,888 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
-2025-06-04 08:33:23,888 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
-2025-06-04 08:33:23,888 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
-2025-06-04 08:33:23,888 - DEBUG - DataManager new_record    help_info  should we create the record here ??
-2025-06-04 08:33:23,956 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
-2025-06-04 08:33:23,957 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-04 08:33:23,957 - DEBUG - DataManager new_record    help_text  should we create the record here ??
-2025-06-04 08:33:23,957 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
-2025-06-04 08:33:23,957 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-04 08:33:23,957 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
-2025-06-04 08:41:20,062 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:41:20,897 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:41:20,898 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:41:20,900 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:41:20,900 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
-2025-06-04 08:41:20,900 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
-2025-06-04 08:41:20,900 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='prior' update.db
-2025-06-04 08:41:20,900 - DEBUG - DataManager new_record    help_info  should we create the record here ??
-2025-06-04 08:41:20,971 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
-2025-06-04 08:41:20,971 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-04 08:41:20,971 - DEBUG - DataManager new_record    help_text  should we create the record here ??
-2025-06-04 08:41:20,971 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
-2025-06-04 08:41:20,971 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-04 08:41:20,971 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
-2025-06-04 08:41:54,128 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:41:54,809 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:41:54,810 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
-2025-06-04 08:41:54,810 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
-2025-06-04 08:41:54,810 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='prior' update.db
-2025-06-04 08:41:54,810 - DEBUG - DataManager new_record    help_info  should we create the record here ??
-2025-06-04 08:41:54,883 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
-2025-06-04 08:41:54,883 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-04 08:41:54,883 - DEBUG - DataManager new_record    help_text  should we create the record here ??
-2025-06-04 08:41:54,883 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
-2025-06-04 08:41:54,883 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-04 08:41:54,883 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
-2025-06-04 08:42:23,478 - DEBUG - ['>>search howto']
-2025-06-04 08:42:23,479 - DEBUG - cmd_exec cmd = 'search' 
- cmd_args = ['howto']
-2025-06-04 08:42:23,479 - DEBUG - base document search_me criteria = 'howto'
-2025-06-04 08:42:23,479 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:42:24,098 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:42:24,101 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "howto" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-04 08:47:28,176 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:47:28,177 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 08:47:28,178 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-04 08:47:28,179 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-04 08:47:28,179 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-04 08:47:28,179 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-04 09:50:37,997 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "we", "book" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-04 09:53:14,222 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 09:53:14,229 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 09:53:14,229 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-04 09:53:14,240 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-04 09:53:14,241 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-04 09:53:14,241 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-04 09:53:58,291 - DEBUG - ['>>search deeper dive button', '', '', 'Some code here but lets improve:', '']
-2025-06-04 09:53:58,292 - DEBUG - cmd_exec cmd = 'search' 
- cmd_args = ['deeper', 'dive', 'button']
-2025-06-04 09:53:58,292 - DEBUG - base document search_me criteria = 'deeper dive button'
-2025-06-04 09:53:58,293 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 09:53:58,597 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 09:53:58,600 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "deeper", "button", "dive" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 3  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-04 09:54:01,093 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 09:54:01,100 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 09:54:01,101 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-04 09:54:01,109 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-04 09:54:01,110 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-04 09:54:01,111 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-04 09:54:41,461 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "we", "book" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-04 09:54:50,803 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 09:54:51,098 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 09:54:51,099 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-04 09:54:51,111 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-04 09:54:51,112 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-04 09:54:51,112 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-04 09:54:55,584 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "master", "we", "book" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 3  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-04 10:03:36,729 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "david" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-04 10:03:42,190 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 10:03:42,197 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 10:03:42,198 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
-2025-06-04 10:03:42,198 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
-2025-06-04 10:03:42,199 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
-2025-06-04 10:03:42,199 - DEBUG - DataManager new_record    help_info  should we create the record here ??
-2025-06-04 10:03:44,759 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
-2025-06-04 10:03:44,759 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-04 10:03:44,760 - DEBUG - DataManager new_record    help_text  should we create the record here ??
-2025-06-04 10:03:44,760 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
-2025-06-04 10:03:44,760 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-04 10:03:44,760 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
-2025-06-04 10:04:12,648 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 10:04:13,451 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 10:08:37,218 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 10:08:39,204 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 10:09:12,990 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-04 10:09:12,997 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:36:15,010 - CRITICAL - Root logger is set up. Modules can now log using logging.getLogger().
+2025-06-16 14:36:15,011 - INFO - config_logger call was: logging.info
+2025-06-16 14:36:15,011 - DEBUG - QsqlDbAccess  init_db()
+2025-06-16 14:36:15,012 - DEBUG - connection_name = 'qt_sql_default_connection'
+2025-06-16 14:36:15,056 - DEBUG - log_sql_callback PRAGMA synchronous = NORMAL;
+2025-06-16 14:36:15,057 - DEBUG - log_sql_callback PRAGMA journal_mode = WAL;
+2025-06-16 14:36:15,057 - DEBUG - log_sql_callback PRAGMA optimize;
+2025-06-16 14:36:15,181 - Notice - 
+2025-06-16 14:36:15,181 - Notice - ============================
+2025-06-16 14:36:15,181 - Notice - 
+2025-06-16 14:36:15,181 - Notice - Application: Stuff DB in QT Ver 73: 2025 06 15.01 in mode mode_github_example_code_on_theprofand version  Ver 73: 2025 06 15.01
+2025-06-16 14:36:15,181 - Notice - 
+2025-06-16 14:36:15,181 - Notice - command line arg + 0  =  main.py)
+2025-06-16 14:36:15,181 - Notice - command line arg + 1  =  mode_github_example_code_on_theprof)
+2025-06-16 14:36:15,181 - Notice - current directory /mnt/WIN_D/for_github/stuffdb
+2025-06-16 14:36:15,182 - Notice - Time now: 2025-06-16 18:36:15
+2025-06-16 14:36:17,011 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
+2025-06-16 14:36:17,016 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
+2025-06-16 14:36:17,016 - DEBUG - post_init DetailTabBase  HelpDetailTab  
+2025-06-16 14:36:17,022 - ERROR - ------------------------ monkey_patch_here reexamine this--------------------------
+2025-06-16 14:36:17,027 - DEBUG - set_size_pos--------------------------------------  
+2025-06-16 14:36:22,318 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "split" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-06-16 14:36:22,328 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "split" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-06-16 14:36:32,156 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:36:32,156 - DEBUG - update_db record null no action, return help_info
+2025-06-16 14:36:32,156 - DEBUG - update_db record null no action, return help_text
+2025-06-16 14:36:32,156 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:36:32,156 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-06-16 14:36:32,158 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-06-16 14:36:32,158 - ERROR - send_topic_update needs fixing !! just re-enabled 
+2025-06-16 14:36:32,158 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-06-16 14:36:57,715 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:36:57,746 - INFO - check_id_for_error elapsed perf_counter 0.0007997439970495179
+2025-06-16 14:36:57,747 - INFO - update_db elapsed perf_counter 0.03163409500848502
+2025-06-16 14:36:57,747 - INFO - update_db elapsed perf_counter 0.0004752590029966086
+2025-06-16 14:36:57,747 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:36:57,748 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-06-16 14:36:57,749 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-06-16 14:36:57,749 - ERROR - send_topic_update needs fixing !! just re-enabled 
+2025-06-16 14:36:57,750 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-06-16 14:37:13,372 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:37:13,410 - INFO - check_id_for_error elapsed perf_counter 0.0010976570047205314
+2025-06-16 14:37:13,411 - INFO - update_db elapsed perf_counter 0.03856833199097309
+2025-06-16 14:37:13,413 - INFO - update_db elapsed perf_counter 0.0007789350056555122
+2025-06-16 14:37:13,413 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:37:13,414 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-06-16 14:37:13,418 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-06-16 14:37:13,418 - ERROR - send_topic_update needs fixing !! just re-enabled 
+2025-06-16 14:37:13,419 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-06-16 14:37:22,856 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:37:22,884 - INFO - check_id_for_error elapsed perf_counter 0.0010784569894894958
+2025-06-16 14:37:22,885 - INFO - update_db elapsed perf_counter 0.02824966300977394
+2025-06-16 14:37:22,886 - INFO - update_db elapsed perf_counter 0.0007619759999215603
+2025-06-16 14:37:22,887 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:37:22,888 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-06-16 14:37:22,892 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-06-16 14:37:22,892 - ERROR - send_topic_update needs fixing !! just re-enabled 
+2025-06-16 14:37:22,893 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-06-16 14:37:22,895 - DEBUG - record_to_table found row 1 in future update maybe for now skip adding by return 
+2025-06-16 14:37:46,802 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "split", "ex" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-06-16 14:40:59,044 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:40:59,045 - INFO - check_id_for_error elapsed perf_counter 0.00029853299201931804
+2025-06-16 14:40:59,045 - INFO - update_db elapsed perf_counter 0.0008754089940339327
+2025-06-16 14:40:59,085 - INFO - update_db elapsed perf_counter 0.03943164799420629
+2025-06-16 14:40:59,085 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:41:04,704 - DEBUG - ['>>py -------- with maxsplit --------', 'str_0 = "Test dot xs.abcdef.Line2-nLine4.mp4";', '', '', 'splits = str_0.split( ".", 2  )', 'print( f"{splits = }")']
+2025-06-16 14:41:04,704 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['--------', 'with', 'maxsplit', '--------']
+2025-06-16 14:41:21,627 - DEBUG - ['>>py -------- with maxsplit --------', 'str_0 = "Test dot xs.abcdef.Line2-nLine4.mp4";', '', '', 'splits = str_0.split( ".", 2  )', 'print( f"{splits = }")']
+2025-06-16 14:41:21,627 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['--------', 'with', 'maxsplit', '--------']
+2025-06-16 14:42:06,041 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:42:06,044 - INFO - check_id_for_error elapsed perf_counter 0.0010973739990731701
+2025-06-16 14:42:06,045 - INFO - update_db elapsed perf_counter 0.0032119460083777085
+2025-06-16 14:42:06,096 - INFO - update_db elapsed perf_counter 0.05056043299555313
+2025-06-16 14:42:06,097 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:42:07,680 - DEBUG - ['>>py -------- with maxsplit --------', 'str_0 = "Test dot xs.abcdef.Line2-nLine4.mp4";', '', 'max  = 2', 'splits = str_0.split( ".",  max  )', 'print( f"{max = } {splits = }")']
+2025-06-16 14:42:07,680 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['--------', 'with', 'maxsplit', '--------']
+2025-06-16 14:42:46,723 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:42:46,726 - INFO - check_id_for_error elapsed perf_counter 0.001096094012609683
+2025-06-16 14:42:46,727 - INFO - update_db elapsed perf_counter 0.0032689619984012097
+2025-06-16 14:42:46,750 - INFO - update_db elapsed perf_counter 0.02224715599732008
+2025-06-16 14:42:46,750 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:42:48,431 - DEBUG - ['>>py -------- with maxsplit --------', 'str_0 = "Test dot xs.abcdef.Line2-nLine4.mp4";', '', 'max  = 2', 'splits = str_0.split( ".",  max  )', 'print( f"{max = } {splits = } {len( splits ) = }")']
+2025-06-16 14:42:48,432 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['--------', 'with', 'maxsplit', '--------']
+2025-06-16 14:43:24,169 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:43:24,170 - INFO - check_id_for_error elapsed perf_counter 0.0003027560014743358
+2025-06-16 14:43:24,170 - INFO - update_db elapsed perf_counter 0.0009624829981476068
+2025-06-16 14:43:24,218 - INFO - update_db elapsed perf_counter 0.04762246999598574
+2025-06-16 14:43:24,219 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:43:25,901 - DEBUG - ['>>py -------- with maxsplit --------', 'str_0 = "Test dot xs.abcdef.Line2-nLine4.mp4";', '', '', 'max  = 0', 'splits = str_0.split( ".",  max  )', 'print( f"{max = } {splits = } {len( splits ) = }")', '', 'max  = 1', 'splits = str_0.split( ".",  max  )', 'print( f"{max = } {splits = } {len( splits ) = }")', '', '', 'max  = 2', 'splits = str_0.split( ".",  max  )', 'print( f"{max = } {splits = } {len( splits ) = }")']
+2025-06-16 14:43:25,902 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['--------', 'with', 'maxsplit', '--------']
+2025-06-16 14:44:08,111 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:44:08,115 - INFO - check_id_for_error elapsed perf_counter 0.0011107969912700355
+2025-06-16 14:44:08,115 - INFO - update_db elapsed perf_counter 0.00316823399043642
+2025-06-16 14:44:08,149 - INFO - update_db elapsed perf_counter 0.03314240000327118
+2025-06-16 14:44:08,149 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:55:13,950 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "try", "search" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-06-16 14:55:16,102 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:55:16,105 - INFO - check_id_for_error elapsed perf_counter 0.0007727020129095763
+2025-06-16 14:55:16,105 - INFO - update_db elapsed perf_counter 0.0023381810024147853
+2025-06-16 14:55:16,106 - INFO - update_db elapsed perf_counter 0.0005699190078303218
+2025-06-16 14:55:16,106 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:55:16,107 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-06-16 14:55:16,113 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-06-16 14:55:16,113 - ERROR - send_topic_update needs fixing !! just re-enabled 
+2025-06-16 14:55:16,113 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-06-16 14:55:22,024 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-16 14:55:22,027 - INFO - check_id_for_error elapsed perf_counter 0.0011461819958640262
+2025-06-16 14:55:22,028 - INFO - update_db elapsed perf_counter 0.003248677996452898
+2025-06-16 14:55:22,085 - INFO - update_db elapsed perf_counter 0.05613383499439806
+2025-06-16 14:55:22,086 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 06:58:34,448 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 06:58:34,449 - INFO - check_id_for_error elapsed perf_counter 0.0002820100053213537
+2025-06-17 06:58:34,449 - INFO - update_db elapsed perf_counter 0.0008363579981960356
+2025-06-17 06:58:34,497 - INFO - update_db elapsed perf_counter 0.04816659801872447
+2025-06-17 06:58:34,498 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 07:02:20,549 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 07:02:20,552 - INFO - check_id_for_error elapsed perf_counter 0.0010778169962577522
+2025-06-17 07:02:20,553 - INFO - update_db elapsed perf_counter 0.0030977409915067255
+2025-06-17 07:02:20,596 - INFO - update_db elapsed perf_counter 0.04281705498578958
+2025-06-17 07:02:20,597 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 07:02:22,410 - DEBUG - ['>>search string   /sys = StuffDB   # more space around =  should work', '']
+2025-06-17 07:02:22,411 - DEBUG - cmd_exec cmd = 'search' 
+ cmd_args = ['string', '/sys', '=', 'StuffDB', '#', 'more', 'space', 'around', '=', 'should', 'work']
+2025-06-17 07:02:22,411 - DEBUG - base document search_me criteria = defaultdict(None, {'key_words': 'string', 'system': 'StuffDB'})
+2025-06-17 07:02:22,412 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 07:02:22,415 - INFO - check_id_for_error elapsed perf_counter 0.001162255008239299
+2025-06-17 07:02:22,416 - INFO - update_db elapsed perf_counter 0.0031537190079689026
+2025-06-17 07:02:22,417 - INFO - update_db elapsed perf_counter 0.0008875080093275756
+2025-06-17 07:02:22,418 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 07:02:22,421 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  lower(help_info.system)= "stuffdb"  AND   key_word IN ( "string" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-06-17 07:02:58,200 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 07:02:58,201 - INFO - check_id_for_error elapsed perf_counter 0.0002811980084516108
+2025-06-17 07:02:58,201 - INFO - update_db elapsed perf_counter 0.0008160680008586496
+2025-06-17 07:02:58,248 - INFO - update_db elapsed perf_counter 0.046466892992611974
+2025-06-17 07:02:58,248 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 07:02:59,859 - DEBUG - ['>>search string   / sys = StuffDB   #  space around =  and / -- should work', '']
+2025-06-17 07:02:59,859 - DEBUG - cmd_exec cmd = 'search' 
+ cmd_args = ['string', '/', 'sys', '=', 'StuffDB', '#', 'space', 'around', '=', 'and', '/', '--', 'should', 'work']
+2025-06-17 07:02:59,859 - DEBUG - base document search_me criteria = defaultdict(None, {'key_words': 'string', 'system': 'StuffDB'})
+2025-06-17 07:02:59,859 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 07:02:59,860 - INFO - check_id_for_error elapsed perf_counter 0.0002891200128942728
+2025-06-17 07:02:59,860 - INFO - update_db elapsed perf_counter 0.0007981160015333444
+2025-06-17 07:02:59,860 - INFO - update_db elapsed perf_counter 0.0002727690152823925
+2025-06-17 07:02:59,860 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 07:02:59,861 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  lower(help_info.system)= "stuffdb"  AND   key_word IN ( "string" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-06-17 07:03:31,905 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 07:03:31,908 - INFO - check_id_for_error elapsed perf_counter 0.0010958360217045993
+2025-06-17 07:03:31,909 - INFO - update_db elapsed perf_counter 0.003204753011232242
+2025-06-17 07:03:31,911 - INFO - update_db elapsed perf_counter 0.001141356013249606
+2025-06-17 07:03:31,911 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 07:04:21,065 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-17 07:04:21,068 - INFO - check_id_for_error elapsed perf_counter 0.00108919499325566
+2025-06-17 07:04:21,069 - INFO - update_db elapsed perf_counter 0.0032896799966692924
+2025-06-17 07:04:21,071 - INFO - update_db elapsed perf_counter 0.001529135013697669
+2025-06-17 07:04:21,072 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'

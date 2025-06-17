@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # ---- tof
 """
-
 album_document
+    an ordered collection of pictures
 
 
 """
@@ -16,7 +16,8 @@ if __name__ == "__main__":
     #main.main()
 # --------------------
 
-import functools
+#import functools
+from   functools import partial
 import logging
 #import sqlite3
 import time
@@ -93,6 +94,7 @@ import picture_viewer
 import qt_sql_query
 import app_exceptions
 import data_manager
+from   picture_document import PictureDocument
 # ---- end imports
 LOG_LEVEL  = 10
 
@@ -153,10 +155,6 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         self.list_tab               = self._build_tab_list(  self  )
         main_notebook.addTab(      self.list_tab, "List of Albums"    )
 
-        # ix                         += 1
-        # self.detail_text_index      = ix
-        # self.text_tab               = self._build_tab_text( self )
-        # main_notebook.addTab( self.text_tab,    "Text"     )
 
         # for reasons have to do out of order
 
@@ -173,13 +171,6 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         self.photo_index           = ix
         main_notebook.addTab( self.picture_tab, "Picture"     )
 
-        # ix                         += 1
-        # self.photo_index           = ix
-        # # rint( f"__init__  {self = }")
-        # self.picture_tab             = self._build_tab_picture( self )
-        # # rint( f">>>>> SubWindow _build_tab_photo __init__  {self.picture_tab = }")
-        # main_notebook.addTab( self.picture_tab, "Picture"     )
-
         ix                        += 1
         self.history_tab_index     = ix
         self.history_tab           = self._build_tab_history( self )
@@ -193,7 +184,7 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
     # ------------------------------------------
     def _build_tab_list( self, parent_window   ):
         """
-        what it says, read
+        what it says, read --- !! refactor this an like out
         """
         return AlbumListTab( parent_window )
 
@@ -222,38 +213,7 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         """
         return AlbumHistoryTab( parent_window )
 
-    # ---- capture events ----------------------------
-    # ------------------------------------------
-    def on_history_clickedxxx( self, index: QModelIndex ):
-        """
-        !! finish me
-        Args:
-            index (QModelIndex): DESCRIPTION.
 
-        !! promote the whole thing?? need key to be id col 0 seems ok
-        might be functioalize if we use an argument for self.list.tab
-        """
-        debug_msg    = ( "on_history_clicked  save first if necessary")
-        logging.log( LOG_LEVEL,  debug_msg, )
-
-        row                     = index.row()
-        column                  = index.column()
-
-        self.list_tab.list_ix   = row
-
-        id_index                = self.history_tab.history_model.index(
-            index.row( ), 0 )
-        db_key                  = self.history_tab.history_model.data(
-            id_index, Qt.DisplayRole )
-        debug_msg = ( f"on_history_clicked Clicked on list row {row}, column "
-                      "{column}, {db_key=}" )  # " value: {value}" )
-        logging.debug( debug_msg )
-
-        self.fetch_row_by_id( db_key )
-
-        # set tab
-        self.main_notebook.setCurrentIndex( self.detail_tab_index )
-        self.detail_tab.id_field.setText( str( db_key )  )
 
     # ------------------------------------------
     def on_list_double_clickedxxxxx( self, index: QModelIndex ):
@@ -272,20 +232,6 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         logging.debug( debug_msg )
 
     # ---- sub window interactions ---------------------------------------
-    # -------------------------------------
-    def default_new_rowxxxxxx( self ):
-        """
-        defaults values for a new row in the detail and the
-        text tabs
-
-        Changes state of detail and related tabs
-
-        """
-        next_key      = AppGlobal.key_gen.get_next_key(
-            self.detail_table_name )
-        self.detail_tab.default_new_row( next_key )
-        self.text_tab.default_new_row(   next_key )
-
     # -------------------------------------
     def copy_prior_row( self ):
         """tail_tab.default_new_row( next_key )
@@ -339,7 +285,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         the usual
         """
         super().__init__( parent_window )
-        self.tab_name            = "AlbumCriteriaTab"
+        self.tab_name   = "AlbumCriteriaTab"
 
     # ------------------------------------------
     def _build_tab( self, ):
@@ -351,7 +297,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         layout          = QHBoxLayout( page )
                 # can we fold in to next
 
-        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        grid_layout     = gui_qt_ext.CQGridLayout( col_max = 10 )
         layout.addLayout( grid_layout )
 
         self._build_top_widgets_grid( grid_layout )
@@ -430,7 +376,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self.critera_widget_list.append( widget )
 
         widget.addItem('Ascending')
-        widget.addItem('Decending')
+        widget.addItem('Descending')
 
         debug_msg = ( "build_tab build criteria change put in as marker ")
         logging.debug( debug_msg )
@@ -448,7 +394,6 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         for i_widget in self.critera_widget_list:
             i_widget.function_on_return   = self.criteria_select
 
-
     # -------------
     def criteria_select( self,     ):
         """
@@ -458,15 +403,14 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         debug_msg = ( "criteria_select   trying to add key words " )
         logging.debug( debug_msg )
 
-        parent_document                 = self.parent_window
+        parent_document        = self.parent_window
 
-        model                           = parent_document.list_tab.list_model
-        #rint( "begin channel_select for the list")
-        query                           = QSqlQuery()
-        query_builder                   = qt_sql_query.QueryBuilder( query, print_it = False, )
+        model                   = parent_document.list_tab.list_model
 
-        kw_table_name                   = "photoshow_key_words"
-        #column_list                     = [ "id", "id_old", "name",  "add_kw",         ]
+        query                   = QSqlQuery()
+        query_builder           = qt_sql_query.QueryBuilder( query, print_it = False, )
+
+        kw_table_name           = "photoshow_key_words"
 
         # !! next is too much
         columns    = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
@@ -474,7 +418,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         col_names        = [   ]
         #col_head_widths  = [ "10"  ]
         for i_column in columns:
-            col_names.append(        i_column.column_name  )
+            col_names.append( i_column.column_name )
             #col_head_texts.append(   i_column.col_head_text  )
             #col_head_widths.append(  i_column.col_head_width  )
         column_list                     = col_names
@@ -548,7 +492,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             column_name = "id"
         elif order_by == "id_old":
             column_name = "id_old"
-        else:   # !! might better handel this
+        else:   # !! might better handle this
             column_name = "name"
 
         order_by_dir   = criteria_dict[ "order_by_dir" ].lower( )
@@ -572,9 +516,9 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
                                                   model,
                                                   msg = "HelpSubWindow criteria_select" )
 
-# ------------
+# -------
 #         help_document.main_notebook.setCurrentIndex( help_document.list_tab_index )
-#         self.critera_is_changed = False
+#         self.criteria_is_changed = False
 # -----------
 
         debug_msg      = (  query.executedQuery()   )
@@ -703,13 +647,13 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "id", )
-        self.id_field     = edit_field
+        self.id_field                       = edit_field
         edit_field.setReadOnly( True )
         edit_field.setPlaceholderText( "id" )
-        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
-        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
-        edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
-        edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
+        edit_field.rec_to_edit_cnv          = edit_field.cnv_int_to_str
+        edit_field.dict_to_edit_cnv         = edit_field.cnv_int_to_str
+        edit_field.edit_to_rec_cnv          = edit_field.cnv_str_to_int
+        edit_field.edit_to_dict_cnv         = edit_field.cnv_str_to_int
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 1 )
 
@@ -871,10 +815,7 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
         # ---- capture needed fields
         # descr      = self.descr_field.text()
         name       = self.name_field.text()
-        # add_kw     = self.add_kw_field.text()
-        # print(  ia_qt.q_line_edit( self.name_field,
-        #                   msg = "this is the name field",  ) # include_dir = True ) )
-        # url      = self.url_field.text()
+
 
         edit_ts  = self.edit_ts_field.text()
         edit_ts  = "self.edit_ts_field.text()"   # !! test
@@ -906,16 +847,6 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
             None.
 
         """
-        # model    = self.tab_model
-
-        # yt_id    = self.yt_id_field.text()
-        # name     = self.name_field.text()
-        # #print(  ia_qt.q_line_edit( self.name_field,
-        # #                   msg = "this is the name field",  ) # include_dir = True ) )
-        # url      = self.url_field.text()
-        # mypref   = self.mypref_field.text()
-
-
         self.clear_detail_fields()
 
         # ---- ??redef add_ts
@@ -947,7 +878,6 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
                 # ---- special for this table
                 record.setValue("name", self.name_field.text())
                 # record.setValue("add_kw",     self.add_kw_field.text())
-
 
                 # ---- timestamps
                 record.setValue("add_ts", self.add_ts_field.text())
@@ -1018,363 +948,6 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
 
         # 'add_photo_to_show'
         self.picture_sub_tab.add_photo_to_show( photo_dict )
-
-# ----------------------------------------
-class TestDetaiSubTab( base_document_tabs.DetailTabBase, ):
-
-    def __init__(self, parent_window ):
-        """
-        the usual
-
-        """
-        super().__init__( parent_window )
-
-        self._build_gui()
-
-    # ------------------------------------------
-    def _build_gui( self, ):
-        """
-        what it says, read
-        put page into the notebook
-
-        """
-        page            = self
-
-
-        placer          = gui_qt_ext.PlaceInGrid(
-            central_widget=page,
-            a_max=0,
-            by_rows=False  )
-
-        # a_widget        = QPushButton( "Get Criteria test" )
-        # a_widget.clicked.connect(  self.get_criteria )
-        # placer.place( a_widget )
-
-        # ---- Channel Like
-        a_widget  = QLabel( "xxx:" )
-        placer.new_row()
-        placer.place( a_widget )
-
-        a_widget    = QLineEdit()
-
-        placer.place( a_widget )
-        self.channel_like_widget    = a_widget
-
-        # ---- MyPref
-        a_widget  = QLabel( "rrr" )
-        placer.place( a_widget )
-
-        a_widget    = QComboBox()
-        values      = [ "Ignore", "Item 1", "Item 2", "Item 3"]
-        a_widget.addItems( values )
-        placer.place( a_widget )
-        self.channel_pref_widget    = a_widget
-
-        # self.channel_pref_widget.setCurrentText("Ignore")
-        # text = self.channel_pref_widget.currentText()
-
-        # ----Ch MyGroup
-        a_widget  = QLabel( "ccc" )
-        # placer.new_row()
-        placer.place( a_widget )
-
-        a_widget    = QComboBox()
-        values      = ( "Ignore", 'Group1'  )
-        a_widget.addItems( values )
-        # a_widget.setCurrentText("Ignore")
-        placer.place( a_widget )
-        self.channel_group_widget  = a_widget
-
-        # ----"Order By:"
-        a_widget    = QLabel( "Order By:" )
-        placer.new_row()
-        placer.place( a_widget )
-
-        a_widget    = QComboBox()
-        values      = ( "Ignore", "title", 'pub_date', 'watched',
-                        'view_count', )
-        a_widget.addItems( values )
-        placer.place( a_widget )
-        self.channel_order_by_widget  = a_widget
-
-        # ---- buttons
-        a_widget        = QPushButton( "Do Nothing" )
-        # a_widget.clicked.connect(  self.clear_criteria )
-        placer.new_row()
-        placer.place( a_widget )
-
-    # -------------------------------------
-    def __build_gui( self ):
-        """
-        what it says read
-        Returns:
-            none
-        """
-        tab                 = self
-        tab_layout          = QVBoxLayout(tab)
-
-        self.id_field       = QLineEdit()
-        self.id_field.setValidator( QIntValidator() )
-        self.id_field.setPlaceholderText("Enter ID")
-        tab_layout.addWidget(self.id_field)
-
-        entry_widget         = QTextEdit()
-        self.text_data_field = entry_widget
-        entry_widget.setPlaceholderText( "Some Long \n text on a new line " )
-        tab_layout.addWidget( entry_widget  )
-
-        # self.name_field = QLineEdit()
-        # self.name_field.setPlaceholderText("Name")
-        # tab_layout.addWidget(self.name_field)
-
-
-        # self.mypref_field = QLineEdit()
-        # self.mypref_field.setValidator(QIntValidator())
-        # self.mypref_field.setPlaceholderText("Preference")
-        # tab_layout.addWidget(self.mypref_field)
-
-        button_layout = QHBoxLayout()
-
-    # -----------------------------
-    def copy_prior_row( self, next_key ):
-        """
-        could use create default_new_row
-        what it says
-            this is for a new row on the window -- no save
-            fill with default
-        Returns:
-            None.
-
-        """
-        # capture needed fields
-        # yt_id    = self.yt_id_field.text()
-        text_data       = self.text_data_field.text()
-
-        self.default_new_row(  next_key )
-
-        self.text_data_field.setTtext( f"{text_data} \n ------ \n {text_data}")
-
-    # -----------------------------
-    def default_new_row(self, next_key ):
-        """
-        what it says
-            this is for a new row on the window -- no save
-            needs key but timestamp photo from detail not text
-        arg:
-            next_key for table, just trow out if not used
-        Returns:
-            None.
-
-        """
-        self.clear_detail_fields()
-
-        self.text_data_field.setText(
-            f"this is the default text for id { next_key=}" )
-
-        # # ---- ??redef add_ts
-        # a_ts   = str( time.time() ) + "sec"
-        # # record.setValue( "add_ts",  a_ts    )
-        # self.add_ts_field.setText(  a_ts )
-        # self.edit_ts_field.setText( a_ts )
-
-        self.id_field.setText( str( next_key ) )
-
-    # ----------------------------
-    def fetch_detail_row( self, id=None ):
-        """
-        Args:
-            id can be external or as chat has it fetched
-
-        Returns:
-            None.
-        !! could be promoted
-        """
-        id      = self.id_field.text()
-
-        debug_msg   = ( f"Album text tab fetch_detail_row { id= }")
-        logging.log( LOG_LEVEL,  debug_msg, )
-
-        self.fetch_detail_row_by_id( id )
-
-    # -----------------------------
-    def fetch_text_row_by_id( self, id   ):
-        """
-        what it says, read
-        or is is not a fetch, a copy over, not what I want
-        !! need to fix -- updates may no         t work
-        also need to check for more id errors, perhaps
-        Args:
-            id (TYPE): DESCRIPTION.
-
-        """
-        model     = self.detail_text_model
-        model.setFilter( (f"id = {id}") )
-        model.select()
-        if model.rowCount() > 0:
-            record = model.record(0)
-            self.text_data_field.setText(  record.value(    "text_data"     ))
-            # self.name_field.setText(   record.value(    "name"      ))
-            # self.url_field.setText(    record.value(     "url"       ))
-
-        else:
-
-            msg     = f"Fetch Error: No record tor text_data found with the given ID. {id = }"
-            QMessageBox.warning(self, "Error", msg )
-            AppGlobal.logger.error( msg )
-
-        # else:
-        #     QMessageBox.warning(self, "Input Error", f"Please enter a valid ID. { id = }")
-
-    # -----------------------------
-    def delete_detail_row(self):
-        """
-        looks like could be promoted -- dbkey needs to stay id
-              but need to delete detail_children as well
-              but need to delete key words as well
-        what it says read
-         delete_detail_row delete_detail_row
-        Returns:
-            None.
-
-        """
-        model       = self.detail_text_model
-        id          = self.id_field.text()
-        if id:
-            model.setFilter( f"id = {id}" )
-            model.select()
-            if model.rowCount() > 0:
-                model.removeRow(0)
-                model.submitAll()
-                QMessageBox.information(
-                    self, "Delete Success", "detail_text_model Record deleted successfully.")
-                self.clear_detail_fields()
-            else:
-                msg   = "Delete Error: No record found with the given ID. { id = } "
-                QMessageBox.warning(self, "Error", msg )
-                AppGlobal.logger.error( msg )
-        else:
-            msg  = f"Please enter a valid ID. { id = }"
-            QMessageBox.warning(self, "Input Error",
-                                "Please enter a valid ID.")
-            AppGlobal.logger.error( msg )
-
-    # ------------------------
-    def clear_detail_fields(self):
-        """
-        what it says, read
-        what fields, need a bunch of rename here
-        clear_detail_fields  clear_detail_fields
-        """
-        self.id_field.clear()
-
-        self.text_data_field.clear()
-        # self.name_field.clear()
-        # self.url_field.clear()
-
-    # -------------------------
-    def update_new_record(self):
-        """
-        Returns:
-            None.
-
-        """
-        print( f"update_new_record  {self.record_state=}")
-
-        if not self.record_state  == base_document_tabs.RECORD_NEW:
-            debug_msg  = ( f"update_new_record bad state, return  {self.record_state=}")
-            logging.error( debug_msg )
-            return
-
-        model      = self.detail_text_model
-        new_id     = self.idField.text()
-        new_text   = self.textField.toPlainText()
-        if new_id and new_text:
-            record = model.record()
-            record.setValue("id", int(new_id))
-            record.setValue("text_data", new_text)
-            model.insertRecord(self.model.rowCount(), record)
-            model.submitAll()
-            self.record_state    = base_document_tabs.RECORD_FETCHED
-            QMessageBox.information(self, "Save New", "New record saved!")
-        else:
-            debug_msg   = ( f"do not seem to have new id and text {new_id=} { new_text=}")
-            logging.error( debug_msg )
-
-    # ----------------------
-    def update_record_fetched(self):
-        debug_msg  = ( f"update_record_fetched  {self.record_state=}")
-        logging.error( debug_msg )
-
-        if not self.record_state  == base_document_tabs.RECORD_FETCHED:
-            debug_msg    = ( f"update_record_fetched bad state, return  {self.record_state=}")
-            logging.error( debug_msg )
-            return
-
-        model      = self.detail_text_model
-        id_value = self.idField.text()
-        if id_value:
-            model.setFilter(f"id = {id_value}")
-            model.select()
-            if self.model.rowCount() > 0:
-                record = model.record(0)
-                record.setValue("id", int(id_value))
-                record.setValue("text_data", self.textField.toPlainText())
-                model.setRecord(0, record)
-                model.submitAll()
-                # QMessageBox.information(
-                #     self, "Save", "Record ( fetched ) saved!")
-            model.setFilter("")
-
-    def update_text( self, ):
-        """
-
-        """
-        debug_msg  = ( "update text in album used? promoted??")
-        logging.log( LOG_LEVEL,  debug_msg, )
-
-        if self.record_state   == base_document_tabs.RECORD_NULL:
-            print( "update_db record null no action, return ")
-
-        elif self.record_state   == base_document_tabs.RECORD_NEW:
-            self.update_new_record()
-
-        elif self.record_state   == base_document_tabs.RECORD_FETCHED:
-            self.update_record_fetched()
-
-        elif self.record_state   == base_document_tabs.RECORD_DELETE:
-            self.delete_record_update()
-
-        else:
-            print( f"update_db wtf  {self.record_state=} ")
-
-        print( f"update_db record state now:  {self.record_state=} ")
-
-    # ---------------------
-    def delete_record_update(self):
-        """
-
-
-        Returns:
-            None.
-
-        """
-        if not self.record_state  == self.RECORD.DELETE:
-            print( f"delete_record_update bad state, return  {self.record_state=}")
-            return
-
-        model       = self.detail_text_model
-        id_value    = self.deleted_id
-        if id_value:
-            model.setFilter(f"id = {id_value}")
-            model.select()
-            if model.rowCount() > 0:
-                model.removeRow(0)
-                model.submitAll()
-                self.clear_fields()  # will fix record state
-                self.record_state       = base_document_tabs.RECORD_NULL
-                QMessageBox.information(
-                    self, "delete_record_update", "Record deleted!")
-            model.setFilter( "" )
 # ----------------------------------------
 class AlbumHistoryTab(  base_document_tabs.HistoryTabBase  ):
     """
@@ -1395,10 +968,8 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
     This is the list of photos in the album
     see photo_in_show_join_chat.py
 
-    should this be pictuer list like other tabs, I think different from
+    should this be picture list like other tabs, I think different from
     subjects
-
-
     """
     # ------------------------------------------
     def __init__(self, parent_window ):
@@ -1428,29 +999,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         self._build_model()
         self._build_gui()
-
-        # sort of guessing  work on these
-        # columns to find the respecitve data
-        self.ix_photo_fn              = 6  # 5
-        self.ix_photo_name            = 9
-        self.ix_sub_dir               = 8
-        self.ix_seq_no                = 3
-        self.ix_photoshow_id          = 10   # album_id
-        self.ix_photo_id              = 7
-
-# Column 0: id
-# Column 1: photo_id_old
-# Column 2: photo_show_id_old
-# Column 3: sequence
-# Column 4: photo_in_show_id_old
-# Column 5: camera
-# Column 6: file
-# Column 7: photo_id
-# Column 8: sub_dir
-# Column 9: name
-# Column 10: photo_show_id
-# Column 11: photo_in_show_id
-
+        self.move_target    = 0
 
     # ------------------------------------------
     def _build_gui( self, ):
@@ -1461,33 +1010,21 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         page                = self
 
         main_layout         = QVBoxLayout( self )
-        photo_layout        = QHBoxLayout( self )
+        photo_layout = QHBoxLayout( self )
 
         main_layout.addLayout( photo_layout )
-
-        # # ---- "Copy File Name" comes out at bottom
-        # label           = "Copy File Name?????"
-        # widget          = QPushButton( label )
-        # # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
-        # # widget.clicked.connect( connect_to )
-        # #widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
-        # main_layout.addWidget( widget, )
-
 
         model       = self.model
         view        = self.view
 
-        view.setEditTriggers(QTableView.NoEditTriggers) # no editiong
+        view.setEditTriggers(QTableView.NoEditTriggers) # no editing
 
         debug_col = True
         if debug_col:
             self.col_head_no()
         self.col_head_names()
 
-
         # ---- view   -- built with model here layout only
-        # self.view           = QTableView()
-        # self.view.setSelectionBehavior(QTableView.SelectRows)
         photo_layout.addWidget( self.view )
 
         self.view.clicked.connect( self._on_list_click  )
@@ -1504,13 +1041,13 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         main_layout.addLayout( button_layout )
 
         widget          = QPushButton('Next>')
-        connect_to      = functools.partial( self.prior_next, 1 )
+        connect_to      = partial( self.prior_next, 1 )
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
 
         #
         widget          = QPushButton( '<Prior')
-        connect_to      = functools.partial( self.prior_next, -1 )
+        connect_to      = partial( self.prior_next, -1 )
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
 
@@ -1541,47 +1078,85 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         button_layout.addWidget( widget )
 
         #
-        widget        = QPushButton( 'Copy to Album')
+        widget        = QPushButton( 'Copy All to Album')
         widget.clicked.connect( self.copy_to_album )
         button_layout.addWidget( widget )
 
-        # # Create buttons for CRUD operations
-        # widget        = QPushButton('AddDlg')
-        # # add_button    = widget
-        # # widget.clicked.connect(self.add_record)
-        # button_layout.addWidget( widget )
+        #
+        widget        = QPushButton( 'Copy Selected to Album')
+        widget.clicked.connect( self.copy_selected_to_album )
+        button_layout.addWidget( widget )
 
-        # #
-        # widget        = QPushButton('EditDlg')
-        # # add_button    = widget
-        # # widget.clicked.connect(self.edit_record)
-        # button_layout.addWidget( widget )
+        # ---- button_layout 2
+        button_layout       = QHBoxLayout( self )
+        main_layout.addLayout( button_layout )
 
-        # #
-        # widget        = QPushButton('Delete')
-        # # add_button    = widget
-        # # widget.clicked.connect(self.delete_record)
-        # button_layout.addWidget( widget )
-
-        # #
-        # widget        = QPushButton( 'save_select_model_test')
-        # widget.clicked.connect(self.save_select_model_test)
-        # button_layout.addWidget( widget )
+        # ---- edit
+        widget        = QPushButton( 'Testing>>>')
+        #widget.clicked.connect( self.edit_file_name )
+        button_layout.addWidget( widget )
 
         #
-        widget        = QPushButton( 'add_photo_test')
-        widget.clicked.connect(self.add_photo_test)
+        widget      = QPushButton( 'duplicate')
+        widget.clicked.connect( self.duplicate )
         button_layout.addWidget( widget )
+
+        #
+        widget      = QPushButton( 'set_move_target')
+        widget.clicked.connect( self.set_move_target )
+        button_layout.addWidget( widget )
+
+        #
+        widget      = QPushButton( 'move_after')
+        widget.clicked.connect( self.move_after )
+        button_layout.addWidget( widget )
+
+        #
+        widget      = QPushButton( 'move_top')
+        widget.clicked.connect( self.move_top )
+        button_layout.addWidget( widget )
+
+        # ----
+        widget      = QPushButton( 'Test/Debug->')
+        button_layout.addWidget( widget )
+
+        # ----
+        widget      = QPushButton( 'resequence by 10')
+        connect_to  = partial( self.resequence, increment= 10 )
+        widget.clicked.connect( connect_to )
+        button_layout.addWidget( widget )
+
+        #
+        widget        = QPushButton( 'resequence by 20')
+        connect_to    = partial( self.resequence, increment= 20 )
+        widget.clicked.connect( connect_to )
+        button_layout.addWidget( widget )
+
+        # #
+        # widget        = QPushButton( 'loop thru')
+        # #widget.clicked.connect(self.add_photo_test)
+        # button_layout.addWidget( widget )
+
+        # #
+        # widget        = QPushButton( 'loop thru reverse')
+        # widget.clicked.connect(self.add_photo_test)
+        # button_layout.addWidget( widget )
+
+
+        # #
+        # widget        = QPushButton( 'add_photo_test')
+        # widget.clicked.connect(self.add_photo_test)
+        # button_layout.addWidget( widget )
 
         #
         widget        = QPushButton( 'reselect')
         widget.clicked.connect(self.reselect)
         button_layout.addWidget( widget )
 
-        #
-        widget        = QPushButton( 'get_max_seq')
-        widget.clicked.connect(self.get_max_seq)
-        button_layout.addWidget( widget )
+        # #
+        # widget        = QPushButton( 'get_max_seq')
+        # widget.clicked.connect(self.get_max_seq)
+        # button_layout.addWidget( widget )
 
         #
         widget        = QPushButton( 'inspect')
@@ -1596,7 +1171,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         revised based on qt_by_example
 
-        if you change the model then  self.ix_sub_dir  needs to be changed ... perhaps others
+        if you change the model then  self.sub_dir_col_ix  needs to be changed ... perhaps others
 
         """
         # Create the model and set up the relation for file and sub_dir
@@ -1604,7 +1179,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         # self.model          = qt_with_logging.QSqlRelationalTableModelWithLogging(
         #     self )
         self.model.setTable( "photo_in_show" )
-            # primry table id sequence  photo_id  photo_show_id  photo_in_show_id
+            # primary table id sequence  photo_id  photo_show_id  photo_in_show_id
 
         # Setting the relation to include `file` and `sub_dir.....`
         # if you change this there are a bunch of other changes to make
@@ -1618,14 +1193,9 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         self.seq_col_ix         = 3
         self.dt_item_col_ix     = 6
         self.file_col_ix        = 7
-
+        self.photo_id_col_ix    = 8
         self.sub_dir_col_ix     = 9
         self.name_col_ix        = 10
-
-
-
-        #self.dt_item_col_ix   = 1
-
 
 
         # Set filter for the specific `photo_show_id`
@@ -1640,13 +1210,14 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         view            = QTableView()
         self.view       = view
         view.setModel( self.model )
-
+        view.setSelectionMode(QTableView.ExtendedSelection)
+        view.setSelectionBehavior(QTableView.SelectRows)
         view.setEditTriggers(QTableView.DoubleClicked | QTableView.SelectedClicked)
 
     # --------------------
-    def col_head_names(self):
+    def col_head_names( self ):
         """
-
+        what it says
 
         """
         # start using these  self.dt_item_col_ix   = 1
@@ -1655,11 +1226,11 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         model.setHeaderData(  self.id_col_ix, Qt.Horizontal, "ID" )
         view.setColumnWidth(  self.id_col_ix, 50)  # Set ix_col  width in pixels
-        view.setColumnHidden( self.id_col_ix, True )
+        # view.setColumnHidden( self.id_col_ix, True )
 
         # ix_col      = 1
         # view.setColumnHidden( ix_col, True )  # might or might not change
-        #     # cloumn numbers -- beware in all of order of operations
+        #     # column numbers -- beware in all of order of operations
 
         # ix_col      = 2
         # view.setColumnHidden( ix_col, True )
@@ -1668,8 +1239,9 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         model.setHeaderData(  self.seq_col_ix, Qt.Horizontal, "Seq" )
         view.setColumnWidth(  self.seq_col_ix, 50)
 
-        print( f"{self.dt_item_col_ix = }")
-        delegate = base_document_tabs.DateFormatDelegate( view )
+        #print( f"{self.dt_item_col_ix = }")
+        #delegate = base_document_tabs.DateFormatDelegate( view )
+        delegate = base_document_tabs.DateTimeFormatDelegate( view )
         view.setItemDelegateForColumn( self.dt_item_col_ix, delegate)
         model.setHeaderData(  self.dt_item_col_ix, Qt.Horizontal, "Dt Item" )
         view.setColumnWidth(  self.dt_item_col_ix, 100)
@@ -1702,18 +1274,12 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
     def col_head_no(self):
         """
         what it says -- for debug only
-        6 is date
-        7 is file
-        0 is id
-        3 is sequence
-        9 is subdir
         """
         model    = self.model
         view     = self.view
         for ix_col in range( 7 ):
             model.setHeaderData(  ix_col, Qt.Horizontal, str( ix_col ) )
             view.setColumnWidth(  ix_col, 80)  # Set column 0 width to  pixels
-
 
     # --------------------
     def create_context_menu(self):
@@ -1760,7 +1326,9 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         logging.debug( debug_msg )
 
         self.list_ix            = row
-        self.prior_next( 0 )
+
+        # self.prior_next( 0 )
+        self.display_pic( row )
 
     # ------------------------------------------
     def select_by_id ( self, a_id ):
@@ -1769,6 +1337,8 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         what it says, read
         id is the id of the photo show
         self.edit_model.setFilter( "id = 33 " )
+
+        to try to keep move_target in range reset to 0
 
         #model.setFilter(f'photoshow.id = {photoshow_id}')
 
@@ -1782,17 +1352,19 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         """
         self.album_id       = a_id    # change to album_id in all of this tab
         model               = self.model
-        debug_msg = ( f"select_by_id  {id = }")
+        debug_msg           = ( f"select_by_id  {id = }")
         logging.debug( debug_msg )
 
-        # ---- write
+        # ---- setup
         model.setFilter( f"photo_show_id = {a_id} " )
+        model.setSort( self.seq_col_ix, Qt.AscendingOrder )
         # self.table_model_write.select()
         # self.view_write.setModel( self.table_model_write )
         self.prior_next( 0, absolute = True  )
+        self.move_target    = 0
 
     # ------------------------------------------
-    def prior_next( self, delta, absolute = False  ):
+    def prior_next( self, delta, absolute = False ):
         """
         get and put in control the prior or next photo
         using delta to determine which
@@ -1812,9 +1384,9 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         list_ix                 = self.list_ix
 
         if absolute:
-            new_list_ix           = delta
+            new_list_ix         = delta
         else:
-            new_list_ix           = list_ix + delta
+            new_list_ix         = list_ix + delta
 
         if no_rows <= 0:
             file_name    =  base_document_tabs.fix_pic_filename( None )
@@ -1843,21 +1415,21 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         # file_name              = self.query_model_read.data( fn_index, Qt.DisplayRole )
 
         #fn_item               =  model.item( self.list_ix,  ix_fn )  # may need to be model or ....
-        fn_item             =  model.data( model.index( self.list_ix, self.ix_photo_fn  ) )
+        fn_item             =  model.data( model.index( self.list_ix, self.file_col_ix  ) )
 
         #file_name  = fn_item.text() if fn_item is not None else ""
         file_name           = fn_item
         debug_msg = ( f"prior_next { file_name  = }")
         logging.debug( debug_msg )
 
-        fn_item             =  model.data( model.index( self.list_ix, self.ix_sub_dir ) )
+        fn_item             =  model.data( model.index( self.list_ix, self.sub_dir_col_ix ) )
         sub_dir             = fn_item
         debug_msg = ( f"prior_next {sub_dir  = }")
         logging.debug( debug_msg )
 
-        # for degug
-        data                =  model.data( model.index( self.list_ix, self.ix_photo_name ) )
-        debug_msg = ( f"for self.ix_photo_name {data} = " )
+        # for debug
+        data                =  model.data( model.index( self.list_ix, self.name_col_ix ) )
+        debug_msg = ( f"for self.name_col_ix {data} = " )
         logging.debug( debug_msg )
 
         index               = self.model.index( self.list_ix, 0)
@@ -1884,6 +1456,56 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         #rint( "above bad because hard to find self.picture_tab.display_file( file_name )"  )
 
         return file_name
+
+    # ------------------------------------------
+    def display_pic( self, ix_row  ):
+        """
+        display from row, no messing with scroll.....
+        """
+        model               = self.model
+
+        #fn_item               =  model.item( self.list_ix,  ix_fn )  # may need to be model or ....
+        fn_item             =  model.data( model.index( ix_row, self.file_col_ix  ) )
+
+        #file_name  = fn_item.text() if fn_item is not None else ""
+        file_name           = fn_item
+        debug_msg = ( f"prior_next { file_name  = }")
+        logging.debug( debug_msg )
+
+        fn_item             =  model.data( model.index( self.list_ix, self.sub_dir_col_ix ) )
+        sub_dir             = fn_item
+        debug_msg = ( f"prior_next {sub_dir  = }")
+        logging.debug( debug_msg )
+
+        # for debug
+        data                =  model.data( model.index( self.list_ix, self.name_col_ix ) )
+        debug_msg = ( f"for self.name_col_ix {data} = " )
+        logging.debug( debug_msg )
+
+        index               = self.model.index( self.list_ix, 0)
+
+        # selection_model     = self.view.selectionModel()
+        # selection_model.clearSelection()
+        # # Select the entire row
+        # selection_model.select( index, selection_model.Select | selection_model.Rows )
+        # self.view.scrollTo( index )
+
+        # # debug explore model
+        # for ix_col in range( 15 ): # 10 works
+        #     data               =  model.data( model.index( self.list_ix, ix_col ) ) # row col
+        #     print( f"album picture sub tab prior_next: {ix_col = } / { data  = }")  file_name, sub_dir
+
+        file_name   = base_document_tabs.build_pic_filename( file_name = file_name, sub_dir = sub_dir )
+        file_name   = base_document_tabs.fix_pic_filename( file_name )
+
+        #rint( f"change to prior next 0 {file_name = }" )
+        self._display_photo_by_fn( file_name )
+
+        # bad !!
+        self.parent_window.parent_window.picture_tab.display_file( file_name )  # the other tab in sub window
+        #rint( "above bad because hard to find self.picture_tab.display_file( file_name )"  )
+
+        return
 
     # ------------------------------------------
     def add_photo_test(self):
@@ -1916,27 +1538,27 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         # print( "!! add_model_test  submitAll
 
-
     # ------------------------------------------
     def reselect(self):
         """
         what it says,
+            select again using current id
         """
-        model           = self.model
+
 
         # ---- inspect
-        self_view       = self.view
-        self_model      = model
+        # self_view       = self.view
+        # self_model      = model
 
-        wat_inspector.go(
-              msg            = "save_select_model_test:",
-              a_locals       = locals(),
-              a_globals      = globals(), )
+        # wat_inspector.go(
+        #       msg            = "self.reselect() save_select_model_test:",
+        #       a_locals       = locals(),
+        #       a_globals      = globals(), )
 
-        self.select_by_id ( self.album_id )
+        self.select_by_id( self.album_id )
 
     # ------------------------------------------
-    def get_max_seq(self):
+    def get_max_seq( self ):
         """
         what it says, read
         from a chat question
@@ -1951,14 +1573,15 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         column_count    = model.columnCount()
 
         for row in range( row_count ):
-            index     = model.index( row,   self.ix_seq_no    ) # row column
+            index     = model.index( row,   self.seq_col_ix    ) # row column
             data      = model.data( index )
             try:
                 seq       = int( data )
 
             except Exception as an_except:
-                debug_msg     = f"get_max_seq a_except for int()        >>{an_except}<<  type  >>{type( an_except)}<<"
-                logging.debug( debug_msg )
+                debug_msg     = ( f"get_max_seq a_except for int()   "
+                                  f" >>{an_except}<<  type  >>{type( an_except)}<<" )
+                logging.rttot( debug_msg )
 
                 seq     = 0
 
@@ -1971,7 +1594,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         return max_seq
 
     # ------------------------------------------
-    def add_row(self, data_in_dict ):
+    def add_row(self, data_in_dict, sequence = None, reselect = True ):
         """
         !! add flag for reselect or not for optimization
         need to modify all callers
@@ -1985,6 +1608,11 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
             db = AppGlobal.qsql_db_access.db
 
         !! does not handle errors
+        Args
+            data_in_dict  data we need for row, now just photo id
+              sequence is none generate the sequence else use
+            could move intod data_in_dict
+
         """
         model           = self.model
         db              = model.database()
@@ -1996,9 +1624,10 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         key             = AppGlobal.key_gen.get_next_key( self.table_name )
 
-        sequence        = self.get_max_seq( ) + 1
+        if sequence is None:
+            sequence        = self.get_max_seq( ) + 1
 
-        # ---- so now all the data in lined uup
+        # ---- so now all the data in lined up
         query           = QSqlQuery( db )
 
         sql     = """INSERT INTO photo_in_show (
@@ -2028,8 +1657,11 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
             pass
             #print("Insert successful.")
 
-        #rint( "do a select here 888 8")
-        self.select_by_id ( self.album_id )
+        #rint( "do a select here 888 8")  --- !! is next reselect
+
+        if reselect:
+            self.select_by_id (self.album_id )
+
         return
 
         # print( "inspect  -----------------------------------------")
@@ -2056,6 +1688,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
     # # ------------------------------------------
     # def data_to_model_photo(self, data_dict ):
         """
+        is this dead, from where we tried to update a relational model
         what it says - read   change name just to data-to_model
         from russ qrm
         this will do an update or an insert
@@ -2066,10 +1699,8 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
             the album_id
         it needs the data_dict
 
-
         # looks like we need to add to the record not the model !! see relational model 2
         # maybe add to both or add the record to the model, go back to relational model 2
-
 
         """
         model           = self.model
@@ -2091,13 +1722,13 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         #       a_locals       = locals(),
         #       a_globals      = globals(), )
 
-        debug_msg = ( "this is code after first inspect -----------------------------------------")
-        logging.debug( debug_msg )
+        # debug_msg = ( "this is code after first inspect -----------------------------------------")
+        # logging.debug( debug_msg )
         # row count here becomes rowcount - 1 later
         model.insertRow( model.rowCount() )
         ix_row               = model.rowCount() - 1   # model row that get the data here new row
         # model.index makes an index row col for the data
-        model.setData( model.index( ix_row, 0 ), key ) # 0 alway column for key
+        model.setData( model.index( ix_row, 0 ), key ) # 0 always column for key
 
         # data_dict["photo_id"]         = photo_id
 
@@ -2113,14 +1744,14 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         # ---- seq_no --- should gen here
         data        = self.get_max_seq() + 1
-        ix_col      = self.ix_seq_no
+        ix_col      = self.seq_col_ix
         debug_msg = ( f"data_to_model_photo seq_no { data } {ix_col = }" )
         logging.debug( debug_msg )
 
         model.setData( model.index(  ix_row, ix_col  ), data )
 
         # ---- photo_id
-        data        =  data_dict["photo_id"]
+        data        =  data_dict[ "photo_id" ]
         ix_col      = self.ix_photo_id
         debug_msg = ( f"data_to_model_photo_photo photo_id { data } {ix_col = }" )
         logging.debug( debug_msg )
@@ -2128,20 +1759,20 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         # ---- photo_fn
         data        =  data_dict[ "photo_fn" ]
-        ix_col      = self.ix_photo_fn
+        ix_col      = self.file_col_ix
         debug_msg = ( f"data_to_model_photo_photo_fn { data  } {ix_col = }" )
         logging.debug( debug_msg )
         model.setData( model.index(  ix_row, ix_col  ), data )
 
         # ---- sub_dir
         data        =  data_dict[ "sub_dir" ]
-        ix_col      = self.ix_sub_dir
+        ix_col      = self.sub_dir_col_ix
         debug_msg = ( f"data_to_model__photo sub_dir { data } {ix_col = }" )
         model.setData( model.index(  ix_row, ix_col  ), data )
 
         # ---- photo_name
         data        =  data_dict[ "photo_name" ]
-        ix_col      = self.ix_photo_name
+        ix_col      = self.name_col_ix
         debug_msg = ( f"data_to_model_photo photo_name { data } {ix_col = }" )
         logging.debug( debug_msg )
         model.setData( model.index(  ix_row, ix_col  ), data )
@@ -2168,7 +1799,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         what it says
             this is sent from some photo usually
             this may be dead already
-            revisition end of nov 2024
+            revision end of Nov 2024
         """
         debug_msg = ( f"add_photo_to_show_delete_later way down in photoshowdetaillist tab {photo_dict = }")
         logging.debug( debug_msg )
@@ -2182,11 +1813,10 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
     # ------------------------------------------
     def delete_selected( self,    ):
         """
-        testing selection no delete
-        right now only 1 can be selected, may change
+
+        !! update at some point to use make_selected_row_dict
         transaction seems incomplete
         """
-
         if not base_document_tabs.is_delete_ok():
             return
 
@@ -2204,9 +1834,8 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
                 msg     = ( f"Selected row: {row = }" )
                 logging.debug(  msg )
 
-
         model           = self.model
-        column_name = "id"
+        column_name     = "id"
 
         # Get the column index for the column name
         column = model.fieldIndex( column_name )
@@ -2223,8 +1852,6 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
             msg     = ( f"Value at   {row = },   '{column_name = }': {a_id = }" )
             logging.debug(  msg )
 
-
-        # return   #======================================= for now
 
         # ---- the delete  may not be done
         model           = self.model
@@ -2262,7 +1889,6 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         what it says
 
         not right for multiple selections or none !
-
         """
         view            = self.view
 
@@ -2280,16 +1906,35 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         return row
 
     # ------------------------------------------
-    def get_file_name( self,    ):
+    def get_file_name_old( self, ):
         """
-        get the file name
+        get the file name for a picture in the album
+        based on selected row
         """
         row          = self.get_selected_row()
 
         file_name    = self.get_data_for_column( row, "file"  )
         sub_dir      = self.get_data_for_column( row, "sub_dir" )
 
-        file_name   = base_document_tabs.build_pic_filename( file_name = file_name, sub_dir = sub_dir )
+        file_name    = base_document_tabs.build_pic_filename( file_name = file_name, sub_dir = sub_dir )
+        return file_name
+
+    # ------------------------------------------
+    def get_file_name( self, ix_row = None ):
+        """
+        get the file name for a picture in the album
+        based on selected row or ix_row
+
+
+        """
+        if ix_row is None:
+            ix_row          = self.get_selected_row()
+
+
+        file_name    = self.get_data_for_column( ix_row, "file"  )
+        sub_dir      = self.get_data_for_column( ix_row, "sub_dir" )
+
+        file_name    = base_document_tabs.build_pic_filename( file_name = file_name, sub_dir = sub_dir )
         return file_name
 
     # ------------------------------------------
@@ -2297,8 +1942,14 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         """
         get the file name into the clipboard
         """
-        file_name   = self.get_file_name()
-        QApplication.clipboard().setText( file_name )
+        file_names_string   = ""
+        selected_rows       = self.make_selected_row_dict()
+        for ix_row in selected_rows.keys():
+            file_name           = self.get_file_name( ix_row )
+            file_names_string   = f"{file_names_string}\n{file_name}"
+        if file_names_string.startswith( "\n" ):
+            file_names_string = file_names_string[ 1: ]
+        QApplication.clipboard().setText( file_names_string )
 
     # ------------------------------------------
     def shell_file_name( self,    ):
@@ -2328,12 +1979,15 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
             if none open, if multiple open
             what about save
         """
-
-        picture_docs    = AppGlobal.mdi_management.get_picture_docs()
+        mdi_management  = AppGlobal.mdi_management
+        picture_docs    = mdi_management.get_picture_docs()
         if  len( picture_docs ) == 0:
-            1/0
-
+            mdi_management.make_document( PictureDocument, instance_ix = 1 )
+            picture_docs    = mdi_management.get_picture_docs()
+        else:
+            pass
         picture_doc     = picture_docs[ 0 ]
+
         row             = self.get_selected_row()
         a_id            = self.get_data_for_column( row, "photo_id"  )
         picture_doc.select_record( a_id  )
@@ -2386,7 +2040,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         return album_target
 
     # --------------------------------------
-    def copy_to_album( self,  ):
+    def copy_selected_to_album( self,  ):
         """
         copy pictures to another album
         for now all at end of items in the other album
@@ -2401,12 +2055,44 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
                                      "That is a No Go", msg )
             return
 
+        model       = self.model
+
+        # could have case statement here and get rid of copy to album
+        # # ---- all rows
+        # for ix_row in range( model.rowCount() ):
+        #     self.add_to_album( album_target, ix_row )
+        with base_document_tabs.CursorContext():
+            selected_rows   = self.make_selected_row_dict()
+            for ix_row in selected_rows.keys():
+                self.add_to_album( album_target, ix_row )
+
+        # msg         = ( "\n maybe finished return ++++++++++++++++++++++++++++++++++++++++++++")
+        # logging.debug( msg )
+
+    # --------------------------------------
+    def copy_to_album( self,  ):
+        """
+        copy pictures to another album
+        for now all at end of items in the other album
+        consider instead argument on copy selected  !!
+        cosider popup message at begin and end
+        """
+        try:
+            album_target = self.copy_pic_setup()
+
+        except app_exceptions.ReturnToGui as an_except:
+            msg       = f"{str( an_except)}"
+            logging.debug( msg )
+            QMessageBox.information( AppGlobal.main_window,
+                                     "That is a No Go", msg )
+            return
+
         model       = self.model   # QSqlRelationalTableModel(self)
         #ix_debug    = 0
         # start with all later with some selections
-
-        for ix_row in range( model.rowCount() ):
-            self.add_to_album( album_target, ix_row )
+        with base_document_tabs.CursorContext():
+            for ix_row in range( model.rowCount() ):
+                self.add_to_album( album_target, ix_row )
 
 
         # msg         = ( "\n maybe finished return ++++++++++++++++++++++++++++++++++++++++++++")
@@ -2414,7 +2100,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
     # -----------------------------
     def add_to_album( self, album_target, ix_row ):
-    #def add_to_show( self, ): in picture detail, now movdify above
+    #def add_to_show( self, ): in picture detail, now modify above
         """
         will add one to the show need to call over and over
         took from picture detail  was add_to_show
@@ -2425,11 +2111,11 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         model         = self.model
         # dict is a bit odd  --- some is wrong all we really need i photo_id
-        #photo_id      =  int( self.id_field.text() )  # may be available elsewhere   this worul db test
-        photo_id_ix   = 7
+        #photo_id      =  int( self.id_field.text() )  # may be available elsewhere   this would db test
+        photo_id_ix   = 8
         photo_id      =  model.data( model.index( ix_row, photo_id_ix))
         #photo_fn      =  self.file_field.text()
-        # may want to double check but seems now only photo id matters set rest to None, drop weh it works
+        # may want to double check but seems now only photo id matters set rest to None, drop when it works
         row_dict            = { "photo_name":               "from album_picture_sub_tab",
                                 "photo_fn":                  None,
                                 "photo_id":                  photo_id,
@@ -2446,7 +2132,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
     # ------------------------------------------
     def get_data_for_column( self, row, column_name  ):
         """
-        may want to make more reusuable and promote
+        may want to make more reusable and promote
         """
         model           = self.model
 
@@ -2467,9 +2153,352 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         return data
 
     # ------------------------------------------
+    def update_sequence( self, *, a_id, sequence  ):
+        """
+        what it says
+
+        update sequence by id on the db
+        """
+        #db          = model.database()
+        query       = QSqlQuery( self.model.database() )
+
+        if not query.prepare("UPDATE photo_in_show SET sequence = :sequence WHERE id = :a_id"):
+            msg    = (f"resequence() Failed to prepare query: {query.lastError().text()}")
+            logging.error( msg, )
+
+        query.bindValue(":a_id",       a_id )
+        query.bindValue(":sequence", sequence)
+
+        if not query.exec_():
+            msg     = ( f"resequence() Query execution failed: {a_id = } {sequence = } "
+                        f"{query.lastError().text()}")
+            logging.error( msg, )
+
+        if query.numRowsAffected() == 0:
+            msg     = ( f"resequence()  No rows updated for {a_id = } {sequence = }")
+            logging.error( msg, )
+
+    # ------------------------------------------
+    def resequence( self, increment  ):
+        """
+        seems to work, is for debug or real, time will tell
+        resequence all of the rows by some increment
+        then reselect
+        """
+        sequence    = 0
+        model       = self.model
+
+        row_count   = model.rowCount()
+        for ix_row in range( row_count ):
+            index   = model.index( ix_row, self.id_col_ix )
+            a_id    = model.data(index)
+            debug_msg     = ( f"Value at {ix_row = },  : {a_id = } {type(a_id ) = }" )
+            logging.log( LOG_LEVEL,  debug_msg, )
+
+            sequence    += increment
+            self.update_sequence( a_id = a_id, sequence = sequence  )
+
+        self.reselect()
+
+        return
+
+    # ------------------------------------------
+    def duplicate( self,    ):
+        """
+        for now may just be first selected
+        the dup just has a new id else all the same sequence?
+
+        has a resequence
+        may need a reselect -- does at some point
+
+        """
+        debug_msg = ( f"duplicate {1 = }")
+        logging.debug( debug_msg )
+
+        model           = self.model
+        view            = self.view
+        # Assuming `view` is your QTableView
+        selection_model = view.selectionModel()
+        if selection_model:
+            selected_indexes = selection_model.selectedRows()
+
+            for index in selected_indexes:
+                ix_row     = index.row()
+
+                # not needed except debug
+                index       = model.index( ix_row, self.id_col_ix )
+                a_id        = model.data(index)
+
+                index       = model.index( ix_row, self.seq_col_ix )
+                sequence    = model.data(index)
+
+                # compact ver of above
+                photo_id    = model.data( model.index( ix_row, self.photo_id_col_ix  ) )
+
+                msg     = ( f"for row at   {ix_row = }, {a_id = } {sequence = } {photo_id}" )
+                logging.debug(  msg )
+
+                data_in_dict   = { "photo_id": photo_id }
+
+                self.add_row( data_in_dict, sequence = sequence, reselect = False )
+
+        self.reselect()
+        self.resequence( 20 )
+        return
+
+    # ------------------------------------------
+    def set_move_target( self,   ):
+        """
+        check for single selection an set ...
+        """
+        model               = self.model
+        view                = self.view
+        # Assuming `view` is your QTableView
+        selection_model     = view.selectionModel()
+        if selection_model:
+            selected_indexes = selection_model.selectedRows()
+
+            if len( selected_indexes ) != 1 :
+                msg     = f"For this to work your target needs to be just one selected row. \n your have {len( selected_indexes )}"
+                raise app_exceptions.ReturnToGui( msg )
+
+            for index in selected_indexes:
+                self.move_target = index.row()
+                return
+
+    # ------------------------------------------
+    def make_selected_row_dict( self, ):
+        """
+        what it says
+
+        return
+            selected_rows a dict
+
+            dict of selected rows with row: id
+        selected_rows   = self.make_selected_row_dict()
+
+        """
+        model               = self.model
+        view                = self.view
+        selected_rows       = dict()
+        # !! might not need check
+        selection_model     = view.selectionModel()
+        if selection_model:
+            selected_indexes = selection_model.selectedRows()
+
+            for index in selected_indexes:
+                ix_row     = index.row()
+
+                index       = model.index( ix_row, self.id_col_ix )
+                a_id        = model.data(index)
+
+                selected_rows[ ix_row ] = a_id
+
+                # msg     = ( f"Selected row: {ix_row = } {a_id = }" )
+                # logging.debug(  msg )
+
+        return selected_rows
+
+    # ------------------------------------------
+    def setup_move_after( self,   ):
+        """
+        not complete in process  !! but works
+        may want a confirm from user
+        need list, dict... of the selected rows
+            set -- easy for membership, but i need to traverse in order
+            *dict -- order ok and membership good only need one
+            list or lists, fine seem less efficient
+        need the target
+            the target may not be in the selected
+            the target must be in range
+        return
+            mutated self.selected_rows
+        exception
+        """
+        self.selected_rows  = self.make_selected_row_dict()
+
+        # model               = self.model
+        # view                = self.view
+
+        if  self.move_target > self.model.rowCount( ):
+            msg     = ( f"For this to work your target needs to be in the range of pictures"
+                       f"target = {self.move_target + 1}" )
+            raise app_exceptions.ReturnToGui( msg )
+
+        if self.move_target in self.selected_rows:
+            msg     = ( f"For this to work your target cannot be one of the "
+                       f"selected rows target = {self.move_target + 1}" )
+            raise app_exceptions.ReturnToGui( msg )
+        # check that targetself.move_target    = 3   # here row index may change to id is not in selected !!
+
+    # ------------------------------------------
+    def move_after( self,   ):
+        """
+        this can all be done by a resequence
+        target is the id of the place to insert after
+        this is a three pass process first above target
+        then all selected
+        then below target
+        """
+        model           = self.model
+        view            = self.view
+
+        try:
+            self.setup_move_after( )
+
+        except app_exceptions.ReturnToGui as an_except:
+            msg       = f"setup did not work {str( an_except)}"
+            logging.debug( msg )
+            QMessageBox.information( AppGlobal.main_window,
+                                     "That is a No Go", msg )
+            return
+
+        sequence        = 0
+        increment       = 20
+        row_count       = model.rowCount() # will not charge
+
+        # ---- resequence 1 from top to target skip selected include target
+        for ix_row in range( self.move_target + 1 ):
+            if ix_row in self.selected_rows:
+                msg       = f"pass 1 skipping {ix_row = }"
+                logging.debug( msg )
+                continue
+
+            sequence += increment
+
+            index     = model.index( ix_row,   self.id_col_ix      ) # row column
+            a_id      = model.data( index )
+
+            msg       = f"pass 1 resequence {ix_row = } {a_id =} {sequence = }"
+            logging.debug( msg )
+            self.update_sequence( a_id = a_id, sequence = sequence )
+
+        # ---- resequence 2 from top to bottom but only selected
+        for ix_row in range( row_count ):
+            if ix_row not in self.selected_rows:
+                msg       = f"pass 2 skipping {ix_row = } it is not selected "
+                logging.debug( msg )
+                continue
+
+            sequence  += increment
+
+            index     = model.index( ix_row,   self.id_col_ix      ) # row column
+            a_id      = model.data( index )
+
+            msg       = f"pass 2 resequence {ix_row = } {a_id =} {sequence = }"
+            logging.debug( msg )
+            self.update_sequence( a_id = a_id, sequence = sequence  )
+
+        # ---- resequence 3 from target +1, skip selected
+        for ix_row in range( self.move_target + 1, row_count ):
+            if ix_row in self.selected_rows:
+                msg       = f"pass 3 skipping selected {ix_row = }"
+                logging.debug( msg )
+                continue
+
+            sequence += increment
+
+            index     = model.index( ix_row, self.id_col_ix )  # row column
+            a_id      = model.data( index )
+
+            msg       = f"pass 3 resequence {ix_row = } {a_id =} {sequence = }"
+            logging.debug( msg )
+            self.update_sequence( a_id = a_id, sequence = sequence  )
+
+        self.reselect()
+    # ------------------------------------------
+    def setup_move_top( self,   ):
+        """
+        what it says
+
+            might error if no selected ??
+
+        returns
+            mutated self.selected_rows
+        """
+        self.selected_rows  = self.make_selected_row_dict()
+        ...
+
+    # ------------------------------------------
+    def move_top( self,   ):
+        """
+        this can all be done by a resequence
+        target is the id of the place to insert after
+        this is a three pass process first above target
+        then all selected
+        then below target
+        """
+        model           = self.model
+        view            = self.view
+
+        try:
+            self.setup_move_top( )
+
+        except app_exceptions.ReturnToGui as an_except:
+            msg       = f"setup did not work {str( an_except)}"
+            logging.debug( msg )
+            QMessageBox.information( AppGlobal.main_window,
+                                     "That is a No Go", msg )
+            return
+
+        sequence        = 0
+        increment       = 20
+        row_count       = model.rowCount() # will not charge
+
+        # # ---- resequence 1 from top to target skip selected include target
+        # for ix_row in range( self.move_target + 1 ):
+        #     if ix_row in self.selected_rows:
+        #         msg       = f"pass 1 skipping {ix_row = }"
+        #         logging.debug( msg )
+        #         continue
+
+        #     sequence += increment
+
+        #     index     = model.index( ix_row,   self.id_col_ix      ) # row column
+        #     a_id      = model.data( index )
+
+        #     msg       = f"pass 1 resequence {ix_row = } {a_id =} {sequence = }"
+        #     logging.debug( msg )
+        #     self.update_sequence( a_id = a_id, sequence = sequence )
+
+        # ---- resequence 2 from top to bottom but only selected
+        for ix_row in range( row_count ):
+            if ix_row not in self.selected_rows:
+                msg       = f"move_top pass 1 skipping {ix_row = } it is not selected "
+                logging.debug( msg )
+                continue
+
+            sequence  += increment
+
+            index     = model.index( ix_row,   self.id_col_ix      ) # row column
+            a_id      = model.data( index )
+
+            msg       = f"move_top() pass 1 resequence {ix_row = } {a_id =} {sequence = }"
+            logging.debug( msg )
+            self.update_sequence( a_id = a_id, sequence = sequence  )
+
+        # ---- resequence 2 from target +1, skip selected
+        for ix_row in range( 0, row_count ):
+            if ix_row in self.selected_rows:
+                msg       = f"pass 2 skipping selected {ix_row = }"
+                logging.debug( msg )
+                continue
+
+            sequence += increment
+
+            index     = model.index( ix_row, self.id_col_ix )  # row column
+            a_id      = model.data( index )
+
+            msg       = f"move_top() 2 resequence {ix_row = } {a_id =} {sequence = }"
+            logging.debug( msg )
+            self.update_sequence( a_id = a_id, sequence = sequence  )
+
+        self.reselect()
+
+    # ------------------------------------------
     def inspect( self,  ):
         """
-        the usual
+        the usual debug with wat
         """
         # make some locals for inspection
         #parent_window           = self.parent( ).parent( ).parent().parent()

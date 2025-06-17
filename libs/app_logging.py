@@ -217,7 +217,7 @@ def add_to_log(   ):
         #QMessageBox.information(self, "Result", msg )
         print( msg )
         logging.error( F"USER_MSG: {msg}" )
-
+    1/0   # to test exception management
     # else:
     #     msg     = "Dialog was canceled"
     #     #QMessageBox.information(self, "Result",  msg )
