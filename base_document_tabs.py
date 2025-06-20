@@ -92,7 +92,7 @@ import parameters
 #import mdi_management
 import picture_viewer
 
-# ---- import end
+# ---- constants
 
 FIF             = info_about.INFO_ABOUT.find_info_for
 

@@ -77,7 +77,7 @@ import key_words
 import parameters
 import qt_sql_query
 
-
+# ---- constants
 SYSTEM_LIST     = parameters.PARAMETERS.systems_list
 
 
@@ -232,6 +232,8 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         """
         what it says, read
         put page into the notebook
+        for system
+                widget.setEditable(True)
         """
         page            = self
         layout          = QHBoxLayout( page )
@@ -270,16 +272,13 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget  = QLabel( "Key Words" )
         grid_layout.addWidget( widget )
 
-
-        # ---- can we have history
         widget                    = cw.CQHistoryComboBox(
                                        field_name = "key_words" )
 
-
         # widget                    = cw.CQLineEdit(
         #                                field_name = "key_words" )
-        #self.key_words_widget     = widget   # !! think can drop these
-        self.key_word_widget        = None      # set to value in gui if used
+        self.key_words_widget     = widget   # not this one at least not yet
+        # self.key_word_widget        = None      # set to value in gui if used
         widget.setPlaceholderText( "key_words"  )
         self.critera_widget_list.append( widget )
         #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
@@ -304,11 +303,13 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget                  = cw.CQComboBox(
                                         field_name = "system" )
         self.critera_widget_list.append( widget )
+
         grid_layout.addWidget( widget )
         widget.addItems( SYSTEM_LIST )
         # widget.addItem( '' )
 
         widget.setCurrentIndex( 0 )
+        widget.setEditable( True )
 
         # ---- Order by
         grid_layout.new_row()
@@ -741,11 +742,12 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         edit_field.ct_prior   = partial( edit_field.do_ct_value, - 99 )
         edit_field.ct_default = partial( edit_field.do_ct_value, - 99 )
 
+        edit_field.setToolTip("This is the hover text!")
+
         """
         for ix in range( self.max_col ):
             widget   = QSpacerItem( 50, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
             layout.addItem( widget, 0, ix  )  # row column
-
 
         # ---- code_gen: TableDict.to_build_form 2025_02_01 for help_info -- begin table entries -----------------------
 
@@ -778,7 +780,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 1 )
 
-
         # ---- title
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
@@ -799,6 +800,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
                                                 is_keep_prior_enabled  = True
                                                  )
         self.key_words_field     = edit_field
+        edit_field.setToolTip("Key Words field")
         # this is too late
         #edit_field.is_keep_prior_enabled        = True
         edit_field.setPlaceholderText( "key_words" )
@@ -806,7 +808,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         self.data_manager.add_field( edit_field, is_key_word = True )
         layout.addWidget( edit_field, columnspan = 4 )
 
-        # ---- system
+        # ---- system deleted
         # edit_field                  = cw.CQLineEdit(
         #                                         parent         = None,
         #                                         field_name     = "system",
@@ -825,6 +827,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
                                                 field_name     = "system",
                                                 is_keep_prior_enabled        = True   )
         self.system_field     = edit_field
+        #edit_field.setEditable( True )
         edit_field.setPlaceholderText( "system" )
         edit_field.clear()
         edit_field.add_items( SYSTEM_LIST )
@@ -842,6 +845,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
                                                            )
         self.sub_system_field     = edit_field
         edit_field.setPlaceholderText( "sub_system" )
+        edit_field.setToolTip("SubSystem field")
         # still validator / default func  None
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
@@ -1083,7 +1087,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         label       = ">>"
         widget      = QPushButton( label )
         #connect_to  = functools.partial( text_edit_ext_obj.cmd_exec, text_entry_widget )
-        connect_to  =   text_edit_ext_obj.cmd_exec
+        connect_to  = text_edit_ext_obj.cmd_exec
         widget.clicked.connect( connect_to )
         text_layout.addWidget ( widget,     )
 

@@ -161,7 +161,8 @@ def rpt_key_words( table_name ):
         display_order       = i_column.display_order
 
         if i_is_key_word:
-            msg    = f"{ix} { column_name = } {i_is_key_word = }  "
+            is_key_word    = i_is_key_word  # to make look nicer
+            msg    = f"{ix} { column_name = } { is_key_word = }  "
             print( msg )
 
 # -----------------------------------
@@ -342,7 +343,7 @@ table_name    = "help_info"
 # ---- .... people
 # table_name      = "people"
 # table_name      = "people_text"
-table_name      = "people_phones"
+#table_name      = "people_phones"
 
 
 # ---- .... photo
@@ -384,7 +385,7 @@ table_name      = "people_phones"
 # ---- next only for primay document tables
 #rpt_list_order( table_name )
 
-#rpt_key_words( table_name )
+rpt_key_words( table_name )
 
 # ---- sql for all tables
 

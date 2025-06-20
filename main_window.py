@@ -577,6 +577,17 @@ class StuffdbMainWindow( QMainWindow ):
         open_action.triggered.connect( connect_to )
         a_menu.addAction( open_action )
 
+        instance_ix     = 1
+        action          = QAction( "DB Maint", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                 window_class   = DbManagementSubWindow,
+                                                 instance_ix    = instance_ix )
+        action.triggered.connect( connect_to )
+        a_menu.addAction( action )
+
+
+
+
         a_menu.addSeparator()
 
 

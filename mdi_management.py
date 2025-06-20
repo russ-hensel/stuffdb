@@ -94,6 +94,8 @@ logger          = logging.getLogger( )
 #for custom logging level at module
 LOG_LEVEL  = 20   # higher is more
 
+
+# ---- dict constants
 SEARCH_COMMAND_DICT                     = defaultdict( lambda: None )
 SEARCH_COMMAND_DICT["search_help"   ]   = help_document.HelpDocument
 SEARCH_COMMAND_DICT["search_stuff"  ]   = stuff_document.StuffDocument
@@ -107,6 +109,9 @@ SEARCH_CRITERIA_DICT["sys"]     =  "system"
 SEARCH_CRITERIA_DICT["subsys"]  = "sub_system"
 #SEARCH_CRITERIA_DICT["name"]    =  "name"
 SEARCH_CRITERIA_DICT["id"]      =  "id",
+
+#SEARCH_CRITERIA_DICT["name"]    =  "name"
+SEARCH_CRITERIA_DICT["ob"]      =  "id",
 
 
 

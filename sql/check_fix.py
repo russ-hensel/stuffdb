@@ -49,7 +49,7 @@ import stuff_util_sql
 #temp  = parameters.Parameters()
 #print( parameters.PARAMETERS )
 
-data_dict.build_it()
+#data_dict.build_it()
 App              = None
 DB_CONNECTION    = None
 
@@ -92,6 +92,12 @@ DB_CONNECTION    = None
 #     DB_CONNECTION.close( )
 #     DB_CONNECTION = None
 
+
+def line_out( line ):
+    """ """
+    print( line )
+
+
 # ------------
 def update_table_key_gen_think_in_sql_util( db, table_name, key_value   ):
     """
@@ -122,10 +128,10 @@ def update_table_key_gen_think_in_sql_util( db, table_name, key_value   ):
     #     """ )
 
     last_error    = query.lastError()
-    print( f"{what} {last_error} = " )
+    line_out( f"{what} {last_error} = " )
     #ia_qt.q_sql_error( query.lastError() )
     db.commit()
-    print( f"end {what}"  )
+    line_out( f"end {what}"  )
 
 #--------------
 def create_tablexxx(   db, table_name   ):
@@ -195,7 +201,7 @@ def print_record_count( db, table_name ):
     what it says
     will only return one record
     """
-    print( "begin  print_record_count ")
+    line_out( "begin  print_record_count ")
 
     record_count  = 0
     max_ix        = 100000
@@ -208,11 +214,11 @@ def print_record_count( db, table_name ):
 
             """    # WHERE can_execute = 'Y';
 
-    print( sql )
+    line_out( sql )
 
     query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
 
-    print( "select result" )
+    line_out( "select result" )
 
     ix          = 0
     while query.next():
@@ -225,11 +231,11 @@ def print_record_count( db, table_name ):
         field_5        = query.value(5)   # index past end, no error just get None
 
         #print(f"record:{ix} {field_0 = }  {field_1 = }  {field_2 = } {field_3 = } {field_4 = } {field_5 = } ")
-        print(f"record count {field_0 = }   <<<<============== ")
+        line_out(f"record count {field_0 = }   <<<<============== ")
         if ix >= max_ix:
             break
 
-    print( f"end   print_record_count  ")
+    line_out( f"end   print_record_count  ")
 
 # ----------------------------------
 def add_missing_text( db, table_name ):
@@ -417,7 +423,7 @@ def check_key_words_for_dups( db, table_name ):
     """
     what it says
     """
-    print( "begin  check_key_words_for_dups ")
+    line_out( "begin  check_key_words_for_dups ")
     max_ix        = 10044
     # if table_name == None:
     #     table_name = "stuff"
@@ -432,11 +438,11 @@ def check_key_words_for_dups( db, table_name ):
                 GROUP BY id, key_word
                 HAVING COUNT(*) > 1; """
 
-    print( sql )
+    line_out( sql )
 
     query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
 
-    print( "select result" )
+    line_out( "select result" )
 
     ix          = 0
     while query.next():
@@ -448,7 +454,7 @@ def check_key_words_for_dups( db, table_name ):
         field_4        = query.value(4)
         field_5        = query.value(5)   # index past end, no error just get None
 
-        print(f"record:{ix} {field_0 = }  {field_1 = }  {field_2 = } {field_3 = } {field_4 = } {field_5 = } ")
+        line_out(f"record:{ix} {field_0 = }  {field_1 = }  {field_2 = } {field_3 = } {field_4 = } {field_5 = } ")
         if ix >= max_ix:
             break
 

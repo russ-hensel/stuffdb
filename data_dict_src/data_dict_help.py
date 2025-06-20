@@ -95,6 +95,9 @@ def build_it( a_data_dict ):
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
+                                             col_head_text      = "Sub System",
+                                             col_head_width     = 15,
+                                             col_head_order     = 35,
                                              display_order     = 18, )
 
     a_table_dict.add_column( a_column_dict )
@@ -125,7 +128,7 @@ def build_it( a_data_dict ):
                                              is_keep_prior_enabled = True,
                                              col_head_text      = "Key Words",
                                              col_head_width     = 40,
-                                             col_head_order     = 32,
+                                             col_head_order     = 38,
                                              display_order      = 12,
                                              form_col_span      = 4,)
     a_table_dict.add_column( a_column_dict )

@@ -1181,6 +1181,8 @@ class CQComboBox( QComboBox, CQEditBase ):
         from the line edit
         lets see what we can get rid of
         start with non editable
+
+    try         self.setEditable(True)
     """
     def __init__(self,
                  parent                 = None,
@@ -1201,6 +1203,7 @@ class CQComboBox( QComboBox, CQEditBase ):
                         field_name         = field_name,
                                )
 
+        # self.setEditable(True)  # !! may need to be at top debug make ...
         self.default_typexxx          = "string"          # deprecate
         #self.default_value         = "default-value"     # deprecate
         self.prior_value           = ""  # something of a valid type

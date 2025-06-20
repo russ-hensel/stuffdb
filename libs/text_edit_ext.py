@@ -268,7 +268,8 @@ class TextEditExt( ):
 
             new_lines.append( ii_line )
 
-        new_lines.append( "the end")
+        # !! integrate the next if a multiline
+        #new_lines.append( "the end")
         new_text = "\n".join( new_lines )
 
 
@@ -387,8 +388,8 @@ class TextEditExt( ):
         !! needs extension
 
         """
-        widget = self.context_widget
-        menu   = QMenu( widget )
+        widget      = self.context_widget
+        menu        = QMenu( widget )
 
         # Add standard actions
         undo_action = menu.addAction("Undo")
@@ -399,28 +400,37 @@ class TextEditExt( ):
         cut_action.triggered.connect(widget.cut)
         copy_action = menu.addAction("Copy")
         copy_action.triggered.connect(widget.copy)
+
         paste_action = menu.addAction("Paste")
         paste_action.triggered.connect(widget.paste)
+        #menu.addSeparator()
+
+        # ---- "Smart Paste"
+        foo_action = menu.addAction("Smart Paste")
+        foo_action.triggered.connect(self.smart_paste_clipboard )
         menu.addSeparator()
+
 
         select_all_action = menu.addAction("Select All")
         select_all_action.triggered.connect(widget.selectAll)
+
+        # ---- >>   go
+        menu_action = menu.addAction(">>   go ...")
+        menu_action.triggered.connect( self.cmd_exec )
         menu.addSeparator()
 
-        # Add custom action
-        foo_action = menu.addAction("Smart Paste")
-        foo_action.triggered.connect(self.smart_paste_clipboard )
 
         # Enable/disable actions based on context
         cursor = widget.textCursor()
-        has_selection = cursor.hasSelection()
-        can_undo = widget.document().isUndoAvailable()
-        can_paste = QApplication.clipboard().text() != ""
+        has_selection   = cursor.hasSelection()
+        can_undo        = widget.document().isUndoAvailable()
+        can_paste       = QApplication.clipboard().text() != ""
 
         undo_action.setEnabled(can_undo)
         cut_action.setEnabled(has_selection)
         copy_action.setEnabled(has_selection)
         paste_action.setEnabled(can_paste)
+        foo_action.setEnabled(can_paste)
 
         # Show the context menu
         menu.exec_(widget.mapToGlobal(pos))

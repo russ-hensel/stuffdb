@@ -9,7 +9,7 @@ Created on Mon Jun 16 07:26:39 2025
 
 # ---- tof
 
-# ---- imports
+
 
 # --------------------
 if __name__ == "__main__":
@@ -26,15 +26,7 @@ import subprocess
 #from functools import partial
 from pathlib import Path
 
-import data_dict
-import gui_qt_ext
-import info_about
-#import key_words
-import string_util
-import text_edit_ext
-#import table_model
-import wat_inspector
-from app_global     import AppGlobal
+
 from PyQt5.QtCore   import QDate, QModelIndex, Qt, QTimer, pyqtSlot
 from PyQt5.QtCore   import Qt, QDateTime
 from PyQt5.QtWidgets import QStyledItemDelegate
@@ -89,6 +81,19 @@ from PyQt5.QtWidgets import (QAction,
 
 
 import parameters
+import data_dict
+import check_fix
+
+#import gui_qt_ext
+import info_about
+#import key_words
+import string_util
+import text_edit_ext
+#import table_model
+import wat_inspector
+from app_global     import AppGlobal
+import qsql_utils
+
 #import ex_qt
 #import exec_qt
 #import mdi_management
@@ -103,12 +108,9 @@ EXEC_RUNNER     = None  # setup below
 
 
 
-
-
 # ---- end imports
 
 
-#-------------------------------
 
 # ----------------------------------------
 class DbManagementSubWindow( QMdiSubWindow ):
@@ -145,12 +147,8 @@ class DbManagementSubWindow( QMdiSubWindow ):
         AppGlobal.mdi_management.register_document(  self )
 
 
-# !! may need fix
-        #self.tab_folder.currentChanged.connect( self.on_tab_changed )
 
-        #combo_dict_ext.build_it( AppGlobal.qsql_db_access.db )   # do not forget
-
-        # self.detail_table_name      = "stuff"
+        self.detail_table_name      = "xxx"  # need for framework do not delete
         # self.key_word_table_name    = "stuff_key_word"
         # self.text_table_name        = "stuff_text"  # text tables always id and text_data
             # used in text tab base
@@ -180,37 +178,21 @@ class DbManagementSubWindow( QMdiSubWindow ):
         self.first_tab         = FirstTab( self  )
         main_notebook.addTab(       self.first_tab, "First Tab" )
 
-        # ix                       += 1
-        # self.list_tab_index      = ix
-        # self.list_tab            = StuffListTab( self  )
-        # main_notebook.addTab(  self.list_tab, "List"    )
+        self.first_tab         = KeyWordTab( self  )
+        main_notebook.addTab( self.first_tab, "Key Words" )
 
-        # ix                       += 1
-        # self.detail_tab_index     = ix  #
-        # self.detail_tab           = StuffDetailTab( self )
-        # main_notebook.addTab( self.detail_tab, "Detail"     )
+        tab                 = OutputTab( self  )
+        self.output_tab     = tab
+        main_notebook.addTab( tab, "Output" )
 
-        # ix                       += 1
-        # self.picture_tab_index     = ix
-        # self.picture_tab           = base_document_tabs.StuffdbPictureTab( self )
-        # main_notebook.addTab( self.picture_tab, "Picture"     )
-
-        # ix                         += 1
-        # self.detail_text_index      = ix  # phase out !!
-        # self.text_tab_index         = ix
-        # self.text_tab               = StuffTextTab( self )
-        # main_notebook.addTab( self.text_tab, "Text"     )
-
-        # ix                         += 1
-        # self.history_tab_index     = ix
-        # self.history_tab           = StuffHistoryTab( self )
-        # main_notebook.addTab( self.history_tab, "History"    )
+        self.output_edit    = tab.output_edit   # self.output_edit
 
         sub_window.setWidget( main_notebook )
         mdi_area.addSubWindow( sub_window )
         #      # perhaps add to register_document in midi_management
 
         sub_window.show()
+
     # --------------------------------
     def __init_2__( self ):
         """call at end of child __init__ """
@@ -249,21 +231,34 @@ class DbManagementSubWindow( QMdiSubWindow ):
                            qt_height  )
 
     # --------------------------------
-    def output_msg( self, msg  ):
+    def activate_output_tab( self,    ):
         """
 
+
+        self.parent_window.activate_output_tab()
         """
-        print( msg )
+        self.main_notebook.setCurrentWidget( self.output_tab  )
 
     # --------------------------------
-    def get_topic( self ):
+    def output_msg( self, msg, clear = False  ):
         """
-        of the detail record -- implemented in stuff in people not working
+        dup with line_out
         """
-        return "DocumentBase need override for topic in descendant"
+        self.append_msg( msg, clear = clear  )
 
-
-
+    #----------------------------
+    def append_msg( self, msg, clear = False ):
+        """
+        read it --
+            and print to console
+        msg is just the name of the function
+        """
+        #msg     = f"----==== {msg} ====----"
+        # if clear:
+        #     self.clear_msg(  )
+        if clear:
+            self.output_edit.clear()
+        self.output_edit.append( msg )
 
     # --------------------------------
     def closeEvent(self, event):
@@ -283,7 +278,11 @@ class DbManagementSubWindow( QMdiSubWindow ):
         debug_msg  = (f"{self.windowTitle()} has been closed")
         logging.debug( debug_msg )
 
+    # ------------------------------------------
+    def system_rpt( self, ):
+        """
 
+        """
 
 
 
@@ -357,17 +356,17 @@ class FirstTab( QWidget ):
     """
     def __init__(self, parent_window ):
         """
-        lots of variable may not be used .... clean up later
+
         """
         super().__init__()
 
-        self.criteria_dict          = {}
-        self.critera_widget_list    = []
-        self.critera_is_changed     = True
+        # self.criteria_dict          = {}
+        # self.critera_widget_list    = []
+        # self.critera_is_changed     = True
         self.parent_window          = parent_window
         self.key_words_widget       = None      # set to value in gui if used
 
-        self.tab_name               = "CriteriaTab set in child"
+        self.tab_name               = "DbMaint"
         self.build_gui()
 
     # -----------------------------
@@ -375,60 +374,46 @@ class FirstTab( QWidget ):
         """
 
         """
+        vlayout              = QVBoxLayout( self )
 
-        layout              = QHBoxLayout()
+        layout              = QHBoxLayout( self )
+        vlayout.addLayout( layout )
 
-        widget              = QPushButton( "q_pbutton_1" )
-        self.q_pbutton_1    = widget
-        # connect_to          = self.pb_1_clicked
-        # widget.clicked.connect(  connect_to   )
+        # ---- table combobox
+        widget              = QComboBox()
+
+        self.table_widget   = widget
+
+        a_list              = ['help_info',
+                         'help_key_word',
+                         'stuff',
+                         'Three',
+                         'Four' ]
+
+        widget.addItems( a_list )
+        widget.setCurrentIndex( 0 )
         layout.addWidget( widget )
 
 
+        widget              = QPushButton( "create sql" )
+        self.q_pbutton_1    = widget
+        connect_to          = self.create_sql
+        widget.clicked.connect(  connect_to   )
+        layout.addWidget( widget )
 
-    # -------------------------------
-    def _build_top_widgets_grid( self, grid_layout ):
-        """
-        what it says read, std for all criteria tabs
-        lets add a Hbox
-        now on an hbox placed on the grid layout
-        return
-            mutates
-            creates new row, uses creates another
-        """
-        grid_layout.new_row()
-        button_layout    = QHBoxLayout()
-        grid_layout.addLayout( button_layout, grid_layout.ix_col, grid_layout.ix_row, 1, 5  )
-        #row: int, column: int, rowSpan: int, columnSpan:
-            # int, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = Qt.Alignment()):
-        grid_layout.new_row()
+        widget              = QPushButton( "record count" )
+        connect_to          = self.record_count_rpt
+        widget.clicked.connect( connect_to  )
+        layout.addWidget( widget )
 
-        # ---- may need a spacer where titles are in rest of page
-        # width    = 35
-        # widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
-        # #grid_layout.new_row()
-        # # grid_layout.addWidget( widget )
-        # grid_layout.addItem( widget, grid_layout.ix_row, grid_layout.ix_col    )  # row column
-        # grid_layout.ix_col  += 1
+        # ---- new row
+        layout              = QHBoxLayout( self )
+        vlayout.addLayout( layout )
 
-        # ---- buttons
-        a_widget        = QPushButton( "Clear" )
-        a_widget.clicked.connect(  self.clear_criteria )
-        button_layout.addWidget( a_widget )
-
-        a_widget        = QPushButton( "Go -->" )
-        a_widget.clicked.connect(  self.parent_window.criteria_select )
-        button_layout.addWidget( a_widget )
-
-        a_widget        = QPushButton( "Paste/Go -->" )
-        a_widget.clicked.connect(  self.paste_go )
-        button_layout.addWidget( a_widget )
-
-        a_widget        = QPushButton( "Clear/Paste/Go -->" )
-        a_widget.clicked.connect(  self.clear_go )
-        button_layout.addWidget( a_widget )
-
-        grid_layout.new_row()
+        widget              = QPushButton( "Systems and SubSystes" )
+        connect_to          = self.system_sub_count_rpt
+        widget.clicked.connect( connect_to  )
+        layout.addWidget( widget )
 
     # -------------------------------
     def _build_top_widgets_placer_delete( self, placer ):
@@ -458,82 +443,365 @@ class FirstTab( QWidget ):
         a_widget.clicked.connect(  self.clear_go )
         button_layout.addWidget( a_widget )
 
-    # -------------------------------
-    def add_buttons( self, placer ):
-        """
-        debug
-        this should be called add_debug_widgets
-        """
-        placer.new_row()
-        widget  = QLabel( "unknown" )
-        self.criteria_changed_widget = widget
-        self.criteria_changed_widget.setText( "self.criteria_changed_widget" )
-        placer.place( widget, columnspan = 2 )
-
-        # ---- buttons
-        a_widget        = QPushButton( "Clear Criteria change widget " )
-        a_widget.clicked.connect(  self.clear_criteria )
-        placer.new_row()
-        placer.place( a_widget )
-
-        a_widget        = QPushButton( "Run Select" )
-        a_widget.clicked.connect(  self.parent_window.criteria_select )
-        #placer.new_row()
-        placer.place( a_widget )
-
-        a_widget        = QPushButton( "show_criteria" )
-        a_widget.clicked.connect( lambda: self.show_criteria(   ) )
-        #placer.new_row()
-        placer.place( a_widget )
-
-        a_widget        = QPushButton( "Criteria Unchanged" )
-        a_widget.clicked.connect( lambda: self.criteria_changed( False ) )
-        #placer.new_row()
-        placer.place( a_widget )
 
     # -------------------------
-    def make_criteria_date_widget( self,   ):
-        """
-        THE WIDGETS HAVE CHANGED SINCE THIS WAS WRITTEN, FIX WHEN NEXT USED
 
-        what it says, read
-        make our standard date widgets
-
-        return two widgets both same holdover from old code fix sometime ,
-        starting and ending widget in a tuple
-        """
-        #widget                  = QDateEdit()
-        widget                   = cw.CQDateCriteria()   # need types here perhaps !!
-        widget.editingFinished.connect( lambda: self.criteria_changed( True ) )
-        widget.userDateChanged.connect( lambda: self.criteria_changed( True ) )
-        widget.setCalendarPopup( True )
-        widget.setDisplayFormat( "dd/MM/yyyy" )
-        widget.setDate( QDate( 2025, 1, 1 ))
-        #widget_to_layout            = widget.container
-        return ( widget, widget )
-        # widget, widget_to_layout  =self.make_criteria_date_widget()
-
-    # ---- Actions
-    def criteria_select_if( self,   ):
+    # ---- reports
+    def record_count_rpt( self,   ):
         """
         What it says, read
-            note: strip the strings
+
         """
-        if self.critera_is_changed:
-            self.criteria_select()
-        else:
-            pass
-            # debug_msg  = ( "criteria_select_if no select !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            # logging.debug( debug_msg )
-        # put in criteria_select  !! self.criteria_is_changed = False
-        self.critera_is_changed = False
+        table_name     = self.table_widget.currentText()
+
+
+        msg    = ( f"for table {table_name = }" )
+        self.parent_window.output_msg(  msg )
+
+
+
+        db             = AppGlobal.qsql_db_access.db
+        check_fix.print_record_count( db, table_name )
+
+
+        #self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+    # ---- reports
+    def system_sub_count_rpt( self,   ):
+        """
+        What it says, read
+
+        """
+        table_name     = "stuff"
+
+        db             = AppGlobal.qsql_db_access.db
+
+        msg      = ("System_sub_count_rpt:")
+        self.parent_window.output_msg( msg, clear = True )
+
+        sql     = """
+            SELECT system, sub_system, COUNT(*) as sub_system_count
+            FROM help_info
+            WHERE system IS NOT NULL AND sub_system IS NOT NULL
+            GROUP BY system, sub_system
+            ORDER BY system, sub_system;
+            """
+
+        query      = QSqlQuery( db )
+
+        query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
+
+
+
+        # self.parent_window.output_msg( sql )
+
+        while query.next():
+            # a_id        = query.value(0)
+            # value_1        = query.value(1)
+            # value_2   = query.value(2)
+
+            msg      = (f" : {query.value(0) = }  { query.value(1) = }  { query.value(2) = }  ")
+
+            self.parent_window.output_msg(  msg )
+
+        self.parent_window.activate_output_tab()
+
+    #-------------------------
+    def create_sql( self,   ):
+        """
+        What it says, read
+
+        """
+        table_name     = self.table_widget.currentText()
+        self.parent_window.output_msg(   f"for table {table_name = }", clear = True )
+
+        a_table    = data_dict.DATA_DICT.get_table( table_name )
+
+        sql        = a_table.to_sql_create()
+        msg    = f"{sql} "
+        self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+
+# ----------------------------------------
+class KeyWordTab( QWidget ):
+    """
+    what it says
+
+    maint and report on key word tables
+    """
+    def __init__(self, parent_window ):
+        """
+
+        """
+        super().__init__()
+
+        # self.criteria_dict          = {}
+        # self.critera_widget_list    = []
+        # self.critera_is_changed     = True
+        self.parent_window          = parent_window
+        self.key_words_widget       = None      # set to value in gui if used
+
+        self.tab_name               = "DbMaint"
+        self.build_gui()
+
+    # -----------------------------
+    def build_gui( self,   ):
+        """
+
+        """
+        vlayout              = QVBoxLayout( self )
+
+        # ---- new row
+        layout              = QHBoxLayout( self )
+        vlayout.addLayout( layout )
+
+        # ---- table combobox
+        widget              = QComboBox()
+
+        self.table_widget   = widget
+
+        a_list              = [
+                         'help_key_word',
+                         'stuff_key_word',
+                         'plant_key_word',
+                         'people_key_word' ]
+
+        widget.addItems( a_list )
+        widget.setCurrentIndex( 0 )
+        layout.addWidget( widget )
+
+        widget              = QPushButton( "key_word_dups" )
+        self.q_pbutton_1    = widget
+        connect_to          = self.key_word_dups
+        widget.clicked.connect(  connect_to   )
+        layout.addWidget( widget )
+
+        widget              = QPushButton( "!!rebuild_key_words" )
+        # connect_to          = self.record_count_rpt
+        # widget.clicked.connect( connect_to  )
+        layout.addWidget( widget )
+
+        # ---- new row
+        layout              = QHBoxLayout( self )
+        vlayout.addLayout( layout )
+
+        widget              = QPushButton( "!!" )
+        # connect_to          = self.system_sub_count_rpt
+        # widget.clicked.connect( connect_to  )
+        layout.addWidget( widget )
+
+
+    # -------------------------
+
+    # ---- reports
+    # -------------------------
+    def key_word_dups( self,   ):
+        """
+        What it says, read
+
+        """
+        db             = AppGlobal.qsql_db_access.db
+        table_name     = self.table_widget.currentText()
+
+        msg    = f"Check {table_name = } for key word duplicates"
+        self.parent_window.output_msg(  msg, clear = True )
+
+        check_fix.line_out    = self.parent_window.output_msg
+        check_fix.check_key_words_for_dups( db, table_name )
+
+        # msg    = f"{sql} "
+        # self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+    # -------------------------
+    def record_count_rpt( self,   ):
+        """
+        What it says, read
+
+        """
+        table_name     = self.table_widget.currentText()
+
+        msg = ( f"for table {table_name = }" )
+        self.parent_window.output_msg( msg, clear = True )
+
+        db             = AppGlobal.qsql_db_access.db
+
+        check_fix.line_out    = self.parent_window.output_msg
+        check_fix.print_record_count( db, table_name )
+
+        self.parent_window.activate_output_tab()
+
+    # -------------------------
+    def system_sub_count_rpt( self,   ):
+        """
+        What it says, read
+
+        """
+        table_name     = "stuff"
+        db             = AppGlobal.qsql_db_access.db
+
+        msg    = f"Record Count for systems and subsudtems {table_name = }"
+        self.parent_window.output_msg( msg, clear = True )
+
+        sql     = """
+            SELECT system, sub_system, COUNT(*) as sub_system_count
+            FROM help_info
+            WHERE system IS NOT NULL AND sub_system IS NOT NULL
+            GROUP BY system, sub_system
+            ORDER BY system, sub_system;
+            """
+
+        query      = QSqlQuery( db )
+
+        query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
+
+        msg      = ("system_sub_count_rpt:")
+        self.parent_window.output_msg( msg, )
+
+        self.parent_window.output_msg( sql, )
+
+        while query.next():
+            # a_id        = query.value(0)
+            # value_1        = query.value(1)
+            # value_2   = query.value(2)
+
+            msg      = (f" : {query.value(0) = }  { query.value(1) = }  { query.value(2) = }  ")
+            self.parent_window.output_msg( msg, )
+
+        self.parent_window.activate_output_tab()
+
+    #------------------------
+    def create_sql( self,   ):
+        """
+        What it says, read
+
+        """
+        table_name     = self.table_widget.currentText()
+
+        msg    = ( f"Create SQL for table {table_name = }" )
+        self.parent_window.output_msg( msg, clear = True )
+
+        a_table    = data_dict.DATA_DICT.get_table( table_name )
+
+        sql        = a_table.to_sql_create()
+
+        msg    = f"{sql} "
+        self.parent_window.output_msg( msg, )
+
+        self.parent_window.activate_output_tab()
+
+# ----------------------------------------
+class OutputTab( QWidget ):
+    """
+    what it says
+
+
+    """
+    def __init__(self, parent_window ):
+        """
+
+        """
+        super().__init__()
+
+        self.parent_window          = parent_window
+
+        self.tab_name               = "Output"
+        self.build_gui()
+
+    # -----------------------------
+    def build_gui( self,   ):
+        """
+
+        """
+        vlayout              = QVBoxLayout( self )
+
+        self._build_gui_bot( vlayout )
+
+        # # ---- new row
+        # layout              = QHBoxLayout( self )
+        # vlayout.addLayout( layout )
+
+        # # ---- table combobox
+        # widget              = QComboBox()
+
+        # self.table_widget   = widget
+
+        # a_list              = [
+        #                  'help_key_word',
+        #                  'stuff_key_word',
+        #                  'plant_key_word',
+        #                  'people_key_word' ]
+
+        # widget.addItems( a_list )
+        # widget.setCurrentIndex( 0 )
+        # layout.addWidget( widget )
+
+
+        # widget              = QPushButton( "key_word_dups" )
+        # self.q_pbutton_1    = widget
+        # connect_to          = self.key_word_dups
+        # widget.clicked.connect(  connect_to   )
+        # layout.addWidget( widget )
+
+        # widget              = QPushButton( "!!rebuild_key_words" )
+        # # connect_to          = self.record_count_rpt
+        # # widget.clicked.connect( connect_to  )
+        # layout.addWidget( widget )
+
+        # # ---- new row
+        # layout              = QHBoxLayout( self )
+        # vlayout.addLayout( layout )
+
+        # widget              = QPushButton( "!!" )
+        # # connect_to          = self.system_sub_count_rpt
+        # # widget.clicked.connect( connect_to  )
+        # layout.addWidget( widget )
+
+
+    # -------------------------------
+    def _build_gui_bot(self, layout  ):
+        """
+        make the bottom of the gui, mostly the large
+        message widget
+        layouts
+            a vbox for main layout
+        """
+        # ---- new row
+        row_layout      = QHBoxLayout(   )
+        layout.addLayout( row_layout,  )
+
+        # ----
+        widget              = QTextEdit("load\nthis should be new row ")
+        self.msg_widget     = widget
+        #widget.clicked.connect( self.load    )
+        row_layout.addWidget( widget,   )
+        self.output_edit    = widget
+
+
+    # -------------------------
+
+    # ---- reports
+    # -------------------------
+
+    # -------------------------
+    def system_sub_count_rpt( self,   ):
+        """
+        What it says, read
+
+        """
+
+
+
+    # ---- Actions none yet
 
 
     # -----------------------
     def __str__( self ):
 
         a_str   = ""
-        a_str   = "\n>>>>>>>>>>* CriteriaTabBase *<<<<<<<<<<<<"
+        a_str   = "\n>>>>>>>>>>* xxxxxx *<<<<<<<<<<<<"
 
         return a_str
 
