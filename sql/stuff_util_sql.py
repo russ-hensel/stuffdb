@@ -95,8 +95,8 @@ def create_connection( use_temp = True  ):
 
 
 
-def  end_connection(   ):
-    global  DB_CONNECTION
+def  end_connectionxxx(   ):
+    #global  DB_CONNECTION
     DB_CONNECTION.close( )
     DB_CONNECTION = None
 
@@ -284,10 +284,6 @@ def insert_key_gen_init_old( db, table_name   ):
 
 
 
-
-
-
-
     begin_sql       = ( 'INSERT INTO key_gen (  '
                                  'table_name,   key_value )  ' )
     queries = [
@@ -371,14 +367,16 @@ def create_table(   db, table_name   ):
 def drop_table( db, table_name, confirm = True   ):
     """
     delete or drop a table
+
+    confirm disabled
     """
     query       = QSqlQuery( db )
 
     sql         = f"DROP TABLE IF EXISTS {table_name}"
     print( sql )
 
-    if confirm: # else just blast thru
-        user_input = input( "Enter something to continue: ")
+    # if confirm: # else just blast thru
+    #     user_input = input( "Enter something to continue: ")
 
     query.prepare( sql )
 

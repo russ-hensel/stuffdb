@@ -39,6 +39,9 @@ from app_global import AppGlobal
 #import file_writers
 #import file_readers
 
+def line_out( line ):
+    """ """
+    print( line )
 
 # ----------------------------------------
 class SqlRunner(   ):
@@ -50,7 +53,7 @@ class SqlRunner(   ):
     def __init__( self, db_file_name ):
         # ---- part of interface
         if db_file_name is None:
-            print( "db_file_name is None:")
+            line_out( "db_file_name is None:")
             1/0
 
         self._connection             = None     # see:
@@ -174,8 +177,8 @@ class SqlRunner(   ):
             #rint( f"open_connection create connection for  {self.db_file_name} {self._connection}" )
 
         except lite.Error as a_except:
-             print( type(a_except), '::', a_except )
-             print( f"open_connection() unable to open: self.db_file_name = {self.db_file_name}")
+             line_out( type(a_except), '::', a_except )
+             line_out( f"open_connection() unable to open: self.db_file_name = {self.db_file_name}")
         #rint( f"return new connection {self._connection}")
         return self._connection
 
@@ -213,14 +216,14 @@ class SqlRunner(   ):
 
         except lite.Error as a_except:
             #except ( lite.Error, TypeError) as a_except:
-            print( type(a_except), '::', a_except )
-            print( f"error define_{table_name} , exception {a_except}" )
+            line_out( type(a_except), '::', a_except )
+            line_out( f"error define_{table_name} , exception {a_except}" )
             raise
         finally:
             self.commit_connection()
             self.close_connection( )
 
-        print( f"define_table   {table_name} " )
+        line_out( f"define_table   {table_name} " )
 
     # ----------------------------------------------
     def insert_row( self, sql, a_row ):
@@ -240,8 +243,8 @@ class SqlRunner(   ):
             # sql_con.close()   # with takes care of this ?
 
         except Exception as a_except:  # !! be more specific
-            print( "exception in insert_row() {sql}"    )
-            print( type(a_except), '>>', a_except )
+            line_out( "exception in insert_row() {sql}"    )
+            line_out( type(a_except), '>>', a_except )
             self.close_connection()
 
             raise
@@ -299,7 +302,7 @@ class SqlRunner(   ):
 
         help_mode    = self.help_mode
 
-        print( f"builder confirm_continue {help_mode}")
+        line_out( f"builder confirm_continue {help_mode}")
 
         AppGlobal.gui.display_info_string( info_msg )
 
@@ -327,18 +330,19 @@ class SqlRunner(   ):
         self.end_time           = 0
         try:
             self.this_select()          # configured for one of self.  ... with sub-classing always the same
-            print( "after this select", self.get_info_string( )    )
+            line_out( f"after this select  {self.get_info_string( ) }"   )
 
             self.select_and_output()    # help_mode ??
 
         except app_global.UserCancel as exception:   #  !!this is probably the Right one
         #except Exception as exception:
             pass  # Catch the  exception and swallow as user wants out not an error
-            print( exception )  # debug only
+            line_out( exception )  # debug only
 
         msg   = f"Select Done, rows selected: {self.row_count} time = {self.end_time - self.start_time}"
         AppGlobal.gui.display_info_string( msg )
         AppGlobal.logger.debug(  msg  )
+        line_out( msg )
 
     # ----------------------------------------------
     def select( self, sql, sql_data  ):
@@ -356,7 +360,7 @@ class SqlRunner(   ):
             cur           = self.get_cursor()
             execute_args  = (  sql,   sql_data,  )
             msg           = f"sql_util.select  ; execute_args {execute_args}"
-            print(  msg )
+            line_out(  msg )
             # if self.select_writer:
             #     self.select_writer.write_header( )
 
@@ -368,7 +372,7 @@ class SqlRunner(   ):
 
                 self.row_count    += 1
 
-                print( f"row {self.row_count}: {row}"  )
+                line_out( f"row {self.row_count}: {row}"  )
                 break
 
         self.commit_connection()
@@ -393,7 +397,7 @@ class SqlRunner(   ):
             cur           = self.get_cursor()
             execute_args  = (  sql,   sql_data,  )
             msg           = f"sql_util.SqlRunner.update  ; execute_args {execute_args}"
-            print(  msg )
+            line_out(  msg )
             # if self.select_writer:
             #     self.select_writer.write_header( )
 
@@ -441,7 +445,7 @@ class SqlRunner(   ):
             cur           = self.get_cursor()
             execute_args  = (  sql,   sql_data,  )
             msg           = f"select and output; execute_args {execute_args}"
-            print(  msg )
+            line_out(  msg )
             if self.select_writer:
                 self.select_writer.write_header( )
 
@@ -462,7 +466,7 @@ class SqlRunner(   ):
                     self.select_writer.write_row( row )
                     #rint( f"select_and_output row {self.row_count}: {row}"  )
                 else:
-                    print( f"row {self.row_count}: {row}"  )
+                    line_out( f"row {self.row_count}: {row}"  )
                 #row  = list( row )
 
 
@@ -519,7 +523,7 @@ class SqlRunner(   ):
         self.file_writer.write_header( self.table_info )
 
         msg     = f"Select and output; connect to {self.db_name}"
-        print( msg )
+        line_out( msg )
         sql_con = lite.connect( self.db_name )
 
         with sql_con:
@@ -590,9 +594,10 @@ class SqlRunner(   ):
 
         self.file_writer.write_footer( footer_info )
 
-        print(  footer_info )
+        line_out(  footer_info )
         msg      =  f"select complete with footer info: {footer_info}"
         AppGlobal.logger.debug( msg )
+        line_out( msg )
 
         # os open file for user to view
         #if   self.output_format  == "html":
@@ -986,6 +991,7 @@ class TableInfo( object ):
                 msg  =  f"problem where has no value >>{data}<<"
                 AppGlobal.print_debug(  msg )
                 raise DBOjectException( msg )
+
             data      = parts[0] + ' "' + parts[1] + '"'
 
             self.where_list .append( [column, data] )

@@ -109,8 +109,29 @@ EXEC_RUNNER     = None  # setup below
 
 
 # ---- end imports
+# PERHAPS IN DATA DICT
+ALL_TABLES  = [
+                         'help_info', "help_text",  "help_key_word",
+                         'stuff', "stuff_text",
+                         'plant', "plant_text",
+                         'people' "people_text",
+                            ]
 
+TABLE_DICT  = {
+                         'help_info': "help_text",
+                         'stuff': "stuff_text",
+                         'plant': "plant_text",
+                         'people': "people_text",
+                            }
 
+KW_TABLE_DICT  = {
+                         'help_info': "help_key_word",
+                         'stuff': "stuff_key_word",
+                         'plant': "plant_key_word",
+                         'people': "people_key_word",
+                            }
+
+IKW_TABLE_DICT = {value: key for key, value in KW_TABLE_DICT.items()}
 
 # ----------------------------------------
 class DbManagementSubWindow( QMdiSubWindow ):
@@ -175,11 +196,14 @@ class DbManagementSubWindow( QMdiSubWindow ):
 
         # ix                       += 1
         # self.criteria_tab_index   = ix
-        self.first_tab         = FirstTab( self  )
-        main_notebook.addTab(       self.first_tab, "First Tab" )
+        self.first_tab         = BasicsTab( self  )
+        main_notebook.addTab(       self.first_tab, "BasicsTab" )
 
         self.first_tab         = KeyWordTab( self  )
         main_notebook.addTab( self.first_tab, "Key Words" )
+
+        self.first_tab         = RecordMatchTab( self  )
+        main_notebook.addTab( self.first_tab, "RecordMatchTab" )
 
         tab                 = OutputTab( self  )
         self.output_tab     = tab
@@ -350,7 +374,7 @@ class DbManagementSubWindow( QMdiSubWindow ):
 
 
 # ----------------------------------------
-class FirstTab( QWidget ):
+class BasicsTab( QWidget ):
     """
     what it says
     """
@@ -384,11 +408,7 @@ class FirstTab( QWidget ):
 
         self.table_widget   = widget
 
-        a_list              = ['help_info',
-                         'help_key_word',
-                         'stuff',
-                         'Three',
-                         'Four' ]
+        a_list              = ALL_TABLES
 
         widget.addItems( a_list )
         widget.setCurrentIndex( 0 )
@@ -445,7 +465,6 @@ class FirstTab( QWidget ):
 
 
     # -------------------------
-
     # ---- reports
     def record_count_rpt( self,   ):
         """
@@ -455,14 +474,13 @@ class FirstTab( QWidget ):
         table_name     = self.table_widget.currentText()
 
 
-        msg    = ( f"for table {table_name = }" )
-        self.parent_window.output_msg(  msg )
+        msg    = ( f"record_count_rpt for table {table_name = }" )
+        self.parent_window.output_msg(  msg, clear = True )
 
 
-
-        db             = AppGlobal.qsql_db_access.db
+        db                  = AppGlobal.qsql_db_access.db
+        check_fix.line_out  = self.parent_window.output_msg
         check_fix.print_record_count( db, table_name )
-
 
         #self.parent_window.output_msg(  msg )
         self.parent_window.activate_output_tab()
@@ -491,8 +509,6 @@ class FirstTab( QWidget ):
         query      = QSqlQuery( db )
 
         query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
-
-
 
         # self.parent_window.output_msg( sql )
 
@@ -578,9 +594,9 @@ class KeyWordTab( QWidget ):
         widget.clicked.connect(  connect_to   )
         layout.addWidget( widget )
 
-        widget              = QPushButton( "!!rebuild_key_words" )
-        # connect_to          = self.record_count_rpt
-        # widget.clicked.connect( connect_to  )
+        widget              = QPushButton( "rebuild_key_words" )
+        connect_to          = self.rebuild_key_word
+        widget.clicked.connect( connect_to  )
         layout.addWidget( widget )
 
         # ---- new row
@@ -594,6 +610,36 @@ class KeyWordTab( QWidget ):
 
 
     # -------------------------
+    # -------------------------
+    def rebuild_key_word( self,   ):
+        """
+        What it says, read
+
+        """
+        db                  = AppGlobal.qsql_db_access.db
+
+        IKW_TABLE_DICT
+        kw_table_name       = self.table_widget.currentText()
+        table_name          = IKW_TABLE_DICT[ kw_table_name ]
+
+
+        check_fix.line_out  = self.parent_window.output_msg
+        db_check            = check_fix.DbCheck( db )
+
+        msg    = f"Rebuild {table_name = } for key words"
+        self.parent_window.output_msg(  msg, clear = True )
+
+
+        db_check.fix_key_word_index( base_table_name        = table_name,
+                                     key_word_table_name    = kw_table_name )
+
+        #check_fix.check_key_words_for_dups( db, table_name )
+
+        # msg    = f"{sql} "
+        # self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+
 
     # ---- reports
     # -------------------------
@@ -615,23 +661,7 @@ class KeyWordTab( QWidget ):
         # self.parent_window.output_msg(  msg )
         self.parent_window.activate_output_tab()
 
-    # -------------------------
-    def record_count_rpt( self,   ):
-        """
-        What it says, read
 
-        """
-        table_name     = self.table_widget.currentText()
-
-        msg = ( f"for table {table_name = }" )
-        self.parent_window.output_msg( msg, clear = True )
-
-        db             = AppGlobal.qsql_db_access.db
-
-        check_fix.line_out    = self.parent_window.output_msg
-        check_fix.print_record_count( db, table_name )
-
-        self.parent_window.activate_output_tab()
 
     # -------------------------
     def system_sub_count_rpt( self,   ):
@@ -691,6 +721,106 @@ class KeyWordTab( QWidget ):
         self.parent_window.output_msg( msg, )
 
         self.parent_window.activate_output_tab()
+
+
+# ----------------------------------------
+class RecordMatchTab( QWidget ):
+    """
+    what it says
+
+    maint and report on key word tables
+    """
+    def __init__(self, parent_window ):
+        """
+
+        """
+        super().__init__()
+
+        # self.criteria_dict          = {}
+        # self.critera_widget_list    = []
+        # self.critera_is_changed     = True
+        self.parent_window          = parent_window
+        self.key_words_widget       = None      # set to value in gui if used
+
+        self.tab_name               = "RecordMatch"
+
+
+        self.build_gui()
+
+    # -----------------------------
+    def build_gui( self,   ):
+        """
+
+        """
+        vlayout              = QVBoxLayout( self )
+
+        # ---- new row
+        layout              = QHBoxLayout( self )
+        vlayout.addLayout( layout )
+
+        # ---- table combobox
+        widget              = QComboBox()
+
+        self.table_widget   = widget
+
+        a_list              =  TABLE_DICT.keys()
+
+        widget.addItems( a_list )
+        widget.setCurrentIndex( 0 )
+        layout.addWidget( widget )
+
+        widget              = QPushButton( "Missing Text" )
+        self.q_pbutton_1    = widget
+        connect_to          = self.find_missing_text
+        widget.clicked.connect(  connect_to   )
+        layout.addWidget( widget )
+
+        widget              = QPushButton( "Excess Text " )
+        connect_to          = self.find_excess_text
+        widget.clicked.connect( connect_to  )
+        layout.addWidget( widget )
+
+        # ---- new row
+        layout              = QHBoxLayout( self )
+        vlayout.addLayout( layout )
+
+    # ---- reports
+    # -------------------------
+    def find_excess_text( self,   ):
+        """
+        What it says, read
+
+        """
+        db                  = AppGlobal.qsql_db_access.db
+        table_name          = self.table_widget.currentText()
+        text_table_name     = TABLE_DICT[table_name]
+
+        msg    = f"Check find_excess_text {table_name = } {text_table_name = } "
+        self.parent_window.output_msg(  msg, clear = True )
+
+        check_fix.line_out    = self.parent_window.output_msg
+        check_fix.find_excess_text( db, table_name, text_table_name )
+
+        self.parent_window.activate_output_tab()
+
+    # -------------------------
+    def find_missing_text( self,   ):
+        """
+        What it says, read
+
+        """
+        db                  = AppGlobal.qsql_db_access.db
+        table_name          = self.table_widget.currentText()
+        text_table_name     = TABLE_DICT[table_name]
+
+        msg    = f"Check find_missing_text {table_name = } {text_table_name = } "
+        self.parent_window.output_msg(  msg, clear = True )
+
+        check_fix.line_out    = self.parent_window.output_msg
+        check_fix.find_missing_text( db, table_name, text_table_name )
+
+        self.parent_window.activate_output_tab()
+
 
 # ----------------------------------------
 class OutputTab( QWidget ):

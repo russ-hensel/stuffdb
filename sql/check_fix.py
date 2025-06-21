@@ -235,7 +235,11 @@ def print_record_count( db, table_name ):
         if ix >= max_ix:
             break
 
+    break_line  = "-----------------"
+    line_out( "")
+    line_out( break_line )
     line_out( f"end   print_record_count  ")
+    line_out( "")
 
 # ----------------------------------
 def add_missing_text( db, table_name ):
@@ -322,81 +326,82 @@ def add_missing_text( db, table_name ):
 
     print( "sql done" )
 
+
 # ----------------------------------
-def print_missing_text( db, table_name ):
+def find_excess_text( db, table_name, text_table_name ):
     """
     what it says
     """
-    print( "begin  print_missing_help_text ")
+    msg      = f"find_excess_text {table_name = } {text_table_name = } "
+    line_out( msg )
 
+    sql      =  f"""
+            SELECT  {text_table_name}.*
+            FROM {text_table_name}
+            LEFT JOIN  {table_name}  ON {text_table_name}.id = {table_name}.id
+            WHERE {table_name}.id IS NULL;
 
-    chat = """
-    i hava a table defined by
-            CREATE TABLE help_info  (
-            id  INTEGER,
-            type  VARCHAR(15),
-            can_execute  VARCHAR(1) )
+        """
+    line_out( sql )
 
-    and another defined by
-
-        CREATE TABLE help_text  (
-            id  INTEGER,
-            text_data  TEXT )
-
-    I would like to find all the records in help_info
-
-    where there is no corresponding record in help_text
-
-    can you give me a query that will list these records?
-
-    """
-
-
-    if  table_name == "help_info":
-        sql = """
-            SELECT help_info.*
-            FROM help_info
-            LEFT JOIN help_text  ON help_info.id = help_text.id
-            WHERE help_text.id IS NULL;
-            """
-
-    elif  table_name == "stuff":
-        sql = """
-            SELECT stuff.*
-            FROM stuff
-            LEFT JOIN stuff_text  ON stuff.id = stuff_text.id
-            WHERE stuff_text.id IS NULL;
-            """
-        sql = """
-            SELECT stuff.*
-            FROM stuff
-            LEFT JOIN stuff_text ON stuff.id = stuff_text.id
-            WHERE stuff_text.id IS NULL; """
-
-    elif  table_name == "plant":
-        # sql = """
-        #     SELECT stuff.*
-        #     FROM stuff
-        #     LEFT JOIN stuff_text  ON stuff.id = stuff_text.id
-        #     WHERE stuff_text.id IS NULL;
-        #     """
-        sql = """
-            SELECT plant.*
-            FROM plant
-            LEFT JOIN plant_text ON plant.id = plant_text.id
-            WHERE plant_text.id IS NULL; """
-
-
-    else:
-        # no sql for that
-        1/0
-
-    print( sql )
 
     record_count  = 0
     max_ix        = 100000
 
-    query = QSqlQuery( DB_CONNECTION )
+    query = QSqlQuery( db )
+
+    query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
+
+    msg     = ( "select result, best result is zero records found" )
+    line_out( msg )
+
+    ix          = 0
+    while query.next():
+        ix              += 1
+        field_0        = query.value(0)
+        field_1        = query.value(1)
+        field_2        = query.value(2)
+        field_3        = query.value(3)
+        field_4        = query.value(4)
+        field_5        = query.value(5)   # index past end, no error just get None
+
+        msg   = (f"record:{ix} {field_0 = }  {field_1 = }  {field_2 = } {field_3 = } {field_4 = } {field_5 = } ")
+        line_out( msg )
+        if ix >= max_ix:
+            break
+
+
+    break_line  = "-----------------"
+    line_out( "")
+    line_out( break_line )
+    msg     = ( f"end   find_excess_text best result is 0, you have: {ix = }")
+    line_out( msg )
+    line_out( "")
+
+
+# ----------------------------------
+def find_missing_text( db, table_name, text_table_name ):
+    """
+    what it says
+    """
+    msg      = f"find_missing_text {table_name = } {text_table_name = } "
+    line_out( msg )
+
+    sql      =  f"""
+            SELECT  {table_name}.*
+            FROM {table_name}
+            LEFT JOIN  {text_table_name}  ON {table_name}.id = {text_table_name}.id
+            WHERE {text_table_name}.id IS NULL;
+
+        """
+    line_out( sql )
+
+
+
+    record_count  = 0
+    max_ix        = 100000
+
+    query = QSqlQuery( db )
 
     query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
 
@@ -412,11 +417,19 @@ def print_missing_text( db, table_name ):
         field_4        = query.value(4)
         field_5        = query.value(5)   # index past end, no error just get None
 
-        print(f"record:{ix} {field_0 = }  {field_1 = }  {field_2 = } {field_3 = } {field_4 = } {field_5 = } ")
+        msg   = (f"record:{ix} {field_0 = }  {field_1 = }  {field_2 = } {field_3 = } {field_4 = } {field_5 = } ")
+        line_out( msg )
         if ix >= max_ix:
             break
 
-    print( f"end   print_missing_help_text {ix = }")
+    break_line  = "-----------------"
+    line_out( "")
+    line_out( break_line )
+    msg     = ( f"end   find_excess_text best result is 0, you have: {ix = }")
+    line_out( msg )
+    line_out( "")
+
+
 
 # ----------------------------------
 def check_key_words_for_dups( db, table_name ):
@@ -570,18 +583,22 @@ class DbCheck(   ):
         warn   = ( "\nkey word field may still be manual and not from data dict check "
                   " +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" )
 
-        print( warn )
+        line_out( warn )
+        stuff_util_sql.line_out  = line_out
+
         stuff_util_sql.drop_table(   self.db, table_name = key_word_table_name )
         stuff_util_sql.create_table( self.db, table_name = key_word_table_name )
 
-        a_key_word_indexer    = key_word_indexer.KeyWordIndexer(  self.db,
-                                              base_table_name,
-                                              key_word_table_name  )
+        a_key_word_indexer    = key_word_indexer.KeyWordIndexer(
+                                                self.db,
+                                                base_table_name,
+                                                key_word_table_name  )
 
         a_key_word_indexer.loop_thru( )
-        stuff_util_sql.end_connection( )
+        # stuff_util_sql.end_connection( )
 
-        print( warn )
+        msg     = ( f"end fix_key_word_index")
+        line_out( msg )
 
 
 # ====================================================================

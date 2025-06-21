@@ -1,104 +1,91 @@
-2025-06-20 06:57:23,708 - CRITICAL - Root logger is set up. Modules can now log using logging.getLogger().
-2025-06-20 06:57:23,708 - INFO - config_logger call was: logging.info
-2025-06-20 06:57:23,708 - DEBUG - QsqlDbAccess  init_db()
-2025-06-20 06:57:23,709 - DEBUG - connection_name = 'qt_sql_default_connection'
-2025-06-20 06:57:23,751 - DEBUG - log_sql_callback PRAGMA synchronous = NORMAL;
-2025-06-20 06:57:23,752 - DEBUG - log_sql_callback PRAGMA journal_mode = WAL;
-2025-06-20 06:57:23,752 - DEBUG - log_sql_callback PRAGMA optimize;
-2025-06-20 06:57:23,847 - Notice - 
-2025-06-20 06:57:23,847 - Notice - ============================
-2025-06-20 06:57:23,847 - Notice - 
-2025-06-20 06:57:23,847 - Notice - Application: Stuff DB in QT Ver .073: 2025 06 15.01 in mode mode_github_example_code_on_theprofand version  Ver .073: 2025 06 15.01
-2025-06-20 06:57:23,847 - Notice - 
-2025-06-20 06:57:23,847 - Notice - command line arg + 0  =  main.py)
-2025-06-20 06:57:23,848 - Notice - command line arg + 1  =  mode_github_example_code_on_theprof)
-2025-06-20 06:57:23,848 - Notice - current directory /mnt/WIN_D/for_github/stuffdb
-2025-06-20 06:57:23,848 - Notice - Time now: 2025-06-20 10:57:23
-2025-06-20 06:57:25,663 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
-2025-06-20 06:57:25,676 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
-2025-06-20 06:57:25,677 - DEBUG - post_init DetailTabBase  HelpDetailTab  
-2025-06-20 06:57:25,687 - ERROR - ------------------------ monkey_patch_here reexamine this--------------------------
-2025-06-20 06:57:25,693 - DEBUG - set_size_pos--------------------------------------  
-2025-06-20 06:57:33,362 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "activate" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-20 06:57:33,365 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "activate" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-20 06:57:35,799 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 06:57:35,800 - DEBUG - update_db record null no action, return help_info
-2025-06-20 06:57:35,801 - DEBUG - update_db record null no action, return help_text
-2025-06-20 06:57:35,801 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 06:57:35,802 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-20 06:57:35,809 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-20 06:57:35,810 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-20 06:57:35,811 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-20 07:27:53,549 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "ext", "edit" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-20 07:28:00,798 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 07:28:00,799 - INFO - check_id_for_error elapsed perf_counter 0.00028574594762176275
-2025-06-20 07:28:00,799 - INFO - update_db elapsed perf_counter 0.0008037369698286057
-2025-06-20 07:28:00,799 - INFO - update_db elapsed perf_counter 0.00028680701507255435
-2025-06-20 07:28:00,799 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 07:28:00,800 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-20 07:28:00,801 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-20 07:28:00,802 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-20 07:28:00,802 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-20 07:33:01,952 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "helpdocument" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-20 07:33:13,564 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 07:33:13,568 - INFO - check_id_for_error elapsed perf_counter 0.0012513430556282401
-2025-06-20 07:33:13,568 - INFO - update_db elapsed perf_counter 0.0035845089587382972
-2025-06-20 07:33:13,570 - INFO - update_db elapsed perf_counter 0.0008548040059395134
-2025-06-20 07:33:13,571 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 07:33:13,571 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-20 07:33:13,580 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-20 07:33:13,580 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-20 07:33:13,581 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-20 07:45:42,370 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "open" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-20 07:45:46,467 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 07:45:46,471 - INFO - check_id_for_error elapsed perf_counter 0.0013139820075593889
-2025-06-20 07:45:46,471 - INFO - update_db elapsed perf_counter 0.003583219018764794
-2025-06-20 07:45:46,514 - INFO - update_db elapsed perf_counter 0.04249409300973639
-2025-06-20 07:45:46,515 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 07:45:46,515 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-20 07:45:46,519 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-20 07:45:46,520 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-20 07:45:46,520 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-20 07:45:53,226 - DEBUG - ['>>url https://www.openstreetmap.org/#map=4/38.01/-95.84', '', 'iD - OpenStreetMap Wiki']
-2025-06-20 07:45:53,227 - DEBUG - cmd_exec cmd = 'url' 
- cmd_args = ['https://www.openstreetmap.org/#map=4/38.01/-95.84']
-2025-06-20 08:11:50,090 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 08:11:50,151 - INFO - check_id_for_error elapsed perf_counter 0.0004271029611118138
-2025-06-20 08:11:50,151 - INFO - update_db elapsed perf_counter 0.06097690499154851
-2025-06-20 08:11:50,168 - INFO - update_db elapsed perf_counter 0.016298979986459017
-2025-06-20 08:11:50,168 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 08:11:50,168 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
-2025-06-20 08:11:50,168 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
-2025-06-20 08:11:50,168 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
-2025-06-20 08:11:50,169 - DEBUG - DataManager new_record    help_info  should we create the record here ??
-2025-06-20 08:11:50,195 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
-2025-06-20 08:11:50,196 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-20 08:11:50,196 - DEBUG - DataManager new_record    help_text  should we create the record here ??
-2025-06-20 08:11:50,196 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
-2025-06-20 08:11:50,196 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
-2025-06-20 08:11:50,196 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
-2025-06-20 09:54:04,746 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 09:54:04,879 - INFO - check_id_for_error elapsed perf_counter 0.00034376000985503197
-2025-06-20 09:54:04,880 - INFO - update_db elapsed perf_counter 0.13261817500460893
-2025-06-20 09:54:04,897 - INFO - update_db elapsed perf_counter 0.017243032983969897
-2025-06-20 09:54:04,897 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 15:06:21,143 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "tailscale" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-20 15:06:23,037 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 15:06:23,040 - INFO - check_id_for_error elapsed perf_counter 0.0011131049832329154
-2025-06-20 15:06:23,041 - INFO - update_db elapsed perf_counter 0.0031531929853372276
-2025-06-20 15:06:23,042 - INFO - update_db elapsed perf_counter 0.0008852190221659839
-2025-06-20 15:06:23,043 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 15:06:23,044 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-20 15:06:23,050 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-20 15:06:23,050 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-20 15:06:23,050 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
-2025-06-20 15:08:31,257 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "rust" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
-2025-06-20 15:08:33,435 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 15:08:33,480 - INFO - check_id_for_error elapsed perf_counter 0.001339819049462676
-2025-06-20 15:08:33,481 - INFO - update_db elapsed perf_counter 0.0444856800022535
-2025-06-20 15:08:33,517 - INFO - update_db elapsed perf_counter 0.035989584983326495
-2025-06-20 15:08:33,518 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
-2025-06-20 15:08:33,519 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
-2025-06-20 15:08:33,529 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
-2025-06-20 15:08:33,529 - ERROR - send_topic_update needs fixing !! just re-enabled 
-2025-06-20 15:08:33,530 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-06-21 07:42:46,301 - CRITICAL - Root logger is set up. Modules can now log using logging.getLogger().
+2025-06-21 07:42:46,301 - INFO - config_logger call was: logging.info
+2025-06-21 07:42:46,301 - DEBUG - QsqlDbAccess  init_db()
+2025-06-21 07:42:46,302 - DEBUG - connection_name = 'qt_sql_default_connection'
+2025-06-21 07:42:46,304 - DEBUG - log_sql_callback PRAGMA synchronous = NORMAL;
+2025-06-21 07:42:46,304 - DEBUG - log_sql_callback PRAGMA journal_mode = WAL;
+2025-06-21 07:42:46,304 - DEBUG - log_sql_callback PRAGMA optimize;
+2025-06-21 07:42:46,336 - Notice - 
+2025-06-21 07:42:46,337 - Notice - ============================
+2025-06-21 07:42:46,337 - Notice - 
+2025-06-21 07:42:46,337 - Notice - Application: Stuff DB in QT Ver .073: 2025 06 15.01 in mode mode_github_example_code_on_theprofand version  Ver .073: 2025 06 15.01
+2025-06-21 07:42:46,337 - Notice - 
+2025-06-21 07:42:46,337 - Notice - command line arg + 0  =  main.py)
+2025-06-21 07:42:46,338 - Notice - command line arg + 1  =  mode_github_example_code_on_theprof)
+2025-06-21 07:42:46,338 - Notice - current directory /mnt/WIN_D/for_github/stuffdb
+2025-06-21 07:42:46,338 - Notice - Time now: 2025-06-21 11:42:46
+2025-06-21 07:42:48,382 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
+2025-06-21 07:42:48,385 - DEBUG - init end DetailTabBase DetailTabBase -- >> tab failed to set<<< and...   
+2025-06-21 07:42:48,385 - DEBUG - post_init DetailTabBase  HelpDetailTab  
+2025-06-21 07:42:48,389 - ERROR - ------------------------ monkey_patch_here reexamine this--------------------------
+2025-06-21 07:42:48,392 - DEBUG - set_size_pos--------------------------------------  
+2025-06-21 08:20:04,579 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "match", "record" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-06-21 08:20:04,581 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "match", "record" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-06-21 08:20:11,275 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "missing" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-06-21 08:20:14,500 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-21 08:20:14,501 - DEBUG - update_db record null no action, return help_info
+2025-06-21 08:20:14,502 - DEBUG - update_db record null no action, return help_text
+2025-06-21 08:20:14,503 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-21 08:20:14,503 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-06-21 08:20:14,510 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-06-21 08:20:14,510 - ERROR - send_topic_update needs fixing !! just re-enabled 
+2025-06-21 08:20:14,510 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-06-21 08:20:29,896 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-21 08:20:29,961 - INFO - check_id_for_error elapsed perf_counter 0.0004153220070293173
+2025-06-21 08:20:29,961 - INFO - update_db elapsed perf_counter 0.06506617100239964
+2025-06-21 08:20:29,978 - INFO - update_db elapsed perf_counter 0.01600277599936817
+2025-06-21 08:20:29,978 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-21 09:12:21,254 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "invert" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  lower(help_info.title) ASC  '
+2025-06-21 09:12:24,228 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-21 09:12:24,229 - INFO - check_id_for_error elapsed perf_counter 0.0004029689953313209
+2025-06-21 09:12:24,230 - INFO - update_db elapsed perf_counter 0.0012882660012110136
+2025-06-21 09:12:24,230 - INFO - update_db elapsed perf_counter 0.0003621319992817007
+2025-06-21 09:12:24,230 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-21 09:12:24,231 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-06-21 09:12:24,232 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-06-21 09:12:24,233 - ERROR - send_topic_update needs fixing !! just re-enabled 
+2025-06-21 09:12:24,233 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-06-21 09:12:51,906 - DEBUG - ['>>Py revers keys and values  -- not working', '', "a_dict = {'Name': 'Zara',", "'Age': 7,", "'Class': 'First',", '}', '', 'print( f"initial dict  >>{a_dict}" )', '', 'print("may be issues if values not unique ")', '', 'print( dict_to_str( a_dict ) )', 'print( "--------inverted 1 ------------")', 'b_dict = dict(map(reversed, a_dict.items()))    # invert the dict', 'print( dict_to_str( b_dict ) )', '', 'print( "--------inverted 2------------")', 'b_dict = dict(zip( a_dict.values(), a_dict.keys()))', 'print( f"dict_to_str( b_dict )   >>{dict_to_str( b_dict )}<<" )', '', 'print( "--------inverted 3------------")', 'b_dict = {value: key for key, value in b_dict.items()}', 'print( dict_to_str( b_dict ) )']
+2025-06-21 09:12:51,907 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['revers', 'keys', 'and', 'values', '--', 'not', 'working']
+2025-06-21 09:14:31,518 - DEBUG - ['>>Py reverse keys and values', '', "a_dict = {'Name': 'Zara',", "'Age': 7,", "'Class': 'First',", '}', '', 'print( f"initial dict  >>{a_dict}" )', '', 'print("may be issues if values not unique ")', '', 'print( dict_to_str( a_dict ) )', 'print( "--------inverted 1 ------------")', 'b_dict = dict(map(reversed, a_dict.items()))    # invert the dict', 'print(  f"  {b_dict =}   ")', '', 'print( "--------inverted 2------------")', 'b_dict = dict(zip( a_dict.values(), a_dict.keys()))', '#print( f"dict_to_str( b_dict )   >>{dict_to_str( b_dict )}<<" )', 'print(  f"  {b_dict =}   ")', '', 'print( "--------inverted 3------------")', 'b_dict = {value: key for key, value in b_dict.items()}', '', 'print(  f"  {b_dict =}   ")']
+2025-06-21 09:14:31,519 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['reverse', 'keys', 'and', 'values']
+2025-06-21 09:14:52,594 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-21 09:14:52,656 - INFO - check_id_for_error elapsed perf_counter 0.0014047549993847497
+2025-06-21 09:14:52,657 - INFO - update_db elapsed perf_counter 0.06206997299887007
+2025-06-21 09:14:52,673 - INFO - update_db elapsed perf_counter 0.014924064998922404
+2025-06-21 09:14:52,674 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-21 09:14:54,343 - DEBUG - ['>>Py reverse keys and values', '', "a_dict = {'Name': 'Zara',", "'Age': 7,", "'Class': 'First',", '}', '', 'print( f"initial dict  >>{a_dict}" )', '', 'print("may be issues if values not unique ")', '', 'print( dict_to_str( a_dict ) )', 'print( "--------inverted 1 ------------")', 'b_dict = dict(map(reversed, a_dict.items()))    # invert the dict', 'print(  f"  {b_dict =}   ")', '', 'print( "--------inverted 2------------")', 'b_dict = dict(zip( a_dict.values(), a_dict.keys()))', '# print( f"dict_to_str( b_dict )   >>{dict_to_str( b_dict )}<<" )', 'print(  f"  {b_dict =}   ")', '', 'print( "--------inverted 3------------")', 'b_dict = {value: key for key, value in b_dict.items()}', '', 'print(  f"  {b_dict =}   ")']
+2025-06-21 09:14:54,344 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['reverse', 'keys', 'and', 'values']
+2025-06-21 09:15:43,974 - DEBUG - ['>>Py reverse keys and values', '', "a_dict = {'Name': 'Zara',", "'Age': 7,", "'Class': 'First',", '}', '', '# print( f"initial dict  >>{a_dict}" )', '', 'print("may be issues if values not unique ")', '', '#print( dict_to_str( a_dict ) )', 'print( "--------inverted 1 ------------")', 'b_dict = dict(map(reversed, a_dict.items()))    # invert the dict', 'print(  f"  {b_dict =}   ")', '', 'print( "--------inverted 2------------")', 'b_dict = dict(zip( a_dict.values(), a_dict.keys()))', '# print( f"dict_to_str( b_dict )   >>{dict_to_str( b_dict )}<<" )', 'print(  f"  {b_dict =}   ")', '', 'print( "--------inverted 3------------")', 'b_dict = {value: key for key, value in b_dict.items()}', '', 'print(  f"  {b_dict =}   ")']
+2025-06-21 09:15:43,974 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['reverse', 'keys', 'and', 'values']
+2025-06-21 09:16:05,112 - DEBUG - ['>>Py reverse keys and values', '', "a_dict = {'Name': 'Zara',", "'Age': 7,", "'Class': 'First',", '}', '', '# print( f"initial dict  >>{a_dict}" )', '', 'print("may be issues if values not unique ")', '', '#print( dict_to_str( a_dict ) )', 'print( "--------inverted 1 ------------")', 'b_dict = dict(map(reversed, a_dict.items()))    # invert the dict', 'print(  f"  {b_dict =}   ")', '', 'print( "--------inverted 2------------")', 'b_dict = dict(zip( a_dict.values(), a_dict.keys()))', '# print( f"dict_to_str( b_dict )   >>{dict_to_str( b_dict )}<<" )', 'print(  f"  {b_dict =}   ")', '', 'print( "--------inverted 3------------")', 'b_dict = {value: key for key, value in b_dict.items()}', '', 'print(  f"  {b_dict =}   ")']
+2025-06-21 09:16:05,113 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['reverse', 'keys', 'and', 'values']
+2025-06-21 09:16:24,161 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-21 09:16:24,164 - INFO - check_id_for_error elapsed perf_counter 0.0009469840006204322
+2025-06-21 09:16:24,165 - INFO - update_db elapsed perf_counter 0.0029390019990387373
+2025-06-21 09:16:24,192 - INFO - update_db elapsed perf_counter 0.02637502299330663
+2025-06-21 09:16:24,192 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-21 09:17:33,177 - DEBUG - ['>>Py reverse keys and values', '', "a_dict = {'Name': 'Zara',", "'Age': 7,", "'Class': 'First',", '}', '', '# print( f"initial dict  >>{a_dict}" )', '', 'print("may be issues if values not unique ")', '', '#print( dict_to_str( a_dict ) )', 'print( "--------inverted 1 ------------")', 'b_dict = dict(map(reversed, a_dict.items()))    # invert the dict', 'print(  f"  {b_dict =}   ")', '', 'print( "--------inverted 2------------")', 'b_dict = dict(zip( a_dict.values(), a_dict.keys()))', '# print( f"dict_to_str( b_dict )   >>{dict_to_str( b_dict )}<<" )', 'print(  f"  {b_dict =}   ")', '', 'print( "--------inverted 3------------ fix me")', 'b_dict = {value: key for key, value in a_dict.items()}', '', 'print(  f"  {b_dict =}   ")']
+2025-06-21 09:17:33,178 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['reverse', 'keys', 'and', 'values']
+2025-06-21 09:18:03,578 - DEBUG - ['>>Py reverse keys and values', '', "a_dict = {'Name': 'Zara',", "'Age': 7,", "'Class': 'First',", '}', '', '# print( f"initial dict  >>{a_dict}" )', '', 'print("may be issues if values not unique ")', '', '#print( dict_to_str( a_dict ) )', 'print( "--------inverted 1 ------------")', 'b_dict = dict(map(reversed, a_dict.items()))    # invert the dict', 'print(  f"  {b_dict =}   ")', '', 'print( "--------inverted 2------------")', 'b_dict = dict(zip( a_dict.values(), a_dict.keys()))', '# print( f"dict_to_str( b_dict )   >>{dict_to_str( b_dict )}<<" )', 'print(  f"  {b_dict =}   ")', '', 'b_dict  = None   # for insurance', 'print( "--------inverted 3------------ fix me")', 'b_dict = {value: key for key, value in a_dict.items()}', '', 'print(  f"  {b_dict =}   ")']
+2025-06-21 09:18:03,579 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['reverse', 'keys', 'and', 'values']
+2025-06-21 09:19:19,601 - DEBUG - ['>>Py reverse keys and values', '', "a_dict = {'Name': 'Zara',", "'Age': 7,", "'Class': 'First',", '}', '', '# print( f"initial dict  >>{a_dict}" )', '', 'print("may be issues if values not unique ")', '', '#print( dict_to_str( a_dict ) )', 'print( "--------inverted 1 ------------")', 'b_dict = dict(map(reversed, a_dict.items()))    # invert the dict', 'print(  f"  {b_dict =}   ")', '', 'print( "--------inverted 2------------")', 'b_dict = dict(zip( a_dict.values(), a_dict.keys()))', '# print( f"dict_to_str( b_dict )   >>{dict_to_str( b_dict )}<<" )', 'print(  f"  {b_dict =}   ")', '', 'b_dict  = None   # for insurance', 'print( "--------inverted 3------------ fix me")', 'b_dict = {value: key for key, value in a_dict.items()}', '', 'print(  f"  {b_dict =}   ")', '', 'b_dict  = None   # for insurance', 'print( "--------inverted inverted ------------ f")', 'b_dict = {value: key for key, value in a_dict.items()}', 'c_dict = {value: key for key, value in b_dict.items()}', '', 'print(  f"  {b_dict =}   ")', 'print(  f"  {c_dict =}   ")', '', '']
+2025-06-21 09:19:19,602 - DEBUG - cmd_exec cmd = 'py' 
+ cmd_args = ['reverse', 'keys', 'and', 'values']
+2025-06-21 09:19:27,587 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-21 09:19:27,588 - INFO - check_id_for_error elapsed perf_counter 0.0003069140002480708
+2025-06-21 09:19:27,588 - INFO - update_db elapsed perf_counter 0.0009950849998858757
+2025-06-21 09:19:27,628 - INFO - update_db elapsed perf_counter 0.03962751200015191
+2025-06-21 09:19:27,628 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-21 09:27:09,222 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-21 09:27:09,226 - INFO - check_id_for_error elapsed perf_counter 0.001269881999178324
+2025-06-21 09:27:09,226 - INFO - update_db elapsed perf_counter 0.0035135620055370964
+2025-06-21 09:27:09,228 - INFO - update_db elapsed perf_counter 0.0011362360019120388
+2025-06-21 09:27:09,229 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
