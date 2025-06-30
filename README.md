@@ -1,13 +1,15 @@
 StuffDb  -- A database system about Stuff
 
 A desktop gui system using qt to track all sorts of "stuff"  
+
   stuff includes:
-      text notes = help
-      physical item, a collection, a set of woodworking tools... = stuff document
-      an address book ++   = people document
-      information about plants = plant document
-      pictures with notes ... linked to other documents = picture document
-      albums documents: a collection of pictures
+* text notes = help 
+* physical item, a collection, a set of woodworking
+* tools... = stuff document
+* an address book ++   = people document 
+* information about plants = plant document 
+* pictures with notes ... linked to other documents = picture document
+* albums documents: a collection of pictures
       ......
 
 This is my first time with qt for sql, it has been an adventure
@@ -15,6 +17,9 @@ This is my first time with qt for sql, it has been an adventure
 Status:
   At this point some stuff works, but still very far from a useful system.
   The current db is around the help document which works fairly well.
+
+  If you want to try it out: contact me and I will make the repository work, right
+  now while it works on my desktop the repo is primarly for backup not distribution.
 
   Will soon have a db for all the documents, mostly empty.
 
