@@ -168,7 +168,9 @@ class ParmsTemp( ):
         self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db"
         self.db_file_name      = "/tmp/ramdisk/temp.db"
         self.db_file_name      = "/tmp/ramdisk/temp2.db"
+        self.db_file_name      = "/tmp/ramdisk/mode_import_june.db"
 
+        self.db_file_name      = "/tmp/ramdisk/help_merge/help_merge.db"
 
         self.idle_venv     = "py_12_misc"   # idle will open in this python venv
             # path leading to all docs and help

@@ -1123,8 +1123,9 @@ class DetailTabBase( QWidget ):
             # the edits use for topics  probably tuples that need sorting
 
         self.pseodo_text_tab    = None    # may create, a data_manager in place of text_tab
+                 # used by help_document only ??
 
-        debug_msg    = ( f"init end DetailTabBase {self.tab_name}  " )
+        debug_msg    = ( f"DetailTabBase init end  {self.tab_name}  " )
         logging.debug( debug_msg )
 
     # ---------
@@ -1230,6 +1231,9 @@ class DetailTabBase( QWidget ):
         logging.debug( debug_msg )
 
         self.data_manager.delete_all()
+
+        if self.pseodo_text_tab is not None:
+            self.pseodo_text_tab.delete_all()
 
         # for i_sub_tab in self.sub_tab_list:
         #     if i_sub_tab:

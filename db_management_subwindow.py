@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jun 16 07:26:39 2025
 
-@author: russ
 """
 
 
 # ---- tof
-
-
 
 # --------------------
 if __name__ == "__main__":
@@ -77,7 +73,6 @@ from PyQt5.QtWidgets import (QAction,
                              QTextEdit,
                              QVBoxLayout,
                              QWidget)
-
 
 
 import parameters
@@ -166,8 +161,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
 
         # may want to keep at end of this init
         AppGlobal.mdi_management.register_document(  self )
-
-
 
         self.detail_table_name      = "xxx"  # need for framework do not delete
         # self.key_word_table_name    = "stuff_key_word"
@@ -283,6 +276,30 @@ class DbManagementSubWindow( QMdiSubWindow ):
         if clear:
             self.output_edit.clear()
         self.output_edit.append( msg )
+
+
+    #----------------------------
+    def to_top_of_msg( self,   ):
+        """
+        read it --
+
+        """
+        text_edit   = self.output_edit
+        cursor      = text_edit.textCursor()
+        cursor.movePosition( cursor.Start )
+        text_edit.setTextCursor(cursor)
+        text_edit.ensureCursorVisible()
+
+
+    #----------------------------
+    def get_output_edit( self, ):
+        """
+        read it --
+
+        may not need
+        """
+        return self.output_edit
+
 
     # --------------------------------
     def closeEvent(self, event):
@@ -414,7 +431,6 @@ class BasicsTab( QWidget ):
         widget.setCurrentIndex( 0 )
         layout.addWidget( widget )
 
-
         widget              = QPushButton( "create sql" )
         self.q_pbutton_1    = widget
         connect_to          = self.create_sql
@@ -426,7 +442,19 @@ class BasicsTab( QWidget ):
         widget.clicked.connect( connect_to  )
         layout.addWidget( widget )
 
-        # ---- new row
+        # ---- max_id row
+        widget              = QPushButton( "max_id" )
+        connect_to          = self.max_id_rpt
+        widget.clicked.connect( connect_to  )
+        layout.addWidget( widget )
+
+        # ---- max_id row
+        widget              = QPushButton( "set_key_max_id" )
+        connect_to          = self.set_key_max_id
+        widget.clicked.connect( connect_to  )
+        layout.addWidget( widget )
+
+        # ---- Systems and SubSystes
         layout              = QHBoxLayout( self )
         vlayout.addLayout( layout )
 
@@ -466,6 +494,54 @@ class BasicsTab( QWidget ):
 
     # -------------------------
     # ---- reports
+    # -------------------------
+    def set_key_max_id( self,   ):
+        """
+        What it says, read
+
+        """
+        # KeyGenerator( db)   # there is one hanging around   strange_vibes
+        # AppGlobal.key_gen       = a_key_gen
+        table_name      = self.table_widget.currentText()
+        a_key_gen       = AppGlobal.key_gen
+
+        max_id          = a_key_gen.get_max_for_table( table_name )
+
+        if max_id < 0:
+            msg      = f"Table {table_name} {max_id = } so this did not work "
+            self.parent_window.output_msg( msg, clear = True )
+
+            self.parent_window.activate_output_tab()
+
+            return
+
+        max_id   += 10
+        a_key_gen.update_key_for_table( table_name, max_id )
+
+        msg      = f"Table {table_name} {max_id = }"
+        self.parent_window.output_msg( msg, clear = True )
+
+        self.parent_window.activate_output_tab()
+
+    # -------------------------
+    def max_id_rpt( self,   ):
+        """
+        What it says, read
+
+        """
+        # KeyGenerator( db)   # there is one hanging around   strange_vibes
+        # AppGlobal.key_gen       = a_key_gen
+        table_name      = self.table_widget.currentText()
+        a_key_gen       = AppGlobal.key_gen
+
+        max_id          = a_key_gen.get_max_for_table( table_name )
+
+        msg      = f"Table {table_name} {max_id = }"
+        self.parent_window.output_msg( msg, clear = True )
+
+        #self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+    # -------------------------
     def record_count_rpt( self,   ):
         """
         What it says, read
@@ -473,10 +549,8 @@ class BasicsTab( QWidget ):
         """
         table_name     = self.table_widget.currentText()
 
-
         msg    = ( f"record_count_rpt for table {table_name = }" )
         self.parent_window.output_msg(  msg, clear = True )
-
 
         db                  = AppGlobal.qsql_db_access.db
         check_fix.line_out  = self.parent_window.output_msg
@@ -485,8 +559,21 @@ class BasicsTab( QWidget ):
         #self.parent_window.output_msg(  msg )
         self.parent_window.activate_output_tab()
 
-    # ---- reports
-    def system_sub_count_rpt( self,   ):
+    def system_sub_count_out( self, system, subsystem_counts ):
+        """ """
+        # how about a generator instead
+        total    = sum( [ i_count for  i_gnore, i_count in subsystem_counts] )
+        line     = f"{system = } {total}"
+
+        self.parent_window.output_msg( line  )
+
+        for i_subsystem, i_count in subsystem_counts:
+            i_line     = (f"        {i_subsystem} {i_count}" )
+            self.parent_window.output_msg( i_line  )
+
+
+
+    def system_sub_count_rpt( self, ):
         """
         What it says, read
 
@@ -511,11 +598,66 @@ class BasicsTab( QWidget ):
         query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
 
         # self.parent_window.output_msg( sql )
+        current_system      = None
+        i_subsystem_counts  = []
+        while query.next():
+            # a_id        = query.value(0)
+            # value_1        = query.value(1)
+            # value_2   = query.value(2)
+            i_system        = str( query.value(0) )
+            if i_system == "" or i_system is None:
+                i_system = "none"
+            i_sub_system    = str( query.value(1) )
+            if i_sub_system == "" or i_system is None:
+                i_sub_system = "none"
+            i_count         = query.value(2)
+
+            if current_system != i_system:
+                if current_system is not None:
+                    self.system_sub_count_out( system = current_system, subsystem_counts = i_subsystem_counts )
+                current_system      = i_system
+                i_subsystem_counts  = []
+
+            i_subsystem_counts.append( (i_sub_system, i_count ) )
+
+        if current_system is not None:
+            self.system_sub_count_out( system = i_system, subsystem_counts = i_subsystem_counts )
+
+        self.parent_window.activate_output_tab()
+        self.parent_window.to_top_of_msg()
+
+
+
+    def system_sub_count_rpt_old( self,   ):
+        """
+        What it says, read
+
+        """
+        table_name     = "stuff"
+
+        db             = AppGlobal.qsql_db_access.db
+
+        msg      = ("System_sub_count_rpt:")
+        self.parent_window.output_msg( msg, clear = True )
+
+        sql     = """
+            SELECT system, sub_system, COUNT(*) as sub_system_count
+            FROM help_info
+            WHERE system IS NOT NULL AND sub_system IS NOT NULL
+            GROUP BY system, sub_system
+            ORDER BY system, sub_system;
+            """
+
+        query      = QSqlQuery( db )
+        query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
+
+        # self.parent_window.output_msg( sql )
 
         while query.next():
             # a_id        = query.value(0)
             # value_1        = query.value(1)
             # value_2   = query.value(2)
+
 
             msg      = (f" : {query.value(0) = }  { query.value(1) = }  { query.value(2) = }  ")
 
@@ -529,13 +671,13 @@ class BasicsTab( QWidget ):
         What it says, read
 
         """
-        table_name     = self.table_widget.currentText()
+        table_name  = self.table_widget.currentText()
         self.parent_window.output_msg(   f"for table {table_name = }", clear = True )
 
-        a_table    = data_dict.DATA_DICT.get_table( table_name )
+        a_table     = data_dict.DATA_DICT.get_table( table_name )
 
-        sql        = a_table.to_sql_create()
-        msg    = f"{sql} "
+        sql         = a_table.to_sql_create()
+        msg         = f"{sql} "
         self.parent_window.output_msg(  msg )
         self.parent_window.activate_output_tab()
 
@@ -629,7 +771,7 @@ class KeyWordTab( QWidget ):
         msg    = f"Rebuild {table_name = } for key words"
         self.parent_window.output_msg(  msg, clear = True )
 
-
+        # does it run off data_dict  ??
         db_check.fix_key_word_index( base_table_name        = table_name,
                                      key_word_table_name    = kw_table_name )
 
@@ -638,8 +780,6 @@ class KeyWordTab( QWidget ):
         # msg    = f"{sql} "
         # self.parent_window.output_msg(  msg )
         self.parent_window.activate_output_tab()
-
-
 
     # ---- reports
     # -------------------------

@@ -1,5 +1,43 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+
+
+ Handling Large .db-wal Files:
+
+    Why large?: Frequent writes or uncommitted transactions can cause growth.
+    Fix:
+        Run
+
+PRAGMA wal_checkpoint(FULL);
+    did on test db size did not change -- do a change
+
+
+to force a full checkpoint.
+        Check for stuck transactions or unclosed connections in your application.
+        Vacuum the database (VACUUM;) to optimize if needed.
+
+Deleting .db-wal Files:
+
+    Caution: Do not manually delete .db-wal files while the database is in use, as this can corrupt the database or cause data loss.
+    Only delete if:
+        All database connections are closed.
+        You’re sure no transactions are pending.
+        You’ve backed up the database.
+
+
+
+
+1. Check for any remaining connections:
+
+# On Linux/Mac, check if any process is using the database -- add this a linux command ??
+lsof your_database.db*
+
+# Or check for SQLite processes  - add this a linux command ??
+ps aux | grep sqlite
+
+
+
 """
 Created on Mon Apr 21 06:52:49 2025
 
@@ -111,24 +149,15 @@ from help
 
 
 
-#>>Py -------- create the tables --------  beware of use_temp --- then go set up key gen
-# run in spyder if still modifying code
-import adjust_path
-import stuff_util_sql   as su
-import data_dict
-import py_helpers
+class AClass():
 
-use_temp         = True
-db                     = su.create_connection( use_temp = use_temp )
-data_dict.build_it()
+    def __init__( self ):
+        pass
+        self.x=2
+        self.y=3
+    def __str__( self ):
+        a_str     = " \n".join(  f"{k} = {v!r}"        for         k, v        in self.__dict__.items() )
+        return a_str
+a_class = AClass()
 
-#table_name      = "stuff"
-table_name      = "stuff_text"
-#table_name      = "stuff_key_word"
-#table_name      = "stuff_event"
-
-# ---- drop and create beware read first
-#ret   = py_helpers.confirm_continue(  f"drop and create next {use_temp = }" )
-su.drop_table(   db,   table_name = table_name, confirm = False  )
-       # need confirm = False if running from help else probably better not
-su.create_table( db,   table_name = table_name )
+print( a_class )

@@ -69,10 +69,15 @@ class Parameters( ):
         #self.mode_imported_on_theprof()
         #self.mode_build_me()
 
-        self.mode_ramdisk_temp3()
+        # self.mode_ramdisk_temp3()
 
-        self.tweak_test_add_pictures()
+        # self.tweak_test_add_pictures()
 
+
+        # self.mode_import_june()
+        # self.mode_ram_merge_help()
+        # self.mode_russ2025_on_theprof()
+        self.mode_ramdisk_on_theprof()
 
         #self.mode_imported_on_theprof()
 
@@ -109,6 +114,32 @@ class Parameters( ):
             # the type of database, so far we only support SQLite
         self.db_file_name       = "./data/python_ex.db"
 
+   # -------
+    def mode_import_june( self ):
+        """
+        a mode for testing of pictures with the new build_me database
+        """
+        self.mode               = "mode_import_june"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/mode_import_june.db"
+        self.db_file_name       = "/tmp/ramdisk/mode_import_june.db"
+#
+        # # ---- pictures
+        # self.picture_browse         = "/mnt/WIN_D/temp_photo/source"
+        #     # browsing starts from here see PictureDocument
+
+        # # picture to use when a valid picture is not found or does not exist
+        # #self.pic_nf_file_name       = "./misc/404.png"
+
+        # self.picture_db_root        = "/mnt/WIN_D/temp_photo/dest"
+        #     # all pictures once in the db should be under this directory
+
+        # self.picture_db_sub         = "/99"
+        #     # subdir for above used when adding new pictures
+
     # -------
     def mode_build_me( self ):
         """
@@ -119,9 +150,8 @@ class Parameters( ):
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
             # the type of database, so far we only support SQLite
+
         self.db_file_name       = "./data/python_ex.db"
-
-
         self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/build_me.db"
 
 #
@@ -156,6 +186,42 @@ class Parameters( ):
 
         self.icon               =  "./misc/db_red_on_black.png"
 
+   # -------
+    def mode_ram_merge_help( self ):
+        """
+         this will bee the new russ2025
+        """
+        self.mode               = "mode_ram_merge_help"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/tmp/ramdisk/help_merge/help_merge.db"
+
+
+   # -------
+    def mode_merge_help_temphide( self ):
+        """
+         this will bee the new russ2025
+        """
+        self.mode               = "mode_merge_help"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/help_merge/help_merge.db"
+
+   # -------
+    def mode_russ_2025( self ):
+        """
+         this will bee the new russ2025
+        """
+        self.mode               = "mode_russ_2025"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ/russ2025.db"
 
     # ---- ---->> Methods:  one for each mode
     # -------
@@ -276,6 +342,58 @@ class Parameters( ):
 
         self.logging_level          = logging.INFO
         self.logging_level          = logging.DEBUG
+
+    # -------
+    def mode_russ2025_on_theprof( self ):
+        """
+        a mode for the help info while still in dev
+        later will export data then re-import and
+        perhaps re-key
+        """
+        self.mode               = "mode_russ2025_on_theprof"
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ/russ2025.db"
+
+        self.icon               =  "./misc/db_red_on_black.png"
+
+        self.logging_level          = logging.INFO
+        self.logging_level          = logging.DEBUG
+
+    # -------
+    def mode_ramdisk_on_theprof( self ):
+        """
+        a mode for the help info while still in dev
+        later will export data then re-import and
+        perhaps re-key
+        """
+        self.mode               = "mode_ramdisk_on_theprof"
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/tmp/ramdisk/ramdisk.db"
+        #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
+
+        self.logging_level          = logging.INFO
+        self.logging_level          = logging.DEBUG
+
+
 
     # -------
     def mode_helpdb_on_theprof( self ):
@@ -779,7 +897,6 @@ class Parameters( ):
                             'Programming',
                             'Python',
                             'RasPi',
-                            'QTBook',
                             'RshPy',              # subsystem the project
                             'Russ',
                             'SQL',
@@ -809,6 +926,9 @@ class Parameters( ):
 
             elif mode_string   == "mode_github_example_code_on_theprof":
                 self.mode_github_example_code_on_theprof()
+
+            elif mode_string   == "mode_russ2025_on_theprof":
+                self.mode_russ2025_on_theprof()
 
             else:
                 print( f"unknown_mode_string {mode_string =}")

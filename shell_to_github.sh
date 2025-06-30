@@ -30,7 +30,7 @@ rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuf
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db     /mnt/WIN_D/for_github/stuffdb/data
 
 
- 
+
 
 
 # to libs ----------------------------------------------
@@ -60,7 +60,7 @@ rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshl
 
 
 # here just wait for a keystroke ( or comment out )
-echo "hit any key to continue and exit "
+echo "hit <enter> to continue and exit "
 read RESPONSE
 
 

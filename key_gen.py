@@ -59,6 +59,7 @@ class KeyGenerator:
             update_query.bindValue(":next_key", next_key)
             update_query.bindValue(":table_name", table_name)
             update_query.exec()
+
         else:
             next_key = 1000
             insert_query = QSqlQuery(self.db)

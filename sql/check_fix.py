@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jan 20 17:41:10 2025
 
-@author: russ
 """
 
 
@@ -15,7 +13,6 @@ import adjust_path
 # ---- begin pyqt from import_qt.py
 
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
-
 
 
 # # ----QtWidgets big

@@ -26,7 +26,7 @@ import custom_widgets
 
 __VERSION__   = "not maintained"
 
-DATA_DICT     = None  # created on import
+DATA_DICT     = None  # created on import is instance of DataDict()
 SKIP          = "THIS IS A VALUE INDICATING A SKIP"
 # ---- defaults  --- use if dict entry is None
 default_values                              = {}   # key   = var/use with use often not ind
@@ -381,6 +381,37 @@ class TableDict(  ):
             name_to_ix_dict[ i_name ]  = ix_column
 
         return name_to_ix_dict
+
+
+    #------------------------------------------------
+    def get_key_word_columns(self,    ):
+        """
+        !! not optimized
+        """
+        key_word_column_list    = []
+
+        for ix_column, i_column in enumerate( self.columns ):
+
+
+            i_name          = i_column.column_name
+            i_my_type       = i_column.column_name       # work in progress or error
+            i_display_type  = i_column.display_type
+            i_form_edit     = i_column.form_edit
+            i_is_key_word   = i_column.is_key_word
+            i_placeholder   = i_column.placeholder_text
+            i_default_func  = i_column.default_func
+            i_is_topic      = i_column.is_topic
+
+            i_detail_edit_class = i_column.detail_edit_class
+            # i_db_convert_type   = i_column.db_convert_type   # string for VARCHAR text....
+
+            if i_is_key_word is True:
+                key_word_column_list.append( i_name )
+
+        #column_list.sort( key = lambda i_column: i_column.in_history )
+        # breakpoint()
+        return key_word_column_list
+
 
     #------------------------------------------------
     def get_detail_columns(self,    ):

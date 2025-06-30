@@ -49,5 +49,5 @@ cp /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/*.db  /tmp/ramdi
 
 # here just wait for a keystroke ( or comment out )
 
-echo "Enter to continue"
+echo "Done press <enter> to exit script"
 read RESPONSE

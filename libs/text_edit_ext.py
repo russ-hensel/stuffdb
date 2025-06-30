@@ -272,8 +272,8 @@ class TextEditExt( ):
         #new_lines.append( "the end")
         new_text = "\n".join( new_lines )
 
-
         self.insert_text_at_cursor( new_text )
+        self.insert_text_at_cursor( "" )       # extra line at end
 
     #-----------------------------------
     def paste_clipboard( self, ):

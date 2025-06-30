@@ -830,6 +830,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         #edit_field.setEditable( True )
         edit_field.setPlaceholderText( "system" )
         edit_field.clear()
+        edit_field.setEditable( True )
         edit_field.add_items( SYSTEM_LIST )
         # still validator / default func  None
         edit_field.is_keep_prior_enabled        = True

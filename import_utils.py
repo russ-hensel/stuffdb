@@ -41,12 +41,14 @@ from pathlib import Path
 
 """
 
-
+# ---- constants
 SINGLE_QUOTE            = "'"
 DOUBLE_QUOTE            = '"'
 DOUBLE_SINGLE_QUOTE     = DOUBLE_QUOTE + SINGLE_QUOTE
 SINGLE_DOUBLE_QUOTE     = SINGLE_QUOTE + DOUBLE_QUOTE
-
+# TO_SPACES               = ""
+TAB                     = "\t"
+COMMA                   = ","
 
 #------------------------------
 def string_to_int( num_string ):
@@ -253,6 +255,44 @@ def split_dat_line( a_string ):
             break
 
     return parsed_list
+
+#====================================
+class ComaToTab(  ):
+    """
+    read in comma sep file write out a tab sep file, perhaps a bit of conversion
+    """
+    #----------- init -----------
+    def __init__(self, file_name_src, file_name_dest  ):     # expand the init to set more stuff is this a TableInfo
+        file_src        = open( file_name_src,    'r', encoding = "utf8", errors = 'ignore' )
+        file_dest       = open( file_name_dest, 'w', encoding = "utf8", errors = 'ignore' )
+
+        for ix_line, i_line in enumerate( file_src ) :
+            i_input_line     = i_line
+            i_line_issue     = i_line
+            ix_line_issue    = ix_line
+            try:
+                # print( f"importing line >>>>>{ix_line}")
+                #i_line     = i_line.rstrip('\n')
+                i_line     = i_line.replace( "\96", "'" )  # grave aacent
+                i_line     = i_line.replace( "\92", "/" )  #  backslash
+                i_line     = i_line.replace( COMMA, TAB  )  #
+                file_dest.write( i_line )
+            except:
+                msg    = ( f"exception at line {ix_line}")
+                print( msg )
+                msg    = ( f"\n{i_input_line}\n\n")
+                print( msg )
+        msg     = ( f"line count {ix_line =}")
+        print( msg )
+        msg     = ( ">>>>>>>>>>>>>>all done<<<<<<<<<<<<<<<<<<")
+        print( msg )
+
+# ---- run standalone from here
+# --------------------
+if __name__ == "__main__":
+    file_name_src     = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/import_old_sfuff/help_info/help_info.dat"
+    file_name_dest    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/import_old_sfuff/help_info/help_info_tab.csv"
+    a_comma_to_tab    = ComaToTab( file_name_src, file_name_dest )
 
 
 

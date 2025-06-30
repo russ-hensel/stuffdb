@@ -232,8 +232,9 @@ class QsqlDbAccess(   ):
             # Set synchronous mode to NORMAL for a balance of speed and safety
             cursor.execute("PRAGMA synchronous = NORMAL;")
 
-            # Enable Write-Ahead Logging for better concurrency
-            cursor.execute("PRAGMA journal_mode = WAL;")
+            # Enable Write-Ahead Logging for better concurrency --
+            #    currently I do not have transaction management for this.
+            #cursor.execute("PRAGMA journal_mode = WAL;")
 
             # # Increase cache size to ~100 MB (assuming 4 KB page size)
             # cursor.execute("PRAGMA cache_size = 25000;")  # 25,000 pages

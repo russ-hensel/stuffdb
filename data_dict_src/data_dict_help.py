@@ -133,7 +133,7 @@ def build_it( a_data_dict ):
                                              form_col_span      = 4,)
     a_table_dict.add_column( a_column_dict )
 
-    # ---- add_ts   --- may not exist ??
+    # ---- add_ts   --- may not exist ?? -- was missing fixed
     a_column_dict = data_dict.ColumnDict(    column_name    = "add_ts",
                                              db_type        = "INTEGER",
                                              display_type   = "timestamp",
@@ -144,6 +144,7 @@ def build_it( a_data_dict ):
                                              form_read_only     = True,
                                              display_order      = 120,
                                              form_col_span      = 1,)
+    a_table_dict.add_column( a_column_dict )
 
     # ---- edit_ts
     a_column_dict = data_dict.ColumnDict(    column_name    = "edit_ts",
@@ -233,6 +234,13 @@ def build_it( a_data_dict ):
                                              default_func= None, )
     a_table_dict.add_column( a_column_dict )
 
+    # ---- can_execute
+    a_column_dict = data_dict.ColumnDict(    column_name    = "can_execute",
+                                             db_type        = "VARCHAR(1)",
+                                             display_type   = "string",
+                                             max_len        = None,
+                                             default_func= None, )
+    a_table_dict.add_column( a_column_dict )
 
     # ---- help_text ---------------------
     a_table_dict   = data_dict.TableDict(  "help_text" )
@@ -274,19 +282,6 @@ def build_it( a_data_dict ):
                                    placeholder_text   = "this is a long text\\nfield\\ncan hold many lines",)
 
     a_table_dict.add_column( a_column_dict )
-
-
-
-
-
-    # ---- can_execute
-    a_column_dict = data_dict.ColumnDict(    column_name    = "can_execute",
-                                             db_type        = "VARCHAR(1)",
-                                             display_type   = "string",
-                                             max_len        = None,
-                                             default_func= None, )
-    a_table_dict.add_column( a_column_dict )
-
 
 
 
