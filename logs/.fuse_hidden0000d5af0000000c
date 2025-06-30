@@ -1683,3 +1683,69 @@
 2025-06-30 09:04:05,696 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
 2025-06-30 09:04:05,696 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
 2025-06-30 09:04:05,697 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-06-30 09:13:09,006 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "github", "delete" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  help_info.id ASC  '
+2025-06-30 09:13:11,974 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-30 09:13:12,335 - INFO - check_id_for_error elapsed perf_counter 0.02784582000458613
+2025-06-30 09:13:12,335 - INFO - update_db elapsed perf_counter 0.36072989902459085
+2025-06-30 09:13:12,378 - INFO - update_db elapsed perf_counter 0.04225807194598019
+2025-06-30 09:13:12,378 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-30 09:13:12,378 - DEBUG - DocumentBase new_record first validate, then save, wait for except then go on save removed 
+2025-06-30 09:13:12,379 - DEBUG - new_record change self.detail_tab.default_new_row( next_key ) 
+2025-06-30 09:13:12,379 - DEBUG - Detail_Tab_Base new_record next_key = None   option ='default' update.db
+2025-06-30 09:13:12,379 - DEBUG - DataManager new_record    help_info  should we create the record here ??
+2025-06-30 09:13:12,418 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_info' 
+2025-06-30 09:13:12,418 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-06-30 09:13:12,418 - DEBUG - DataManager new_record    help_text  should we create the record here ??
+2025-06-30 09:13:12,419 - DEBUG - DataManager new_record time stuff may be lost  self.table_name = 'help_text' 
+2025-06-30 09:13:12,419 - DEBUG - new_record need to fix up the picture tab if any or does document do it ??
+2025-06-30 09:13:12,419 - DEBUG - Detail_Tab_Base clear out sub tabs?? !!
+2025-06-30 09:14:47,106 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "video", "master" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  help_info.id ASC  '
+2025-06-30 09:14:49,204 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-30 09:14:49,350 - INFO - check_id_for_error elapsed perf_counter 0.013390790030825883
+2025-06-30 09:14:49,350 - INFO - update_db elapsed perf_counter 0.1448057839879766
+2025-06-30 09:14:49,404 - INFO - update_db elapsed perf_counter 0.05327707598917186
+2025-06-30 09:14:49,404 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-30 09:14:49,404 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-06-30 09:14:49,429 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-06-30 09:14:49,430 - ERROR - send_topic_update needs fixing !! just re-enabled 
+2025-06-30 09:14:49,430 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-06-30 09:14:49,433 - DEBUG - record_to_table found row 26 in future update maybe for now skip adding by return 
+2025-06-30 09:15:17,859 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "github", "delete" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words  \n    HAVING  count(*) >= 2  \n     ORDER BY  help_info.id ASC  '
+2025-06-30 09:15:19,671 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-30 09:15:19,685 - INFO - check_id_for_error elapsed perf_counter 0.01058967103017494
+2025-06-30 09:15:19,686 - INFO - update_db elapsed perf_counter 0.014532080967910588
+2025-06-30 09:15:19,691 - INFO - update_db elapsed perf_counter 0.005398085981141776
+2025-06-30 09:15:19,691 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-30 09:15:19,691 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-06-30 09:15:19,705 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-06-30 09:15:19,706 - ERROR - send_topic_update needs fixing !! just re-enabled 
+2025-06-30 09:15:19,706 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-06-30 09:22:17,397 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-30 09:22:17,407 - INFO - check_id_for_error elapsed perf_counter 0.007237540034111589
+2025-06-30 09:22:17,407 - INFO - update_db elapsed perf_counter 0.009808577015064657
+2025-06-30 09:22:17,473 - INFO - update_db elapsed perf_counter 0.0659383439924568
+2025-06-30 09:22:17,474 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-30 09:22:34,925 - DEBUG - ['>>search   github', '', 'delete locally will be propigated', '', 'rename not so sure', '', '', 'on website', '', '----------------- chat', '', 'on the github website how do i delete a file?', '', 'To delete a file on GitHub via the website:', '', '    Navigate to the repository containing the file.', '    Locate the file you want to delete and click on it.   .......... now read below', '    Click the pencil icon (edit) or the trash can icon (delete) at the top right.', '    If editing, remove the file content or confirm deletion.', '    Scroll to the "Commit changes" section.', '    Enter a commit message describing the deletion.', '    Click "Commit changes" to delete the file.', '', 'This removes the file from the repository. If you need to delete multiple files, repeat for each, or use Git locally for batch operations.', '', 'To delete a file on the GitHub website, follow these steps:', '', '    Navigate to the File: Go to the repository on GitHub and locate the file you want to delete by browsing through the repository’s file structure.', '    Open the File: Click on the file to view its contents.', '    Access the Delete Option:', '        In the top-right corner of the file view, look for the three dots (...) or the kebab menu (horizontal ellipsis).', '        Click the three dots to open a dropdown menu.', '        Scroll down if necessary, as the "Delete file" option may not be immediately visible due to the menu’s height.', '', '']
+2025-06-30 09:22:34,926 - DEBUG - cmd_exec cmd = 'search' 
+ cmd_args = ['github']
+2025-06-30 09:22:34,927 - DEBUG - base document search_me criteria = defaultdict(None, {'key_words': 'github'})
+2025-06-30 09:22:34,927 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-30 09:22:34,964 - INFO - check_id_for_error elapsed perf_counter 0.024146457959432155
+2025-06-30 09:22:34,965 - INFO - update_db elapsed perf_counter 0.036608529975637794
+2025-06-30 09:22:35,021 - INFO - update_db elapsed perf_counter 0.0567055240389891
+2025-06-30 09:22:35,022 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-30 09:22:35,030 - DEBUG - Executing SQL query: query_exec_model query.executedQuery() = 'SELECT   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words    FROM help_info  \n    INNER JOIN  help_key_word  ON help_info.id = help_key_word.id  \n    WHERE  key_word IN ( "github" )   \n    GROUP BY   help_info.id,  help_info.title,  help_info.system,  help_info.sub_system, help_info.key_words  \n    HAVING  count(*) >= 1  \n     ORDER BY  help_info.id ASC  '
+2025-06-30 09:22:41,919 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-30 09:22:41,962 - INFO - check_id_for_error elapsed perf_counter 0.033477513992693275
+2025-06-30 09:22:41,963 - INFO - update_db elapsed perf_counter 0.04309815197484568
+2025-06-30 09:22:41,971 - INFO - update_db elapsed perf_counter 0.00811903498833999
+2025-06-30 09:22:41,971 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'
+2025-06-30 09:22:41,972 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2025-06-30 09:22:41,988 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2025-06-30 09:22:41,988 - ERROR - send_topic_update needs fixing !! just re-enabled 
+2025-06-30 09:22:41,988 - DEBUG -  send_topic_update  <<<<<<<<< self.tab_name = 'HelpDetailTab'  <<<<<<<<<<<<<<<<<<<<  self.enable_send_topic_update = False 
+2025-06-30 09:22:55,845 - INFO - Document Base   validate... done for self.subwindow_name = 'HelpSubWindow'
+2025-06-30 09:22:55,855 - INFO - check_id_for_error elapsed perf_counter 0.006736490991897881
+2025-06-30 09:22:55,855 - INFO - update_db elapsed perf_counter 0.009178782987874001
+2025-06-30 09:22:55,934 - INFO - update_db elapsed perf_counter 0.07854478800436482
+2025-06-30 09:22:55,934 - DEBUG - HelpDocument.update_db  >>> for self.subwindow_name = 'HelpSubWindow'

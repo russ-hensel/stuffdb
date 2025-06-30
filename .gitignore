@@ -26,6 +26,8 @@ share/python-wheels/
 *.egg
 *.log
 *.py_log
+scratch*.py
+temp*.*
 MANIFEST
 
 # PyInstaller
