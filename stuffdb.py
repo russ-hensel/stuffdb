@@ -14,7 +14,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver .073: 2025 06 15.01"
+__version__   = "Ver .074: 2025 06 28.01"
 
 # ---- imports
 import datetime

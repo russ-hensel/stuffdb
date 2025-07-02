@@ -837,8 +837,8 @@ class Parameters( ):
 
         self.auto_run           = True  # run code examples -- !! what but needed
 
-        # ---- templates  a bit odd to control left margin -- !! change to textwrap
-        # ----....python
+        # ---- templates  a bit odd to control left margin --
+        # ---- Python template
         self.text_templates     = {}
         template_name           = "Python"
         template_text           = (
@@ -851,17 +851,36 @@ class Parameters( ):
         """ )
         self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
 
-        #---------------------------------
+        # -------- Bash
         template_name          = "Bash"
         template_text          = (
         """
-        >>Bash a_shell_template
+        >>Bash ------------ bash_template ------------
+        ls *.py
+        cd ~
+        ls *.py
 
-        print( f"bash a_shell_template still needs writing { 0 = }"
+        >>end ------------
+        #print( f"bash a_shell_template still needs writing { 0 = }"
         """  )
         self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
 
-        # ---- text
+        # -------- Bash
+        template_name          = "aDividers"
+        template_text          = (
+        """
+        ============ what  ============
+
+
+        ------------------------
+
+
+        ========================
+        """  )
+        self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
+
+
+        # ---- text template
         template_name          = "Text"
         template_text          = (
         """
@@ -869,7 +888,7 @@ class Parameters( ):
         """  )
         self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
 
-        # ---- url
+        # ---- url template
         template_name          = "Url"
         template_text          = (
         """
@@ -884,6 +903,12 @@ class Parameters( ):
         >>Shell  /mnt/WIN_D/PhotoDB/00/00july_06.jpg
         """  )
         self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
+        a_dict     = self.text_templates
+
+        # ---- sort the templates so the user does not
+        #print(  "sort on key item[0]" )
+        self.text_templates = {a_key: a_value for a_key, a_value in sorted( a_dict.items(), key = lambda item: item[0] ) }
+        #print( b_dict )
 
         # ---- systems for helpdb ??alpha  to sort make all quotes the same
         self.systems_list      =  [    '',
@@ -905,6 +930,9 @@ class Parameters( ):
                             'Tools',
 
                         ]
+
+        # ---- add a sort for the systems
+
 
     # ------->> default mode, always call
     def mode_from_command_line( self ):

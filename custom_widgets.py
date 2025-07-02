@@ -428,9 +428,7 @@ class CQEditBase(   ):
     """
     second parent for QT edit child controls
 
-
     do not need prior value it is just sitting in the control
-
 
     get rid of is_changed ??
                 prior_data

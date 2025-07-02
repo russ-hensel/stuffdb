@@ -295,7 +295,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget, columnspan = 2 )
 
-        # ---- system grid_layout.new_row()
+        # ---- system
         grid_layout.new_row()
         widget          = QLabel( "System" )
         grid_layout.addWidget( widget  )
@@ -303,7 +303,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget                  = cw.CQComboBox(
                                         field_name = "system" )
         self.critera_widget_list.append( widget )
-
+        widget.setMaxVisibleItems( 25 )
         grid_layout.addWidget( widget )
         widget.addItems( SYSTEM_LIST )
         # widget.addItem( '' )
@@ -698,7 +698,9 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         """
         What it says, read
                 tweaks    may need         widget.setReadOnly( True )
+                system and sub_system need to be editable combo
                 #---- system TO combo box
+                   and edit_field.setMaxVisibleItems( 25 )  # Number of rows shown in the popup
         for a grid# Row 1, Column 0, Span 1 row and 2 columns
 
         row_span      = 1 # default is 1
@@ -831,6 +833,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         edit_field.setPlaceholderText( "system" )
         edit_field.clear()
         edit_field.setEditable( True )
+        edit_field.setMaxVisibleItems( 25 )  # Number of rows shown in the popup
         edit_field.add_items( SYSTEM_LIST )
         # still validator / default func  None
         edit_field.is_keep_prior_enabled        = True
@@ -1022,7 +1025,14 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         button_layout.addWidget( ddl_button_widget  )
 
         # ---- copy line
-        label           = "Copy\nLine"
+        label           = "!!Copy\nLine"
+        widget = QPushButton( label )
+        # connect_to  =  functools.partial( self.copy_line_of_text, text_entry_widget )
+        # widget.clicked.connect( connect_to )
+        button_layout.addWidget( widget, )
+
+        # ---- paste_divider
+        label           = "!!divider"
         widget = QPushButton( label )
         # connect_to  =  functools.partial( self.copy_line_of_text, text_entry_widget )
         # widget.clicked.connect( connect_to )

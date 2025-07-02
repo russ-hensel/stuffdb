@@ -49,6 +49,7 @@ default_values[ "dict_to_edit_cnv" ]        = SKIP
 
 default_values[ "edit_to_rec_cnv" ]         = SKIP
 default_values[ "edit_to_dict_cnv" ]        = SKIP
+default_values[ "set_editable" ]            = SKIP
 
 # cw.CQLineEdit
 
@@ -378,6 +379,8 @@ class TableDict(  ):
             i_detail_edit_class = i_column.detail_edit_class
             # i_db_convert_type   = i_column.db_convert_type   # string for VARCHAR text....
 
+
+
             name_to_ix_dict[ i_name ]  = ix_column
 
         return name_to_ix_dict
@@ -673,7 +676,8 @@ class TableDict(  ):
             edit_to_rec_cnv         = i_column.edit_to_rec_cnv
             edit_to_dict_cnv        = i_column.edit_to_dict_cnv
             form_make_ref           = i_column.form_make_ref
-
+            set_editable            = i_column.set_editable
+            edit_tool_tip            = i_column.edit_tool_tip
 
             if  True:
                 #line_list.append(  '' )
@@ -699,6 +703,14 @@ class TableDict(  ):
                 # self.id_old_field         = edit_field
                 if form_make_ref:
                     line_list.append( f'{indent_1}self.{field_name}_field     = edit_field' )
+
+                # ---- set_editable
+                value     = get_value( field_name       = field_name,
+                                       atribute         = "set_editable" ,
+                                       current_value    =  set_editable  )
+                if value is not SKIP:
+                    line_list.append( f'{indent_1}edit_field.set_editable        = edit_field.set_editable( {value} )' )
+
 
                 # ---- rec_to_edit_cnv
                 value     = get_value( field_name       = field_name,
@@ -1219,6 +1231,7 @@ class ColumnDict(  ):
                  #column_head        = None,   # to label the columns
                  detail_edit_class      = None,   # default to custom_edit.CQLineEdit(   "skip" to skip it
                  # display_order    = number then we sort but what about None ?
+                 set_editable           = None,   # None default to no output else    edit_field.setEditable( True )
                  col_head_text          = None,
                  col_head_width         = -1,
                  col_head_order         = -1,      # my default based on sql
@@ -1232,6 +1245,10 @@ class ColumnDict(  ):
                  edit_to_rec_cnv        = None,
                  edit_to_dict_cnv       = None,
                  dict_to_edit_cnv       = None,
+                 edit_tool_tip          = None,     # will default to what
+                                                    # bool False, no tip
+                                                    # bool True, use field name or something derived
+                                                    # string, use string
 
                  is_keep_prior_enabled  = False,
 
@@ -1252,7 +1269,7 @@ class ColumnDict(  ):
         self.form_read_only         = form_read_only
 
         self.create_self            = create_self
-
+        self.set_editable            = set_editable
         self.edit_to_rec            = edit_to_rec    # string name of function
         self.rec_to_edit            = rec_to_edit
         self.is_keep_prior_enabled  = is_keep_prior_enabled
@@ -1268,6 +1285,7 @@ class ColumnDict(  ):
         #         self.rec_to_edit   = "rec_to_edit_int_to_str"
 
         self.detail_edit_class      = detail_edit_class
+        self.edit_tool_tip          = edit_tool_tip
 
         # # ---- edit_in_type
         # if edit_in_type is None:

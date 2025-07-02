@@ -192,8 +192,8 @@ class QsqlDbAccess(   ):
                                                   model,
                                                   msg = None )
         """
-        debug_msg      = f"Executing SQL query: query_exec_model {query.executedQuery() = }"
-        logging.log( LOG_LEVEL,  debug_msg, )
+        # debug_msg      = f"Executing SQL query: query_exec_model {query.executedQuery() = }"
+        # logging.log( LOG_LEVEL,  debug_msg, )
 
         if query.exec():
             model.setQuery( query )

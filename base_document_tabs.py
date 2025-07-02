@@ -853,9 +853,9 @@ class DocumentBase( QMdiSubWindow ):
         if self.text_tab is not None:
             self.text_tab.update_db()
 
-        loc        = f"{self.__class__.__name__}.{inspect.currentframe().f_code.co_name} "
-        debug_msg  = f"{loc} >>> for {self.subwindow_name = }"
-        logging.debug( debug_msg )
+        # loc        = f"{self.__class__.__name__}.{inspect.currentframe().f_code.co_name} "
+        # debug_msg  = f"{loc} >>> for {self.subwindow_name = }"
+        # logging.debug( debug_msg )
 
     # ---------------------------------------
     def validate( self, ):
@@ -1139,8 +1139,8 @@ class DetailTabBase( QWidget ):
         this build the standard detail db interface prior to
         building the gui which is next
         """
-        debug_msg   = ( f"post_init DetailTabBase  {self.tab_name}  " )
-        logging.debug( debug_msg )
+        # debug_msg   = ( f"post_init DetailTabBase  {self.tab_name}  " )
+        # logging.debug( debug_msg )
 
         model                   = QSqlTableModel(
                                       self, AppGlobal.qsql_db_access.db )

@@ -305,11 +305,11 @@ class DataManager(   ):
                 # key_words.KeyWords
         #rint( f"update_db record state now:  {self.record_state = } ")
         #rint( "what about other tabs and subtabs")
-        perf_end   = time.perf_counter()
-        delta_perf = perf_end - perf_start
+        # perf_end   = time.perf_counter()
+        # delta_perf = perf_end - perf_start
 
-        msg          = f"update_db elapsed perf_counter { delta_perf }"
-        logging.info( msg )
+        # msg          = f"update_db elapsed perf_counter { delta_perf }"
+        # logging.info( msg )
 
     # ---------------------------
     def update_record_fetched(self):

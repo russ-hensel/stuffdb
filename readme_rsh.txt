@@ -1,5 +1,5 @@
 
-
+begin to do these notes in the db itself
 
 Use the next for search:
 
@@ -49,6 +49,13 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
     look at importing pictures and shows......
 
 
+---- ver74
+
+        been a while
+        incorporated old stuff help_info ..
+        many improvements
+        new document for db maint
+        usual time to clean up
 
 ---- ver73
 

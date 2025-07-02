@@ -556,27 +556,17 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         menu_open.addAction( action )
 
-
-        # ---- Configuration
+        # ---- Configuration ............
         a_menu          = menubar.addMenu("Configuration")
 
-        open_action     = QAction( "Open Log", self )
-        connect_to      = functools.partial( AppGlobal.os_open_txt_file,
-                                             AppGlobal.parameters.pylogging_fn  )
-        open_action.triggered.connect( connect_to )
-        a_menu.addAction( open_action )
-
-        #---------------
+        # ---- "Show Parameters"
         open_action     = QAction( "Show Parameters", self )
         connect_to      = self.show_parameters
         open_action.triggered.connect( connect_to )
         a_menu.addAction( open_action )
-        #---------------
-        open_action     = QAction( "Open Parameters", self )
-        connect_to      = AppGlobal.controller.os_open_parmfile
-        open_action.triggered.connect( connect_to )
-        a_menu.addAction( open_action )
 
+
+        # ---- "DB Maint"
         instance_ix     = 1
         action          = QAction( "DB Maint", self )
         connect_to      = functools.partial( self.add_subwindow,
@@ -585,7 +575,19 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         a_menu.addAction( action )
 
+        #---------------
+        open_action     = QAction( "Open Parameters", self )
+        connect_to      = AppGlobal.controller.os_open_parmfile
+        open_action.triggered.connect( connect_to )
+        a_menu.addAction( open_action )
 
+
+        # ---- "Open Log"
+        open_action     = QAction( "Open Log", self )
+        connect_to      = functools.partial( AppGlobal.os_open_txt_file,
+                                             AppGlobal.parameters.pylogging_fn  )
+        open_action.triggered.connect( connect_to )
+        a_menu.addAction( open_action )
 
 
         a_menu.addSeparator()

@@ -379,13 +379,13 @@ table_name    = "help_info"
 #rpt_display_order( table_name )
 
 # ---- .... gen_build_fields
-#gen_build_fields( table_name )
+gen_build_fields( table_name )
 
 
 # ---- next only for primay document tables
 #rpt_list_order( table_name )
 
-rpt_key_words( table_name )
+#rpt_key_words( table_name )
 
 # ---- sql for all tables
 

@@ -93,6 +93,11 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "sub_system",
                                              db_type        = "VARCHAR(15)",
                                              display_type   = "string",
+                                             detail_edit_class  = "custom_widgets.CQComboBox",
+                                             form_edit          = "custom_widgets.CQComboBox",
+                                             set_editable        = True,
+
+
                                              max_len        = None,
                                              default_func   = None,
                                              col_head_text      = "Sub System",
@@ -107,6 +112,9 @@ def build_it( a_data_dict ):
     a_column_dict = data_dict.ColumnDict(    column_name    = "system",
                                              db_type        = "VARCHAR(15)",
                                              display_type   = "string",
+                                             detail_edit_class  = "custom_widgets.CQComboBox",
+                                             form_edit          = "custom_widgets.CQComboBox",
+                                             set_editable        = True,
                                              max_len        = None,
                                              default_func   = None,
                                              is_key_word        = True,
