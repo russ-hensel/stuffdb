@@ -822,12 +822,20 @@ class IdleExe( ):
     def idle_file( self, file_name ):
         """
         open idle in a conda venv for file_name
+
+        think links to idle_file   filename
         """
 
         sh_lines        = [ f"conda activate {self.venv}", f"idle  {file_name}" ]
         self.write_file_sh( sh_lines )
 
-        subprocess.run(["bash", self.file_name_temp_sh ])  # !! define check
+        # next seems to be blocking
+        #subprocess.run(["bash", self.file_name_temp_sh ])
+
+        # should be non blocking
+        subprocess.Popen([ "bash", self.file_name_temp_sh])
+
+
         # next is wrong because we need the environment set up
         #subprocess.run([ "idle", file_name ])
 

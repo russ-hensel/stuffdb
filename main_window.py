@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=E221,E201,E202,C0325,E0611,W0201,W0612
 """
-main window container for the mdi
+main window -- container for the mdi
 
 """
 
@@ -10,7 +10,7 @@ main window container for the mdi
 if __name__ == "__main__":
     #----- run the full app
     import main
-    main.main()
+    #main.main()
 # --------------------
 
 # ---- imports
@@ -29,6 +29,9 @@ import show_parameters
 #import    help_sub_window
 # import   db_create
 from app_global import AppGlobal
+
+
+from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
 from PyQt5.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
@@ -850,6 +853,32 @@ class StuffdbMainWindow( QMainWindow ):
         # finally:
         #     msg     = f"in finally  {1}"
         #     print( msg )
+
+
+    def closeEvent(self, event):
+        """
+        Handle the window close event for clean shutdown
+        """
+        print("Performing clean shutdown...")
+
+        # Add your cleanup code here
+        self.cleanup()
+
+        # Accept the close event
+        event.accept()
+
+        # Clean exit from Qt
+        QCoreApplication.quit()
+
+    def cleanup(self):
+        """Perform cleanup operations"""
+        # Stop any running threads
+        # Close database connections
+        # Save application state
+        # Clean up temporary files
+        # etc.
+        pass
+
 
     # ---- test actions ----------------------
     # -----------------------------

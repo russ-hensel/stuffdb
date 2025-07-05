@@ -238,7 +238,7 @@ class Parameters( ):
 
         self.picture_db_root    = "/mnt/WIN_D/temp_photo"
         self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
-                # self.picture_db_root    = "/mnt/WIN_D/PhotoDB/" my reeal pics
+                # self.picture_db_root    = "/mnt/WIN_D/PhotoDB/" my real pics
         self.picture_db_sub     = "/99"
             # all pictures should be under this directory
         # ---- file  and path names
@@ -292,7 +292,7 @@ class Parameters( ):
 
 
         self.picture_db_sub     = ""
-        self.picture_db_sub     = "/alaska"
+        self.picture_db_sub     = "/Alaska"
             # all pictures should be under this directory
         # ---- file  and path names
         self.picture_browse     = "/mnt/WIN_D/temp_photo/source"
@@ -416,7 +416,7 @@ class Parameters( ):
         # self.wat_qt_ypos        = 10
 
         self.picture_db_root    = "/mnt/WIN_D/temp_photo"
-        self.picture_db_sub     = "/test_delete heldb on"
+        self.picture_db_sub     = "/test_delete helpdb on"
         self.picture_db_sub     = "/99/new_test"
             # all pictures should be under this directory
         # ---- file  and path names
@@ -445,7 +445,7 @@ class Parameters( ):
         self.mode               = "mode_python_ex_on_theprof"
 
         self.picture_db_root    = "/mnt/WIN_D/temp_photo"
-        self.picture_db_sub     = "/test_deleteon the proff "
+        self.picture_db_sub     = "/test_deleteon the prof "
         self.picture_db_sub     = "dest/99"    # no leading /
 
         # self.startup_function   = startup_functions.say_hello
@@ -851,7 +851,7 @@ class Parameters( ):
         """ )
         self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
 
-        # -------- Bash
+        # ---- Bash template
         template_name          = "Bash"
         template_text          = (
         """
@@ -865,11 +865,11 @@ class Parameters( ):
         """  )
         self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
 
-        # -------- Bash
-        template_name          = "aDividers"
+        # -------- Bash  just dividers for text notes
+        template_name          = "Dividers"
         template_text          = (
         """
-        ============ what  ============
+        ============ note_about_what  ============
 
 
         ------------------------
@@ -895,6 +895,26 @@ class Parameters( ):
         >>url  https://www.youtube.com/feed/subscriptions#on&off&types=uploads
         """  )
         self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
+
+        # ---- idle_template
+        template_name          = "Idle"
+        template_text          = (
+        """
+        >>idle  -------- python_that_runs_this --------
+        print( "high_their_sailor")
+        print( "done")
+        >>end --------
+        """  )
+        self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
+
+        # ---- idle_file_template
+        template_name          = "Idle_file"
+        template_text          = (
+        """
+        >>idle_file   ./libs/example_file_in_libs.py
+        """  )
+        self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
+
 
         # ---- .... shell template
         template_name          = "Shell"
@@ -922,7 +942,7 @@ class Parameters( ):
                             'Programming',
                             'Python',
                             'RasPi',
-                            'RshPy',              # subsystem the project
+                            'RshPy',
                             'Russ',
                             'SQL',
                             'StuffDB',

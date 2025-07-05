@@ -1010,12 +1010,12 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         data_manager.add_field( widget, )
         button_layout.addWidget( widget, )
 
-        label           = "Paste Clip"
-        widget          = QPushButton( label )
-        # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        widget.clicked.connect( self.text_edit_ext_obj.paste_clipboard  )
-        button_layout.addWidget( widget, )
+        # label           = "Paste Clip"
+        # widget          = QPushButton( label )
+        # # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
+        # # widget.clicked.connect( connect_to )
+        # widget.clicked.connect( self.text_edit_ext_obj.paste_clipboard  )
+        # button_layout.addWidget( widget, )
 
         # ---- template may not even need in self
         print( "monkey_patch_here_please")
@@ -1024,36 +1024,36 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         button_layout.addWidget( ddl_widget  )
         button_layout.addWidget( ddl_button_widget  )
 
-        # ---- copy line
-        label           = "!!Copy\nLine"
-        widget = QPushButton( label )
-        # connect_to  =  functools.partial( self.copy_line_of_text, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        button_layout.addWidget( widget, )
-
-        # ---- paste_divider
-        label           = "!!divider"
-        widget = QPushButton( label )
-        # connect_to  =  functools.partial( self.copy_line_of_text, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        button_layout.addWidget( widget, )
-
-        label           = "run\npython idle"
-        widget          = QPushButton( label )
-        # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        #widget.clicked.connect( self.do_python )
-        button_layout.addWidget( widget, )
+        # # ---- copy line  copy ling without selecting
+        # label           = "!!Copy\nLine"
+        # widget = QPushButton( label )
+        # # connect_to  =  functools.partial( self.copy_line_of_text, text_entry_widget )
+        # # widget.clicked.connect( connect_to )
+        # button_layout.addWidget( widget, )
 
         # ---- Paste Prior
         label           = "Paste Prior"
         widget          = QPushButton( label )
-        # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
-        # widget.clicked.connect( connect_to )
         widget.clicked.connect( self.text_edit_ext_obj.paste_cache )
         button_layout.addWidget( widget, )
 
-        # ---- Paste Prior
+        # ---- !!To_Smart
+        label           = "Cnv Hyper...tbd"
+        widget          = QPushButton( label )
+        # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
+        # widget.clicked.connect( connect_to )
+        #widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
+        button_layout.addWidget( widget, )
+
+        # ---- !!To_Smart
+        label           = "To_Smart...tbd"
+        widget          = QPushButton( label )
+        # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
+        # widget.clicked.connect( connect_to )
+        #widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
+        button_layout.addWidget( widget, )
+
+        # ---- Remove Lead/Trail"
         label           = "Remove Lead/Trail"
         widget          = QPushButton( label )
         # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
@@ -1095,7 +1095,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         # text_layout.addWidget( widget,  )
 
         # ---- >>
-        label       = ">>"
+        label       = "Go  >> ..."
         widget      = QPushButton( label )
         #connect_to  = functools.partial( text_edit_ext_obj.cmd_exec, text_entry_widget )
         connect_to  = text_edit_ext_obj.cmd_exec

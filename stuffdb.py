@@ -14,7 +14,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver .074: 2025 06 28.01"
+__version__   = "Ver .074: 2025 07 04.01"
 
 # ---- imports
 import datetime
@@ -303,7 +303,7 @@ def main():
     app         = App(   )
     # mainWin     = stuff_db_main_window.StuffDbMainWindow()
     # mainWin.show()
-    sys.exit( 99 )
+   # sys.exit( 99 )
 #  # app         = QApplication( sys.argv )
 #  # mainWin     = stuff_db_main_window.StuffDbMainWindow()
 #  # mainWin.show()
