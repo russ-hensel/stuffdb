@@ -2,9 +2,8 @@
 # ---- tof
 
 """
-    temporary parameters    for  stuff_db_qt
+    temporary parameters    for  stuffdb
     to run along with sql utils
-
 
 """
 
@@ -154,23 +153,15 @@ class ParmsTemp( ):
 
         # think for qt4_by_example not stuff
         self.db_file_name      = ":memory:"
-        #self.db_file_name      = "sample.db"   #  = "sample.db"   =  ":memory:"
 
-        #self.db_file_name        = "/tmp/ramdisk/qt_sql.db"
-        "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/helpdb.db",
-        "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/new.db",
-        "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/photo_text.db",
-        "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db",
-        "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex (another copy).db",
-        "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex (copy).db",
         "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db",
         self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/build_me.db"
         self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db"
         self.db_file_name      = "/tmp/ramdisk/temp.db"
         self.db_file_name      = "/tmp/ramdisk/temp2.db"
         self.db_file_name      = "/tmp/ramdisk/mode_import_june.db"
-
         self.db_file_name      = "/tmp/ramdisk/help_merge/help_merge.db"
+        self.db_file_name      = "/tmp/ramdisk/ramdisk.db"
 
         self.idle_venv     = "py_12_misc"   # idle will open in this python venv
             # path leading to all docs and help

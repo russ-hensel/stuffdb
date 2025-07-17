@@ -10,7 +10,7 @@
 # --------------------
 if __name__ == "__main__":
     import main
-    main.main()
+    #main.main()
 # --------------------
 
 # ---- imports
@@ -422,13 +422,21 @@ class DocumentBase( QMdiSubWindow ):
 
         self.tab_folder             = QTabWidget() # create for descendants
 
+        self.add_history_to_data_manager = False   # klugey way for history
+                                                   # because of tyming need to watit
+                                                   # to init_2__
+
         # may want to keep at end of this init
         AppGlobal.mdi_management.register_document(  self )
         self.tab_folder.currentChanged.connect( self.on_tab_changed )
 
     # --------------------------------
     def __init_2__( self ):
-        """call at end of child __init__ """
+        """
+        call at end of child __init__
+
+
+        """
         # !! perhaps in ancestor to a post innit
         title       = self.subwindow_name
         if self.instance_ix !=0:
@@ -442,6 +450,10 @@ class DocumentBase( QMdiSubWindow ):
         icon    = QIcon(  parameters.PARAMETERS.icon  )
         self.setWindowIcon(icon)
 
+        if self.add_history_to_data_manager:
+            # this is bad consider refactor
+            pass
+            self.detail_tab.data_manager.history_tab  = self.history_tab
     # --------------------------------
     def set_size_pos( self ):
         """
@@ -1156,6 +1168,9 @@ class DetailTabBase( QWidget ):
                     #  AppGlobal.qsql_db_access.db
                 # AppGlobal.key_gen       = a_key_gen.key_gen
                     # some_function( table_name )
+
+        #self.data_manager.history_tab   = self.parent_window.history_tab
+
         if self.key_word_table_name != "":
             self.data_manager.enable_key_words( self.key_word_table_name )
 

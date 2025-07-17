@@ -11,7 +11,7 @@
 if __name__ == "__main__":
     #----- run the full app
     import main
-    main.main()
+    #main.main()
 # --------------------
 
 import functools
@@ -80,7 +80,6 @@ import qt_sql_query
 # ---- constants
 SYSTEM_LIST     = parameters.PARAMETERS.systems_list
 
-
 logger          = logging.getLogger( )
 
 LOG_LEVEL       = 5   # higher is more
@@ -100,7 +99,7 @@ class HelpDocument( base_document_tabs.DocumentBase ):
         self.text_table_name    = "help_text"  # text tables always id and text_data
         self.help_filename      = "help_doc.txt"
         self.subwindow_name     = "HelpSubWindow"
-
+        self.add_history_to_data_manager = True
         self._build_gui()
         self.__init_2__()
 
@@ -306,6 +305,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget.setMaxVisibleItems( 25 )
         grid_layout.addWidget( widget )
         widget.addItems( SYSTEM_LIST )
+        widget.addItem( "<none>" )
         # widget.addItem( '' )
 
         widget.setCurrentIndex( 0 )
@@ -381,7 +381,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
     def criteria_select( self, ):
         """
         moved down from document
-        uses info in criteria tab to build list in list tab
+        uses info in criteria tab to do selection build list in list tab
         uses info from 2 tabs
 
         test in sql browser -- when testing look out for bind variables
@@ -437,7 +437,13 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         # ---- system
         system     = criteria_dict[ "system" ].strip().lower()
-        if system:
+        if   system == "<none>":
+            #add_where       =  f' help_info.system)= "{system}" '
+            add_where       =  ' help_info.system  IS NULL OR TRIM(help_info.system)= "" '
+            #WHERE system IS NULL OR TRIM(system) = ''
+            query_builder.add_to_where( add_where, [ ])
+
+        elif system:
             add_where       =  f' lower(help_info.system)= "{system}" '
             query_builder.add_to_where( add_where, [ ])
 
@@ -673,15 +679,8 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
         box_layout_1    =  QVBoxLayout( page )
 
-        layout      = gui_qt_ext.CQGridLayout( col_max = 12,  )
+        layout          = gui_qt_ext.CQGridLayout( col_max = 12 )
         box_layout_1.addLayout( layout )
-        # CQGridLayout
-
-# layout.setColumnStretch(0, 1)  # First column takes 1 part of horizontal space
-# layout.setColumnStretch(1, 2)  # Second column takes 2 parts (wider than first)
-# layout.setRowStretch(0, 2)     # First row takes 2 parts of vertical space
-# layout.setRowStretch(1, 1)
-
 
         # ----fields
         self._build_fields( layout  )

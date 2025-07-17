@@ -115,11 +115,6 @@ class SQLError( Exception ):
 
 
 
-
-
-
-
-
 class DisplaySQLError( QDialog ):
     """
     for display of errors, may move out of here

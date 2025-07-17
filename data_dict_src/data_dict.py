@@ -1092,7 +1092,7 @@ class TableDict(  ):
 
         line_list.append(  f'{indent_1}sql        =   """INSERT INTO    {self.table_name} ( ' )
 
-        ntc             = ","
+        ntc             = ","  # connects the lines, read carefully
         ix_max          = len( self.columns ) -1
 
         for ix_column, i_column in enumerate( self.columns ):
@@ -1101,9 +1101,10 @@ class TableDict(  ):
             i_field_name      = i_column.column_name
 
             if ix_column == ix_max:
-                ntc = ""
+                ntc = " ) "
 
             line_list.append(  f"{indent_1}{i_field_name}{ntc}", )
+
 
 
 

@@ -2,10 +2,9 @@
 # ---- tof
 
 """
-    parameters    for  stuff_db_qt
+    parameters    for  stuffdb
 
-    parameters    for  stuffdb_qt
-    parameters.PARAMETERS.
+        parameters.PARAMETERS.
 
 """
 # --------------------
@@ -377,6 +376,8 @@ class Parameters( ):
         """
         self.mode               = "mode_ramdisk_on_theprof"
 
+
+        # ---- temp pictures
         self.picture_db_root    = "/mnt/WIN_D/temp_photo"
 
         self.picture_db_sub     = "/99/new_test"
@@ -384,14 +385,23 @@ class Parameters( ):
         # ---- file  and path names
         self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
 
+        # ---- really the pictures
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
+                # self.picture_db_root    = "/mnt/WIN_D/PhotoDB/" my real pics
+        self.picture_db_sub     = "/99"
+
+
+
+
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
 
         self.db_file_name       = "/tmp/ramdisk/ramdisk.db"
         #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
 
-        self.logging_level          = logging.INFO
-        self.logging_level          = logging.DEBUG
+        self.logging_level      = logging.INFO
+        self.logging_level      = logging.DEBUG
 
 
 
@@ -936,6 +946,7 @@ class Parameters( ):
                             'CAD/Print',
                             'Delete',
                             'Electronics',
+                            'Garden',
                             'House',
                             'Linux',
                             'Powerbuilder',
@@ -948,6 +959,7 @@ class Parameters( ):
                             'StuffDB',
                             'TBD',
                             'Tools',
+                            'Web',
 
                         ]
 

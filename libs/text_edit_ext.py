@@ -116,8 +116,11 @@ TEXT_EDIT_EXT       = None
 #                 "id": "id",
 
 #                 }
-
-
+#does order matter
+REPLACE_LIST    = [ ( "*>url ",   ">>url " ),   # note deliberate space
+                    ( "*>url0 ",  ">>url " ),
+                    ( "*>shell ",  ">>shell " ),
+                    ]
 
 
 class TextEditExt( ):
@@ -264,7 +267,7 @@ class TextEditExt( ):
                 ii_line  = f">>url {i_line}"
 
             elif string_util.begins_with_file_name( i_line ):
-                ii_line  = f">>text {i_line}"
+                ii_line  = f">>shell {i_line}"
 
             new_lines.append( ii_line )
 
@@ -398,6 +401,7 @@ class TextEditExt( ):
 
         cut_action = menu.addAction("Cut")
         cut_action.triggered.connect(widget.cut)
+
         copy_action = menu.addAction("Copy")
         copy_action.triggered.connect(widget.copy)
 
@@ -408,6 +412,26 @@ class TextEditExt( ):
         # ---- "Smart Paste"
         foo_action = menu.addAction("Smart Paste")
         foo_action.triggered.connect(self.smart_paste_clipboard )
+        menu.addSeparator()
+
+        # ---- "Strip Sel"
+        foo_action = menu.addAction("Strip Sel")
+        foo_action.triggered.connect( self.strip_lines_in_selection)
+        #menu.addSeparator()
+
+        # ---- "RStrip Sel"
+        foo_action = menu.addAction("RStrip Sel")
+        foo_action.triggered.connect( self.strip_eol_lines_in_selection )
+        #menu.addSeparator()
+
+        # ---- ""Update Markup""
+        foo_action = menu.addAction("Update Markup")
+        foo_action.triggered.connect( self.update_markup )
+        menu.addSeparator()
+
+        # ---- "Open Urls"
+        foo_action = menu.addAction("Open Urls")
+        foo_action.triggered.connect( self.goto_urls_in_selection )
         menu.addSeparator()
 
 
@@ -494,24 +518,73 @@ class TextEditExt( ):
 
 
     #------------------------------------
+    def strip_eol_lines_in_selection(self, ):
+        """
+
+            The processed text (also replaces the selection in the widget)
+        """
+        text_edit       = self.text_edit
+        # Get the selected text
+        cursor          = text_edit.textCursor()
+        selected_text   = cursor.selectedText()
+
+        # Check if there's any selected text
+        if not selected_text:
+            return None
+
+        # Split into lines and strip each line
+        # Note: QTextEdit uses Unicode paragraph separators (U+2029) for line breaks in selectedText()
+        lines           = selected_text.split('\u2029')
+        stripped_lines  = [line.rstrip() for line in lines]
+
+        processed_text = '\n'.join(stripped_lines)
+
+        cursor.insertText(processed_text)
+        return processed_text # for no good reason ??
+
+    #------------------------------------
+    def goto_urls_in_selection(self, ):
+        """
+        what it says
+
+        and/or look in clipboard utils
+        """
+        text_edit       = self.text_edit
+        # Get the selected text
+        cursor          = text_edit.textCursor()
+        selected_text   = cursor.selectedText()
+
+        if not selected_text:
+            return None
+
+        lines           = selected_text.split('\u2029')
+        stripped_lines  = [line.strip() for line in lines]
+        for i_line in stripped_lines:
+            i_line.replace( ">>url", "") # what about caps -- do better
+            i_line.strip( )
+            if string_util.begins_with_url( i_line ):
+                splits = i_line.split( " " )
+                i_line = splits[0]
+                webbrowser.open( i_line, new = 0, autoraise = True )
+
+    #------------------------------------
     def strip_lines_in_selection(self, ):
         """
-        Claude says
-        Gets selected text from a QTextEdit, strips leading and trailing spaces from each line,
-        and replaces the original selection with the processed text.
+        Remove whitespace both end of lines
 
-        Args:
-            text_edit: A QTextEdit widget instance
+        Originally Claude says
+            Gets selected text from a QTextEdit, strips leading and trailing spaces from each line,
+            and replaces the original selection with the processed text.
+
 
         Returns:
             The processed text (also replaces the selection in the widget)
         """
-        text_edit    = self.text_edit
+        text_edit       = self.text_edit
         # Get the selected text
-        cursor = text_edit.textCursor()
-        selected_text = cursor.selectedText()
+        cursor          = text_edit.textCursor()
+        selected_text   = cursor.selectedText()
 
-        # Check if there's any selected text
         if not selected_text:
             return None
 
@@ -529,11 +602,43 @@ class TextEditExt( ):
         return processed_text
 
 
-    # # ----- cmd_ext, migrate to this !! todo
-    # def cmd_ext( self ):
-    #     """ """
-    #     cmd_ext( self, ) # other things make this call more directly
+    def do_line_replacements( self, line ):
+        """
 
+        may want to strip eol while at it
+        """
+        print( "do_line_replacements {line =}" )
+        #breakpoint()
+        for old, new in REPLACE_LIST:
+                line   = line.replace( old, new )
+
+        return line
+
+    #------------------------------------
+    def update_markup(self, ):
+        """
+        update from old stuff markup to new markup
+        """
+        text_edit       = self.text_edit
+        # Get the selected text
+        cursor          = text_edit.textCursor()
+        selected_text   = cursor.selectedText()
+
+        # Check if there's any selected text
+        if not selected_text:
+            return None
+
+        # Split into lines and strip each line
+        # Note: QTextEdit uses Unicode paragraph separators (U+2029) for line breaks in selectedText()
+        lines           = selected_text.split('\u2029')
+        updated_lines  = [self.do_line_replacements(line) for line in lines]
+
+        processed_text = '\n'.join(updated_lines)
+
+        # Replace the selected text with the processed text
+        cursor.insertText( processed_text )
+
+        return processed_text
 
     # ------------------------
     def cmd_exec( self   ):

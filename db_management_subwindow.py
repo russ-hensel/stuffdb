@@ -105,24 +105,31 @@ EXEC_RUNNER     = None  # setup below
 
 # ---- end imports
 # PERHAPS IN DATA DICT
+# list
 ALL_TABLES  = [
+                         'photo_in_show', "photo_in_show_text",
                          'help_info', "help_text",  "help_key_word",
-                         'stuff', "stuff_text",
+                         'stuff', "stuff_key_word", "stuff_text",
                          'plant', "plant_text",
-                         'people' "people_text",
-                            ]
+                         'people' "people_key_word", "people_text",
+                         'photo', "photo_key_word", "photo_text",
 
+                            ]
+# dict   what is this
 TABLE_DICT  = {
+                         'photo_in_show': "photo_in_show_text",
                          'help_info': "help_text",
                          'stuff': "stuff_text",
                          'plant': "plant_text",
                          'people': "people_text",
+                         'photo': "photo_text",
                             }
 
 KW_TABLE_DICT  = {
                          'help_info': "help_key_word",
                          'stuff': "stuff_key_word",
                          'plant': "plant_key_word",
+                         'photo': "photo_key_word",
                          'people': "people_key_word",
                             }
 
@@ -723,7 +730,9 @@ class KeyWordTab( QWidget ):
         a_list              = [
                          'help_key_word',
                          'stuff_key_word',
+                         'photo_key_word',
                          'plant_key_word',
+                         'planting_key_word',
                          'people_key_word' ]
 
         widget.addItems( a_list )

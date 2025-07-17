@@ -69,6 +69,8 @@ class PictureViewer( QGraphicsView ):
         self.scene          = QGraphicsScene(self)
         self.setScene( self.scene )
         self.pixmap_item    = QGraphicsPixmapItem()
+
+        self.pixmap         = QPixmap( "" )  # initial null item
         self.scene.addItem( self.pixmap_item )
         self.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
 
@@ -82,9 +84,9 @@ class PictureViewer( QGraphicsView ):
         # self.view.setScene(self.scene)
 
         self.setRenderHint( QPainter.Antialiasing )
-        self.setRenderHint(QPainter.SmoothPixmapTransform)
+        self.setRenderHint( QPainter.SmoothPixmapTransform)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-        self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
+        self.setResizeAnchor( QGraphicsView.AnchorUnderMouse )
         self.file_name              = None
         self.file_name_not_found    = None
 
@@ -95,6 +97,7 @@ class PictureViewer( QGraphicsView ):
         """
         self.file_name  = file_name
         pixmap          = QPixmap( file_name )
+        self.pixmap     = pixmap
         ok              = self.set_pixmap( pixmap )
         if not ok:
             if file_name is None:
@@ -133,9 +136,10 @@ class PictureViewer( QGraphicsView ):
         file_name       = self.file_name_not_found
         self.file_name  = file_name
         pixmap          = QPixmap( file_name )
+
+        self.pixmap     = pixmap
         ok              = self.set_pixmap( pixmap )
         self.fit_in_view()
-
 
     # -----------------------------
     def set_pixmap( self, pixmap ):
@@ -181,7 +185,32 @@ class PictureViewer( QGraphicsView ):
         self.resetTransform()
         #rint("Zoom Reset")
 
+
+    def fit_image(self):
+            """From Grok
+            Scale the image to fill the view while maintaining aspect ratio."""
+            if not self.pixmap.isNull():
+                # Get the view's viewport size
+                view_rect = self.viewport().rect()
+                # Get the pixmap's bounding rectangle
+                pixmap_rect = QRectF(self.pixmap_item.pixmap().rect())
+                # Fit the pixmap in the view
+                self.fitInView( pixmap_rect, Qt.KeepAspectRatioByExpanding )
+                # Center the scene in the view
+                self.centerOn(self.pixmap_item)
+
+
     def fit_in_view( self ):
+        """
+        what it says, read it
+        but what does it mean
+        """
+        self.fit_image()
+        #self.fitInView( self.scene.sceneRect(), Qt.KeepAspectRatio)
+        #rint("Fit in View")
+
+
+    def fit_in_view_1( self ):
         """
         what it says, read it
         but what does it mean

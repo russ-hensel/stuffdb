@@ -97,7 +97,8 @@ class DataManager(   ):
                                             # want to update on save
 
         self.record_state           = RECORD_NULL
-
+        self.history_tab            = None      # set to get history updates
+                                                # may not be implemented or imcoplete
 
         # key word is up there in parent
         self.key_word_table_name    = ""        # set in init of child ??
@@ -435,6 +436,10 @@ class DataManager(   ):
         msg          = "update_new_record_v3 at very end "
         debug_msg    = ( f"\n{msg}" )
         logging.log( LOG_LEVEL,  debug_msg, )
+
+
+        if self.history_tab is not None:
+            self.history_tab.record_to_table( record )
 
         self.record_state    = RECORD_FETCHED
 
