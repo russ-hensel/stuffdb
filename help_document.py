@@ -98,7 +98,7 @@ class HelpDocument( base_document_tabs.DocumentBase ):
         self.detail_table_name  = "help_info"
         self.text_table_name    = "help_text"  # text tables always id and text_data
         self.help_filename      = "help_doc.txt"
-        self.subwindow_name     = "HelpSubWindow"
+        self.subwindow_name     = "Notes Window"
         self.add_history_to_data_manager = True
         self._build_gui()
         self.__init_2__()

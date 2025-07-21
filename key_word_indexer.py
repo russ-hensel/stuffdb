@@ -288,12 +288,12 @@ class KeyWordIndexer(   ):
             # debug_msg     = ( f"on record {ix}" )
             # logging.log( LOG_LEVEL,  debug_msg, )
 
-            row_data = [ str( query.value(i) ) for i in range(query.record().count())]
+            row_data        = [ str( query.value(i) ) for i in range(query.record().count())]
 
             #print(row_data)
-            table_id          = int( row_data[ 0 ] )
-            old_kw_string     = ""
-            new_kw_string     = self.get_key_words( self.table_name, row_data[ 1: ]  )
+            table_id        = int( row_data[ 0 ] ) # should always be the id
+            old_kw_string   = ""
+            new_kw_string   = self.get_key_words( self.table_name, row_data[ 1: ]  )
                 # split off id an int
             #rint( f">>>>>>> {new_kw_string = }<<<" )
             #a_key_word_processor

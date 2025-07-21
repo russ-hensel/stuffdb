@@ -392,7 +392,7 @@ def build_it( a_data_dict ):
     a_table_dict   = data_dict.TableDict(  "people_phone" )
     a_data_dict.add_table ( a_table_dict )
 
-    # ---- "people_id",
+    # ---- "id",
     a_column_dict = data_dict.ColumnDict( column_name  = "id",
                                              display_order  =  0,
                                              db_type        = "INTEGER",
@@ -413,13 +413,13 @@ def build_it( a_data_dict ):
 
 
     # ---- "seq_id",
-    a_column_dict = data_dict.ColumnDict( column_name  = "seq_id_old",
+    a_column_dict = data_dict.ColumnDict( column_name  = "seq_id",
                                              display_order  =  2,
                                           db_type      = "VARCAR(10)",
                                           display_type = "error",
                                           max_len        = None,
                                           default_func   = None,
-                                          col_head_text      = "Seq Id_old",
+                                          col_head_text      = "Seq Id",
                                           col_head_width     = 100, )
 
     a_table_dict.add_column( a_column_dict )

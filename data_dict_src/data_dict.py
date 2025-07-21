@@ -1077,6 +1077,7 @@ class TableDict(  ):
         """
         what it says, read
 
+        written to make it easy to comment out columns
         """
         what           = "sql_to_insert_bind ---- code gen"
         column_list    = []
@@ -1090,7 +1091,7 @@ class TableDict(  ):
         line_list.append(  f'{indent_1}# ---- {what}  ' )
         line_list.append(  '' )
 
-        line_list.append(  f'{indent_1}sql        =   """INSERT INTO    {self.table_name} ( ' )
+        line_list.append(  f'{indent_1}sql        = ( "INSERT INTO    {self.table_name} ( " '  )
 
         ntc             = ","  # connects the lines, read carefully
         ix_max          = len( self.columns ) -1
@@ -1103,14 +1104,12 @@ class TableDict(  ):
             if ix_column == ix_max:
                 ntc = " ) "
 
-            line_list.append(  f"{indent_1}{i_field_name}{ntc}", )
-
-
+            line_list.append(  f'{indent_1}"{i_field_name}{ntc}"  ', )
 
 
         # ---- second pass
         line_list.append(  f"{indent_1}   " )
-        line_list.append(  f"{indent_1}VALUES ( " )
+        line_list.append(  f'{indent_1}"VALUES ( " ' )
 
         ntc             = ","
         ix_max          = len( self.columns ) -1
@@ -1118,18 +1117,25 @@ class TableDict(  ):
         for ix_column, i_column in enumerate( self.columns ):
             i_type          = i_column.db_type
             i_db_type       = i_column.db_type
-            i_field_name      = i_column.column_name
+            i_field_name    = i_column.column_name
             i_edit_in_type  = i_column.edit_in_type
 
             if ix_column == ix_max:
                 ntc = ""
 
-            line_list.append(  f"{indent_1}:{i_field_name}{ntc}"  )
-        line_list.append(  f'{indent_1} ) """' )
+            line_list.append(  f'{indent_1}":{i_field_name}{ntc} "'  )
+        line_list.append(  f'{indent_1}")" ) ' )
         #line_list.append(  f'{indent_1} ) ' )
 
         # ---- third pass
         line_list.append(  f"{indent_1} " )
+
+        line_list.append(  f'{indent_1}if VERBOSE:  # move to above this block ' )
+        line_list.append(  f'{indent_1}    pass ' )
+        line_list.append(  f'{indent_1}    #print( .....' )
+
+        line_list.append(  f'{indent_1}# query = QSqlQuery( db )    # better may be above this block ' )
+
         line_list.append(  f"{indent_1}query.prepare( sql )   " )
         line_list.append(  f"{indent_1} " )
         #line_list.append(  f"{indent_1}VALUES ( " )

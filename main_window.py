@@ -418,7 +418,7 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         menu_open.addAction( action )
 
-        action          = QAction( "Help 1", self )
+        action          = QAction( "Notes 1", self )
         connect_to      = functools.partial( self.add_subwindow,
                                                  window_class   = HelpDocument,
                                                  instance_ix    = instance_ix )
@@ -470,7 +470,7 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         menu_open.addAction( action )
 
-        action          = QAction( "Help 2", self )
+        action          = QAction( "Notes 2", self )
         connect_to      = functools.partial( self.add_subwindow,
                                                  window_class   = HelpDocument,
                                                  instance_ix    = instance_ix )
@@ -523,7 +523,7 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         menu_open.addAction( action )
 
-        action          = QAction( "Help", self )
+        action          = QAction( "Notes", self )
         connect_to      = functools.partial( self.add_subwindow,
                                                 window_class = HelpDocument )
         action.triggered.connect( connect_to )

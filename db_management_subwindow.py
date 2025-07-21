@@ -10,7 +10,6 @@
 # --------------------
 if __name__ == "__main__":
     import main
-    main.main()
 # --------------------
 
 # ---- imports
@@ -101,8 +100,6 @@ FIF             = info_about.INFO_ABOUT.find_info_for
 EXEC_RUNNER     = None  # setup below
 # MARKER              = ">snip"
 
-
-
 # ---- end imports
 # PERHAPS IN DATA DICT
 # list
@@ -111,7 +108,8 @@ ALL_TABLES  = [
                          'help_info', "help_text",  "help_key_word",
                          'stuff', "stuff_key_word", "stuff_text",
                          'plant', "plant_text",
-                         'people' "people_key_word", "people_text",
+                         'people', "people_key_word", "people_text",
+                         'people_phone', ''
                          'photo', "photo_key_word", "photo_text",
 
                             ]
