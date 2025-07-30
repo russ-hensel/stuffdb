@@ -149,9 +149,6 @@ class App( ):
         text_edit_ext.STUFF_DB = self
         self.gui               = None
 
-
-
-
         # ---- wat inspector
 
         self.restart( )
@@ -170,7 +167,6 @@ class App( ):
 
         AppGlobal.q_app         = self.q_app
         self.assign_icon( )
-
 
         self.parameters         = parameters.Parameters( )
         AppGlobal.parameters    = self.parameters

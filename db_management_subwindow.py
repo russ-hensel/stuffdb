@@ -108,6 +108,7 @@ ALL_TABLES  = [
                          'help_info', "help_text",  "help_key_word",
                          'stuff', "stuff_key_word", "stuff_text",
                          'plant', "plant_text",
+                         'planting', "planting_text",
                          'people', "people_key_word", "people_text",
                          'people_phone', ''
                          'photo', "photo_key_word", "photo_text",
@@ -119,6 +120,7 @@ TABLE_DICT  = {
                          'help_info': "help_text",
                          'stuff': "stuff_text",
                          'plant': "plant_text",
+                         'planting': "planting_text",
                          'people': "people_text",
                          'photo': "photo_text",
                             }
@@ -127,6 +129,7 @@ KW_TABLE_DICT  = {
                          'help_info': "help_key_word",
                          'stuff': "stuff_key_word",
                          'plant': "plant_key_word",
+                         'planting': "planting_key_word",
                          'photo': "photo_key_word",
                          'people': "people_key_word",
                             }

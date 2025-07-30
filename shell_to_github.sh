@@ -26,6 +26,9 @@ rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuf
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/misc/*.*              /mnt/WIN_D/for_github/stuffdb/misc
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/sql/*.*               /mnt/WIN_D/for_github/stuffdb/sql
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_dict_src/*.*     /mnt/WIN_D/for_github/stuffdb/data_dict_src
+rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/py_helpers/*.*        /mnt/WIN_D/for_github/stuffdb/py_helpers
+  
+ 
 
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db     /mnt/WIN_D/for_github/stuffdb/data
 

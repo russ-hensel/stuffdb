@@ -203,9 +203,9 @@ def query_exec_error_check( *, query, sql = None, raise_except = True ):
 
     if not result:
         query_ok        = False
-        error_txt       =  query.lastError().text()
+        error_txt       = query.lastError().text()
         loc             = "query_exec_error_check"
-        debug_msg        = f"{loc} >>> error sql = { sql } \n lastError = {error_txt = }"
+        debug_msg       = f"{loc} >>> error sql = { sql } \n lastError = {error_txt = }"
         logging.debug( debug_msg )
         dialog          =  DisplaySQLError( parent = None, title = "SQL Error", msg = debug_msg )
         if dialog.exec_() == QDialog.Accepted:

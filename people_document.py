@@ -11,7 +11,7 @@ Created on Sat Jun 29 09:56:07 2024
 if __name__ == "__main__":
     #----- run the full app
     import main
-    main.main()
+
 # --------------------
 
 
