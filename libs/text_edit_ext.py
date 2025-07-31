@@ -164,14 +164,14 @@ class TextEditExt( ):
 
 
     # ------------------------------------------
-    def get_template_ddl_values(self):
+    def get_snippet_ddl_values(self):
         """
         get the list of drop-down value from the
         parameter templates
 
         """
         values              = []
-        text_templates      = self.parameters.text_templates
+        text_templates      = self.parameters.text_snippets
         for i_key, i_value in text_templates.items( ):
             values.append( i_key )
 
@@ -184,7 +184,7 @@ class TextEditExt( ):
             when a drop-down needs a text item
 
         """
-        text_templates      = self.parameters.text_templates
+        text_templates      = self.parameters.text_snippets
         text                = text_templates[ key ]
 
         return text
@@ -203,7 +203,7 @@ class TextEditExt( ):
         widget              = QComboBox()
         self.ddl_widget     = widget
         #self.text_edit_ext_obj.set_up_widget( widget )
-        values              = self.get_template_ddl_values()
+        values              = self.get_snippet_ddl_values()
         widget.addItems( values )
         widget.setCurrentIndex( 0 )
         widget.setMinimumWidth( 200 )
@@ -214,17 +214,17 @@ class TextEditExt( ):
         #widget.currentTextChanged.connect(self.current_text_changed)
 
         # ---- button
-        label                   = "Paste Template"
+        label                   = "Paste Snippet"
         widget                  = QPushButton( label )
         self.ddl_button_widget  = widget
         #connect_to         = functools.partial( text_edit_ext.qt_exec, entry_widget )
-        connect_to         = self.paste_template
+        connect_to         = self.paste_snippet
         widget.clicked.connect( connect_to )
 
         return ( self.ddl_widget, self.ddl_button_widget )
 
     #-----------------------------------
-    def paste_template ( self, ):
+    def paste_snippet( self, ):
         """
         what it says
         """

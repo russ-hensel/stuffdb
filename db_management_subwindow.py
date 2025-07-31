@@ -100,18 +100,31 @@ FIF             = info_about.INFO_ABOUT.find_info_for
 EXEC_RUNNER     = None  # setup below
 # MARKER              = ">snip"
 
-# ---- end imports
+
 # PERHAPS IN DATA DICT
 # list
 ALL_TABLES  = [
-                         'photo_in_show', "photo_in_show_text",
-                         'help_info', "help_text",  "help_key_word",
-                         'stuff', "stuff_key_word", "stuff_text",
-                         'plant', "plant_text",
-                         'planting', "planting_text",
-                         'people', "people_key_word", "people_text",
-                         'people_phone', ''
-                         'photo', "photo_key_word", "photo_text",
+                    "help_info",
+                    "help_key_word",
+                    "help_text",
+                    "people",
+                    "people_key_word",
+                    "people_phone", ""
+                    "people_text",
+                    "photo",
+                    "photoshow",
+                    "photoshow_key_word",
+                    "photo_in_show",
+                    "photo_in_show_text",
+                    "photo_key_word",
+                    "photo_text",
+                    "plant",
+                    "plant_text",
+                    "planting",
+                    "planting_text",
+                    "stuff",
+                    "stuff_key_word",
+                    "stuff_text",
 
                             ]
 # dict   what is this
@@ -119,19 +132,21 @@ TABLE_DICT  = {
                          'photo_in_show': "photo_in_show_text",
                          'help_info': "help_text",
                          'stuff': "stuff_text",
-                         'plant': "plant_text",
-                         'planting': "planting_text",
+                         'plant':       "plant_text",
+                         'planting':    "planting_text",
+                         'photoshow':   "photoshow_text",
                          'people': "people_text",
                          'photo': "photo_text",
                             }
 
 KW_TABLE_DICT  = {
-                         'help_info': "help_key_word",
-                         'stuff': "stuff_key_word",
-                         'plant': "plant_key_word",
-                         'planting': "planting_key_word",
-                         'photo': "photo_key_word",
-                         'people': "people_key_word",
+                         'help_info':  "help_key_word",
+                         'stuff':       "stuff_key_word",
+                         'plant':       "plant_key_word",
+                         'planting':    "planting_key_word",
+                         'photo':       "photo_key_word",
+                         'photoshow':   "photoshow_key_word",
+                         'people':      "people_key_word",
                             }
 
 IKW_TABLE_DICT = {value: key for key, value in KW_TABLE_DICT.items()}
@@ -389,8 +404,8 @@ class DbManagementSubWindow( QMdiSubWindow ):
         #                                    f"{self.subwindow_name}" ] )
         # a_str   = string_util.to_columns( a_str, ["tab_folder",
         #                                    f"{self.tab_folder}" ] )
-        a_str   = string_util.to_columns( a_str, ["text_tab",
-                                            f"{self.text_tab}" ] )
+        # a_str   = string_util.to_columns( a_str, ["text_tab",
+        #                                     f"{self.text_tab}" ] )
 
         # b_str   = self.super().__str__( self )
         # a_str   = a_str + "\n" + b_str
@@ -732,6 +747,7 @@ class KeyWordTab( QWidget ):
                          'help_key_word',
                          'stuff_key_word',
                          'photo_key_word',
+                         'photoshow_key_word',
                          'plant_key_word',
                          'planting_key_word',
                          'people_key_word' ]

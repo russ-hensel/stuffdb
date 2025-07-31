@@ -243,10 +243,31 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         self._build_top_widgets_grid( grid_layout )
 
+        # ---- "Key Words"
+        grid_layout.new_row()
+        widget  = QLabel( "Key Words" )
+        grid_layout.addWidget( widget )
+
+        widget                    = cw.CQHistoryComboBox(
+                                       field_name = "key_words" )
+
+        # widget                    = cw.CQLineEdit(
+        #                                field_name = "key_words" )
+        self.key_words_widget     = widget   # not this one at least not yet
+        # self.key_word_widget        = None      # set to value in gui if used
+        widget.setPlaceholderText( "key_words"  )
+        self.critera_widget_list.append( widget )
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget )
+
+
         # ----id
         widget                = QLabel( "ID" )
         grid_layout.new_row()
         grid_layout.addWidget( widget )
+
+
+
 
         widget                  = cw.CQLineEdit(
                                              field_name = "table_id" )
@@ -266,22 +287,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         # widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget, )    # columnspan = 3 )
 
-        # ---- "Key Words"
-        grid_layout.new_row()
-        widget  = QLabel( "Key Words" )
-        grid_layout.addWidget( widget )
 
-        widget                    = cw.CQHistoryComboBox(
-                                       field_name = "key_words" )
-
-        # widget                    = cw.CQLineEdit(
-        #                                field_name = "key_words" )
-        self.key_words_widget     = widget   # not this one at least not yet
-        # self.key_word_widget        = None      # set to value in gui if used
-        widget.setPlaceholderText( "key_words"  )
-        self.critera_widget_list.append( widget )
-        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget )
 
         # ---- grid_layout.new_row()
         grid_layout.new_row()

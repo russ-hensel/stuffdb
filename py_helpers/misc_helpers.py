@@ -46,22 +46,10 @@ def  print_sys_path(   ):
 
         print( f"{i_path}" )
 
-def  insert_path_if_missing( a_path_name ):
-    """
-
-    import misc_helpers
-    misc_helpers.insert_if_missing( path )
-    """
-    if not a_path_name in sys.path :
-        sys.path.insert( 1, f"{a_path_name}" )
-        print( f"path {a_path_name} inserted" )
-    else:
-        print( f"path {a_path_name} not needed, notinserted" )
-
 
 def  insert_if_missing( a_path_name ):
     """
-    depricated
+
     import misc_helpers
     misc_helpers.insert_if_missing( path )
     """
@@ -99,6 +87,6 @@ def  list_to_toc( a_list ):
     print()
 
 def misc_example( ):
-    print( "misc_example  43")
+    print( "misc_example  44")
 
 # ---- eof

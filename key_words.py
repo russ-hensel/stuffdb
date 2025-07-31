@@ -223,6 +223,8 @@ class KeyWords(   ):
 
         self.check_id_for_error( table_id )
 
+        self.db.commit()   # trying to get rid of wad fiel
+
         # debug_msg    = f"compute_add_delete   {self.key_words_for_delete}"
         # logging.debug( debug_msg )
 

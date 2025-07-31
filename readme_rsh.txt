@@ -47,7 +47,11 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
 
     add photo does not insert current default should do under clear
     look at importing pictures and shows......
+---- ver 076  2025 july 30
 
+
+---- ver 75
+        who knows
 
 ---- ver74
 

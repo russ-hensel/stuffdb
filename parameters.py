@@ -76,8 +76,8 @@ class Parameters( ):
         # self.mode_import_june()
         # self.mode_ram_merge_help()
         # self.mode_russ2025_on_theprof()
-        self.mode_ramdisk_on_theprof()
-
+        #self.mode_ramdisk_on_theprof()
+        self.mode_aug_ramdisk_on_theprof()
         #self.mode_imported_on_theprof()
 
         #self.mode_builddb_on_theprof()
@@ -368,6 +368,38 @@ class Parameters( ):
         self.logging_level          = logging.DEBUG
 
     # -------
+    def mode_aug_ramdisk_on_theprof( self ):
+        """
+        a mode for the help info while still in dev
+        later will export data then re-import and
+        perhaps re-key
+        """
+        self.mode               = "mode_aug_ramdisk_on_theprof"
+
+        # ---- temp pictures
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- really the pictures
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
+                # self.picture_db_root    = "/mnt/WIN_D/PhotoDB/" my real pics
+        self.picture_db_sub     = "/99"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/tmp/ramdisk/aug.db"
+        #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
+
+        self.logging_level      = logging.INFO
+        self.logging_level      = logging.DEBUG
+
+    # -------
     def mode_ramdisk_on_theprof( self ):
         """
         a mode for the help info while still in dev
@@ -390,9 +422,6 @@ class Parameters( ):
         self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
                 # self.picture_db_root    = "/mnt/WIN_D/PhotoDB/" my real pics
         self.picture_db_sub     = "/99"
-
-
-
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
@@ -849,7 +878,7 @@ class Parameters( ):
 
         # ---- templates  a bit odd to control left margin --
         # ---- Python template
-        self.text_templates     = {}
+        self.text_snippets     = {}
         template_name           = "Python"
         template_text           = (
         """
@@ -859,7 +888,7 @@ class Parameters( ):
 
         >>end --------
         """ )
-        self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
+        self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
         # ---- Bash template
         template_name          = "Bash"
@@ -873,7 +902,7 @@ class Parameters( ):
         >>end ------------
         #print( f"bash a_shell_template still needs writing { 0 = }"
         """  )
-        self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
+        self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
         # -------- Bash  just dividers for text notes
         template_name          = "Dividers"
@@ -887,7 +916,7 @@ class Parameters( ):
 
         ========================
         """  )
-        self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
+        self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
 
         # ---- text template
@@ -896,7 +925,7 @@ class Parameters( ):
         """
         >>Text  ./parameters.py
         """  )
-        self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
+        self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
         # ---- url template
         template_name          = "Url"
@@ -904,7 +933,7 @@ class Parameters( ):
         """
         >>url  https://www.youtube.com/feed/subscriptions#on&off&types=uploads
         """  )
-        self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
+        self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
         # ---- idle_template
         template_name          = "Idle"
@@ -915,7 +944,7 @@ class Parameters( ):
         print( "done")
         >>end --------
         """  )
-        self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
+        self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
         # ---- idle_file_template
         template_name          = "Idle_file"
@@ -923,7 +952,7 @@ class Parameters( ):
         """
         >>idle_file   ./libs/example_file_in_libs.py
         """  )
-        self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
+        self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
 
         # ---- .... shell template
@@ -932,12 +961,12 @@ class Parameters( ):
         """
         >>Shell  /mnt/WIN_D/PhotoDB/00/00july_06.jpg
         """  )
-        self.text_templates[template_name] = textwrap.dedent( template_text ).strip()
-        a_dict     = self.text_templates
+        self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
+        a_dict     = self.text_snippets
 
         # ---- sort the templates so the user does not
         #print(  "sort on key item[0]" )
-        self.text_templates = {a_key: a_value for a_key, a_value in sorted( a_dict.items(), key = lambda item: item[0] ) }
+        self.text_snippets = {a_key: a_value for a_key, a_value in sorted( a_dict.items(), key = lambda item: item[0] ) }
         #print( b_dict )
 
         # ---- systems for helpdb ??alpha  to sort make all quotes the same

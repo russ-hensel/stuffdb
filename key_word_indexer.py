@@ -71,7 +71,6 @@ import key_words
 # data_dict   = data_dict.build_it( db_name = None )
 
 
-
 KEY_WORD_SQL  = defaultdict( lambda: None )
 # DATA_DICT   = data_dict.DATA_DICT
 
