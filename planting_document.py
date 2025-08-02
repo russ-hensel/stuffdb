@@ -334,6 +334,18 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         self._build_top_widgets_grid( grid_layout )
 
+        # ----key words
+        widget                = QLabel( "Key Words" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit(
+                                                 field_name = "key_words"   )
+        self.critera_widget_list.append( widget )
+        self.key_words_widget   = widget  # is needed for paste
+        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, columnspan = 3 )
+
         # ---- name like
         grid_layout.new_row()
         widget  = QLabel( "Name (like)" )
@@ -346,17 +358,7 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget )
 
-        # ----key words
-        widget                = QLabel( "Key Words" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
 
-        widget                  = cw.CQLineEdit(
-                                                 field_name = "key_words"   )
-        self.critera_widget_list.append( widget )
-        self.key_words_widget   = widget  # is needed for paste
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget, columnspan = 3 )
 
         # ---- Order by
         grid_layout.new_row()
@@ -403,10 +405,14 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         # # grid_layout.addWidget( widget )
         # grid_layout.addItem( widget, grid_layout.ix_row, grid_layout.ix_col )
 
+        # # ---- function_on_return( self )
+        # for i_widget in self.critera_widget_list:
+        #     i_widget.function_on_return   = self.criteria_select
         # ---- function_on_return( self )
         for i_widget in self.critera_widget_list:
-            i_widget.function_on_return   = self.criteria_select
-
+            # ---- new  only really changes some edits
+            i_widget.on_value_changed       = lambda: self.criteria_changed( True )
+            i_widget.on_return_pressed      = self.criteria_select
 
     # ---- Actions
     # -------------------------

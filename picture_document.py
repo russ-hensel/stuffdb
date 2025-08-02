@@ -308,6 +308,19 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         self._build_top_widgets_grid( grid_layout )
 
+
+        # ----key words
+        widget                = QLabel( "Key Words" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit(
+                                                field_name = "key_words"   )
+        self.key_words_field    = widget
+        self.critera_widget_list.append( widget )
+        grid_layout.addWidget( widget, columnspan = 3 )
+
+
         # ----id
         widget                = QLabel( "ID" )
         # grid_layout.new_row()
@@ -330,16 +343,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self.critera_widget_list.append( widget )
         grid_layout.addWidget( widget, )    # columnspan = 3 )
 
-        # ----key words
-        widget                = QLabel( "Key Words" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit(
-                                                field_name = "key_words"   )
-        self.key_words_field    = widget
-        self.critera_widget_list.append( widget )
-        grid_layout.addWidget( widget, columnspan = 3 )
 
         # ---- name like
         grid_layout.new_row()
@@ -414,9 +417,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         #widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
         #grid_layout.new_row()  # because seems to be missing
         grid_layout.addWidget( widget )
-
-
-
 
 
         # ---- criteria changed should be in parent

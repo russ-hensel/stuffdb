@@ -267,8 +267,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         grid_layout.addWidget( widget )
 
 
-
-
         widget                  = cw.CQLineEdit(
                                              field_name = "table_id" )
         self.id_field           = widget
@@ -605,7 +603,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         self.criteria_select()
 
     # -----------------------------
-    def clear_criteria( self ):
+    def clear_criteria_promoted( self ):
         """
         What it says, read
         extend

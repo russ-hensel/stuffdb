@@ -2134,6 +2134,10 @@ class CriteriaTabBase( QWidget ):
            # i_criteria.set_data_default()
             i_criteria.set_default()
 
+        # next from help will it work in general
+        widget   = self.get_criteria_widget( "key_words" )
+        widget.setFocus()
+
     # -----------------------------
     def paste_go( self ):
         """

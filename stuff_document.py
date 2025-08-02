@@ -266,6 +266,19 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         self._build_top_widgets_grid( grid_layout )
 
+        # ----key words
+        widget                = QLabel( "Key Words" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit( field_name  = "key_words", )
+        self.critera_widget_list.append( widget )
+        self.key_words_widget   = widget  # is needed for paste
+        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, columnspan = 3 )
+
+
+
         # ----id
         widget                = QLabel( "ID" )
         grid_layout.new_row()
@@ -286,16 +299,7 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget )    # columnspan = 3 )
 
-        # ----key words
-        widget                = QLabel( "Key Words" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
 
-        widget                  = cw.CQLineEdit( field_name  = "key_words", )
-        self.critera_widget_list.append( widget )
-        self.key_words_widget   = widget  # is needed for paste
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget, columnspan = 3 )
 
         # ----descr
         widget                = QLabel( "descr" )
@@ -363,10 +367,16 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         grid_layout.new_row()
         grid_layout.addWidget( widget )
 
+        # # ---- function_on_return( self )
+        # for i_widget in self.critera_widget_list:
+        #     # ---- new  only really changes some edits
+        #     i_widget.on_return_pressed     = self.criteria_select
+
         # ---- function_on_return( self )
         for i_widget in self.critera_widget_list:
             # ---- new  only really changes some edits
-            i_widget.on_return_pressed     = self.criteria_select
+            i_widget.on_value_changed       = lambda: self.criteria_changed( True )
+            i_widget.on_return_pressed      = self.criteria_select
 
     # -------------
     def criteria_select( self,     ):
