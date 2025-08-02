@@ -47,6 +47,18 @@ def  print_sys_path(   ):
         print( f"{i_path}" )
 
 
+def  insert_path_if_missing( a_path_name ):
+    """
+
+    import misc_helpers
+    misc_helpers.insert_if_missing( path )
+    """
+    #print( sys.path )  # is a list
+    if not a_path_name in sys.path :
+        sys.path.insert( 1, f"{a_path_name}" )
+        print( "inserted" )
+    else:
+        print( "not needed no inserted" )
 def  insert_if_missing( a_path_name ):
     """
 
