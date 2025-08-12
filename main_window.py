@@ -398,18 +398,6 @@ class StuffdbMainWindow( QMainWindow ):
         menu_open       = menubar.addMenu( "Open" )
         self.menu_open  = menu_open
 
-        # ---- open 1 ............................
-        # !! make list of classes and change to loop
-        instance_ix     = 1
-        action          = QAction( "DB Maint", self )
-        connect_to      = functools.partial( self.add_subwindow,
-                                                 window_class   = DbManagementSubWindow,
-                                                 instance_ix    = instance_ix )
-        action.triggered.connect( connect_to )
-        menu_open.addAction( action )
-
-
-
         instance_ix     = 1
         action          = QAction( "Album 1", self )
         connect_to      = functools.partial( self.add_subwindow,

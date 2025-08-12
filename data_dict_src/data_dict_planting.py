@@ -292,7 +292,9 @@ def build_it( a_data_dict ):
                                            edit_to_dict_cnv     = "cnv_str_to_int",
                                           display_type = "integer",
                                           max_len        = None,
-                                          default_func   = None,   )
+                                          default_func   = None,
+                                          col_head_text      = "Planting Id",
+                                          col_head_width     = 50, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "event_dt",
@@ -306,10 +308,11 @@ def build_it( a_data_dict ):
                                              edit_to_rec_cnv      = "cnv_qdate_to_int",
                                              edit_to_dict_cnv     = "cnv_qdate_to_int",
 
-
                                           display_type = "integer",
                                           max_len        = None,
-                                          default_func   = None,   )
+                                          default_func   = None,
+                                          col_head_text      = "!!Date",
+                                          col_head_width     = 90, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "dlr",
@@ -317,7 +320,9 @@ def build_it( a_data_dict ):
                                           db_type      = "INTEGER",
                                           display_type = "integer",
                                           max_len        = None,
-                                          default_func   = None,   )
+                                          default_func   = None,
+                                          col_head_text      = "Dlr",
+                                          col_head_width     = 50, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "cmnt",
@@ -327,7 +332,7 @@ def build_it( a_data_dict ):
                                           max_len        = None,
                                           default_func   = None,
                                           col_head_text      = "Comment",
-                                          col_head_width     = 200, )
+                                          col_head_width     = 600, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "type",

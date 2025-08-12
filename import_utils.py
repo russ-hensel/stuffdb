@@ -64,7 +64,8 @@ def string_to_int( num_string ):
 
 def string_to_ts_tenths( date_string, ):
         """
-        have tenths of sec
+        have tenths of sec think can go even farther
+        string to fraction
         """
         return string_to_timestamp( date_string, "%Y/%m/%d %H:%M:%S.%f" )
 
@@ -169,7 +170,14 @@ def get_new_key ( query, sql, id_old ):
     query     =  QSqlQuery( db_create.DB_CONNECTION )
     sql       =   "SELECT id FROM help_info WHERE id_old = :id_old"
     id_old    = "joe"
-    import_utils.get_new_key( query = query, sql = query, id_old = id_old )
+    import_utils.get_new_key( query = query, sql = sql, id_old = id_old )
+            query           =  QSqlQuery( db_create.DB_CONNECTION )
+            sql             = "SELECT id FROM planting WHERE id_old = :id_old"
+
+            planting_id     = import_utils.get_new_key( query = query, sql = sql, id_old = planting_id_old )
+
+
+
     """
 
 

@@ -14,12 +14,6 @@ if __name__ == "__main__":
     import main
     main.main()
 # --------------------
-# # --------------------
-# if __name__ == "__main__":
-#     #----- run the full app
-#     import main
-#     main.main()
-# # --------------------
 
 # ---- imports
 
@@ -36,7 +30,7 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-# ----
+
 from PyQt5.QtWidgets import (QApplication,
                              QComboBox,
                              QDateTimeEdit,
@@ -61,7 +55,6 @@ logger          = logging.getLogger( )
 
 # for custom logging level at module
 LOG_LEVEL  = 20   # higher is more
-
 
 # ---- end imports
 
@@ -101,6 +94,7 @@ class EditStuffEvents( QDialog ):
         form_layout.addRow("Event Date:", self.event_date_edit)
 
         # DLR field (integer)
+
         self.dlr_spinbox = QSpinBox()
         self.dlr_spinbox.setRange(0, 9999)
         form_layout.addRow("DLR:", self.dlr_spinbox)
@@ -139,7 +133,10 @@ class EditStuffEvents( QDialog ):
             dt.setSecsSinceEpoch(edit_data["event_dt"])
             self.event_date_edit.setDateTime(dt)
 
-            self.dlr_spinbox.setValue(edit_data["dlr"])
+            pennies     = int( float( edit_data["dlr"] ) )
+            self.dlr_spinbox.setValue(int( pennies ) )
+
+
             self.comment_edit.setText(edit_data["cmnt"])
 
             # Find and set the index for the type

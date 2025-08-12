@@ -72,12 +72,14 @@ class Parameters( ):
 
         # self.tweak_test_add_pictures()
 
+        #self.mode_theprof_russ_2025()
 
-        # self.mode_import_june()
-        # self.mode_ram_merge_help()
-        # self.mode_russ2025_on_theprof()
-        #self.mode_ramdisk_on_theprof()
-        self.mode_aug_ramdisk_on_theprof()
+        # ---- russ_2025
+        #self.mode_russ_2025_hd()
+        self.mode_russ_2025_ram()
+        #self.mode_aug_ramdisk_on_theprof()
+
+
         #self.mode_imported_on_theprof()
 
         #self.mode_builddb_on_theprof()
@@ -140,32 +142,39 @@ class Parameters( ):
         #     # subdir for above used when adding new pictures
 
     # -------
-    def mode_build_me( self ):
+    def mode_russ_2025_ram( self ):
         """
-        a mode for testing of pictures with the new build_me database
+
         """
-        self.mode               = "mode_build_me"
+        self.mode               = "mode_russ_2025_ram"
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
-            # the type of database, so far we only support SQLite
+        self.db_file_name       = "/tmp/ramdisk/russ2025/russ2025.db"
 
-        self.db_file_name       = "./data/python_ex.db"
-        self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/build_me.db"
+        self.logging_level      = logging.DEBUG   # ERROR
 
-#
-        # ---- pictures
-        self.picture_browse         = "/mnt/WIN_D/temp_photo/source"
-            # browsing starts from here see PictureDocument
+       # self.icon               =  "./misc/db_red_on_yellow.png"
+        self.icon               =  "./misc/db_green_on_black.png"
+       # self.icon               =  "./misc/db_red_on_black.png"
 
-        # picture to use when a valid picture is not found or does not exist
-        #self.pic_nf_file_name       = "./misc/404.png"
+    # -------
+    def mode_russ_2025_hd( self ):
+        """
 
-        self.picture_db_root        = "/mnt/WIN_D/temp_photo/dest"
-            # all pictures once in the db should be under this directory
+        """
+        self.mode               = "mode_russ_2025_hd"
 
-        self.picture_db_sub         = "/99"
-            # subdir for above used when adding new pictures
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+        self.db_file_name       = "./data/russ2025/russ2025.db"
+
+        self.logging_level      = logging.DEBUG   # ERROR
+
+        self.icon               =  "./misc/db_red_on_yellow.png"
+        self.icon               =  "./misc/db_green_on_black.png"
+        self.icon               =  "./misc/db_red_on_black.png"
+
 
     # -------
     def mode_github( self ):
@@ -173,15 +182,16 @@ class Parameters( ):
         test if will run in github, will probably be a lot like new user
         """
         self.mode               = "mode_github"
+        self.mode_russ_2025_hd()
+        self.mode               += "-mode_github"
+        # # ---- type and location of the db file
+        # self.db_type            = "QSQLITE"
+        #     # the type of database, so far we only support SQLite
 
-        # ---- type and location of the db file
-        self.db_type            = "QSQLITE"
-            # the type of database, so far we only support SQLite
 
-        self.db_file_name       = "./data/new.db"   #  = "sample.db"   =  ":memory:"
-        self.db_file_name       = "./data/python_ex.db"
+        # self.db_file_name       = "./data/python_ex.db"
 
-        self.logging_level      = logging.DEBUG   # ERROR
+        # self.logging_level      = logging.DEBUG   # ERROR
 
         self.icon               =  "./misc/db_red_on_black.png"
 
@@ -209,6 +219,19 @@ class Parameters( ):
         self.db_type            = "QSQLITE"
 
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/help_merge/help_merge.db"
+
+   # -------
+    def mode_theprof_russ_2025( self ):
+        """
+         this will bee the new russ2025
+        """
+        self.mode               = "mode_russ_2025"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ/russ2025.db"
+        self.db_file_name       = r"D:\russ\0000\python00\python3\_projects\stuffdb\data\russ\russ2025.db"
 
    # -------
     def mode_russ_2025( self ):

@@ -10,12 +10,7 @@
 
 from pathlib import Path
 
-# ---- local imports
 
-
-# global PARAMETERS
-# PARAMETERS   = None
-# parameters.PARAMETERS
 
 import logging
 import os
@@ -108,7 +103,6 @@ class ParmsTemp( ):
 
         # icon for running app
         self.icon               = r"./misc/icon_red.png"
-
 
         self.text_edit_font     = ("Arial", 12)
 

@@ -283,9 +283,9 @@ class CursorContext:
     """
     def __enter__(self):
         QApplication.setOverrideCursor(Qt.WaitCursor)
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         QApplication.restoreOverrideCursor()
-
 
 # -----------------------------------
 class DateFormatDelegate( QStyledItemDelegate ):
@@ -1627,7 +1627,11 @@ class SubTabBase( QWidget ):
             ix_col    += 1
 
             model.setHeaderData( ix_col, Qt.Horizontal, col_dict[ "col_head_text"  ] )
-            view.setColumnWidth( ix_col,                col_dict[ "col_head_width" ] )
+            width  =   col_dict[ "col_head_width" ]
+            if width > 0:
+                view.setColumnWidth( ix_col, width )
+            else:
+                view.setColumnHidden( ix_col, True )  # view or model
 
         layout.addWidget( view )
 

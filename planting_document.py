@@ -10,7 +10,7 @@ Created on Sat Jun 29 09:56:07 2024
 if __name__ == "__main__":
     #----- run the full app
     import main
-    main.main()
+
 # --------------------
 
 
@@ -124,6 +124,7 @@ import string_util
 from   app_global import AppGlobal
 import people_document
 import people_document_edit
+import import_utils
 
 
 #from pubsub import pub
@@ -133,6 +134,16 @@ LOG_LEVEL           = 20 # level form much debug
            #  higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
 
 EVENT_FIELD_DICT    = None
+
+
+IX_EVENT_ID             = 0 # many are magic convert to this
+IX_EVENT_ID_OLD         = 1
+IX_EVENT_PLANT_ID       = 2
+IX_EVENT_PLANT_ID_OLD   = 3
+IX_EVENT_DATE           = 4
+IX_EVENT_DLR            = 5
+IX_EVENT_CMNT           = 6
+IX_EVENT_TYPE           = 7
 
 
 # ---- end parms
@@ -1054,6 +1065,54 @@ class PlantingEventSubTab( base_document_tabs.SubTabBase ):
         self._build_model()
         self._build_gui()
 
+    # ------------------------------------------
+    def _build_gui( self, ):
+        """
+        what it says, read
+        extend method
+        see parent some of this promoted
+        """
+        super()._build_gui()
+        pass    # continue here
+
+        model     = self.model
+        view      = self.view
+
+        # new dict should do in base controled by data dict
+        # model.setHeaderData(  IX_EVENT_ID, Qt.Horizontal, "ID" )
+        # view.setColumnWidth(  IX_EVENT_ID, 100)  # Set  width in  pixels
+        # view.setColumnHidden( IX_EVENT_ID, True )  # view or model
+
+
+        # model.setHeaderData( IX_EVENT_ID_OLD, Qt.Horizontal, "ID_Old" )
+        # view.setColumnWidth( IX_EVENT_ID_OLD, 100)  # Set  width in  pixels
+        # view.setColumnHidden( IX_EVENT_ID_OLD, True )  # view or model
+        # #view.setColumnHidden( 1, True )  # view or model
+
+        # model.setHeaderData( IX_EVENT_PLANT_ID, Qt.Horizontal, "Plant_Id" )
+        # view.setColumnWidth( IX_EVENT_PLANT_ID, 100)  # Set  width in  pixels
+        # # view.setColumnHidden( IX_EVENT_PLANT_ID, True )  # view or model  # cmnt out for debug
+
+
+        # model.setHeaderData( IX_EVENT_PLANT_ID_OLD, Qt.Horizontal, "Plant_Id_old" )
+        # view.setColumnWidth( IX_EVENT_PLANT_ID_OLD, 100)  # Set  width in  pixels
+        # view.setColumnHidden( IX_EVENT_PLANT_ID_OLD, True )  # view or model
+
+
+        # model.setHeaderData( IX_EVENT_DATE, Qt.Horizontal, "Event Date" )
+        # view.setColumnWidth( IX_EVENT_DATE, 100)  # Set  width in  pixels
+
+        # model.setHeaderData( IX_EVENT_DLR, Qt.Horizontal, "!$ Amount" )
+        # view.setColumnWidth( IX_EVENT_DLR, 100)  # Set  width in  pixels
+
+
+        # model.setHeaderData( IX_EVENT_CMNT, Qt.Horizontal, "Comment" )
+        # view.setColumnWidth( IX_EVENT_CMNT, 300)  # Set  width in  pixels
+
+        # model.setHeaderData( IX_EVENT_TYPE, Qt.Horizontal, "Type" )
+        # view.setColumnWidth( IX_EVENT_TYPE, 100)  # Set  width in  pixels
+
+
     # ---------------------------------
     def _build_model( self, ):
         """
@@ -1315,6 +1374,8 @@ class EventSqlTableModel( QSqlTableModel ):
         self.non_editable_columns = { 99 }
             # 99 not used Columns ..doe it have to be in init or is synamic ..
 
+
+
     def flags(self, index: QModelIndex):
         """
         from chat, not really used as for non edit
@@ -1331,6 +1392,8 @@ class EventSqlTableModel( QSqlTableModel ):
         """
         for special formatting
         and alignment
+        zz
+        IX_EVENT_DLR
         """
         col = index.column()
 
@@ -1338,9 +1401,18 @@ class EventSqlTableModel( QSqlTableModel ):
         if role == Qt.DisplayRole:
             # Handle display formatting for event_dt (column 2)
             # data_dict may have column ix from name
-            if col == 4:  # event_dt
+            if False:
+                pass
+            # if   col == 4:  # event_dt
+            #     value = super().data(index, Qt.EditRole)
+            #     if value not in [ None, "" ]:
+            #         #return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
+            #         return import_utils.string_to_ts_tenths( value )
+            #     return value  # Return raw value if None
+
+            elif col == IX_EVENT_DATE:  # this a string should it be an int?
                 value = super().data(index, Qt.EditRole)
-                if value not in [ None, "" ]:
+                if value is not None:
                     return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
                 return value  # Return raw value if None
 

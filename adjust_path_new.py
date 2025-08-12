@@ -64,7 +64,7 @@ __file__ = '/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/adjust_path.
 adjust_path_path        = Path( adjust_path_file )
 ap_dir_path             = adjust_path_path.parent  # often same as ./
 
-project_dir_path        = ap_dir_path.parent      # ..../_projects
+project_dir_path        = ap_dir_path.parent
 
 print( f"{project_dir_path = }")
 
@@ -110,26 +110,41 @@ else:
 # src_root         = "/mnt/WIN_D/russ/0000/python00/python3"
 
 
+# ---- ./ path
+on_russ_dev  = False
+if on_russ_dev:
+    sys.path.insert( 1, f"{src_root}/_projects/stuffdb" )
 
 
+    sys.path.insert( 1, f"./libs" )   # for installation off dev machines
+    sys.path.insert( 1, f"./data_dict_src" )   # for installation off dev machines
+    sys.path.insert( 1, f"./sql" )   # for installation off dev machines
+    sys.path.insert( 1, f"./py_helpers" )   # for installation off dev machines
+
+
+# fix this for linux derive from file
+src_root   =  r"D:\russ\0000\python00\python3"
+
+
+if on_russ_dev:
 # ---- only on russ's computers
-    # sys.path.insert( 1, f"{src_root}/_projects/rshlib" )
+    sys.path.insert( 1, f"{src_root}/_projects/rshlib" )
 
-    # sys.path.insert( 1, f"{src_root}/_projects/rshlib/app_services" )
-    # sys.path.insert( 1, f"{src_root}/_projects/rshlib/rshlib_qt/" )
-    # sys.path.insert( 1, f"{src_root}/_projects/rshlib/in_spect" )
+    sys.path.insert( 1, f"{src_root}/_projects/rshlib/app_services" )
+    sys.path.insert( 1, f"{src_root}/_projects/rshlib/rshlib_qt/" )
+    sys.path.insert( 1, f"{src_root}/_projects/rshlib/in_spect" )
 
-    # sys.path.insert( 1, f"{src_root}/_examples" )
+    sys.path.insert( 1, f"{src_root}/_examples" )
 
-    # sys.path.insert( 1, f"{src_root}/_projects/stuffdb" )
-    # sys.path.insert( 1, f"{src_root}/_projects/stuffdb/py_helpers" )
-    # sys.path.insert( 1, f"{src_root}/_projects/stuffdb/data_dict_src" )
-    # sys.path.insert( 1, f"{src_root}/_projects/stuffdb/sql" )
+    sys.path.insert( 1, f"{src_root}/_projects/stuffdb" )
+    sys.path.insert( 1, f"{src_root}/_projects/stuffdb/py_helpers" )
+    sys.path.insert( 1, f"{src_root}/_projects/stuffdb/data_dict_src" )
+    sys.path.insert( 1, f"{src_root}/_projects/stuffdb/sql" )
 
-    # sys.path.insert( 1, f"{src_root}/_projects/qt5_by_example" )
-    # sys.path.insert( 1, f"{src_root}/_projects/qt5_by_example/info_about_src" )
+    sys.path.insert( 1, f"{src_root}/_projects/qt5_by_example" )
+    sys.path.insert( 1, f"{src_root}/_projects/qt5_by_example/info_about_src" )
 
-    # sys.path.insert( 1, f"{src_root}/_projects/stuffdb" )
+    sys.path.insert( 1, f"{src_root}/_projects/stuffdb" )
 
 
 
@@ -139,7 +154,7 @@ else:
 
 if VERBOSE >= 20:
     print( "your path has been adjusted for theProf Mint "
-           f"\n    from {__file__}" )
+           "\n    from /mnt/WIN_D/Russ/0000/python00/python3/_projects/stuffdb/adjust_path.py" )
 
 if VERBOSE >= 20:
     print( "    path now:" )

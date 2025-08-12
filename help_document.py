@@ -1074,6 +1074,8 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         widget.setPlaceholderText("Enter search text")
         search_layout.addWidget( widget,   )
 
+        self.text_edit_ext_obj.set_search_line_edit( search_line_edit )
+
         # ---- up down Buttons
         widget              = QPushButton("Down")
         down_button         = widget

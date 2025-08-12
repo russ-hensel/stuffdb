@@ -141,6 +141,7 @@ class TextEditExt( ):
         self.prior_text       = ""
         self.last_position    = 0
         self.idle_exe         = IdleExe()
+        self.search_line_edit  = None    # set later
 
         msg   = ( "------------------------ monkey_patch_here reexamine this--------------------------" )
         logging.error( msg )
@@ -161,6 +162,14 @@ class TextEditExt( ):
             # Example function to be called from context menu
             msg   = ("Foo action triggered!")
             print( msg )
+
+
+    # ------------------------------------------
+    def set_search_line_edit(self, search_line_edit ):
+        """
+
+        """
+        self.search_line_edit  = search_line_edit
 
 
     # ------------------------------------------
@@ -380,7 +389,7 @@ class TextEditExt( ):
         """
         what it says
         """
-        widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        widget.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
         widget.customContextMenuRequested.connect( self.show_context_menu )
         self.context_widget   = widget # for later use in menu
 
@@ -639,6 +648,35 @@ class TextEditExt( ):
         cursor.insertText( processed_text )
 
         return processed_text
+
+
+    # ------------------------
+    def ctrl_f_find ( self   ):
+        """
+
+        """
+        selected_text   = self.capture_selected_text()
+        text_edit       = self.text_edit
+        search_line_edit.setTtext( selected_text  )
+
+
+
+
+    def capture_selected_text(self):
+        """Capture the currently highlighted (selected) text
+        is this worth a function
+        """
+        cursor = self.text_edit.textCursor()
+        selected_text = cursor.selectedText()
+
+        if selected_text:
+            print(f"Captured highlighted text: '{selected_text}'")
+            # Call your function with the captured text
+            #self.foo(selected_text)
+        else:
+            print("No text is currently highlighted/selected")
+
+        return selected_text
 
     # ------------------------
     def cmd_exec( self   ):

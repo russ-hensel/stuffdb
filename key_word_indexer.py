@@ -84,7 +84,7 @@ KEY_WORD_SQL[ "tabs" ] = """SELECT
         FROM    tabs """
 
 # ---- end imports
-LOG_LEVEL  = 20
+LOG_LEVEL  = 50
 
 # ------------------------------------------
 class KeyWordIndexer(   ):

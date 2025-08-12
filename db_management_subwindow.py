@@ -123,10 +123,12 @@ ALL_TABLES  = [
                     "plant_key_word",
                     "planting",
                     "planting_text",
+                    "planting_event",
                     "planting_key_word",
                     "stuff",
                     "stuff_key_word",
                     "stuff_text",
+                    "stuff_event",
 
                             ]
 # dict   what is this

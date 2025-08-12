@@ -10,7 +10,7 @@ this is the code for the StuffDocument
 if __name__ == "__main__":
     #----- run the full app
     import main
-    main.main()
+
 # --------------------
 
 
@@ -100,6 +100,14 @@ LOG_LEVEL           = 20
 
 FIF                 = info_about.INFO_ABOUT.find_info_for
 WIDTH_MULP          = 10   # for some column widths, search
+
+IX_EVENT_ID         = 0 # many are magic convert to this
+IX_EVENT_STUFF_ID   = 2
+IX_EVENT_DATE       = 4
+IX_EVENT_DLR        = 5
+IX_EVENT_CMNT       = 6
+IX_EVENT_TYPE       = 7
+
 
 
 # ----------------------------------------
@@ -1103,13 +1111,14 @@ class StuffHistoryTab( base_document_tabs.HistoryTabBase   ):
         self.tab_name            = "StuffHistorylTab"
 
 # ------------------------------------
-class EventSqlTableModel(QSqlTableModel):
+class EventSqlTableModel( QSqlTableModel ):
     """
     from chat as a way to control editabllity and
     centering, is this a good idea
     what happened to column 1 stuff id
     """
     def __init__(self, parent=None, db=QSqlDatabase()):
+        """ """
         super().__init__(parent, db)
         # Specify multiple columns to make non-editable (e.g., columns 1 and 2)
         #self.non_editable_columns = { 0, 1, }  # Columns ..doe it have to be in init or is synamic ..
@@ -1134,13 +1143,20 @@ class EventSqlTableModel(QSqlTableModel):
         """
         col = index.column()
 
+        if False:
+            pass
         # Check role first
-        if role == Qt.DisplayRole:
-            # Handle display formatting for event_dt (column 2)
-            if col == 2:
+        elif role == Qt.DisplayRole:
+            if col == 4:  # match to code in veiw
                 value = super().data(index, Qt.EditRole)
                 if value is not None:
                     return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
+                return value  # Return raw value if None
+
+            if col == 5:  # match to code in veiw
+                value = super().data(index, Qt.EditRole)
+                if value is not None:
+                    return f"{value:.2f}"
                 return value  # Return raw value if None
 
         elif role == Qt.EditRole:
@@ -1201,6 +1217,7 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
     def _build_gui( self, ):
         """
         what it says, read
+        see parent some of this promoted ??
         """
         page                = self
 
@@ -1226,28 +1243,41 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
 
         ix_col = -1   # could make loop or even list comp
 
-        ix_col += 1
+        ix_col = 0
         model.setHeaderData( ix_col, Qt.Horizontal, "ID" )
         view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        view.setColumnHidden( ix_col, True )  # view or model
 
-        ix_col += 1
-        model.setHeaderData( ix_col, Qt.Horizontal, "Stuff ID" )
+        ix_col = 1
+        model.setHeaderData( ix_col, Qt.Horizontal, "ID_Old" )
         view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        view.setColumnHidden( ix_col, True )  # view or model
         #view.setColumnHidden( 1, True )  # view or model
 
-        ix_col += 1
-        model.setHeaderData( ix_col, Qt.Horizontal, "Date" )
+        ix_col  = 2
+        model.setHeaderData( ix_col, Qt.Horizontal, "Stuff_Id" )
+        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        # view.setColumnHidden( ix_col, True )  # view or model  # cmnt out for debug
+
+        ix_col  = 3
+        model.setHeaderData( ix_col, Qt.Horizontal, "Stuff_Id_old" )
+        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        view.setColumnHidden( ix_col, True )  # view or model
+
+        ix_col  = 4
+        model.setHeaderData( ix_col, Qt.Horizontal, "Event Date" )
         view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
 
-        ix_col += 1
+
+        ix_col  = 5
         model.setHeaderData( ix_col, Qt.Horizontal, "$ Amount" )
         view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
 
-        ix_col += 1
+        ix_col = 6
         model.setHeaderData( ix_col, Qt.Horizontal, "Comment" )
         view.setColumnWidth( ix_col, 300)  # Set  width in  pixels
 
-        ix_col += 1
+        ix_col = 7
         model.setHeaderData( ix_col, Qt.Horizontal, "Type" )
         view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
 
@@ -1281,17 +1311,15 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
     # ---------------------------------
     def _build_model( self, ):
         """
-
+        the usual model build
         """
-        #model              = qt_with_logging.QSqlTableModelWithLogging(  self, self.db    )
-        model              = EventSqlTableModel(  self, self.db    )
+        model              = EventSqlTableModel( self, self.db )
         #model              = QSqlTableModel(  self, self.db    )
         self.model         = model
 
         model.setTable( self.list_table_name )
         model.setEditStrategy( QSqlTableModel.OnManualSubmit )
         #model.non_editable_columns = {0, 1, }  # really only work on custom model
-
 
     # ---------------------------------------
     def select_by_id( self, id ):
@@ -1382,8 +1410,8 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
     def add_new_event(self):
         """Open dialog to add a new event and insert it into the model."""
         #dialog = StuffEventDialog(self)
-        dialog = stuff_document_edit.EditStuffEvents( self )  # the parent tab
-        model    = self.model
+        dialog      = stuff_document_edit.EditStuffEvents( self )  # the parent tab
+        model       = self.model
         # parent=None, edit_data=None ):
 
         if dialog.exec_() == QDialog.Accepted:
@@ -1394,23 +1422,23 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
             self.model.insertRow(row)
 
             # key
-            # Set data for each field
+            # ---- Set data
             #model.setData( model.index(row, 0), form_data["id"])
             a_id    = AppGlobal.key_gen.get_next_key( self.table_name )
-            model.setData( model.index(row, 0), a_id )
+            model.setData( model.index(row, IX_EVENT_ID ), a_id )
             old_non_editable                = model.non_editable_columns
             model.non_editable_columns  = { 99 } # beyond all columns
 
             debug_id  = self.current_id
             # model.setData( model.index(row, 1), form_data["stuff_id"])
-            model.setData( model.index(row, 1), self.current_id )
+            model.setData( model.index(row, IX_EVENT_STUFF_ID ), self.current_id )
 
             model.non_editable_columns  = old_non_editable
 
-            model.setData( model.index(row, 2), form_data["event_dt"])
-            model.setData( model.index(row, 3), form_data["dlr"])
-            model.setData( model.index(row, 4), form_data["cmnt"])
-            model.setData( model.index(row, 5), form_data["type"])
+            model.setData( model.index(row, IX_EVENT_DATE ), form_data["event_dt"])
+            model.setData( model.index(row, IX_EVENT_DLR  ), form_data["dlr"])
+            model.setData( model.index(row, IX_EVENT_CMNT ), form_data["cmnt"])
+            model.setData( model.index(row, IX_EVENT_TYPE ), form_data["type"])
 
     #------------------------
     def get_selected_row_data(self):
@@ -1427,21 +1455,20 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
         model_row = indexes[0].row()
 
 
-        a_timestamp = self.model.data(self.model.index(0, 2), Qt.EditRole)
+        a_timestamp = self.model.data(self.model.index(0, 4), Qt.EditRole)
         print(f"Raw timestamp: {a_timestamp = }")
-
 
         # Extract data from the row
         data = {
             "id":        model.data( model.index( model_row, 0)),
-            "stuff_id":  model.data( model.index( model_row, 1)),
+            "stuff_id":  model.data( model.index( model_row, 2)),
 
             # "event_dt":  model.data( model.index( model_row, 2)),
             "event_dt":  a_timestamp,
 
-            "dlr":       model.data( model.index( model_row, 3)),
-            "cmnt":      model.data( model.index( model_row, 4)),
-            "type":      model.data( model.index( model_row, 5))
+            "dlr":       model.data( model.index( model_row, 5)),
+            "cmnt":      model.data( model.index( model_row, 6)),
+            "type":      model.data( model.index( model_row, 7))
         }
 
         return (model_row, data)
@@ -1469,11 +1496,11 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
 
             # Update the row with the new data
             model.setData( model.index(row, 0), form_data["id"])
-            model.setData( model.index(row, 1), form_data["stuff_id"])
-            model.setData( model.index(row, 2), form_data["event_dt"])
-            model.setData( model.index(row, 3), form_data["dlr"])
-            model.setData( model.index(row, 4), form_data["cmnt"])
-            model.setData( model.index(row, 5), form_data["type"])
+            model.setData( model.index(row, 2), form_data["stuff_id"])
+            model.setData( model.index(row, 4), form_data["event_dt"])
+            model.setData( model.index(row, 5), form_data["dlr"])
+            model.setData( model.index(row, 6), form_data["cmnt"])
+            model.setData( model.index(row, 7), form_data["type"])
 
     # ----------------------------------
     def delete_selected_event(self):
