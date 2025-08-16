@@ -14,7 +14,7 @@ cd /mnt/WIN_D/for_github/stuffdb
 
 # Run the Python program -- with mode argument
 #python main.py  mode_github_example_code_on_theprof
-python main.py  mode_russ2025_on_theprof
+python main.py  mode_github
 # Deactivate the conda environment
 conda deactivate
 

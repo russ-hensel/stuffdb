@@ -147,18 +147,9 @@ class ParmsTemp( ):
 
         # think for qt4_by_example not stuff
         self.db_file_name      = ":memory:"
+        self.db_file_name      = "/tmp/ramdisk/russ2025/russ2025.db"
 
-        "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db",
-        self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/build_me.db"
-        self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db"
-        self.db_file_name      = "/tmp/ramdisk/temp.db"
-        self.db_file_name      = "/tmp/ramdisk/temp2.db"
-        self.db_file_name      = "/tmp/ramdisk/mode_import_june.db"
-        self.db_file_name      = "/tmp/ramdisk/help_merge/help_merge.db"
-        self.db_file_name      = "/tmp/ramdisk/ramdisk.db"
-        self.db_file_name      = "/tmp/ramdisk/aug.db"
-
-        self.idle_venv     = "py_12_misc"   # idle will open in this python venv
+        self.idle_venv          = "py_12_misc"   # idle will open in this python venv
             # path leading to all docs and help
 
         #self.help_file       =  "http://www.opencircuits.com/Python_Smart_ClipBoard"
@@ -347,11 +338,9 @@ def create_if_needed_disabled( ):
 #     if not PARAMETERS:
 
 #           print( "creating global parameters.PARAMETERS")
-#           PARAMETERS    = Parameters()
+#           PARAMETERS    = Parameters(
 
-# # --------------------
 
-# create_if_needed()
 
 
 # =================== eof ==============================

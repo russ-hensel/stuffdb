@@ -444,7 +444,7 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         query_builder                   = qt_sql_query.QueryBuilder( query, print_it = False, )
 
         kw_table_name                   = "platning_key_words"
-        column_list                     = [ "id", "id_old", "name", "add_kw", "bed",       ]
+        column_list                     = [ "id", "id_old", "name", "add_kw", "bed_id",       ]
 
         a_key_word_processor            = key_words.KeyWords( kw_table_name, AppGlobal.qsql_db_access.db )
         query_builder.table_name        = parent_document.detail_table_name

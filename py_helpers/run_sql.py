@@ -17,6 +17,99 @@ from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 #-------------------------------
 
 # ----------------------------------------
+class KeyGen(   ):
+    """
+    runs sql when passed a dict -- no under construction
+
+    outpur to ?? a file
+    """
+    def __init__(self, db_file_name ):
+        """
+        the usual
+            will assume sql lite for now
+
+
+
+        """
+        self.db_file_name    = db_file_name
+
+
+# ---- eof
+
+
+
+    # --------------------------------
+    def init_db( self, ):
+        """
+        why not just get_connection
+
+        print( "Channel Subwindow init_db" )
+        self.db = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type )
+        self.db.setDatabaseName(            AppGlobal.parameters.db_fn )
+        if not self.db.open():
+            QMessageBox.critical( None, "Database Error", self.db.lastError().text())
+
+        db = AppGlobal.qsql_db_access.db
+        xxxAppGlobal.db    = self.db   # globla avail
+        db appears to be the connection
+        russ is still confused try using AppGlobal.qsql_db_access.db   = a_qsql_db_access.db
+        """
+
+        # debug_msg   = ( "QsqlDbAccess  init_db()" )
+        # logging.log( LOG_LEVEL,  debug_msg, )
+
+        db_file_name    = self.db_file_name
+        db_type         = "QSQLITE"
+        self.db         = QSqlDatabase.addDatabase( db_type  )
+        self.db.setDatabaseName( db_file_name   )
+
+        if not self.db.open():
+            msg    = f"Database Error: {self.db.lastError().databaseText()} {db_file_name =} "
+            print( msg, )
+            # QMessageBox.critical(
+            #     None,
+            #     "databasenot open - Error!", msg
+            #     )
+
+        connection_name = self.db.connectionName()
+        debug_msg     = ( f"{connection_name = }")
+        print(  debug_msg, )
+
+        #
+        """
+        self.optimize_1()
+        # # ia_qt.q_sql_database( self.db,
+        #                               msg           = "in init_db()",
+        #                               include_dir    = False) )
+        """
+
+
+        sql     = """INSERT INTO book_club (
+                name,
+                frequency  )
+                VALUES (?, ? )
+            """
+
+            query.prepare( sql )
+            query.addBindValue( name )
+            query.addBindValue( frequency )
+
+        # !! do we ever execute
+
+    #-----------------------------------------------
+    def delete_data( self ):
+        """
+
+        """
+        print_func_header( "delete_data()  not implemented" )
+        self.append_msg( tab_base.DONE_MSG )
+
+
+
+
+
+
+# ----------------------------------------
 class RunSql(   ):
     """
     runs sql when passed a dict

@@ -59,17 +59,50 @@ class Parameters( ):
         if you set the mode from the command line you will not
         get here"""
 
+        #self.mode_temp_db_in_ram()
 
+        #self.mode_new_db()
+        #self.mode_github()
+        #self.mode_python_ex_on_theprof()
+        #self.mode_imported_on_theprof()
+        #self.mode_build_me()
+
+        # self.mode_ramdisk_temp3()
+
+        # self.tweak_test_add_pictures()
+
+        #self.mode_theprof_russ_2025()
 
         # ---- russ_2025
-        self.mode_russ_2025_hd()  # may be hidden
-        self.mode_russ_2025_ram()
+        self.mode_russ_2025_hd()
+        #self.mode_russ_2025_ram()
         #self.mode_github()
 
 
+        #self.mode_aug_ramdisk_on_theprof()
 
 
+        #self.mode_imported_on_theprof()
 
+        #self.mode_builddb_on_theprof()
+
+        #self.mode_russ_on_theprof()
+        #self.mode_helpdb_on_theprof()
+
+        # self.mode_temp_db_in_ram()
+        # self.mode_add_real_pictures()
+
+        #self.mode_russ_on_smithers()
+        #self.new_user_mode()
+        #self.millhouse_1_mode()
+
+        # two of my computers
+        #self.mode_millhouse_mint()
+        #self.mode_theprof_mint()
+        #self.russ_1_mode()
+
+        # --- add on for testing, use as desired edit mode for your needs
+        #self.plus_test_mode()
 
     # -------
     def mode_new_user( self ):
@@ -84,6 +117,31 @@ class Parameters( ):
             # the type of database, so far we only support SQLite
         self.db_file_name       = "./data/python_ex.db"
 
+   # -------
+    def mode_import_june( self ):
+        """
+        a mode for testing of pictures with the new build_me database
+        """
+        self.mode               = "mode_import_june"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/mode_import_june.db"
+        self.db_file_name       = "/tmp/ramdisk/mode_import_june.db"
+#
+        # # ---- pictures
+        # self.picture_browse         = "/mnt/WIN_D/temp_photo/source"
+        #     # browsing starts from here see PictureDocument
+
+        # # picture to use when a valid picture is not found or does not exist
+        # #self.pic_nf_file_name       = "./misc/404.png"
+
+        # self.picture_db_root        = "/mnt/WIN_D/temp_photo/dest"
+        #     # all pictures once in the db should be under this directory
+
+        # self.picture_db_sub         = "/99"
+        #     # subdir for above used when adding new pictures
 
     # -------
     def mode_russ_2025_ram( self ):
@@ -113,16 +171,13 @@ class Parameters( ):
         self.db_type            = "QSQLITE"
         self.db_file_name       = "./data/russ2025/russ2025.db"
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
-
-        self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
-
-        self.picture_db_sub     = "/99"
+  #                                '/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ/russ2025.db'
 
         self.logging_level      = logging.DEBUG   # ERROR
 
         self.icon               =  "./misc/db_red_on_yellow.png"
         self.icon               =  "./misc/db_green_on_black.png"
-        #self.icon               =  "./misc/db_red_on_black.png"
+        self.icon               =  "./misc/db_red_on_black.png"
 
 
     # -------
@@ -143,6 +198,468 @@ class Parameters( ):
         # self.logging_level      = logging.DEBUG   # ERROR
 
         self.icon               =  "./misc/db_red_on_black.png"
+
+   # -------
+    def mode_ram_merge_help( self ):
+        """
+         this will bee the new russ2025
+        """
+        self.mode               = "mode_ram_merge_help"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/tmp/ramdisk/help_merge/help_merge.db"
+
+
+   # -------
+    def mode_merge_help_temphide( self ):
+        """
+         this will bee the new russ2025
+        """
+        self.mode               = "mode_merge_help"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/help_merge/help_merge.db"
+
+   # -------
+    def mode_theprof_russ_2025( self ):
+        """
+         this will bee the new russ2025
+        """
+        self.mode               = "mode_russ_2025"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ/russ2025.db"
+        self.db_file_name       = r"D:\russ\0000\python00\python3\_projects\stuffdb\data\russ\russ2025.db"
+
+   # -------
+    def mode_russ_2025( self ):
+        """
+         this will bee the new russ2025
+        """
+        self.mode               = "mode_russ_2025"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ/russ2025.db"
+
+    # ---- ---->> Methods:  one for each mode
+    # -------
+    def mode_ramdisk_temp3( self ):
+        """
+        /tmp/ramdisk/temp2.db
+        """
+        self.mode               = "mode_ramdisk_temp2"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/tmp/ramdisk/temp3.db"
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
+                # self.picture_db_root    = "/mnt/WIN_D/PhotoDB/" my real pics
+        self.picture_db_sub     = "/99"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        self.logging_level      = logging.DEBUG   # ERROR
+
+        # control initial size and position with:
+        self.qt_width           = 1400
+        self.qt_height          = 800
+        self.qt_xpos            = 50
+        self.qt_ypos            = 50
+
+
+    # -------
+    def mode_new_db( self ):
+        """
+        make directories the real pictures
+        but not the new pictures for testing
+        """
+        self.mode               = "mode_new_db"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support SQLite
+
+        # use full name if calling form a sub-directory of the project at least for now
+        #self.db_file_name      = ":memory:"
+        self.db_file_name       = "./data/new.db"   #  = "sample.db"   =  ":memory:"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/new.db"
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/99"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        self.logging_level      = logging.DEBUG   # ERROR
+
+
+    # -------
+    def tweak_test_add_pictures( self ):
+        """
+        make directories the real pictures
+        but not the new pictures for testing
+        """
+        self.mode               =  self.mode  + " + tweak_test_add_pictures"
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo/dest"
+
+
+
+
+        self.picture_db_sub     = ""
+        self.picture_db_sub     = "/Alaska"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo/source"
+
+
+    # -------
+    def mode_add_real_pictures( self ):
+        """
+        make directories the real pictures
+        but not the new pictures for testing
+        """
+        self.mode               =  self.mode  + "mode_add_real_pictures"
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+
+        self.picture_db_sub     = "/test_delete add real"
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+
+
+    # -------
+    def mode_builddb_on_theprof( self ):
+        """
+        use with full path to db so code from sub dirs will work
+        """
+        self.mode               = "mode_builddb_on_theprof"
+
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/test_delete builddb "
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support SQLite
+
+        self.db_file_name       = "./data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
+        #self.db_file_name       = "./data/python_ex.db"
+        #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
+
+        self.logging_level          = logging.INFO
+        self.logging_level          = logging.DEBUG
+
+    # -------
+    def mode_russ2025_on_theprof( self ):
+        """
+        a mode for the help info while still in dev
+        later will export data then re-import and
+        perhaps re-key
+        """
+        self.mode               = "mode_russ2025_on_theprof"
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ/russ2025.db"
+
+        self.icon               =  "./misc/db_red_on_black.png"
+
+        self.logging_level          = logging.INFO
+        self.logging_level          = logging.DEBUG
+
+    # -------
+    def mode_aug_ramdisk_on_theprof( self ):
+        """
+        a mode for the help info while still in dev
+        later will export data then re-import and
+        perhaps re-key
+        """
+        self.mode               = "mode_aug_ramdisk_on_theprof"
+
+        # ---- temp pictures
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- really the pictures
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
+                # self.picture_db_root    = "/mnt/WIN_D/PhotoDB/" my real pics
+        self.picture_db_sub     = "/99"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/tmp/ramdisk/aug.db"
+        #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
+
+        self.logging_level      = logging.INFO
+        self.logging_level      = logging.DEBUG
+
+    # -------
+    def mode_ramdisk_on_theprof( self ):
+        """
+        a mode for the help info while still in dev
+        later will export data then re-import and
+        perhaps re-key
+        """
+        self.mode               = "mode_ramdisk_on_theprof"
+
+
+        # ---- temp pictures
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- really the pictures
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
+                # self.picture_db_root    = "/mnt/WIN_D/PhotoDB/" my real pics
+        self.picture_db_sub     = "/99"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+
+        self.db_file_name       = "/tmp/ramdisk/ramdisk.db"
+        #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
+
+        self.logging_level      = logging.INFO
+        self.logging_level      = logging.DEBUG
+
+
+
+    # -------
+    def mode_helpdb_on_theprof( self ):
+        """
+        a mode for the help info while still in dev
+        later will export data then re-import and
+        perhaps re-key
+        """
+        self.mode               = "mode_helpdb_on_theprof"
+        # but do they use the same units ?
+        # self.qt_width           = 1200
+        # self.qt_height          = 700    # 700 most of win height
+        # self.qt_xpos            = 50
+        # self.qt_ypos            = 50
+
+        # # sizes for the wat-inspector in qt
+        # self.wat_qt_width       = 1300
+        # self.wat_qt_height      = 800
+        # self.wat_qt_xpos        = 10
+        # self.wat_qt_ypos        = 10
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/test_delete helpdb on"
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support SQLite
+
+        self.db_file_name       = "./data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
+        self.db_file_name       = "./data/python_ex.db"
+        #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
+
+        self.logging_level          = logging.INFO
+        self.logging_level          = logging.DEBUG
+
+    # -------
+    def mode_python_ex_on_theprof( self ):
+        """
+        a mode for the help info while still in dev
+        later will export data then re-import and
+        perhaps re-key
+        """
+        self.mode               = "mode_python_ex_on_theprof"
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/test_deleteon the prof "
+        self.picture_db_sub     = "dest/99"    # no leading /
+
+        # self.startup_function   = startup_functions.say_hello
+        # self.startup_function   = startup_functions.open_help
+                  # /mnt/WIN_D/temp_photo/dest/99
+
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support SQLite
+
+        self.db_file_name       = "./data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
+        #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
+        #self.db_file_name       = "./data/python_ex.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
+
+    # -------
+    def mode_github_example_code_on_theprof( self ):
+        """
+        a mode for the help info while still in dev
+        later will export data then re-import and
+        perhaps re key
+        """
+        self.mode               = "mode_github_example_code_on_theprof"
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/test_delete git"
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support SQLite
+
+        self.db_file_name       = "./data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
+        #/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db
+        #self.db_file_name       = "./data/python_ex.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
+        self.icon               =  "./misc/db_red_on_black.png"
+
+    # -------
+    def mode_imported_on_theprof( self ):
+        """
+        using one of the imported db perhaps on ram disk
+        """
+        self.mode               = "mode_imported_on_theprof"
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+        self.picture_db_sub     = "/test_delete imported"
+        self.picture_db_sub     = "/99/new_test"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support SQLite
+
+        self.db_file_name       = "./data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_help_db/helpdb.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/sept_35.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db"
+
+    # -------
+    def mode_russ_on_theprof( self ):
+        """
+        what it say
+        """
+        self.mode               = "mode_russ_on_theprof"
+        # but do they use the same units ?
+        self.qt_width           = 1200
+        self.qt_height          = 700    # 700 most of win height
+        self.qt_xpos            = 50
+        self.qt_ypos            = 50
+
+        # # control initial size and position with:
+        # self.qt_width           = 1200
+        # self.qt_height          = 500
+        # self.qt_xpos            = 50
+        # self.qt_ypos            = 50
+
+        # sizes for the wat-inspector in qt
+        self.wat_qt_width       = 1300
+        self.wat_qt_height      = 800
+        self.wat_qt_xpos        = 10
+        self.wat_qt_ypos        = 10
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+
+        self.picture_db_sub     = "/test_delete russ on "
+        self.picture_db_sub     = "/99/new_test"
+
+    # -------
+    def mode_russ_on_smithers( self ):
+        """
+        what it says
+        """
+        self.mode               = "mode_russ_on_theprof"
+        # but do they use the same units ?
+        self.qt_width           = 1200
+        self.qt_height          = 700    # 700 most of win height
+        self.qt_xpos            = 50
+        self.qt_ypos            = 50
+
+        # # control initial size and position with:
+        # self.qt_width           = 1200
+        # self.qt_height          = 500
+        # self.qt_xpos            = 50
+        # self.qt_ypos            = 50
+
+        # sizes for the wat-inspector in qt
+        self.wat_qt_width       = 1300
+        self.wat_qt_height      = 800
+        self.wat_qt_xpos        = 10
+        self.wat_qt_ypos        = 10
+
+        self.picture_db_root    = "/mnt/WIN_D/temp_photo"
+            # all pictures should be under this directory
+        # ---- file  and path names
+        self.picture_browse     = "/mnt/WIN_D/temp_photo_source"
+
+        self.picture_db_sub     = "/test_delete smithers"
+        self.picture_db_sub     = "/99/new_test"
+
+        self.db_file_name              = "./data/appdb.db"
+        self.db_file_name              = "./data/sept_35.db"
+
+    # -------
+    def mode_test_addon_ram_disk_db( self ):
+        """
+        what it says
+        """
+        self.mode               += " + mode_test_addon_in_memory_db"
+
+        self.db_type                = "QSQLITE"
+        self.db_file_name      = "/tmp/ramdisk/ramdisk.db"
 
     # -------
     def running_on_tweaks(self,  ):

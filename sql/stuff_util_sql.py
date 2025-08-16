@@ -246,12 +246,12 @@ def init_key_gen( db, table_name, init_value   ):
 
     query           = QSqlQuery( db )
 
-    sql             = "DELETE FROM key_gen WHERE table_name = '{table_name}'"
+    sql             = f"DELETE FROM key_gen WHERE table_name = '{table_name}'"
 
     query_ok        =  qsql_utils.query_exec_error_check(
                  query = query, sql = sql, raise_except = True )
 
-    print( "old value, if any, deleted" )
+    print( "old value, if any, deleted seems not to work, do manually" )
 
 
 
@@ -997,11 +997,41 @@ def  do_it( use_temp ):
 
 # init_as_module( use_temp = True )   # not quite sure why here and should be
 
+def insert_chosen_value( ):
+    """copied from stuffdb aug 2025  """
+    #>>Py ---- Insert a choosen value # ok aug2025----
+
+# import adjust_path
+# import stuff_util_sql   as su
+# import data_dict
+
+# ---- setup
+
+    create_connection( use_temp = True )
+    data_dict.build_it()
+
+    db              = DB_CONNECTION
+    table_name      = "test_table"
+    table_name      = "plant"
+
+    # ---- run command  -- read before running
+
+    print( "ready set go " )
+
+    init_key_gen( db, table_name, 50_000 )
+
+    print_record_count( db,   table_name = "key_gen" )
+
+
 
 # --------------------
 if __name__ == "__main__":
+    """
+    use from stuffdb or here to debug
+    """
+    # do_it( use_temp = True )
+    insert_chosen_value()
 
-    do_it( use_temp = True )
 
 
 # # --------------------
