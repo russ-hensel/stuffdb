@@ -136,7 +136,7 @@ class ParmsTemp( ):
         self.picture_db_sub         = "/test_delete"
             # subdir for above used when adding new pictures
 
-        # ---- .... db type and location of the db file
+        # ---- db type and location of the db file
         self.db_type                = "QSQLITE"
             # the type of database, so far we only support SQLite
 
@@ -148,6 +148,10 @@ class ParmsTemp( ):
         # think for qt4_by_example not stuff
         self.db_file_name      = ":memory:"
         self.db_file_name      = "/tmp/ramdisk/russ2025/russ2025.db"
+        self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
+
+
+
 
         self.idle_venv          = "py_12_misc"   # idle will open in this python venv
             # path leading to all docs and help

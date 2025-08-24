@@ -59,20 +59,16 @@ from PyQt5.QtWidgets import (QAction,
                              QWidget)
 
 # ---- imports local
-#import  document_maker
+
 
 import data_dict
 import gui_qt_ext
 import string_util
-import text_edit_ext
 from   app_global import AppGlobal
-
 
 import base_document_tabs
 import custom_widgets as cw
 import data_manager
-#import example_code  # against code in tex
-#import  ia_qt
 import key_words
 import parameters
 import qt_sql_query
@@ -82,7 +78,7 @@ SYSTEM_LIST     = parameters.PARAMETERS.systems_list
 
 logger          = logging.getLogger( )
 
-LOG_LEVEL       = 5   # higher is more
+LOG_LEVEL       = 5   # higher is more logging
 
 # ----------------------------------------
 class HelpDocument( base_document_tabs.DocumentBase ):
@@ -188,12 +184,6 @@ class HelpDocument( base_document_tabs.DocumentBase ):
 
         if index == self.criteria_tab_index:
             self.criteria_tab.key_words_widget.setFocus()
-        # old_index                = self.current_tab_index
-        # self.current_tab_index   = index
-        # #self.tab_page_info()
-        # if old_index == 0 and index != 0:  # !=0 happens at construct
-        #     self.criteria_tab.criteria_select_if( )
-
 
     # ---- sub window interactions ---------------------------------------
      # ------------------------------------------
@@ -251,8 +241,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget                    = cw.CQHistoryComboBox(
                                        field_name = "key_words" )
 
-        # widget                    = cw.CQLineEdit(
-        #                                field_name = "key_words" )
         self.key_words_widget     = widget   # not this one at least not yet
         # self.key_word_widget        = None      # set to value in gui if used
         widget.setPlaceholderText( "key_words"  )
@@ -260,12 +248,10 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget )
 
-
         # ----id
         widget                = QLabel( "ID" )
         grid_layout.new_row()
         grid_layout.addWidget( widget )
-
 
         widget                  = cw.CQLineEdit(
                                              field_name = "table_id" )
@@ -285,8 +271,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         # widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget, )    # columnspan = 3 )
 
-
-
         # ---- grid_layout.new_row()
         grid_layout.new_row()
         widget  = QLabel( "Title (like)" )
@@ -303,8 +287,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget          = QLabel( "System" )
         grid_layout.addWidget( widget  )
 
-        widget                  = cw.CQComboBox(
-                                        field_name = "system" )
+        widget                  = cw.CQComboBox( field_name = "system" )
         self.critera_widget_list.append( widget )
         widget.setMaxVisibleItems( 25 )
         grid_layout.addWidget( widget )
@@ -331,7 +314,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget.addItem("name - ignore case")
         widget.addItem('id')
         widget.addItem('id_old')
-        # widget.addItem('Title??')
 
         debug_msg  = ( f"{self.tab_name} build_tab build criteria change put in as marker ")
         logging.log( LOG_LEVEL,  debug_msg, )
@@ -351,8 +333,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         widget.addItem('Ascending')
         widget.addItem('Decending')
-        # widget.addItem('id')
-        # widget.addItem('Title??')
 
         #widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
         #grid_layout.new_row()  # because seems to be missing
@@ -367,13 +347,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget  = QLabel( "criteria_changed_widget" )
         self.criteria_changed_widget  = widget
         grid_layout.addWidget( widget )
-
-        # # ---- push up on page still needs adjust
-        # widget   = QSpacerItem( 350, 110, QSizePolicy.Expanding, QSizePolicy.Minimum )
-        #     # width, height..... pixels
-        # grid_layout.new_row()
-        # # grid_layout.place( widget )
-        # grid_layout.addItem( widget, grid_layout.ix_row, grid_layout.ix_col    )  # row column
 
         # ---- function_on_return( self )
         for i_widget in self.critera_widget_list:
@@ -474,14 +447,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
             #query_builder.add_to_where( add_where, where_dict )
             query_builder.add_to_where( add_where, [(  ":title",  f"%{title}%" ) ])
 
-        # ---- order by may need work
-
         # ---- order by
-
-        # widget.addItem('title - ignore case')
-        # widget.addItem('descr')
-        # widget.addItem('name')
-
 
         order_by   = criteria_dict[ "order_by" ]
 
@@ -504,8 +470,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
             print( "order by issue, getting default column ")
             column_name = "help_info.title"
 
-        # widget.addItem('Ascending')
-        # widget.addItem('Decending')
         order_by_dir   = criteria_dict[ "order_by_dir" ].lower( )
 
         debug_msg     = f"help_document >>>>>> {column_name = }  {order_by_dir = }"
@@ -559,14 +523,11 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         parent_window.tab_folder.setCurrentIndex(  tab_index )
         self.clear_criteria()
 
-
         self.key_words_widget.set_data( key_words )
 
         # mayb this maybe not
         #self.criteria_select_if()    # may need to select is changed
         self.criteria_select()
-
-
 
     # -----------------------------
     def search_me_old(self, criteria ):
@@ -602,23 +563,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         #self.criteria_select_if()    # may need to select is changed
         self.criteria_select()
 
-    # -----------------------------
-    def clear_criteria_promoted( self ):
-        """
-        What it says, read
-        extend
-        we should be able to generalize this
-        might make default in ancestor, overrid if desired
-        or pass a field name
-
-        !! use       get_criteria_widget  no self.key_words_widget
-
-        """
-        super().clear_criteria(   )
-        widget   = self.get_criteria_widget( "key_words" )
-        widget.setFocus()
-
-
 # ----------------------------------------
 class HelpListTab( base_document_tabs.ListTabBase  ):
 
@@ -628,8 +572,6 @@ class HelpListTab( base_document_tabs.ListTabBase  ):
         """
         super().__init__( parent_window )
 
-        #self.list_ix            = 5  # should track selected an item in detail
-            # needs work
         self.tab_name           = "HelpListTab"
 
         self._build_gui()
@@ -648,6 +590,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
         self.tab_name               = "HelpDetailTab"
         self.key_word_table_name    = "help_key_word"
+        self.snippet_manager        = None   # make right after edit
 
         # ---- post init
         self.post_init()
@@ -702,7 +645,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         What it says, read
                 tweaks    may need         widget.setReadOnly( True )
                 system and sub_system need to be editable combo
-                #---- system TO combo box
+                ##---- system TO combo box
                    and edit_field.setMaxVisibleItems( 25 )  # Number of rows shown in the popup
         for a grid# Row 1, Column 0, Span 1 row and 2 columns
 
@@ -716,12 +659,9 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( widget, ix_row, ix_col, row_span, col_span )
 
 
-        """
-
-        """
         What it says, read
                 tweaks    may need         widget.setReadOnly( True )
-                # ---- system TO combo box
+                ##---- system TO combo box
                 for ix in range( 8 ):
                     widget   = QSpacerItem( 50, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
                     layout.addItem( widget, 0, ix  )  # row column
@@ -813,19 +753,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         self.data_manager.add_field( edit_field, is_key_word = True )
         layout.addWidget( edit_field, columnspan = 4 )
 
-        # ---- system deleted
-        # edit_field                  = cw.CQLineEdit(
-        #                                         parent         = None,
-        #                                         field_name     = "system",
-        #                                         db_type        = "VARCHAR(15)",
-        #                                         display_type   = "string",
-        #                                          )
-        # self.system_field     = edit_field
-        # edit_field.setPlaceholderText( "system" )
-        # # still validator / default func  None
-        # self.data_manager.add_field( edit_field, is_key_word = True )
-        # layout.addWidget( edit_field, columnspan = 1 )
-
         # ---- system
         edit_field                  = cw.CQComboBox(
                                                 parent         = None,
@@ -842,8 +769,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         edit_field.is_keep_prior_enabled        = True
         self.data_manager.add_field( edit_field, is_key_word = True )
         layout.addWidget( edit_field, columnspan = 1 )
-
-
 
         # ---- sub_system
         edit_field                  = cw.CQLineEdit(
@@ -917,8 +842,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         # ---- type
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "type",
-                                                              )
+                                                field_name     = "type", )
         self.type_field     = edit_field
         edit_field.setPlaceholderText( "type" )
         # still validator / default func  None
@@ -976,136 +900,78 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         data_manager    = self.text_data_manager
 
         # ---- TextEdit   needs to be defined at beginning with exte4nsion object
-        # and monkey patch
         edit_field          = cw.CQTextEdit(
                                     parent         = None,
                                     field_name     = "text_data",
                                                   )
-        text_entry_widget   = edit_field
+        text_edit_widget    = edit_field
         font                = QFont( * parameters.PARAMETERS.text_edit_font ) # ("Arial", 12)
         edit_field.setFont(font)
         self.text_data_field = edit_field    # may be used for editing
         edit_field.setPlaceholderText( "Some Long \n   text on a new line " )
         data_manager.add_field( edit_field, )
         text_layout.addWidget( edit_field, )  # what order row column
-        text_edit_ext_obj         = text_edit_ext.TextEditExt( AppGlobal.parameters, text_entry_widget)
-        self.text_edit_ext_obj    = text_edit_ext_obj
 
-        # tab                 = self
+        self.snippet_manager        = base_document_tabs.SnippetManager( edit_field )
+        text_edit_widget.set_stuffdb( AppGlobal.controller )
 
-        # tab_layout          = QGridLayout(tab)
-        #     # widget: The widget you want to add to the grid.
-        #     # row: The row number where the widget should appear (starting from 0).
-        #     # column: The column number where the widget should appear (starting from 0).
-        #     # rowSpan (optional): The number of rows the widget should span (default is 1).
-        #     # columnSpan (optional): The number of columns the widget should span (default is 1).
-        #     # alignment (optional): The ali
-        # # could have a button layout down one side ??
 
-        # ---- id
+        # ---- id really fro debug hide --- no data manager needs this
         widget          =  cw.CQLineEdit(
                                      parent         = None,
-                                     field_name     = "id",
-                                                )
+                                     field_name     = "id",    )
         self.id_field   = widget
         widget.setReadOnly( True )
 
         data_manager.add_field( widget, )
         button_layout.addWidget( widget, )
 
-        # label           = "Paste Clip"
-        # widget          = QPushButton( label )
-        # # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
-        # # widget.clicked.connect( connect_to )
-        # widget.clicked.connect( self.text_edit_ext_obj.paste_clipboard  )
-        # button_layout.addWidget( widget, )
-
-        # ---- template may not even need in self
-        print( "monkey_patch_here_please")
-        ddl_widget, ddl_button_widget  = self.text_edit_ext_obj.build_up_template_widgets()
+        # ---- snippets
+        ddl_widget, ddl_button_widget  = self.snippet_manager.make_widgets()
 
         button_layout.addWidget( ddl_widget  )
         button_layout.addWidget( ddl_button_widget  )
 
-        # # ---- copy line  copy ling without selecting
-        # label           = "!!Copy\nLine"
-        # widget = QPushButton( label )
-        # # connect_to  =  functools.partial( self.copy_line_of_text, text_entry_widget )
-        # # widget.clicked.connect( connect_to )
-        # button_layout.addWidget( widget, )
 
         # ---- Paste Prior
         label           = "Paste Prior"
         widget          = QPushButton( label )
-        widget.clicked.connect( self.text_edit_ext_obj.paste_cache )
+        widget.clicked.connect( text_edit_widget.paste_cache )
         button_layout.addWidget( widget, )
 
-        # ---- !!To_Smart
-        label           = "Cnv Hyper...tbd"
-        widget          = QPushButton( label )
-        # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        #widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
-        button_layout.addWidget( widget, )
-
-        # ---- !!To_Smart
-        label           = "To_Smart...tbd"
-        widget          = QPushButton( label )
-        # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        #widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
-        button_layout.addWidget( widget, )
+        # # ---- !!To_Smart
+        # label           = "Cnv Hyper...tbd"
+        # widget          = QPushButton( label )
+        # # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
+        # # widget.clicked.connect( connect_to )
+        # #widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
+        # button_layout.addWidget( widget, )
 
         # ---- Remove Lead/Trail"
         label           = "Remove Lead/Trail"
         widget          = QPushButton( label )
         # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
         # widget.clicked.connect( connect_to )
-        widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
+        #widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
         button_layout.addWidget( widget, )
 
         # ---- search text
         search_layout       = QHBoxLayout()
         text_layout.addLayout( search_layout )
-        # ix_row          -= 1
-        # ix_col          += 1
-        widget              = QLineEdit()
-        search_line_edit    = widget
-        widget.setPlaceholderText("Enter search text")
-        search_layout.addWidget( widget,   )
 
-        self.text_edit_ext_obj.set_search_line_edit( search_line_edit )
+        search_text_widget,  up_button,  dn_button  =  text_edit_widget.make_search_widgets(  )
 
-        # ---- up down Buttons
-        widget              = QPushButton("Down")
-        down_button         = widget
-        # connect below
-        connect_to      = functools.partial( self.text_edit_ext_obj.search_down, search_line_edit ,)
-                  #text_entry_widget  ) # entry_widget =.CQTextEdit(
-        down_button.clicked.connect( connect_to )
-        search_layout.addWidget( widget,  )
-
-        widget          = QPushButton("Up")
-        up_button       = widget
-        connect_to      = functools.partial( self.text_edit_ext_obj.search_up, search_line_edit ,)
-        up_button.clicked.connect( connect_to )
-        search_layout.addWidget( widget,   )
-
-        # # ---- qt_exec
-        # label           = "qt_exec"
-        # widget          = QPushButton( label )
-        # connect_to  =  functools.partial( text_edit_ext.qt_exec, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        # # # widget.clicked.connect( self.qt_exec )
-        # text_layout.addWidget( widget,  )
+        search_layout.addWidget( search_text_widget )
+        search_layout.addWidget( dn_button )
+        search_layout.addWidget( up_button )
 
         # ---- >>
         label       = "Go  >> ..."
         widget      = QPushButton( label )
         #connect_to  = functools.partial( text_edit_ext_obj.cmd_exec, text_entry_widget )
-        connect_to  = text_edit_ext_obj.cmd_exec
+        connect_to  = text_edit_widget.cmd_exec
         widget.clicked.connect( connect_to )
-        text_layout.addWidget ( widget,     )
+        text_layout.addWidget ( widget, )
 
     # ----------------------------
     def fetch_detail_rowpromoted( self,  a_id = None ):

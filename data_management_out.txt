@@ -1,0 +1,40 @@
+exploring at depth 1: /mnt/WIN_D/PhotoDB/14
+{'id': 13747, 'file': 'dscn2800.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn2800.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13748, 'file': 'dscn2802.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn2802.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13749, 'file': 'dscn2803.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn2803.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13750, 'file': 'dscn2804.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn2804.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13751, 'file': 'dscn2805.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn2805.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13752, 'file': 'dscn2806.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn2806.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13753, 'file': 'dscn2809.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn2809.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13754, 'file': 'dscn2815.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn2815.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13755, 'file': 'dscn2816.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn2816.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13756, 'file': 'dscn2818.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn2818.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13757, 'file': 'dscn2820.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn2820.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13758, 'file': 'dscn2821.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn2821.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13973, 'file': 'dscn3205.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn3205.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13972, 'file': 'dscn3207.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn3207.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13974, 'file': 'dscn3209.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn3209.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13975, 'file': 'dscn3212.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn3212.jpg /mnt/WIN_D/PhotoDB/
+{'id': 13976, 'file': 'dscn3213.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn3213.jpg /mnt/WIN_D/PhotoDB/
+{'id': 14092, 'file': 'dscn3215.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn3215.jpg /mnt/WIN_D/PhotoDB/
+{'id': 14093, 'file': 'dscn3218.jpg', 'sub_dir': '14'}
+1 record found for file f/mnt/WIN_D/PhotoDB/14/dscn3218.jpg /mnt/WIN_D/PhotoDB/
+error no record found for file f/mnt/WIN_D/PhotoDB/14/pspbrwse.jbf /mnt/WIN_D/PhotoDB/

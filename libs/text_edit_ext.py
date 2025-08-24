@@ -206,7 +206,6 @@ class TextEditExt( ):
             and even return its button ??
             ddl_widget,  ddl_button_widget  =    self.txt_....build_up_template_widgets
         """
-
         #self.text_edit_ext_obj.set_up_widget( widget )
         # ---- combo
         widget              = QComboBox()
@@ -242,7 +241,6 @@ class TextEditExt( ):
         #rint( "this is the text we need to paste")
         #rint( text )
         self.insert_text_at_cursor( text )
-
 
     #-----------------------------------
     def smart_paste_clipboard( self, ):

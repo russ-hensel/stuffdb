@@ -63,11 +63,8 @@ class Parameters( ):
 
         # ---- russ_2025
         self.mode_russ_2025_hd()  # may be hidden
-        self.mode_russ_2025_ram()
+        # self.mode_russ_2025_ram()
         #self.mode_github()
-
-
-
 
 
 
@@ -115,8 +112,14 @@ class Parameters( ):
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
 
         self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
+        ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
+
 
         self.picture_db_sub     = "/99"
+        self.picture_db_sub     = "/test_delete"
+        self.picture_db_sub     = "/25"
+
+        self.picture_browse     = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
 
         self.logging_level      = logging.DEBUG   # ERROR
 
@@ -336,6 +339,9 @@ class Parameters( ):
                   # /mnt/WIN_D/temp_photo/dest/99
             # subdir for above used when adding new pictures
 
+        self.output_dir             = "./output"
+
+
         self.picture_editor         = "gimp-2.10"
 
         # ---- .... db type and location of the db file
@@ -388,7 +394,7 @@ class Parameters( ):
 
         # ---- templates  a bit odd to control left margin --
         # ---- Python template
-        self.text_snippets     = {}
+        self.text_snippets      = {}
         template_name           = "Python"
         template_text           = (
         """

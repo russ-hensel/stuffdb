@@ -14,7 +14,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver .077: 2025 08 14.01"
+__version__   = "Ver .078: 2025 08 19.01"
 
 # ---- imports
 import datetime
@@ -106,7 +106,10 @@ def delete_file( file_name ):
 
 
     # else:
-    #     print( f"file already gone  {file_name}                ")
+    #     print( f"file already gone  {file_name}
+
+
+
 
 class StuffApplication(QtWidgets.QApplication):
     """
@@ -166,6 +169,9 @@ class App( ):
         #self.q_app              = StuffApplication( []  )
 
         AppGlobal.q_app         = self.q_app
+        self.app_global         = AppGlobal
+        #stuff_db_app_global.logger( )
+
         self.assign_icon( )
 
         self.parameters         = parameters.Parameters( )
@@ -267,6 +273,18 @@ class App( ):
         my_logging   = app_logging.APP_LOGGING
         my_logging.os_open_log_file
         return
+
+    # ----------------------------------------------
+    def get_stuff_text_edit_extxxxx( self, text_edit  ):
+        """
+        would be nice if the object was all static  -- but not
+        could move state back into edit or its mixin
+        or maybe already there??
+
+        """
+        # a_filename = self.starting_dir  + os.path.sep + "parameters.py"
+        an_ext     = StuffTextEditExt( text_edit_)
+        return an_ext
 
     # ----------------------------------------------
     def os_open_parmfile( self,  ):

@@ -11,7 +11,7 @@ Most of the code for the Picture Document
 if __name__ == "__main__":
     #----- run the full app
     import main
-    main.main()
+
 # --------------------
 
 # ---- imports
@@ -24,6 +24,7 @@ import logging
 import os
 import shutil
 from   functools import partial
+from   datetime import datetime
 #import functools
 #import sqlite3
 #import sys
@@ -113,6 +114,7 @@ import data_manager
 LOG_LEVEL   = 30    # higher is more
 logger      = logging.getLogger( )
 PARAMETERS  = parameters.PARAMETERS
+
 
 
 # ----------------------------------------
@@ -317,9 +319,9 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget                  = cw.CQLineEdit(
                                                 field_name = "key_words"   )
         self.key_words_field    = widget
+        self.key_words_widget   = widget   # seems dup but see base
         self.critera_widget_list.append( widget )
         grid_layout.addWidget( widget, columnspan = 3 )
-
 
         # ----id
         widget                = QLabel( "ID" )
@@ -376,6 +378,10 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget.addItem('Any')
         widget.addItem('Yes')
         widget.addItem('No')
+
+        a_partial           = partial( widget.set_value, "Yes" )
+        widget.set_default  = a_partial
+
         grid_layout.addWidget( widget )
 
         # ---- file name like
@@ -439,9 +445,9 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         # ---- function_on_return( self )
         for i_widget in self.critera_widget_list:
-            i_widget.function_on_return     = self.criteria_select
             # add value changed to custom edits widget.textChanged.connect
             i_widget.function_on_changed    = ( lambda: self.criteria_changed( True ) )
+            i_widget.function_on_return     = self.criteria_select
 
     # -------------
     def criteria_select( self,     ):
@@ -1018,290 +1024,11 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
 
-
     #---------------------------------
     def _build_fields_old( self, layout ):
         """
-        What it says, read
-        self.sub_dir_field.  !! find file field need manual add
-
-
-        gen the code then tweak -- this now out of date some is auto
-
-        spacer code at the top
-
-            this not in this tab but far below
-                 form_id          = parent_window.id_field.get_raw_data()
-                 form_sub_dir     = parent_window.sub_dir_field.get_raw_data()
-
-           next in old code gen but may be removed
-                self.id_field            = edit_field
-                self.sub_dir_field       = edit_field
-
-
-        a_partial               = partial( self.set_value, PARAMETERS.picture_db_sub  )
-        edit_field.set_clear    = a_partial
-
+        deleted ver078
         """
-        width    = 200
-        for ix in range( layout.col_max ):  # layout.col_max
-            widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
-            layout.addItem( widget, 0, ix  )  # row column
-
-        # ---- code_gen: TableDict.to_build_form 2025_04_01 for photo -- begin table entries -----------------------
-
-        # ---- id
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id", )
-        self.id_field     = edit_field
-        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
-        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
-        edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
-        edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
-        edit_field.setReadOnly( True )
-        edit_field.setPlaceholderText( "id" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 1 )
-
-        # ---- id_old
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id_old", )
-        self.id_old_field     = edit_field
-        edit_field.setReadOnly( True )
-        edit_field.setPlaceholderText( "id_old" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 1 )
-
-        # ---- name
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "name",
-                                                is_keep_prior_enabled  = True )
-
-        self.name_field     = edit_field
-        edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "name" )
-        self.name_field     = edit_field
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- title
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "title",
-                                                is_keep_prior_enabled  = True )
-        self.title_field     = edit_field
-        #edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "title" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- descr
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "descr",
-                                                is_keep_prior_enabled  = True )
-        self.descr_field     = edit_field
-        edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "descr" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- add_kw
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "add_kw",
-                                                is_keep_prior_enabled  = True )
-        self.add_kw_field     = edit_field
-        edit_field.setPlaceholderText( "add_kw" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- cmnt
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "cmnt",
-                                                is_keep_prior_enabled  = True )
-        self.cmnt_field     = edit_field
-        edit_field.setPlaceholderText( "cmnt" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- sub_dir
-        edit_field              = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "sub_dir", )
-        self.sub_dir_field      = edit_field
-        edit_field.setPlaceholderText( "sub_dir" )
-
-        a_partial               = partial( edit_field.set_value, PARAMETERS.picture_db_sub  )
-        # should not need both but for debugging
-        edit_field.set_clear    = a_partial
-        edit_field.set_default  = a_partial
-
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- file
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "file", )
-        self.file_field     = edit_field
-        edit_field.setPlaceholderText( "file" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- camera
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "camera", )
-        self.camera_field     = edit_field
-        edit_field.setPlaceholderText( "camera" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- lens
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "lens", )
-        self.lens_field     = edit_field
-        edit_field.setPlaceholderText( "lens" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- f_stop
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "f_stop", )
-        self.f_stop_field     = edit_field
-        edit_field.setPlaceholderText( "f_stop" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- shutter
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "shutter", )
-        self.shutter_field     = edit_field
-        edit_field.setPlaceholderText( "shutter" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- type
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "type", )
-        self.type_field     = edit_field
-        edit_field.setPlaceholderText( "type" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- series
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "series", )
-        self.series_field     = edit_field
-        edit_field.setPlaceholderText( "series" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- author
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "author", )
-        self.author_field     = edit_field
-        edit_field.setPlaceholderText( "author" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- format
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "format", )
-        self.format_field     = edit_field
-        edit_field.setPlaceholderText( "format" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- inv_id
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "inv_id", )
-        self.inv_id_field     = edit_field
-        edit_field.setPlaceholderText( "inv_id" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- status
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "status", )
-        self.status_field     = edit_field
-        edit_field.setPlaceholderText( "status" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- c_name
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "c_name", )
-        self.c_name_field     = edit_field
-        edit_field.setPlaceholderText( "c_name" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- tag
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "tag", )
-        self.tag_field     = edit_field
-        edit_field.setPlaceholderText( "tag" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- old_inv_id
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "old_inv_id", )
-        self.old_inv_id_field     = edit_field
-        edit_field.setPlaceholderText( "old_inv_id" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- photo_url
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "photo_url", )
-        self.photo_url_field     = edit_field
-        edit_field.setPlaceholderText( "photo_url" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- copyright
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "copyright", )
-        self.copyright_field     = edit_field
-        edit_field.setPlaceholderText( "copyright" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- dt_enter
-        edit_field                  = cw.CQDateEdit(
-                                                parent         = None,
-                                                field_name     = "dt_enter", )
-        self.dt_enter_field     = edit_field
-        # edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_qdate
-        # edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_qdate
-        # edit_field.edit_to_rec_cnv        = edit_field.cnv_qdate_to_int
-        # edit_field.edit_to_dict_cnv       = edit_field.cnv_qdate_to_int
-        edit_field.setReadOnly( True )
-        edit_field.setPlaceholderText( "dt_enter" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
 
     # ---------------------------
     def select_record( self, id_value  ):
@@ -3192,6 +2919,85 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
 
         return a_str
 
+
+
+# ------------------------------------
+class AlbumSqlTableModel( QSqlRelationalTableModel ):
+    """
+    from EventSqlTableModel
+    from chat as a way to control editabllity and
+    centering, is this a good idea
+    what happened to column 1 stuff id
+    """
+    def __init__(self, parent=None, db=QSqlDatabase()):
+        """ """
+        super().__init__(parent, db)
+        # Specify multiple columns to make non-editable (e.g., columns 1 and 2)
+        #self.non_editable_columns = { 0, 1, }  # Columns ..doe it have to be in init or is synamic ..
+        self.non_editable_columns = { 99 }
+
+    def flags(self, index: QModelIndex):
+        """
+        from chat, not really used as for non edit
+        """
+        # Get default flags from the base class
+        flags = super().flags(index)
+        # Remove editable flag for the specified columns
+        if index.column() in self.non_editable_columns:
+            return flags & ~Qt.ItemIsEditable  # Make these columns non-editable
+        return flags
+
+    # ----------------------------
+    def data(self, index: QModelIndex, role=Qt.DisplayRole):
+        """
+        for special formatting
+        and alignment
+        """
+        ix_col = index.column()
+
+        if False:
+            pass
+        # Check role first
+        elif role == Qt.DisplayRole:
+            pass
+            # if col == 4:  # match to code in veiw
+            #     value = super().data(index, Qt.EditRole)
+            #     if value is not None:
+            #         return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
+            #     return value  # Return raw value if None
+
+            if ix_col == 5:  # match to code in veiw  ix_col
+                value = super().data(index, Qt.EditRole)
+                if value is not None and value != "":   # or True may need empty string also
+                    return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
+                return value  # Return raw value if None
+
+            if ix_col == 6:  # match to code in veiw  ix_col
+                value = super().data(index, Qt.EditRole)
+                if value:         # new for  is not None:
+                    return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
+                return value  # Return raw value if None
+
+        elif role == Qt.EditRole:
+            # Return raw value for editing/database sync
+            pass
+            # if col == 2:
+            #     return super().data(index, Qt.EditRole)
+
+        elif role == Qt.TextAlignmentRole:
+            # Handle alignment for all columns
+            pass
+            # if col == 0:  # id
+            #     return Qt.AlignLeft | Qt.AlignVCenter
+            # elif col == 1:  # stuff_id
+            #     return Qt.AlignCenter | Qt.AlignVCenter
+            # elif col == 2:  # event_dt
+            #     return Qt.AlignRight | Qt.AlignVCenter
+
+        # Default to base class for all other roles and columns
+        return super().data(index, role)
+
+
 # ----------------------------------------
 class PictureAlbumtSubTab(  QWidget  ):
     """
@@ -3281,7 +3087,10 @@ class PictureAlbumtSubTab(  QWidget  ):
 
         """
         #model              = QSqlTableModel( self, self.db )
-        model              = qt_with_logging.QSqlRelationalTableModelWithLogging( self, self.db )
+        #model              = qt_with_logging.QSqlRelationalTableModelWithLogging( self, self.db )
+        # model              =  QSqlRelationalTableModel( self, self.db )
+        model              = AlbumSqlTableModel( self, self.db )
+
         self.model         = model
 
         model.setTable( self.table_name )
@@ -3387,6 +3196,8 @@ CREATE TABLE  photoshow    (
         # make non editable
         view.setEditTriggers(QTableView.NoEditTriggers)
 
+        return
+
         ix_col  = 0
         model.setHeaderData( ix_col, Qt.Horizontal , "ID")
         view.setColumnWidth( ix_col, 50  )
@@ -3396,17 +3207,33 @@ CREATE TABLE  photoshow    (
         view.setColumnWidth(  ix_col, 50  )
         view.setColumnHidden( ix_col, True )
 
-        ix_col  += 1
+        ix_col  = 2
         model.setHeaderData( ix_col, Qt.Horizontal , "Name")
         view.setColumnWidth( ix_col, 250  )
 
-        ix_col  += 1
+        ix_col  = 3
         model.setHeaderData( ix_col, Qt.Horizontal , "Comment")
         view.setColumnWidth( ix_col, 250  )
 
-        ix_col  += 1
+        ix_col  = 4
         model.setHeaderData( ix_col, Qt.Horizontal , "Add KW")
         view.setColumnWidth( ix_col, 250  )
+
+        ix_col  = 5   # start date   get stuff from data dict ?
+        col_head    = f"{ix_col =}"
+        col_head    = f"{ix_col} Start"
+        model.setHeaderData( ix_col, Qt.Horizontal , col_head )
+        view.setColumnWidth( ix_col, 80  )
+
+        ix_col  = 6   # start end create_date ?
+        col_head    = f"{ix_col} End"
+        model.setHeaderData( ix_col, Qt.Horizontal , col_head )
+        view.setColumnWidth( ix_col, 80  )  # make a date constant
+
+        ix_col  = 7   # start end create_date ?
+        col_head    = f"{ix_col} type"
+        model.setHeaderData( ix_col, Qt.Horizontal , col_head )
+        view.setColumnWidth( ix_col, 80  )
 
         # ix_col  = 2
         # model.setHeaderData( ix_col, Qt.Horizontal , "Photo Filename")

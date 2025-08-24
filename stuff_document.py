@@ -108,8 +108,6 @@ IX_EVENT_DLR        = 5
 IX_EVENT_CMNT       = 6
 IX_EVENT_TYPE       = 7
 
-
-
 # ----------------------------------------
 class StuffDocument( base_document_tabs.DocumentBase ):
     """
@@ -234,8 +232,6 @@ class StuffDocument( base_document_tabs.DocumentBase ):
         self.text_tab.copy_prior_row(   next_key )
 
     # ---- capture events ----------------------------
-
-
     # -----------------------
     def __str__( self ):
 
@@ -285,8 +281,6 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget, columnspan = 3 )
 
-
-
         # ----id
         widget                = QLabel( "ID" )
         grid_layout.new_row()
@@ -306,8 +300,6 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self.critera_widget_list.append( widget )
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget )    # columnspan = 3 )
-
-
 
         # ----descr
         widget                = QLabel( "descr" )
@@ -368,7 +360,6 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget )
 
-
         # ---- criteria changed should be in parent
         widget  = QLabel( "criteria_changed_widget" )
         self.criteria_changed_widget  = widget
@@ -391,15 +382,15 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         """
         do select base on the criteria_dict
         """
-        parent_document                 = self.parent_window
+        parent_document     = self.parent_window
 
-        model                           = parent_document.list_tab.list_model
-        view                            = parent_document.list_tab.list_view
+        model               = parent_document.list_tab.list_model
+        view                = parent_document.list_tab.list_view
         #rint( "begin channel_select for the list")
-        query                           = QSqlQuery()
-        query_builder                   = qt_sql_query.QueryBuilder( query, print_it = False, )
+        query               = QSqlQuery()
+        query_builder       = qt_sql_query.QueryBuilder( query, print_it = False, )
 
-        kw_table_name                   = "stuff_key_words"
+        kw_table_name       = "stuff_key_words"
 
 
         # !!  may want clear as in help
@@ -435,12 +426,12 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             query_builder.add_to_where( add_where, [ ])
 
         # ---- key words
-        criteria_key_words              = criteria_dict[ "key_words" ]
-        criteria_key_words              = a_key_word_processor.string_to_key_words( criteria_key_words )
-        key_word_count                  = len(  criteria_key_words )
+        criteria_key_words      = criteria_dict[ "key_words" ]
+        criteria_key_words      = a_key_word_processor.string_to_key_words( criteria_key_words )
+        key_word_count          = len(  criteria_key_words )
 
-        criteria_key_words              = ", ".join( [ f'"{i_word}"' for i_word in criteria_key_words ] )
-        criteria_key_words              = f'( {criteria_key_words} ) '    # ( "one", "two" )
+        criteria_key_words      = ", ".join( [ f'"{i_word}"' for i_word in criteria_key_words ] )
+        criteria_key_words      = f'( {criteria_key_words} ) '    # ( "one", "two" )
 
         if key_word_count > 0:
             query_builder.group_by_c_list   = column_list
@@ -450,14 +441,14 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )
 
         # ---- descr
-        descr                          = criteria_dict[ "descr" ].strip().lower()
+        descr               = criteria_dict[ "descr" ].strip().lower()
         if descr:
             add_where       = "lower( descr )  like :descr"   # :is name of bind var below
             query_builder.add_to_where( add_where, [(  ":descr",
                                                      f"%{descr}%" ) ])
 
         # ---- name
-        stuff_name                          = criteria_dict[ "name" ].strip().lower()
+        stuff_name          = criteria_dict[ "name" ].strip().lower()
         if stuff_name:
             add_where       = "lower( name )  like :stuff_name"   # :is name of bind var below
             query_builder.add_to_where( add_where, [(  ":stuff_name",
@@ -589,14 +580,14 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         self.sub_tab_list.append( sub_tab )
         tab_folder.addTab( sub_tab, "Pictures" )
 
-        sub_tab             = StuffEventSubTab( self )
-        self.event_sub_tab  = sub_tab
+        sub_tab                 = StuffEventSubTab( self )
+        self.event_sub_tab      = sub_tab
         self.sub_tab_list.append( sub_tab )
         tab_folder.addTab( sub_tab, "Events" )
 
         # Main notebook
-        detail_notebook           = QTabWidget()
-        self.detail_notebook      = detail_notebook
+        detail_notebook        = QTabWidget()
+        self.detail_notebook   = detail_notebook
 
         # ---- buttons
         # create_button = QPushButton("Create Default")
@@ -640,10 +631,8 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
 
         self.stuff_combo_dict_ext   = combo_dict_ext.STUFF_COMBO_DICT_EXT
 
-
         # ---- code_gen: TableDict.to_build_form 2025_04_01 for stuff
         # -- begin table entries -----------------------
-
         # ---- id
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
@@ -951,8 +940,6 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 1 )
 
-
-
     # ---------------------------
     def select_record( self, id_value  ):
         """
@@ -982,7 +969,6 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         logging.log( LOG_LEVEL, debug_msg, )
         return
 
-
     # -----------------------
     def __str__( self ):
 
@@ -1001,25 +987,7 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         # a_str   = string_util.to_columns( a_str, ["record_state",
         #                                    f"{self.record_state}" ] )
 
-        # a_str   = string_util.to_columns( a_str, ["tab_model",
-        #                                    f"{self.tab_model}" ] )
-        # a_str   = string_util.to_columns( a_str, ["tab_name",
-        #                                    f"{self.tab_name}" ] )
-        # a_str   = string_util.to_columns( a_str, ["table",
-        #                                            f"{self.table}" ] )
 
-        # a_str   = string_util.to_columns( a_str, ["add_kw_field",
-        #                                    f"{self.add_kw_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["author_f_field",
-        #                                    f"{self.author_f_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["author_field",
-        #                                    f"{self.author_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["c_name_field",
-        #                                    f"{self.c_name_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["cmnt_field",
-        #                                    f"{self.cmnt_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["cont_type_field",
-        #                                    f"{self.cont_type_field}" ] )
         # a_str   = string_util.to_columns( a_str, ["descr_field",
         #                                    f"{self.descr_field}" ] )
 
@@ -1031,27 +999,7 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         # a_str   = string_util.to_columns( a_str, ["end_ix_field",
         #                                    f"{self.end_ix_field}" ] )
 
-        # a_str   = string_util.to_columns( a_str, ["file_field",
-        #                                    f"{self.file_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["format_field",
-        #                                    f"{self.format_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["id_field",
-        #                                    f"{self.id_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["id_in_old_field",
-        #                                    f"{self.id_in_old_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["id_old_field",
-        #                                    f"{self.id_old_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["inv_id_field",
-        #                                    f"{self.inv_id_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["loc_add_info_field",
-        #                                    f"{self.loc_add_info_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["manufact_field",
-        #                                    f"{self.manufact_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["model_field",
-        #                                    f"{self.model_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["name_field",
-        #                                    f"{self.name_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["owner_field",
+
         #                                    f"{self.owner_field}" ] )
         # a_str   = string_util.to_columns( a_str, ["performer_field",
         #                                    f"{self.performer_field}" ] )
@@ -1059,18 +1007,6 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
                                            f"{self.picture_sub_tab}" ] )
         # a_str   = string_util.to_columns( a_str, ["project_field",
         #                                    f"{self.project_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["publish_field",
-        #                                    f"{self.publish_field}" ] )
-
-        # a_str   = string_util.to_columns( a_str, ["serial_no_field",
-        #                                    f"{self.serial_no_field}" ] )
-        # a_str   = string_util.to_columns( a_str, ["sign_out_field",
-
-
-        # b_str   = self.super().__str__( self )
-        # a_str   = a_str + "\n" + b_str
-
-        # ---- causing recursion ??
         # b_str   =  super().__str__(  )
         # a_str   = a_str + "\n" + b_str
 
@@ -1204,10 +1140,7 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
         self.table_name      = "stuff_event"
         self.list_table_name = self.table_name   # delete this
         self.tab_name        = "StuffEventSubTab"
-        #self.tab_name            = "StuffEventSubTab  not needed tis is a sub tab
-        #self.current_id      = None
-        #self.current_id      = 28
-        #rint( "fix stuff event select and delete line above should be select_by_id  ")
+
         self._build_model()
         self._build_gui()
 
@@ -1246,12 +1179,12 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
         ix_col = 0
         model.setHeaderData( ix_col, Qt.Horizontal, "ID" )
         view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-        view.setColumnHidden( ix_col, True )  # view or model
+        view.setColumnHidden( ix_col, True )  # view or model visible
 
         ix_col = 1
         model.setHeaderData( ix_col, Qt.Horizontal, "ID_Old" )
-        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-        view.setColumnHidden( ix_col, True )  # view or model
+        view.setColumnWidth( ix_col, 100)
+        view.setColumnHidden( ix_col, True )
         #view.setColumnHidden( 1, True )  # view or model
 
         ix_col  = 2
@@ -1267,7 +1200,6 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
         ix_col  = 4
         model.setHeaderData( ix_col, Qt.Horizontal, "Event Date" )
         view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-
 
         ix_col  = 5
         model.setHeaderData( ix_col, Qt.Horizontal, "$ Amount" )
@@ -1362,40 +1294,6 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
         self.text_tab.default_new_row(   next_key )
 
     # ------------------------------------------
-    def add_record_old(self):
-        """
-        what it says, read?
-        add test for success an refactor??
-        """
-        model      = self.model
-        dialog     = stuff_document_edit.EditStuffEvents( model, index = None, parent = self )
-        if dialog.exec_() == QDialog.Accepted:
-            #self.model.submitAll()
-            ok     = base_document_tabs.model_submit_all(
-                       model,  f"StuffEventsSubTab.add_record " )
-            model.select()
-
-    # ------------------------------------------
-    def edit_record_old(self):
-        """
-        what it says, read?
-        """
-        index       = self.view.currentIndex()
-        model       = self.model
-        if index.isValid():
-            #dialog = stuff_document_edit.EditStuffEvents( model, index, parent = self )
-            dialog = stuff_document_edit.EditStuffEvents( self )
-            if dialog.exec_() == QDialog.Accepted:
-                #self.model.submitAll()
-                ok     = base_document_tabs.model_submit_all(
-                           model,  f"StuffEventsSubTab.add_record " )
-                #ia_qt.q_sql_table_model( self.model, "post edit_record submitAll()" )
-                model.select()
-        else:
-            msg   = "Click on row to edit..."
-            QMessageBox.warning(self, "Please", msg )
-
-    # ------------------------------------------
     def delete_record(self):
         """
         what it says, read?
@@ -1453,7 +1351,6 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
 
         # Get the model row index
         model_row = indexes[0].row()
-
 
         a_timestamp = self.model.data(self.model.index(0, 4), Qt.EditRole)
         print(f"Raw timestamp: {a_timestamp = }")
@@ -1520,6 +1417,7 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
             # Remove the row from the model
             self.model.removeRow(row)
 
+    #-------------------------------
     def submit_changes(self):
         """Submit all changes to the database."""
         if self.model.submitAll():

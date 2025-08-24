@@ -6,7 +6,7 @@
 
 
 # ---- tof
-
+#import adjust_path
 # --------------------
 if __name__ == "__main__":
     import main
@@ -18,6 +18,7 @@ import inspect
 import logging
 import pprint
 import subprocess
+import os
 #from functools import partial
 from pathlib import Path
 
@@ -40,6 +41,7 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlTableModel)
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
+                             QFileDialog,
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -73,7 +75,7 @@ from PyQt5.QtWidgets import (QAction,
                              QVBoxLayout,
                              QWidget)
 
-
+import collections
 import parameters
 import data_dict
 import check_fix
@@ -96,6 +98,7 @@ import qsql_utils
 # ---- import end
 
 FIF             = info_about.INFO_ABOUT.find_info_for
+
 
 EXEC_RUNNER     = None  # setup below
 # MARKER              = ">snip"
@@ -155,6 +158,131 @@ KW_TABLE_DICT  = {
 
 IKW_TABLE_DICT = {value: key for key, value in KW_TABLE_DICT.items()}
 
+FileInfo        = collections.namedtuple( "FileInfo", "file_name path_name full_file_name" )
+
+def  clean_path_part( path_part ):
+    """
+    consider add to some lib ??
+    """
+
+    # ---- crude but i hope effective
+    if path_part:
+        path_part    = path_part.replace( "\\", "/" )
+    else:
+        path_part    = ""
+
+    path_part    = path_part.replace( "///", "/" )
+    path_part    = path_part.replace( "//",  "/" )
+    path_part    = path_part.removeprefix( "/" )
+    path_part    = path_part.removesuffix( "/" )
+
+    return path_part
+
+# ------------------------------------
+def open_file_dialog( parent ):
+    """
+    What it says
+
+    """
+
+
+    dialog = QFileDialog(parent, "Select Files")
+
+    # --- dialog options ---
+    dialog.setFileMode(QFileDialog.ExistingFiles)     # multiple selection allowed
+    dialog.setViewMode(QFileDialog.Detail)            # list vs detail view
+    dialog.setOption(QFileDialog.DontUseNativeDialog, True)  # force Qt dialog
+    dialog.setOption(QFileDialog.ReadOnly, False)     # allow editing file name
+    dialog.setOption(QFileDialog.DontResolveSymlinks, False)
+    dialog.setOption(QFileDialog.HideNameFilterDetails, False)
+
+    # --- default directory ---
+    dialog.setDirectory("/mnt")  # change as needed
+
+    # --- filters ---
+    dialog.setNameFilter("Images (*.png *.jpg *.jpeg *.bmp *.gif)")
+    dialog.setNameFilters([
+        "Images (*.png *.jpg *.jpeg *.bmp *.gif)",
+        "Text files (*.txt *.md *.log)",
+        "All files (*)"
+    ])
+
+    # --- default selected filter ---
+    dialog.selectNameFilter("Images (*.png *.jpg *.jpeg *.bmp *.gif)")
+
+    # --- default file suggestion ---
+    dialog.selectFile("untitled.txt")
+
+    # --- execute the dialog ---
+    if dialog.exec_():
+        selected_files = dialog.selectedFiles()
+        return selected_files
+
+    else:
+        return []
+
+
+
+
+# ------------------------------------
+def open_directory_dialog( parent  ):
+    """
+    What it says
+
+    """
+
+
+    dialog = QFileDialog(parent, "Select a Directory")
+
+    # --- dialog options ---
+    dialog.setFileMode(QFileDialog.Directory)           # directory selection
+    dialog.setOption(QFileDialog.ShowDirsOnly, True)    # show only directories
+    dialog.setOption(QFileDialog.DontUseNativeDialog, True)  # force Qt dialog
+    dialog.setOption(QFileDialog.ReadOnly, False)       # allow typing path manually
+    dialog.setOption(QFileDialog.DontResolveSymlinks, False)
+
+    # --- default start directory ---
+    dialog.setDirectory("/mnt")  # adjust as needed
+
+    # --- default directory suggestion ---
+    dialog.selectFile("Photos")  # highlights/suggests this folder if exists
+
+    # --- execute the dialog ---
+    if dialog.exec_():
+        selected_dirs = dialog.selectedFiles()  # list, usually one item
+        # print("You selected:")
+        # for i_dirs  in selected_dirs:
+
+        #     self.append_msg( msg )
+        return selected_dirs
+
+    else:
+        return []
+
+
+
+# --------------------------------------
+class ExploreArgs(   ):
+    """
+    used in path travisrse form process files
+    args passed down recursive explore functions, treat as constants once set
+    may want a copy for each thread and possibly accumulate data here
+
+    also functions used for processing  .... perhaps a rename ??
+    but some args are functions, here or in helper_thread ??
+    kind of mess keep counters in app_state
+    explore_args
+    """
+    #---------------------
+    def __init__( self, max_dir_depth  ):
+        """
+        Usual init see class doc string
+        explore_args.max_dir_depth
+        """
+        self.max_dir_depth    = max_dir_depth
+
+
+
 # ----------------------------------------
 class DbManagementSubWindow( QMdiSubWindow ):
     """
@@ -180,6 +308,7 @@ class DbManagementSubWindow( QMdiSubWindow ):
 
         self.prior_tab          = 0
         self.current_tab        = 0
+        self.detail_table_id    = None # for compatible with midi management
 
         # self.record_state
         self.current_tab_index      = 0       # assumed to be criteria
@@ -195,7 +324,7 @@ class DbManagementSubWindow( QMdiSubWindow ):
             # used in text tab base
         self.help_filename          = "stuff_doc.txt"
         self.subwindow_name         = "Database Management"
-
+        self.file_out = None
         self._build_gui()
         self.__init_2__()
 
@@ -225,6 +354,10 @@ class DbManagementSubWindow( QMdiSubWindow ):
         self.first_tab         = RecordMatchTab( self  )
         main_notebook.addTab( self.first_tab, "RecordMatchTab" )
 
+        self.first_tab         = PictureUtilTab( self  )
+        main_notebook.addTab( self.first_tab, "PictureUtilTab" )
+
+
         tab                 = OutputTab( self  )
         self.output_tab     = tab
         main_notebook.addTab( tab, "Output" )
@@ -248,6 +381,17 @@ class DbManagementSubWindow( QMdiSubWindow ):
         self.setWindowTitle( title )
         AppGlobal.mdi_management.update_menu_item( self )
         self.set_size_pos()
+
+
+
+    # --------------------------------
+    def get_topic( self ):
+        """
+        for compat with midi manager
+         'DbManagementSubWindow' object has no attribute 'get_topic'
+        """
+        return None
+
 
     # --------------------------------
     def set_size_pos( self ):
@@ -278,7 +422,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
     def activate_output_tab( self,    ):
         """
 
-
         self.parent_window.activate_output_tab()
         """
         self.main_notebook.setCurrentWidget( self.output_tab  )
@@ -289,6 +432,37 @@ class DbManagementSubWindow( QMdiSubWindow ):
         dup with line_out
         """
         self.append_msg( msg, clear = clear  )
+
+    # --------------------------------
+    def output_to_file( self, msg ):
+        """
+        self.parent_window.output_to_file( msg )
+
+
+        """
+        self.file_out.write( msg + "\n" )
+        print( msg )
+
+
+    # --------------------------------
+    def open_file_out( self,  ):
+        """
+
+        """
+        self.file_name_out   = parameters.PARAMETERS.output_dir + "/" + "data_management_out.txt"
+        self.file_out        = open( self.file_name_out,
+                                    'w',
+                                    encoding  = "utf8",
+                                    errors    = 'ignore' )
+
+    # --------------------------------
+    def close_file_out( self,  ):
+        """
+
+        """
+        if self.file_out:
+            self.file_out.close()
+        self.file_out = None
 
     #----------------------------
     def append_msg( self, msg, clear = False ):
@@ -685,7 +859,6 @@ class BasicsTab( QWidget ):
             # value_1        = query.value(1)
             # value_2   = query.value(2)
 
-
             msg      = (f" : {query.value(0) = }  { query.value(1) = }  { query.value(2) = }  ")
 
             self.parent_window.output_msg(  msg )
@@ -993,6 +1166,522 @@ class RecordMatchTab( QWidget ):
 
 
 # ----------------------------------------
+class PictureUtilTab( QWidget ):
+    """
+    what it says
+
+    maint and report on key word tables
+    """
+    def __init__(self, parent_window ):
+        """
+
+        """
+        super().__init__()
+
+        # self.criteria_dict          = {}
+        # self.critera_widget_list    = []
+        # self.critera_is_changed     = True
+        self.parent_window          = parent_window
+        self.key_words_widget       = None      # set to value in gui if used
+
+        self.tab_name               = "PictureUtilTab"
+
+        self.build_gui()
+
+    # -----------------------------
+    def build_gui( self,   ):
+        """
+
+        """
+        vlayout              = QVBoxLayout( self )
+
+        # ---- new row
+        layout              = QHBoxLayout( self )
+        vlayout.addLayout( layout )
+
+        # ---- table combobox
+        widget              = QComboBox()
+
+        self.go_widget      = widget
+
+        a_list              = [ "find_dirs",
+                                "pictures not in albums",
+                                "pictures missing dates",
+                                "find_file_missing",
+                                "find_record_missing",
+                                "clean_file_sub_dir",
+
+                                 ]
+
+        widget.addItems( a_list )
+        widget.setCurrentIndex( 0 )
+        layout.addWidget( widget )
+
+        # ---- set dir
+        widget              = QPushButton( "Set Dir" )
+        connect_to          = self.get_dir
+        widget.clicked.connect( connect_to  )
+        layout.addWidget( widget )
+
+        widget              = QLineEdit( )
+        self.dir_widget     = widget
+        layout.addWidget( widget )
+
+        # ---- set dir
+        widget              = QPushButton( "Set File" )
+        connect_to          = self.get_file
+        widget.clicked.connect( connect_to  )
+        layout.addWidget( widget )
+
+        widget              = QLineEdit( )
+        self.file_widget     = widget
+        layout.addWidget( widget )
+
+        widget              = QPushButton( "Go" )
+        connect_to          = self.go
+        widget.clicked.connect( connect_to  )
+        layout.addWidget( widget )
+
+        # ---- new row
+        layout              = QHBoxLayout( self )
+        vlayout.addLayout( layout )
+
+    # ---- reports
+    # -------------------------
+    def go( self,   ):
+        """
+        What it says, read
+            better make dict based inc dropdown
+        """
+        go_item      = self.go_widget.currentText()
+
+        if go_item == "xxxx":
+            pass
+        elif go_item == "find_dirs":
+            self.find_dirs()
+
+        elif go_item == "clean_file_sub_dir":
+            self.clean_file_sub_dir()
+
+        elif go_item == "find_file_missing":
+            self.find_file_missing()
+
+
+        elif go_item == "find_record_missing":
+            self.find_record_missing()
+
+
+        else:
+            print( f"do not know what {go_item = } is")
+
+
+    def get_dir( self,   ):
+        """ """
+        dirs    = open_directory_dialog( self )
+        if dirs:
+            self.dir_widget.setText(  dirs[0] )
+
+    def get_file( self,   ):
+        """ """
+        files    = open_file_dialog( self )
+        if files:
+            self.dir_widget.setText(  files[0] )
+
+
+
+    # ---- go functions
+
+    # -------------------------
+    def find_dirs( self,   ):
+        """
+        What it says, read
+
+        """
+        db                  = AppGlobal.qsql_db_access.db
+
+        # --- run the query for unique sub_dir values ---
+        query = QSqlQuery( db )
+        sql = """
+            SELECT DISTINCT sub_dir
+            FROM photo
+            WHERE sub_dir IS NOT NULL AND sub_dir <> ''
+            ORDER BY sub_dir ASC
+        """
+        if not query.exec(sql):
+            print("Query failed:", query.lastError().text())
+            return
+
+        # --- print results ---
+        print("Unique sub_dir values (alphabetical):")
+        while query.next():
+            sub_dir = query.value(0)
+            msg     = sub_dir
+            #print(sub_dir)
+
+            self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+
+    # -------------------------
+    def find_dup_file( self, path  ):
+        """
+        work through files in a path ( and descendants )
+        and ouput possible duplicates for deletion
+
+
+        """
+        pass
+
+    # -------------------------
+    def clean_file_sub_dir( self,    ):
+
+        """
+        Loop through all records in the photo table, read file and sub_dir, modify them,
+        and update the same record with the modified values.
+        Returns:
+            bool: True if all updates succeed, False if any error occurs.
+        """
+        # Query to select all records
+        db                  = AppGlobal.qsql_db_access.db
+        select_query        = QSqlQuery( db )
+        select_query_str = """
+            SELECT id, file, sub_dir
+            FROM photo
+        """
+
+        if not select_query.exec_(select_query_str):
+            print("Error executing select query:", select_query.lastError().text())
+            return False
+
+        # Prepare update query with named bind variables
+        update_query = QSqlQuery( db )
+        update_query_str = """
+            UPDATE photo
+            SET file = :new_file, sub_dir = :new_sub_dir
+            WHERE id = :id
+        """
+        update_query.prepare(update_query_str)
+
+        # Loop through records
+        while select_query.next():
+            record_id   = select_query.value(0)
+            file        = select_query.value(1)
+            sub_dir     = select_query.value(2)
+
+            # ---- crude but i hope effective
+
+            new_file       = clean_path_part( file )
+            new_sub_dir    = clean_path_part( sub_dir )
+
+            # ---- not good if new_file is blank or null
+            msg      = f"{new_sub_dir}/{new_file}"
+            #self.parent_window.output_msg( msg, )
+            print( msg )
+
+            # new_sub_dir = f"{sub_dir}_mod" if sub_dir else sub_dir
+
+            # Bind values and execute update
+            update_query.bindValue( ":new_file",     new_file)
+            update_query.bindValue( ":new_sub_dir",  new_sub_dir)
+            update_query.bindValue( ":id",           record_id)
+
+            if not update_query.exec_():
+                print(f"Error updating record id={record_id}:", update_query.lastError().text())
+                return False
+
+        return True
+
+    # -------------------------
+    def find_file_missing( self,   ):
+        """
+        work through records with file names and
+        see if file exists, output is file name for records
+        whenre that file is missing.
+        self.parent_window.open_file_out( )
+        starting_dir   = self.dir_widget.text()
+        self.explore_dir( starting_dir, 0 , explore_args )
+
+        #max_dir_depth 0 is unlimited
+        self.parent_window.close_file_out( )
+
+        """
+        self.parent_window.open_file_out( )
+
+        full_dir    = self.dir_widget.text()
+
+        a_sub_dir   = full_dir.removeprefix( parameters.PARAMETERS.picture_db_root )
+
+        db          = AppGlobal.qsql_db_access.db
+
+        query       = QSqlQuery(db)
+
+        sql = """
+            SELECT id, sub_dir, file
+            FROM photo
+            WHERE sub_dir = :a_sub_dir
+            ORDER BY id ASC
+        """
+        if not query.prepare(sql):
+            msg     = ( f"Prepare failed: {query.lastError().text()}" )
+            self.parent_window.output_to_file( msg )
+            return
+
+        query.bindValue(":a_sub_dir", a_sub_dir )
+
+        # --- print results ---
+        msg     =  (f"Files in sub_dir='{a_sub_dir}':")
+        self.parent_window.output_to_file( msg )
+
+        if not query.exec_():
+            msg     = ("Error executing query:" + query.lastError().text())
+            self.parent_window.output_to_file( msg )
+
+            # msg      = query_str
+            # self.parent_window.output_to_file( msg )
+
+        ix_record_count  = 0
+        while query.next():
+            ix_record_count     += 1
+            a_id                = query.value(0)
+            sub_dir             = query.value(1)
+            file                = query.value(2)
+
+            msg         = (f"id={a_id}, sub_dir={sub_dir}, file={file} {ix_record_count = }")
+            self.parent_window.output_msg(  msg )
+
+            got_file    = self.find_file( sub_dir, file )
+
+            if got_file:
+                pass
+
+            else:
+                msg     = f"error no file found for {a_id}, file f{sub_dir}/{file}"
+                self.parent_window.output_to_file( msg )
+
+        # if   ix_record_count == 0:
+        #     msg    = f"error no record found for file f{sub_dir}/{file}"
+        #     self.parent_window.output_to_file( msg )
+
+        # elif ix_record_count == 1:
+        #     msg    = f"1 record found for file f{full_file_name} {base_path}"
+        #     self.parent_window.output_to_file( msg )
+
+        # else:
+        #     msg    = f"errorish duplicate records found for file f{full_file_name} {base_path}"
+        #     self.parent_window.output_to_file( msg )
+        self.parent_window.close_file_out( )
+        self.parent_window.activate_output_tab()
+
+
+    # -------------------------
+    def find_record_missing( self,   ):
+        """
+        work through files ( perhaps of a given directory )
+        and see if they have 1 or more files
+        output is the file names whre the record is missing.
+
+        """
+        explore_args   = ExploreArgs( max_dir_depth = 1 )
+        self.parent_window.open_file_out( )
+        starting_dir   = self.dir_widget.text()
+        self.explore_dir( starting_dir, 0 , explore_args )
+
+        #max_dir_depth 0 is unlimited
+        self.parent_window.close_file_out( )
+
+        msg     = (f"find_record_missing complete look for output file in {parameters.PARAMETERS.output_dir}")
+        self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+    # ---- support functions
+    # ----------------------------------------------
+    def explore_dir( self, starting_dir, dir_depth, explore_args  ):
+        """
+        set up to run process was for dups and keeps not part of this app
+        recursive
+        could collect files in a list and process as a batch at the end
+        probably more efficient but for now one at a time
+
+        explore and list files in dir and recursive to sub dirs
+            starting_dir  = name of dir we start from
+            dir_depth     = depth of starting_dir, 0 for initial call
+            additional args   current depth
+                           filter
+
+        Args:
+            starting_dir -- now a path or string ... may need bigger fix for now either !!
+
+        """
+
+        # starting_dir    = starting_dir.replace( "\\", "/" )    # normalize win/linux names
+        new_dir_depth   = dir_depth + 1
+        names           = os.listdir( starting_dir )  # may throw [WinError 3]
+
+        msg             = f"exploring at depth {new_dir_depth}: {starting_dir}"
+        # AppGlobal.logger.info( msg )
+        # self.gui_write( msg + "\n" )
+        self.parent_window.output_to_file( msg )
+
+        for i_name in names:
+            # file from / file to
+            i_name        = i_name.replace( "\\", "/" )
+            i_full_name   = os.path.join( starting_dir, i_name )
+                ## ?? just default to / why not and remove next
+            i_full_name   = i_full_name.replace( "\\", "/" )   # !! revise for path
+            # next a named tuple
+            i_file_info   = FileInfo( file_name         = i_name,
+                                      path_name         = starting_dir,
+                                      full_file_name    = i_full_name )
+
+            # ---- for now no pause or cancel
+            # could have pause here too #
+            # if self.app_state.cancel_flag:
+            #     msg = "user cancel"
+            #     raise app_global.UserCancel( msg )
+
+            # if self.app_state.pause_flag:
+            #     time.sleep( self.parameters.ht_pause_sleep )
+
+            # ---- is dir
+            if os.path.isdir( i_full_name ):
+                # msg     = ( f"os.path.isdir self.app_state.ix_explore_dir = "
+                #             f"{self.app_state.ix_explore_dir} new_dir_depth = {new_dir_depth}"
+                #             f"    explore_args.max_dir_depth = {explore_args.max_dir_depth}" )
+                msg      = ( f"found sub dir {i_full_name}")
+                self.parent_window.output_to_file( msg )
+
+
+                if ( ( explore_args.max_dir_depth == 0  ) or
+                     ( explore_args.max_dir_depth  >  new_dir_depth  ) ):
+                         # may be more efficient placement of this so called once
+                    #self.app_state.count_dir      += 1
+                        # or one for file, one for dir, and one for error better ??
+                    # if explore_args.df( i_full_name ):   # the filter for dir
+                    #     msg     = f"making recursive call {i_full_name} {new_dir_depth}"
+                    #     print( msg )
+                    self.explore_dir( i_full_name, new_dir_depth, explore_args )
+                    # else:
+                    #     msg     = f"\nhit false on dir filter df  {i_full_name} "
+                    #     print( msg )
+                else:
+                    msg         = f"\nhit max dir depth {i_full_name} {new_dir_depth} "
+                    self.parent_window.output_to_file( msg )
+
+                continue
+            #import pdb; pdb.set_trace()
+            # ---- is file
+            # ==== we got a file not a dir
+            file_size               = os.path.getsize(  i_full_name )
+            base_path               = parameters.PARAMETERS.picture_db_root
+            full_file_name          = i_full_name
+            self.find_photo_by_full_file_name( base_path      = base_path,
+                                               full_file_name = full_file_name )
+
+
+    def find_file( self, sub_dir, file  ):
+        """
+        could be a file or a directory may want to make better
+        assumes output file is open
+        Find a record in the photo table where the concatenated sub_dir and file match the provided values.
+        path = Path("/mnt/WIN_D/PhotoDB/14/dscn2802.jpg")
+
+        if path.exists():
+        """
+        full_file_name    = f"{parameters.PARAMETERS.picture_db_root}{sub_dir}/{file}"
+        path              = Path( full_file_name )
+
+        is_found          = path.exists()
+
+        msg  = ( f"find_file  >>{full_file_name}<< {is_found = }")
+        self.parent_window.output_to_file( msg )
+
+        return is_found
+
+
+    def find_photo_by_full_file_name( self, *, base_path,  full_file_name ):
+        """
+        Find a record in the photo table where the concatenated BASE_PATH, sub_dir, and file match the provided values.
+        Args:
+            sub_dir (str): The subdirectory name.
+            file_name (str): The file name.
+        Returns:
+            dict or None: A dictionary containing all fields of the matching record, or None if no match or error.
+        """
+        db                  = AppGlobal.qsql_db_access.db
+        #BASE_PATH = "/photos/"  # Constant string for the base directory
+        query = QSqlQuery( db)
+        query_str = ( ""
+            "SELECT id, "
+            # " id_old, "
+                   # name, add_kw, descr, type, series, author, dt_enter, format,
+                   # inv_id, cmnt, status, dt_item, c_name, title, tag, old_inv_id,
+                   " file, sub_dir "
+                   # photo_url, camera, lens, f_stop, shutter, copyright
+            " FROM photo "
+            " WHERE :base_path || TRIM(sub_dir, '/' )  || '/' || file = :full_file_name "
+            )
+
+        query.prepare(query_str)
+        #full_path = f"{sub_dir}/{file_name}"
+        query.bindValue(":base_path",      base_path )
+        query.bindValue(":full_file_name", full_file_name )
+
+        if not query.exec_():
+            msg     = ("Error executing query:" + query.lastError().text())
+            self.parent_window.output_to_file( msg )
+
+            msg      = query_str
+            self.parent_window.output_to_file( msg )
+
+            return None
+        ix_record_count  = 0
+        if query.next():
+            ix_record_count  += 1
+            record = {
+                "id": query.value(0),
+                # "id_old": query.value(1),
+                # "name": query.value(2),
+                # "add_kw": query.value(3),
+                # "descr": query.value(4),
+                # "type": query.value(5),
+                # "series": query.value(6),
+                # "author": query.value(7),
+                # "dt_enter": query.value(8),
+                # "format": query.value(9),
+                # "inv_id": query.value(10),
+                # "cmnt": query.value(11),
+                # "status": query.value(12),
+                # "dt_item": query.value(13),
+                # "c_name": query.value(14),
+                # "title": query.value(15),
+                # "tag": query.value(16),
+                # "old_inv_id": query.value(17),
+                "file": query.value(1),
+                "sub_dir": query.value(2)
+                # "photo_url": query.value(20),
+                # "camera": query.value(21),
+                # "lens": query.value(22),
+                # "f_stop": query.value(23),
+                # "shutter": query.value(24),
+                # "copyright": query.value(25)
+            }
+            msg    = str( record )
+            self.parent_window.output_to_file( msg )
+
+        if   ix_record_count == 0:
+            msg    = f"error no record found for file f{full_file_name} {base_path}"
+            self.parent_window.output_to_file( msg )
+
+        elif ix_record_count == 1:
+            msg    = f"1 record found for file f{full_file_name} {base_path}"
+            self.parent_window.output_to_file( msg )
+
+        else:
+            msg    = f"errorish duplicate records found for file f{full_file_name} {base_path}"
+            self.parent_window.output_to_file( msg )
+        return
+
+# ----------------------------------------
 class OutputTab( QWidget ):
     """
     what it says
@@ -1105,4 +1794,32 @@ class OutputTab( QWidget ):
 
         return a_str
 
-# ---- eof
+
+def test_clean_path_part(   ):
+
+
+
+
+    path_parts     = [
+                        "",
+                        None,
+                        r"//a_sub_dir\\\\",
+                        r"//asub//dir///",
+                        r"//asub//dir\\more_dir///",
+                        # "/one/tow//three//",
+                        # "",
+                        # "",
+                        # "",
+                        # "",
+                        # "",
+                        ]
+    for i_path_part in path_parts:
+        path_part    = i_path_part
+        clean_part   = clean_path_part( path_part )
+        print( f">{path_part}<>{clean_part}<")
+
+# just for prelim test
+# if __name__ == "__main__":
+#     test_clean_path_part()
+
+# # ---- eof

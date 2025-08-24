@@ -63,7 +63,7 @@ def build_it( a_data_dict ):
                                              form_make_ref      = True,
                                              is_keep_prior_enabled = True,
                                              col_head_text      = "Name",
-                                             col_head_width     = 30,
+                                             col_head_width     = 40,
                                              col_head_order     = 10,
                                              display_order      = 10,
                                              form_col_span      = 4,  )
@@ -79,7 +79,7 @@ def build_it( a_data_dict ):
                                              is_key_word        = True,
                                              is_keep_prior_enabled = True,
                                              col_head_text      = "Key Words",
-                                             col_head_width     = 10,
+                                             col_head_width     = 40,
                                              col_head_order     = 15,
                                              display_order      = 35,
                                              form_col_span      = 4,  )
@@ -95,7 +95,7 @@ def build_it( a_data_dict ):
                                              is_key_word        = True,
                                              is_keep_prior_enabled = True,
                                              col_head_text      = "Descr.",
-                                             col_head_width     = 15,
+                                             col_head_width     = 40,
                                              col_head_order     = 20,
                                              display_order      = 30,
                                              form_col_span      = 4,  )
@@ -220,7 +220,7 @@ def build_it( a_data_dict ):
                                              is_key_word    = True,
                                              is_keep_prior_enabled = True,
                                              col_head_text      = "Title",
-                                             col_head_width     = 10,
+                                             col_head_width     = 40,
                                              col_head_order     = 12,
                                              display_order      = 25,
                                              form_col_span      = 4,

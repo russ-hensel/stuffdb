@@ -94,14 +94,14 @@ import picture_viewer
 
 # ---- constants
 
-FIF             = info_about.INFO_ABOUT.find_info_for
+FIF                 = info_about.INFO_ABOUT.find_info_for
 
-EXEC_RUNNER     = None  # setup below
+EXEC_RUNNER         = None  # setup below
 # MARKER              = ">snip"
 
-LOG_LEVEL       = 10    # higher is more
+LOG_LEVEL           = 10    # higher is more
 
-logger          = logging.getLogger( )
+logger              = logging.getLogger( )
 
 # make sure not dups maybe should be in data_manager
 RECORD_NULL         = 0
@@ -110,8 +110,6 @@ RECORD_NEW          = 2
 RECORD_DELETE       = 3
 
 WIDTH_MULP          = 8  # for some column widths
-
-#   stuffdb_tabbed_sub_window.
 
 RECORD_STATE_DICT   = { RECORD_NULL:    "RECORD_NULL",
                         RECORD_FETCHED: "RECORD_FETCHED",
@@ -123,7 +121,7 @@ RECORD_STATE_DICT   = { RECORD_NULL:    "RECORD_NULL",
 # ---- open in idle
 def open_python_file_in_idle( python_filename, ): # conda_env ):
     """
-
+    may have been replaced by some object IdleExe
     open_python_file_in_idle_may_need_move_broken
 
     taken from clipboard Dec 2024
@@ -244,7 +242,7 @@ def is_delete_ok(   ):
     msg_box.setText("Delete ok?")
 
     # Adding buttons
-    choice_no  = msg_box.addButton( "No - key data",  QMessageBox.ActionRole )
+    choice_no  = msg_box.addButton( "No - key data",     QMessageBox.ActionRole )
     choice_yes = msg_box.addButton( "Yes - delete data", QMessageBox.ActionRole )
 
     msg_box.setModal(True)
@@ -276,6 +274,86 @@ def table_widget_no_edit( table_widget ):
                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
 
 # -----------------------------------
+class SnippetManager:
+    """
+    removed from the edit control
+    """
+    def __init__(self, text_edit ):
+        """
+        the usual
+
+        """
+        self.text_edit          = text_edit
+        self.push_button        = None
+        self.snippet_widget     = None
+        self.snippet_ddl        = None
+
+        self.parameters         = parameters.PARAMETERS
+
+    #-----------------------------
+    def make_widgets(self):
+        """
+        what it says
+            perhaps we should change to create
+            and even return its button ??
+            ddl_widget,  ddl_button_widget  =    self.txt_....build_up_template_widgets
+        """
+        # ---- combo
+        widget              = QComboBox()
+        self.snippet_ddl    = widget
+        #self.text_edit_ext_obj.set_up_widget( widget )
+        values              = self.get_snippet_ddl_values()
+        widget.addItems( values )
+        widget.setCurrentIndex( 0 )
+        widget.setMinimumWidth( 200 )
+
+        # ---- button
+        label                   = "Paste Snippet"
+        widget                  = QPushButton( label )
+        self.push_button        = widget
+        connect_to            = self.paste_snippet
+        widget.clicked.connect( connect_to )
+
+        return ( self.snippet_ddl, self.push_button )
+
+    # ------------------------------------------
+    def get_snippet_ddl_values(self):
+        """
+        get the list of drop-down value from the
+        parameter templates
+
+        """
+        values              = []
+        text_snippets       = self.parameters.text_snippets
+        for i_key, i_value in text_snippets.items( ):
+            values.append( i_key )
+
+        return values
+
+    #-----------------------------------
+    def paste_snippet( self, ):
+        """
+        what it says
+        """
+        key    = self.snippet_ddl.currentText( )
+        text   = self.get_template_by_key( key )
+        #rint( "this is the text we need to paste")
+        #rint( text )
+        self.text_edit.insert_text_at_cursor( text + "**" )
+
+    # ---------------------------------
+    def get_template_by_key( self, key ):
+        """
+        what it says
+            when a drop-down needs a text item
+
+        """
+        text_snippets      = self.parameters.text_snippets
+        text                = text_snippets[ key ]
+
+        return text
+
+# -----------------------------------
 class CursorContext:
     """
     chat context manager
@@ -297,8 +375,6 @@ class DateFormatDelegate( QStyledItemDelegate ):
         return date.toString("yyyy-MM-dd")  # Customize format as needed
         #return super().displayText(value, locale)
 
-# from PyQt5.QtWidgets import QStyledItemDelegate
-# from PyQt5.QtCore import Qt, QDateTime
 
 class DateTimeFormatDelegate( QStyledItemDelegate ):
     """for table integer to datetime formats """
@@ -434,7 +510,6 @@ class DocumentBase( QMdiSubWindow ):
     def __init_2__( self ):
         """
         call at end of child __init__
-
 
         """
         # !! perhaps in ancestor to a post innit
@@ -865,9 +940,6 @@ class DocumentBase( QMdiSubWindow ):
         if self.text_tab is not None:
             self.text_tab.update_db()
 
-        # loc        = f"{self.__class__.__name__}.{inspect.currentframe().f_code.co_name} "
-        # debug_msg  = f"{loc} >>> for {self.subwindow_name = }"
-        # logging.debug( debug_msg )
 
     # ---------------------------------------
     def validate( self, ):
@@ -950,11 +1022,12 @@ class DocumentBase( QMdiSubWindow ):
         msgbox.setWindowTitle("Confirm Delete")
         msgbox.setIcon( QMessageBox.Warning)
         msgbox.setText("Do you want to Delete this Record")
-        botonyes = QPushButton("Yes")
+        botonyes    = QPushButton("Yes")
         msgbox.addButton(botonyes, QMessageBox.YesRole)
-        botonno = QPushButton("No")
+        botonno     = QPushButton("No")
         msgbox.addButton(botonno, QMessageBox.NoRole)
         msgbox.exec_()
+
         if msgbox.clickedButton() == botonno:
             return False
         else:
@@ -1067,27 +1140,12 @@ class DocumentBase( QMdiSubWindow ):
                                             f"{self.detail_tab}" ] )
         # a_str   = string_util.to_columns( a_str, ["detail_table_id",
         #                                    f"{self.detail_table_id}" ] )
-        # a_str   = string_util.to_columns( a_str, ["detail_table_name",
-        #                                    f"{self.detail_table_name}" ] )
-        # a_str   = string_util.to_columns( a_str, ["history_tab",
-        #                                    f"{self.history_tab}" ] )
-        # a_str   = string_util.to_columns( a_str, ["list_tab",
-        #                                    f"{self.list_tab}" ] )
-        # # a_str   = string_util.to_columns( a_str, ["mapper",
-        # #                                    f"{self.mapper}" ] )
-        # a_str   = string_util.to_columns( a_str, ["menu_action_id",
-        #                                    f"{self.menu_action_id}" ] )
-        # a_str   = string_util.to_columns( a_str, ["picture_tab",
-        #                                    f"{self.picture_tab}" ] )
-        # a_str   = string_util.to_columns( a_str, ["subwindow_name",
-        #                                    f"{self.subwindow_name}" ] )
+
         # a_str   = string_util.to_columns( a_str, ["tab_folder",
         #                                    f"{self.tab_folder}" ] )
         a_str   = string_util.to_columns( a_str, ["text_tab",
                                             f"{self.text_tab}" ] )
 
-        # b_str   = self.super().__str__( self )
-        # a_str   = a_str + "\n" + b_str
 
         return a_str
 
@@ -1111,9 +1169,6 @@ class DetailTabBase( QWidget ):
         self.viewer              = None   # tab may add
         self.add_ts              = None   # may only be valid for new
 
-        # tab for a list of photos
-        #self.sub_tab_list        = []        # will be called on select
-              # and delete with our id here  self.sub_tab_list.append()   or parent_windo..
         self.tab_name            = "DetailTabBase -- >> tab failed to set<<< and... "
         # self.field_list          = []  # may not be used, but will be checked
             # check that children do not also implement this
@@ -1121,10 +1176,6 @@ class DetailTabBase( QWidget ):
 
         #self.mapper               = None
         self.picture_sub_tab      = None     # in case there is none
-
-        #self.picture_sub_tab      = None   # but usually update in descendant
-        # or could create and append on demand in the detail window
-        # self.picture_sub_tab     = None
 
         # ----
         # next not right for text windows -- is not need there its own in init?
@@ -1164,18 +1215,9 @@ class DetailTabBase( QWidget ):
 
         self.data_manager                       = data_manager.DataManager( self.model )
         self.data_manager.next_key_function     = AppGlobal.key_gen.get_next_key
-                # a_key_gen               = key_gen.KeyGenerator( a_qsql_db_access.db  )
-                    #  AppGlobal.qsql_db_access.db
-                # AppGlobal.key_gen       = a_key_gen.key_gen
-                    # some_function( table_name )
-
-        #self.data_manager.history_tab   = self.parent_window.history_tab
 
         if self.key_word_table_name != "":
             self.data_manager.enable_key_words( self.key_word_table_name )
-
-        #rint( f"post_init  end off to self._build_gui() DetailTabBase  {self.tab_name  }" )
-        #rint( f"my data manager for {self.tab_name} \n{self.data_manager}")
 
         self._build_gui()
 
@@ -1670,20 +1712,6 @@ class SubTabBase( QWidget ):
         # # model_write.setFilter( f"pictureshow_id = {id} " )
         # model.select()
 
-    # -------------------------------------
-    def default_new_rowxxxxx( self ):
-        """tail_tab.default_new_row( next_key )
-        default values for a new row in the detail and the
-        text tabs
-
-        Returns:
-            None.
-
-        """
-        next_key      = AppGlobal.key_gen.get_next_key(
-                        self.detail_table_name )
-        self.detail_tab.default_new_row( next_key )
-        self.text_tab.default_new_row(   next_key )
 
     #---------------- restart here model view dialog name
     #  ---- chat functions
@@ -1807,8 +1835,6 @@ class SubTabBaseOld( QWidget ):
         self.parent_window  = parent_window
 
         self.db             = AppGlobal.qsql_db_access.db
-
-        #self.table_name      = self.parent_window.table_name  --- no this is photo
 
         self.current_id     = None
 
@@ -2122,8 +2148,8 @@ class CriteriaTabBase( QWidget ):
             mutates self.criteria_dict but also returns
             !! could eliminate and let select get as needed
         """
-        self.criteria_dict                  = {}
-        criteria_dict                       = self.criteria_dict
+        self.criteria_dict      = {}
+        criteria_dict           = self.criteria_dict
         for i_criteria in self.critera_widget_list:
             i_criteria.build_criteria( criteria_dict )
 
@@ -2172,7 +2198,6 @@ class CriteriaTabBase( QWidget ):
         parent_window    = self.parent_window
         parent_window.update_db()
 
-
         # msg   = f"made it to help document {criteria =}"
         # logging.debug( msg )
 
@@ -2185,16 +2210,7 @@ class CriteriaTabBase( QWidget ):
         self.put_criteria( criteria )
 
         # mayb this maybe not
-        #self.criteria_select_if()    # may need to select is changed
         self.criteria_select()
-
-    # -----------------------------
-    def search_me_old(self, criteria ):
-        """
-        external search should be overridden in each document type
-        not implemented better
-        """
-        1/0
 
     # -----------------------------
     def get_date_criteria(self,  ):
@@ -2297,7 +2313,6 @@ class HistoryTabBase( QWidget ):
                 msg   = ( "find_id_in_table error !!")
                 logging.error( msg )
                 #breakpoint()     # pdb.set_trace()  # Start the debugger here
-
                 return - 1
 
             #rint( f"find_id_in_table {item.text()}" )
@@ -2482,31 +2497,22 @@ class TextTabBase( DetailTabBase  ):
         data_manager    = self.data_manager
 
         # ---- TextEdit   needs to be defined at beginning with extension object
-        # and monkey patch
+        # and monkey patch  c
         edit_field          = cw.CQTextEdit(
                                     parent         = None,
                                     field_name     = "text_data",
                                                   )
-        text_entry_widget   = edit_field
+        text_edit_widget   = edit_field
+
         font                = QFont( * parameters.PARAMETERS.text_edit_font ) # ("Arial", 12)
         edit_field.setFont(font)
         self.text_data_field = edit_field    # may be used for editing
         edit_field.setPlaceholderText( "Some Long \n   text on a new line " )
         data_manager.add_field( edit_field, )
         text_layout.addWidget( edit_field, )  # what order row column
-        text_edit_ext_obj         = text_edit_ext.TextEditExt( AppGlobal.parameters, text_entry_widget)
-        self.text_edit_ext_obj    = text_edit_ext_obj
 
-        # tab                 = self
-
-        # tab_layout          = QGridLayout(tab)
-        #     # widget: The widget you want to add to the grid.
-        #     # row: The row number where the widget should appear (starting from 0).
-        #     # column: The column number where the widget should appear (starting from 0).
-        #     # rowSpan (optional): The number of rows the widget should span (default is 1).
-        #     # columnSpan (optional): The number of columns the widget should span (default is 1).
-        #     # alignment (optional):
-        # # could have a button layout down one side ??
+        self.snippet_manager        = SnippetManager( edit_field )
+        text_edit_widget.set_stuffdb( AppGlobal.controller )
 
         # ---- id
         widget                  =  cw.CQLineEdit(
@@ -2519,88 +2525,46 @@ class TextTabBase( DetailTabBase  ):
         data_manager.add_field( widget, )
         button_layout.addWidget( widget, )
 
-        label           = "Paste Clip"
-        widget          = QPushButton( label )
-        # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        widget.clicked.connect( self.text_edit_ext_obj.paste_clipboard  )
-        button_layout.addWidget( widget, )
-
-        # ---- template may not even need in self
-        print( "monkey_patch_here_please")
-        ddl_widget, ddl_button_widget  = self.text_edit_ext_obj.build_up_template_widgets()
+        ddl_widget, ddl_button_widget  = self.snippet_manager.make_widgets()
 
         button_layout.addWidget( ddl_widget  )
         button_layout.addWidget( ddl_button_widget  )
 
-        # ---- copy line
-        label           = "Copy\nLine"
-        widget = QPushButton( label )
-        # connect_to  =  functools.partial( self.copy_line_of_text, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        button_layout.addWidget( widget, )
-
-        label           = "run\npython idle"
-        widget          = QPushButton( label )
-        # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        #widget.clicked.connect( self.do_python )
-        button_layout.addWidget( widget, )
 
         # ---- Paste Prior
         label           = "Paste Prior"
         widget          = QPushButton( label )
         # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
         # widget.clicked.connect( connect_to )
-        widget.clicked.connect( self.text_edit_ext_obj.paste_cache )
+        print( "here need to fix paste_prior_paste_cache" )
+        #widget.clicked.connect( self.text_edit_ext_obj.paste_cache )
         button_layout.addWidget( widget, )
 
-        # ---- Paste Prior
-        label           = "Remove Lead/Trail"
-        widget          = QPushButton( label )
-        # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
-        button_layout.addWidget( widget, )
+        # # ---- Paste Prior
+        # label           = "Remove Lead/Trail"
+        # widget          = QPushButton( label )
+        # # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
+        # # widget.clicked.connect( connect_to )
+        # widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
+        # button_layout.addWidget( widget, )
 
         # ---- search text
         search_layout       = QHBoxLayout()
         text_layout.addLayout( search_layout )
-        # ix_row          -= 1
-        # ix_col          += 1
-        widget              = QLineEdit()
-        search_line_edit    = widget
-        widget.setPlaceholderText("Enter search text")
-        search_layout.addWidget( widget,   )
 
-        # ---- up down Buttons
-        widget                  = QPushButton("Down")
-        down_button             = widget
-        # connect below
-        connect_to      = functools.partial( self.text_edit_ext_obj.search_down, search_line_edit ,)
-                  #text_entry_widget  ) # entry_widget =.CQTextEdit(
-        down_button.clicked.connect( connect_to )
-        search_layout.addWidget( widget,  )
+        search_text_widget,  up_button,  dn_button  =  text_edit_widget.make_search_widgets(  )
 
-        widget           = QPushButton("Up")
-        up_button        = widget
-        connect_to      = functools.partial( self.text_edit_ext_obj.search_up, search_line_edit ,)
-        up_button.clicked.connect( connect_to )
-        search_layout.addWidget( widget,   )
+        search_layout.addWidget( search_text_widget )
+        search_layout.addWidget( dn_button )
+        search_layout.addWidget( up_button )
 
-        # # ---- qt_exec
-        # label           = "qt_exec"
-        # widget          = QPushButton( label )
-        # connect_to  =  functools.partial( text_edit_ext.qt_exec, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        # # # widget.clicked.connect( self.qt_exec )
-        # text_layout.addWidget( widget,  )
 
         # ---- >>
         label       = ">>"
         widget      = QPushButton( label )
         #connect_to  = functools.partial( text_edit_ext_obj.cmd_exec, text_entry_widget )
-        connect_to  =   text_edit_ext_obj.cmd_exec
+        #connect_to  =   text_edit_ext_obj.cmd_exec
+        connect_to  = text_edit_widget.cmd_exec
         widget.clicked.connect( connect_to )
         text_layout.addWidget ( widget,     )
 
@@ -2616,7 +2580,6 @@ class TextTabBase( DetailTabBase  ):
             like to build gui on text tabs borrowed here
             in help_document, try to make copy over to base document text tab
         """
-
         tab_layout      = QGridLayout( )
         a_layout.addLayout( tab_layout )
 
@@ -2742,6 +2705,7 @@ class TextTabBase( DetailTabBase  ):
     # ------------------------
     def run_python_idle( self, text_edit ):
         """
+        may now be in -------------------- IdleExe --------------------------
         !! move from base to text ext
         now an experiment to do python esp for now examples
         assume starts from line we are on
@@ -2792,7 +2756,7 @@ breakpoint()
 
         Note text goes into clipboard we should add an argument for that !!
         """
-        debug_msg   = ( "TextEditTab.copy_line_of_text"   )
+        debug_msg           = ( "TextEditTab.copy_line_of_text"   )
         logging.debug( debug_msg )
 
         cursor              = text_edit.textCursor()
@@ -2880,8 +2844,6 @@ class StuffdbPictureTab(  DetailTabBase   ):
             connect_to      = functools.partial( picture_sub_tab.prior_next, 1 )
             widget.clicked.connect( connect_to )
             button_layout.addWidget( widget )
-
-
 
         a_widget        = QPushButton( "fit" )
         a_widget.clicked.connect(  self.fit_in_view )
@@ -3084,6 +3046,7 @@ class PictureListSubTabBase( QWidget  ):
 
     photo_subject table
     """
+
     # ------------------------------------------
     def __init__(self, parent_window ):
         """

@@ -78,6 +78,9 @@ def string_to_ts_sec( date_string, ):
 def string_to_ts_min( date_string, ):
         """
         just to minutes
+
+
+
         """
         return string_to_timestamp( date_string, "%Y/%m/%d %H:%M" )
 

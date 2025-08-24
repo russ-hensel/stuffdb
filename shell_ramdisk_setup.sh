@@ -41,7 +41,8 @@ sudo mount -t tmpfs -o size=3G myramdisk /tmp/ramdisk #
 # >> sudo mount -t tmpfs -o size=5G myramdisk /tmp/ramdisk # nG for the RAM disk,
 mount | tail -n 1 # to see if it is mounted
 cp /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/*.db  /tmp/ramdisk/
-cp /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ/aug.* /tmp/ramdisk/
+mkdir /tmp/ramdisk/russ2025
+cp /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/*.* /tmp/ramdisk/russ2025/
 
 
 
