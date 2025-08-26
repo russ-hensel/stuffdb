@@ -1,27 +1,38 @@
-StuffDb  -- A database system about Stuff
+StuffDb  -- A database system about lots of different kinds of Stuff
 
 A desktop gui system using qt to track all sorts of "stuff"  
 
   stuff includes:
 * text notes = help 
-* physical item, a collection, a set of woodworking
+* physical item, a collection, a set of woodworking = stuff
 * tools... = stuff document
 * an address book ++   = people document 
-* information about plants = plant document 
+* information about kinds of plants = plant document, and for a particular plant in a particurla place a planting document
 * pictures with notes ... linked to other documents = picture document
 * albums documents: a collection of pictures
+
+* An application superpower:
+  ** Notes can includ "hyper commands" that search wiithin the application or execute
+     code of various types ( Python, Bash .... SQL ) or can be used as an application
+     launcher or a url bookmark.
       ......
+
+Most of the documentation for the system will be in its own database, I will need
+to make a version for this repository, right now it is just on my system.
 
 This is my first time with qt for sql, it has been an adventure
 
 Status:
-  At this point some stuff works, but still very far from a useful system.
-  The current db is around the help document which works fairly well.
+  At this point a lot of the Stuffdb works, but still very far from polished system.
+  The current db is around the notes/help document which works fairly well.
 
-  If you want to try it out: contact me and I will make the repository work, right
+  Other documents basically work but can be rough.
+  
+  If you want to try it out: contact me and I will make the repository work ( for you ), right
   now while it works on my desktop the repo is primarly for backup not distribution.
 
   Will soon have a db for all the documents, mostly empty.
+  I am not yet shipping a good starter db but will make one on request.
 
 This is a reimplemtation of a system I wrote 20 years ago in powerbulider, it
 will take a long time to replicat all of its features, but I will be able
@@ -29,7 +40,7 @@ to add new many new features, such as geolocation for maps, and builtin
 editor for long text.
 
 Note:
-  I still like to keep the code right in the git root, see main.py to 
+  I still like to keep most of the code right in the git root, see main.py to 
   start it up ( some code probably missing from repository, but will come in time )
 
 
@@ -39,13 +50,16 @@ Install:
   
   When it complains about dependencies add them
 
-  I am running in Py12
+  I am running in Python and Python 13 it is built in Spyder
 
-Requirements  no .txt
+  There is a parameter.py file and a adjust_path.py file that you will probably
+  need help in tweaking.  I have had others install and get running.
+
+Requirements  no .txt file
   Biggest one is probably pyqt5 -- i install by using anaconda and spyder which
     includes it.
 
-  wat inspector
+  wat inspector -- on github 
 
   will work on this in a bit feel free to send feedback
 
