@@ -5,7 +5,7 @@ A desktop gui system using qt to track all sorts of "stuff"
   stuff includes:
 * text notes = help 
 * physical item, a collection, a set of woodworking = stuff
-* tools... = stuff document
+* tools... like hammers, cnc mills, computers  = stuff document
 * an address book ++   = people document 
 * information about kinds of plants = plant document, and for a particular plant in a particurla place a planting document
 * pictures with notes ... linked to other documents = picture document
@@ -18,7 +18,8 @@ A desktop gui system using qt to track all sorts of "stuff"
       ......
 
 Most of the documentation for the system will be in its own database, I will need
-to make a version for this repository, right now it is just on my system.
+to make a version for this repository, right now it is just on my system.  There
+is just a bit more in this repos wiki.
 
 This is my first time with qt for sql, it has been an adventure
 
