@@ -114,7 +114,7 @@ import data_manager
 LOG_LEVEL   = 30    # higher is more
 logger      = logging.getLogger( )
 PARAMETERS  = parameters.PARAMETERS
-
+NOGO        =  "That is a No Go"
 
 
 # ----------------------------------------
@@ -325,7 +325,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         # ----id
         widget                = QLabel( "ID" )
-        # grid_layout.new_row()
+        grid_layout.new_row()
         grid_layout.addWidget( widget )
 
         widget                  = cw.CQLineEdit(
@@ -336,7 +336,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         grid_layout.addWidget( widget, )    # columnspan = 3 )
 
         # ----id_old
-        widget                = QLabel( "ID Old" )
+        widget                = QLabel( "ID Old*" )
         grid_layout.new_row()
         grid_layout.addWidget( widget )
 
@@ -461,7 +461,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         model.setFilter( "id = -99" )
         model.select()
 
-        query               = QSqlQuery()
+        query               = QSqlQuery( AppGlobal.qsql_db_access.db )
         query_builder       = qt_sql_query.QueryBuilder( query, print_it = False, )
 
         kw_table_name       = "photo_key_words"
@@ -1403,6 +1403,10 @@ class PictureBrowseSubTab( QWidget ):
         a_widget.clicked.connect( self.browse )
         button_layout.addWidget( a_widget )
 
+        a_widget        = QPushButton( "!!Del Dups" )
+        # a_widget.clicked.connect( self.browse )
+        button_layout.addWidget( a_widget )
+
         a_widget        = QPushButton( "move_to_pic" )
         a_widget.clicked.connect( self.move_to_pic )
         button_layout.addWidget( a_widget )
@@ -1434,8 +1438,15 @@ class PictureBrowseSubTab( QWidget ):
         file_dialog     = QFileDialog(self, "Select Files")
 
         file_dialog.setFileMode(QFileDialog.ExistingFiles) #multiple file selection
-        file_dialog.setNameFilter("All Files (*);;Text Files (*.txt)")
-        file_dialog.setDirectory(    initial_dir )
+        # Define name filters (case insensitive)
+        name_filters = [
+            "Common Graphics (*.jpg *.jpeg *.png *.gif *.bmp *.tiff *.tif *.webp *.svg *.ico *.JPG *.JPEG *.PNG *.GIF *.BMP *.TIFF *.TIF *.WEBP *.SVG *.ICO)",
+            "Common Media (*.mp4 *.avi *.mov *.wmv *.flv *.webm *.mkv *.m4v *.mp3 *.wav *.flac *.aac *.ogg *.wma *.MP4 *.AVI *.MOV *.WMV *.FLV *.WEBM *.MKV *.M4V *.MP3 *.WAV *.FLAC *.AAC *.OGG *.WMA)",
+            "JPEG Images (*.jpg *.jpeg *.JPG *.JPEG)",
+            "All Files (*)"
+             ]
+        file_dialog.setNameFilter( name_filters )
+        file_dialog.setDirectory( initial_dir )
         # file_dialog.setWindowTitle(  title      )
         # #file_dialog.setNameFilter(   file_types  )
 
@@ -1572,7 +1583,7 @@ class PictureBrowseSubTab( QWidget ):
             msg       = f"{str( an_except)}"
             logging.debug( msg )
             QMessageBox.information( AppGlobal.main_window,
-                                     "That is a No Go", msg )
+                                     NOGO, msg )
             return
 
         model       = self.model
@@ -1647,7 +1658,7 @@ class PictureBrowseSubTab( QWidget ):
 
         current_filename    = detail_tab.file_field.get_raw_data().strip( )
         if current_filename != "":
-            qsql_utils.ok_message_box(  title = "That is a No Go",
+            qsql_utils.ok_message_box(  title = NOGO,
                 msg   = "For this to work you need a picture with a blank file name"   )
 
             return  # or perhaps an exception
@@ -1718,10 +1729,12 @@ class PictureBrowseSubTab( QWidget ):
 
         # next needs test and perhaps more work
         if os.path.exists( file_name_path_dest ):
-            msg   = ( "dest file >{file_name_path_dest}<  already exists")
-            qsql_utils.ok_message_box(  title = "That is a No Go",
+            msg   = ( f"dest file >{file_name_path_dest}<  already exists")
+            qsql_utils.ok_message_box(  title = NOGO,
                                         msg   = msg  )
             logging.debug( msg )
+            raise Exception( msg )
+            # !! need to end this now loops, an except would at least end the loop
             return
 
         # parent_window.sub_dir_field.set_preped_data( db_sub )   --- maybe after move works
@@ -2000,8 +2013,8 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
             #  QSqlTableModel
 
         # ---- other   model_other
-        headers = [ "Table", "Id", "Information"]   # other is items from other windows, clears when
-        model_other           = table_model.TableModel( headers)   # why not QTableWidget
+        headers = [ "Table", "Id", "Information(model_other)"]   # other is items from other windows, clears when
+        model_other           = table_model.TableModel( headers )   # why not QTableWidget
         self.model_other      = model_other
         model_other.add_indexer(  self.model_other_ituple )
 
@@ -2021,7 +2034,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         right_layout.addWidget( view_other )
 
         # ---- view_history
-        headers = ["history", "22", "32", "43"]
+        headers = ["history", "22", "32", "43"] # do not see
         #self.view           = QTableView()
         model_history           = table_model.TableModel( headers)
         self.model_history      = model_history
@@ -2037,7 +2050,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         #ia_qt.q_abstract_table_model( select_model, "this is my message for my table >>>>>>>>>>>>>>>>>>>>>>>>>>>" )
 
         # ----  model_display
-        headers = ["SubjId", "Table", "Id", "Information"]
+        headers = ["SubjId", "Table", "Id", "Information model_display"]
         #self.view           = QTableView()
         model_display           = table_model.TableModel( headers)
         self.model_display      = model_display
@@ -2119,7 +2132,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         model           = QSqlTableModel( self, self.db )
         #model          = qt_with_logging.QSqlTableModelWithLogging(  self, self.db    )
 
-        self.model      = model    # these are the subjects in the db
+        self.model      = model    # these are the subjects in the db table photo_subject
 
         model.setTable( self.table_name )
         self.model_ituple   = ( 3, 5 ) # to index table, table_id check with table
@@ -2708,7 +2721,9 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         if a_id is None:
             info  = ( "info query returned nothing" )
         else:
+            # should sync using data dict
             info      = (f"ID: {a_id = }  { name = }  {descr = }  ")
+            info      = (f"{ name = }  {descr = } ")
         # consider check for empty, too long so far just debug
         return info
 
@@ -2767,6 +2782,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
     def topic_update( self, table, table_id,  info, ):
         """
         this is the message receiver
+            we could get the info, topic_string here
         """
         #print( "got topic update " )  #"{args} {kwargs}")
         msg       = ( f"got topic update {table = } {table_id = } {info = } update_subjects next not but populate_model_other")

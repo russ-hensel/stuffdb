@@ -246,11 +246,15 @@ def rpt_sub_tab_columns_order( table_name, verbose = False ):
 # ----------------------------------------
 class DataDict(   ):
     """
-    for the stuff table....
+
+    think wrong
+         for the stuff table....\
+    db_schema_name   .... may be many instances of the schema
+    db_name
     """
-    def __init__(self, db_name ):
-        self.db_name        = db_name
-        self.table_dicts    = {}
+    def __init__(self, db_schema_name ):
+        self.db_schema_name     = db_schema_name
+        self.table_dicts        = {}
 
     def add_table(self, a_table  ):
         """
@@ -327,7 +331,7 @@ class DataDict(   ):
     def __str__( self, ):
         """ """
         a_str       = "==== DataDict ======"
-        a_str       = f"{a_str}\n   {self.db_name = }"
+        a_str       = f"{a_str}\n   {self.db_schema_name = }"
         a_str       = f"{a_str}\n   and our tables are:"
         for i_table_name, i_table_dict in self.table_dicts.items(  ):
             a_str   =  f"{a_str}\n   {i_table_name}"
@@ -379,11 +383,41 @@ class TableDict(  ):
             i_detail_edit_class = i_column.detail_edit_class
             # i_db_convert_type   = i_column.db_convert_type   # string for VARCHAR text....
 
-
-
             name_to_ix_dict[ i_name ]  = ix_column
 
         return name_to_ix_dict
+
+    #------------------------------------------------
+    def get_topic_columns_dup(self,    ):
+        """
+        !! not optimized
+        """
+
+        column_list    = []
+
+        for ix_column, i_column in enumerate( self.columns ):
+
+
+            i_name          = i_column.column_name
+            i_my_type       = i_column.column_name       # work in progress or error
+            i_display_type  = i_column.display_type
+            i_form_edit     = i_column.form_edit
+            i_is_key_word   = i_column.is_key_word
+            i_placeholder   = i_column.placeholder_text
+            i_default_func  = i_column.default_func
+            i_is_topic      = i_column.is_topic
+
+            i_detail_edit_class = i_column.detail_edit_class
+            # i_db_convert_type   = i_column.db_convert_type   # string for VARCHAR text....
+
+            if i_is_topic is True:
+                column_list.append( i_name )
+
+        #column_list.sort( key = lambda i_column: i_column.in_history )
+        # breakpoint()
+        return column_list
+
+
 
 
     #------------------------------------------------
@@ -568,7 +602,11 @@ class TableDict(  ):
 
         column_list.sort( key = lambda i_column: i_column.topic_colunm_order )
 
-        return column_list
+
+        column_names    = [i_column.column_name for i_column in column_list ]
+
+        #return column_list
+        return column_names
 
     #------------------------------------------------
     def to_history_list(self,    ):
@@ -1448,18 +1486,18 @@ def build_it_old( db_name ):
     print( DATA_DICT )
 
 
-def  build_it( db_name = None ):
+def  build_it( db_schema_name = None ):
     """build one time  """
     # global DATA_DICT
 
-    if not db_name:
+    if not db_schema_name:
         db_name = "default, probably stuffdb"
 
     global DATA_DICT
     if  DATA_DICT:
         return  DATA_DICT
 
-    build_it_old(  db_name )
+    build_it_old(  db_schema_name )
 
 
     import data_dict_help
@@ -1494,7 +1532,6 @@ def  build_it( db_name = None ):
 
     import data_dict_qt5_example
     data_dict_qt5_example.build_it(  DATA_DICT )
-
 
     #rint( f"{data_dict.DATA_DICT}" )
     print( "DATA_DICT created ")

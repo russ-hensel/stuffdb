@@ -87,6 +87,11 @@ import sql_util
 #import parameter_check
 # ---- end imports
 
+STUFFDB_CONNECTION_NAME    = "stuffdb_main_connection_name"
+
+# stuffdb.DB_CONNECTION_NAME
+# from stuffdb import DB_CONNECTION_NAME
+
 # -----------------------------
 def delete_file( file_name ):
     """
@@ -179,7 +184,7 @@ class App( ):
 
         app_logging.init()
 
-        a_qsql_db_access        = qsql_db_access.QsqlDbAccess( )
+        a_qsql_db_access        = qsql_db_access.QsqlDbAccess( STUFFDB_CONNECTION_NAME )
 
         AppGlobal.qsql_db_access  = a_qsql_db_access
 

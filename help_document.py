@@ -148,7 +148,7 @@ class HelpDocument( base_document_tabs.DocumentBase ):
         Changes state of detail and related tabs
 
         """
-        next_key      = AppGlobal.key_gen.get_next_key(   self.detail_table_name )
+        next_key      = AppGlobal.key_gen.get_next_key( self.detail_table_name )
         self.detail_tab.default_new_row( next_key )
         self.text_tab.default_new_row(   next_key )
 
@@ -354,6 +354,9 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
             i_widget.on_value_changed       = lambda: self.criteria_changed( True )
             i_widget.on_return_pressed      = self.criteria_select
 
+        #self.id_field.setFocus()  # seems not to work try
+        QTimer.singleShot( 0, self.key_words_widget.setFocus )
+
     # -------------
     def criteria_select( self, ):
         """
@@ -376,7 +379,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         model.select()
 
         #rint( "begin channel_select for the list")
-        query                           = QSqlQuery()
+        query                           = QSqlQuery( AppGlobal.qsql_db_access.db )
         query_builder                   = qt_sql_query.QueryBuilder( query, print_it = True  )
 
         kw_table_name                   = "help_key_words"
@@ -966,7 +969,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         search_layout.addWidget( up_button )
 
         # ---- >>
-        label       = "Go  >> ..."
+        label       = ">> Go ..."
         widget      = QPushButton( label )
         #connect_to  = functools.partial( text_edit_ext_obj.cmd_exec, text_entry_widget )
         connect_to  = text_edit_widget.cmd_exec

@@ -23,7 +23,7 @@ import time
 
 from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
                              QApplication,
@@ -61,6 +61,7 @@ from PyQt5.QtGui import (QIntValidator,
                          QStandardItem,
                          QStandardItemModel)
 
+# from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSql_Model
 from PyQt5.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
@@ -133,7 +134,7 @@ logger              = logging.getLogger( )
 LOG_LEVEL           = 20 # level form much debug
            #  higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
 
-EVENT_FIELD_DICT    = None
+EVENT_FIELD_DICT        = None  # created later?
 
 
 IX_EVENT_ID             = 0 # many are magic convert to this
@@ -227,8 +228,6 @@ class PlantingDocument( base_document_tabs.DocumentBase ):
         mdi_area.addSubWindow( sub_window )
 
         sub_window.show()
-
-
 
     # -------------------------------------
     def i_am_hsw(self):
@@ -357,6 +356,20 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget, columnspan = 3 )
 
+        # ----id
+        widget                = QLabel( "ID" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit(
+                                             field_name = "table_id" )
+        self.id_field           = widget
+        self.critera_widget_list.append( widget )
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
+
+
+
         # ---- name like
         grid_layout.new_row()
         widget  = QLabel( "Name (like)" )
@@ -425,9 +438,7 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             i_widget.on_value_changed       = lambda: self.criteria_changed( True )
             i_widget.on_return_pressed      = self.criteria_select
 
-    # ---- Actions
-    # -------------------------
-
+        QTimer.singleShot( 0, self.key_words_widget.setFocus )
 
     # -------------
     def criteria_select( self,     ):
@@ -440,10 +451,10 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         model                           = parent_document.list_tab.list_model
         #rint( "begin channel_select for the list")
-        query                           = QSqlQuery()
+        query                           = QSqlQuery( AppGlobal.qsql_db_access.db )
         query_builder                   = qt_sql_query.QueryBuilder( query, print_it = False, )
 
-        kw_table_name                   = "platning_key_words"
+        kw_table_name                   = "platning_key_word"
         column_list                     = [ "id", "id_old", "name", "add_kw", "bed_id",       ]
 
         a_key_word_processor            = key_words.KeyWords( kw_table_name, AppGlobal.qsql_db_access.db )
@@ -467,6 +478,13 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             query_builder.sql_having        = f" count(*) = {key_word_count} "
 
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )
+
+        # !! change to bind variables sql inject
+        # ---- id  table_id
+        table_id     = criteria_dict[ "table_id" ].strip().lower()
+        if table_id:
+            add_where       =  f' planting.id = {table_id} '
+            query_builder.add_to_where( add_where, [ ])
 
         # ---- name like
         name                          = criteria_dict[ "name" ].strip().lower()
@@ -529,7 +547,7 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
 
 
         self.tab_name                   = "PlantingDetailTab"
-        self.key_word_table_name        = "help_key_word"
+        self.key_word_table_name        = "planting_key_word"
         self.post_init()
         #self.enable_send_topic_update   = True
 
@@ -668,8 +686,6 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         self.plant_id_field           = edit_field
 
 
-
-
         widget_ext                    = combo_dict_ext.PLANT_COMBO_DICT_EXT
         widget_ext.add_widget( edit_field )
         edit_field.setPlaceholderText( "plant_id" )
@@ -749,14 +765,14 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
 
-        # ---- bed
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "bed", )
-        self.bed_field     = edit_field
-        edit_field.setPlaceholderText( "bed" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
+        # ---- bed !! does not exist needs a lookup and ddl  probably
+        # edit_field                  = cw.CQLineEdit(
+        #                                         parent         = None,
+        #                                         field_name     = "bed", )
+        # self.bed_field     = edit_field
+        # edit_field.setPlaceholderText( "bed" )
+        # self.data_manager.add_field( edit_field, is_key_word = False )
+        # layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- lbl_name
         edit_field                  = cw.CQLineEdit(
@@ -884,10 +900,6 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         # still validator / default func  None
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
-
-
-
-
 
 
     # ----------------------------
@@ -1046,8 +1058,9 @@ class PlantingHistorylTab( base_document_tabs.HistoryTabBase   ):
         self.tab_name            = "PlantingHistorylTab"
 
 # ----------------------------------------
-class PlantingEventSubTab( base_document_tabs.SubTabBase ):
+class PlantingEventSubTab( base_document_tabs.SubTabWithEditBase ):
     """
+
     """
     def __init__(self, parent_window ):
         """
@@ -1056,7 +1069,7 @@ class PlantingEventSubTab( base_document_tabs.SubTabBase ):
 
         self.table_name      = "planting_event"
 
-        global EVENT_FIELD_DICT
+        global EVENT_FIELD_DICT   # where when is used ??
         if EVENT_FIELD_DICT is None:
             EVENT_FIELD_DICT   = data_dict.rpt_sub_tab_columns_order( self.table_name, verbose = False  )
 
@@ -1066,51 +1079,61 @@ class PlantingEventSubTab( base_document_tabs.SubTabBase ):
         self._build_gui()
 
     # ------------------------------------------
-    def _build_gui( self, ):
+    def _build_gui_promoted( self, ):
         """
         what it says, read
         extend method
         see parent some of this promoted
         """
-        super()._build_gui()
-        pass    # continue here
+        # super()._build_gui()
+        # pass    # continue here
 
-        model     = self.model
-        view      = self.view
+        # model     = self.model
+        # view      = self.view
 
-        # new dict should do in base controled by data dict
-        # model.setHeaderData(  IX_EVENT_ID, Qt.Horizontal, "ID" )
-        # view.setColumnWidth(  IX_EVENT_ID, 100)  # Set  width in  pixels
-        # view.setColumnHidden( IX_EVENT_ID, True )  # view or model
+        page                = self
 
+        layout              = QVBoxLayout( page )
+        button_layout       = QHBoxLayout()
 
-        # model.setHeaderData( IX_EVENT_ID_OLD, Qt.Horizontal, "ID_Old" )
-        # view.setColumnWidth( IX_EVENT_ID_OLD, 100)  # Set  width in  pixels
-        # view.setColumnHidden( IX_EVENT_ID_OLD, True )  # view or model
-        # #view.setColumnHidden( 1, True )  # view or model
+        layout.addLayout( button_layout )
 
-        # model.setHeaderData( IX_EVENT_PLANT_ID, Qt.Horizontal, "Plant_Id" )
-        # view.setColumnWidth( IX_EVENT_PLANT_ID, 100)  # Set  width in  pixels
-        # # view.setColumnHidden( IX_EVENT_PLANT_ID, True )  # view or model  # cmnt out for debug
+        # model.setHeaderData( 0, Qt.Horizontal, "ID")
+        # model.setHeaderData( 1, Qt.Horizontal, "YT ID"  )
 
+        # Set up the view
+        view                 = QTableView()
+        model                = self.model
+        #self.list_view       = view
+        self.view            = view
+        view.setModel( self.model )
 
-        # model.setHeaderData( IX_EVENT_PLANT_ID_OLD, Qt.Horizontal, "Plant_Id_old" )
-        # view.setColumnWidth( IX_EVENT_PLANT_ID_OLD, 100)  # Set  width in  pixels
-        # view.setColumnHidden( IX_EVENT_PLANT_ID_OLD, True )  # view or model
+        view.setEditTriggers(QTableView.NoEditTriggers)  # Disable all edit triggers make non-edit
+           # now do not need stuff in EventSql.....
 
+        view.setSelectionBehavior( QTableView.SelectRows )
 
-        # model.setHeaderData( IX_EVENT_DATE, Qt.Horizontal, "Event Date" )
-        # view.setColumnWidth( IX_EVENT_DATE, 100)  # Set  width in  pixels
+        self.adj_event_columns()
 
-        # model.setHeaderData( IX_EVENT_DLR, Qt.Horizontal, "!$ Amount" )
-        # view.setColumnWidth( IX_EVENT_DLR, 100)  # Set  width in  pixels
+        layout.addWidget( view )
 
+        # ---- buttons
+        widget        = QPushButton( 'Add' )
+        #add_button    = widget
+        widget.clicked.connect( self.add )
+        button_layout.addWidget( widget )
 
-        # model.setHeaderData( IX_EVENT_CMNT, Qt.Horizontal, "Comment" )
-        # view.setColumnWidth( IX_EVENT_CMNT, 300)  # Set  width in  pixels
+        #
+        widget        = QPushButton('Edit')
+        #add_button    = widget
+        widget.clicked.connect(self.edit_selected_event )
+        button_layout.addWidget( widget )
 
-        # model.setHeaderData( IX_EVENT_TYPE, Qt.Horizontal, "Type" )
-        # view.setColumnWidth( IX_EVENT_TYPE, 100)  # Set  width in  pixels
+        #
+        widget        = QPushButton('Delete')
+        #add_button    = widget
+        #widget.clicked.connect(self.delete_record)
+        button_layout.addWidget( widget )
 
 
     # ---------------------------------
@@ -1148,6 +1171,7 @@ class PlantingEventSubTab( base_document_tabs.SubTabBase ):
         """
         maybe make anscestor and promote
         could be paramaterized with key name ??
+        but is it worth it for 4 lines
         """
         model               = self.model
 
@@ -1155,6 +1179,116 @@ class PlantingEventSubTab( base_document_tabs.SubTabBase ):
         model.setFilter( f"planting_id = {id}" )
         # model_write.setFilter( f"pictureshow_id = {id} " )
         model.select()
+
+    # ----------------------------------
+    def adj_event_columnsxxx( self ):
+        """
+        from _build_gui
+           so some of it can be factored to parent
+           or has it already been see parent
+            think done automatically
+
+0        id
+
+
+1         id_old
+2         planting_id_old
+3         planting_id
+4         event_dt
+5         dlr
+6         cmnt
+7         type
+8           dt_mo  INTEGER,
+9           dt_day  INTEGER,
+10           day_of_year  INTEGER
+
+
+        """
+        view                 = self.view
+        model                = self.model
+
+
+        ix_col = 0
+        model.setHeaderData( ix_col, Qt.Horizontal, "ID" )
+        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        view.setColumnHidden( ix_col, True )  # view or model visible
+
+        ix_col = 1
+        model.setHeaderData( ix_col, Qt.Horizontal, "ID_Old" )
+        view.setColumnWidth( ix_col, 100)
+        #view.setColumnHidden( ix_col, True )
+        #view.setColumnHidden( 1, True )  # view or model
+
+        ix_col  = 2 #   planting_id_old
+        model.setHeaderData( ix_col, Qt.Horizontal, "P_Id_O" )
+        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        # view.setColumnHidden( ix_col, True )  # view or model  # cmnt out for debug
+
+        ix_col  = 3 # planting_id
+        model.setHeaderData( ix_col, Qt.Horizontal, "P_Id" )
+        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        #view.setColumnHidden( ix_col, True )  # view or model
+
+        ix_col  = 4  # 4 event_dt
+        model.setHeaderData( ix_col, Qt.Horizontal, "Event Date" )
+        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+
+        ix_col  = 5  # 5 dlr
+        model.setHeaderData( ix_col, Qt.Horizontal, "$ Amount" )
+        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+
+        ix_col = 6  # 6 cmnt
+        model.setHeaderData( ix_col, Qt.Horizontal, "Comment" )
+        view.setColumnWidth( ix_col, 300)  # Set  width in  pixels
+
+        ix_col = 7  # 7 type
+        model.setHeaderData( ix_col, Qt.Horizontal, "Type" )
+        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+
+
+        # 8 dt_mo INTEGER, 9 dt_day INTEGER, 10 day_of_year INTEGER
+        for ix in range( 8, 11 ):
+            view.setColumnHidden( ix, True )  # view or model
+
+        # might want a loop for this
+        # seems to be only after set model
+        # STUFF_ID_COL    = 1
+        # view.hideColumn( STUFF_ID_COL )
+
+    # ----------------------------------
+    def edit_selected_event(self):
+        """
+        Open dialog to edit the currently selected event.
+        """
+        selected_data = self.get_selected_row_data()
+        if selected_data is None:
+            return
+
+        row, data = selected_data
+
+        # Open dialog with the current data
+        #dialog = StuffEventDialog(self, edit_data=data)
+        dialog = planting_document_edit.EditPlantingEvent( self, edit_data=data )
+            # self the parent tab
+
+        model     = self.model
+
+        if dialog.exec_() == QDialog.Accepted:
+            form_data = dialog.get_form_data()
+            # 0 id 1 id_old 2 planting_id_old 3 planting_id 4 event_dt 5 dlr 6 cmnt 7 type 8 dt_mo INTEGER, 9 dt_day INTEGER, 10 day_of_year INTEGER
+            # Update the row with the new data
+            # model.setData( model.index(row, 0), form_data["id"])
+            # model.setData( model.index(row, 2), form_data["stuff_id"])
+            # model.setData( model.index(row, 4), form_data["event_dt"])
+            # model.setData( model.index(row, 5), form_data["dlr"])
+            # model.setData( model.index(row, 6), form_data["cmnt"])
+            # model.setData( model.index(row, 7), form_data["type"])
+
+            # zz EVENT_FIELD_DICT  EVENT_FIELD_DICT PEOPLE_CONTACT_COLUMN_DICT
+
+            for field_name, field_ix in  EVENT_FIELD_DICT.items():
+                model.setData( model.index( row, field_ix ), form_data[ field_name ] )
+
 
 # ----------------------------------------
 class PlantingEventSubTabOld( base_document_tabs.SubTabBaseOld  ):
@@ -1375,7 +1509,6 @@ class EventSqlTableModel( QSqlTableModel ):
             # 99 not used Columns ..doe it have to be in init or is synamic ..
 
 
-
     def flags(self, index: QModelIndex):
         """
         from chat, not really used as for non edit
@@ -1412,9 +1545,20 @@ class EventSqlTableModel( QSqlTableModel ):
 
             elif col == IX_EVENT_DATE:  # this a string should it be an int?
                 value = super().data(index, Qt.EditRole)
-                if value is not None:
-                    return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
-                return value  # Return raw value if None
+                # better try except
+                # if value is not None:
+                #     return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
+                # return value  # Return raw value if None
+                try:
+                    #return datetime.fromtimestamp(value).strftime( cw.DATE_FORMAT ) # "%Y-%m-%d" )
+                    return datetime.fromtimestamp(value).strftime(  cw.PY_DATE_FORMAT )  # "%Y-%m-%d"
+                    # from duston_widgets import DATE_FORMAT
+                except ( ValueError, TypeError ) as error:
+                    # error_message = str(error)
+                    # msg  = (f"Caught an error: {error_message}")
+                    # print( msg )
+                    return None   # is this ok
+
 
         elif role == Qt.EditRole:
             # Return raw value for editing/database for my dates an int

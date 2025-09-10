@@ -396,7 +396,7 @@ class PeopleCriteriaTab( base_document_tabs.CriteriaTabBase,  ):
 
         model                           = parent_document.list_tab.list_model
         #rint( "begin channel_select for the list")
-        query                           = QSqlQuery()
+        query                           = QSqlQuery( AppGlobal.qsql_db_access.db )
         query_builder                   = qt_sql_query.QueryBuilder( query, print_it = False, )
 
         kw_table_name                   = "platning_key_words"
@@ -505,7 +505,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
             none
         """
         page            = self
-        tabxxx             = self
+
 
         box_layout_1    =  QVBoxLayout( page )
         max_col         = 10

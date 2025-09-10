@@ -422,7 +422,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         model                   = parent_document.list_tab.list_model
 
-        query                   = QSqlQuery()
+        query                   = QSqlQuery( AppGlobal.qsql_db_access.db )
         query_builder           = qt_sql_query.QueryBuilder( query, print_it = False, )
 
         kw_table_name           = "photoshow_key_words"
@@ -1190,7 +1190,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         """
         # Create the model and set up the relation for file and sub_dir
-        self.model = QSqlRelationalTableModel(self)
+        self.model = QSqlRelationalTableModel( self, self.db )
         # self.model          = qt_with_logging.QSqlRelationalTableModelWithLogging(
         #     self )
         self.model.setTable( "photo_in_show" )

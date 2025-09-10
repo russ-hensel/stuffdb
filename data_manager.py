@@ -624,6 +624,9 @@ def delete_record_by_id(model, id_value):
         """
         #rint( "get_topic_string" )
         a_str  = " "
+        if not self.topic_field_list:
+            a_str = "DataManager.get_topic_string i_edit in self.topic_field_list is falsy"
+
         for i_edit in self.topic_field_list:
             a_str    = a_str + " " + i_edit.get_raw_data()
 

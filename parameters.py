@@ -62,7 +62,8 @@ class Parameters( ):
 
 
         # ---- russ_2025
-        self.mode_russ_2025_hd()  # may be hidden
+        self.mode_mh_2025_hd()  # may be hidden
+
         # self.mode_russ_2025_ram()
         #self.mode_github()
 
@@ -120,12 +121,45 @@ class Parameters( ):
         self.picture_db_sub     = "/25"
 
         self.picture_browse     = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
+        self.picture_browse     = "/mnt/WIN_D/PhotosRaw/2025"
 
         self.logging_level      = logging.DEBUG   # ERROR
 
         self.icon               =  "./misc/db_red_on_yellow.png"
         self.icon               =  "./misc/db_green_on_black.png"
         #self.icon               =  "./misc/db_red_on_black.png"
+
+    # -------
+    def mode_mh_2025_hd( self ):
+        """
+
+        """
+        self.mode               = "mode_russ_2025_hd"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+        self.db_file_name       = "./data/russ2025/russ2025.db"
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
+        self.db_file_name       = "./data/russ2025/russ2025.db"
+
+
+        self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
+        ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
+
+
+        self.picture_db_sub     = "/99"
+        self.picture_db_sub     = "/test_delete"
+        self.picture_db_sub     = "/25"
+
+        self.picture_browse     = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
+        self.picture_browse     = "/mnt/WIN_D/PhotosRaw/2025"
+
+        self.logging_level      = logging.DEBUG   # ERROR
+
+        self.icon               =  "./misc/db_red_on_yellow.png"
+        self.icon               =  "./misc/db_green_on_black.png"
+        #self.icon               =  "./misc/db_red_on_black.png"
+
 
 
     # -------
@@ -274,7 +308,10 @@ class Parameters( ):
 
         self.platform           = self.our_os           #  redundant
 
-        # ---- appearance -- including sizes
+        # ---- appearance -- including sizes -- note only
+
+        self.notes_only         = False   # only the notes part of the app
+            # will be available
 
         # control initial size and position with:
         self.qt_width           = 1200
@@ -379,6 +416,18 @@ class Parameters( ):
         self.idle_venv     = "py_12_misc"   # idle will open in this python venv
             # path leading to all docs and help
 
+        # ---- note_default_test  --- not working because Iparameters
+        # do not want to couple custom widgets to parametes, but maybe I should
+        # or a try except to app globals ??
+        self.note_default_text  = (
+                                    ">>Search   x\n"
+                                    ">>Search   y\n"
+                                    "    \n"
+                                    "    \n"
+                                    )
+
+
+        #self.note_default_text = textwrap.dedent( self.note_default_text ).strip()
         #self.help_file       =  "http://www.opencircuits.com/Python_Smart_ClipBoard"
 
         # ---- startup   for now choose from members of startup functions  -- add argument??
@@ -416,7 +465,7 @@ class Parameters( ):
         ls *.py
 
         >>end ------------
-        #print( f"bash a_shell_template still needs writing { 0 = }"
+
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
@@ -433,7 +482,6 @@ class Parameters( ):
         ========================
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
-
 
         # ---- text template
         template_name          = "Text"
@@ -513,6 +561,33 @@ class Parameters( ):
 
     # ------->> default mode, always call
     def mode_from_command_line( self ):
+        """
+        checks to see if command line wants to set the mode
+        we will look for the name of a mode in the list of methods
+        and the execute it
+        """
+        if len( SYS_ARGS ) > 1:
+            mode_str    = SYS_ARGS[1]
+
+            if not mode_str.startswith( "mode_"):
+                print( f"{mode_str = } needs to start with 'mode_'")
+                return False
+
+            exec_str           = f"self.{mode_str}()"
+            try:
+                eval( exec_str, globals(), locals()  )
+            except ValueError as error:
+
+                error_message = str(error)
+                msg  = (f"Caught an error: {error_message} for {exec_str = }")
+                print( msg )
+                return False
+
+            return True
+
+        return False
+    # ------->> default mode, always call
+    def mode_from_command_line_old( self ):
         """
         checks to see if command line wants to set the mode
         note case statement so need to set up

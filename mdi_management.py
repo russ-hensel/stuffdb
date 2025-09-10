@@ -25,7 +25,7 @@ typically in AppGlobal as:
 if __name__ == "__main__":
     #----- run the full app
     import main
-    main.main()
+
 # --------------------
 
 # ---- imports
@@ -82,6 +82,9 @@ import planting_document
 import stuff_document
 import db_management_subwindow  # db_management_subwindow.DbManagementSubWindow( )
 
+import topic_for_table
+
+
 import string_util
 
 from collections import defaultdict
@@ -114,8 +117,8 @@ SEARCH_CRITERIA_DICT["id"]      =  "id",
 SEARCH_CRITERIA_DICT["ob"]      =  "id",
 
 
-
 #mdi_management
+# may have been supplanted by TopicDict
 TopicData   = collections.namedtuple(   "TopicData", "table, id, topic" )
 # WindowData  = collections.namedtuple(   "WindowData",
 #                                        "menu_id, window_title" )  # maybe another dict ?/
@@ -157,6 +160,9 @@ class SendSignals( QObject ):
     """
     # these seem to be class level objects
     topic_update_signal            = pyqtSignal(str, int, str )
+        # whar are args who subscribes
+        # looks like only picture document subscribes
+
     stuff_container_update_signal  = pyqtSignal( str, int, dict )
 
     def send_topic_update(self, table, table_id, info):
@@ -208,14 +214,14 @@ class MdiManagement():
 
         self.closed_topics      = []   # _list of dicts      a list of windows that are close but have had topics
         self._open_topics       = []
+        self.topic_dict         = topic_for_table.TopicDict( AppGlobal.qsql_db_access.db )
         # pub.unsubAll( TOPIC_UPDATE )
         self.send_signals       = SendSignals()
         # we have a class for this but we are just using a dict -- lets get rid of the class
         # bad name for just a dict
 
         self.plant_containers   = { None: "", 1: "1one", 2: "2two" }
-        self.text_edit_search   = TextEditSearch( self, AppGlobal.parameters,   )
-
+        self.text_edit_search   = TextEditSearch( self, AppGlobal.parameters, )
 
     # -------------------------
     def register_document( self,  window_id  ):
@@ -223,6 +229,7 @@ class MdiManagement():
         when a new window is created register
         keep a list, or dict.... for now a list
         !! in process sigh up for pubsub
+        called from ??
         """
         #self.window_list.append( window_id )
         self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
@@ -296,6 +303,7 @@ class MdiManagement():
     def show_document( self, sub_window ):
         """
         what it says, read
+        of course it should exist
         !! may need more for minimized documents
         midi_management.show_document( sub_window )
         """
@@ -632,6 +640,19 @@ class MdiManagement():
         # if dialog.exec_() == QDialog.Accepted:
         #     pass
 
+    def stuffdb_help( self,  search_args ):
+        """
+        open a high instance ix for help using eithe id or a search string
+        id removed for now
+            for now put a_id in search_str
+            do we need to register
+        """
+        # may need to register --- seems to be done
+        # think created as active
+        document   = self.make_document( window_class = help_document.HelpDocument, instance_ix = 3 )
+        #self.stuffdb_app_global.mdi_management.do_db_search( cmd,  cmd_args )
+        self.do_db_search( "search", search_args )
+
     # -------------------------
     def make_document( self, window_class, instance_ix = 0 ):
         """
@@ -709,12 +730,18 @@ class MdiManagement():
         self.show_document( sub_window  )
         return sub_window
 
+    def get_topic_string( self, table_name, a_id ):
+        """
+        """
 
+
+        return self.topic_di.ctget_topic_string( table_name, a_id )
 
 class TextEditSearch( ):
     """
     About this class.....
     self.text_edit_ext_obj         = text_edit_ext.TextEditExt( AppGlobal.parameters, entry_widget)
+    a link to custom_widgets -- factored out to decrease coupling of widget to stuffdb
     """
     #----------- init -----------
     def __init__( self, mdi_management, parameters,   ):
@@ -790,6 +817,8 @@ class TextEditSearch( ):
         """
         perhaps throw some exceptions back here to end the search !!
         cmd has been .lowrer()
+            cmd     ex  [ "a", "b", /sys=python]
+            args    ex: search
         """
         # strip off comment if any ?? save the comment ?
         #     # logging.debug( msg )

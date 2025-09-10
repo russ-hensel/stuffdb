@@ -51,6 +51,7 @@ from PyQt5.QtWidgets import (QAction,
                              QDockWidget,
                              QFileDialog,
                              QFrame,
+                             QGroupBox,
                              QGridLayout,
                              QHBoxLayout,
                              QHeaderView,
@@ -99,10 +100,8 @@ import qsql_utils
 
 FIF             = info_about.INFO_ABOUT.find_info_for
 
-
 EXEC_RUNNER     = None  # setup below
 # MARKER              = ">snip"
-
 
 # PERHAPS IN DATA DICT
 # list
@@ -179,7 +178,7 @@ def  clean_path_part( path_part ):
     return path_part
 
 # ------------------------------------
-def open_file_dialog( parent ):
+def open_file_dialog( parent, default_dir ):
     """
     What it says
 
@@ -197,7 +196,8 @@ def open_file_dialog( parent ):
     dialog.setOption(QFileDialog.HideNameFilterDetails, False)
 
     # --- default directory ---
-    dialog.setDirectory("/mnt")  # change as needed
+    #dialog.setDirectory("/mnt")  # change as needed
+    dialog.setDirectory( default_dir )
 
     # --- filters ---
     dialog.setNameFilter("Images (*.png *.jpg *.jpeg *.bmp *.gif)")
@@ -222,16 +222,33 @@ def open_file_dialog( parent ):
         return []
 
 
+class FileIterator:
+    """expand later with dir depth and filters  """
+    def __init__(self, directory):
+        self.directory = directory
+        self._files = os.listdir(directory)  # list of entries
+        self._index = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        while self._index < len(self._files):
+            filename = self._files[self._index]
+            self._index += 1
+            full_path = os.path.join(self.directory, filename)
+            if os.path.isfile(full_path):
+                return full_path
+        raise StopIteration
+
 
 
 # ------------------------------------
-def open_directory_dialog( parent  ):
+def open_directory_dialog( parent, default_dir  ):
     """
     What it says
 
     """
-
-
     dialog = QFileDialog(parent, "Select a Directory")
 
     # --- dialog options ---
@@ -242,7 +259,9 @@ def open_directory_dialog( parent  ):
     dialog.setOption(QFileDialog.DontResolveSymlinks, False)
 
     # --- default start directory ---
-    dialog.setDirectory("/mnt")  # adjust as needed
+    parent.picture_dir_default
+    #dialog.setDirectory("/mnt")  # adjust as needed
+    dialog.setDirectory( default_dir )
 
     # --- default directory suggestion ---
     dialog.selectFile("Photos")  # highlights/suggests this folder if exists
@@ -357,7 +376,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
         self.first_tab         = PictureUtilTab( self  )
         main_notebook.addTab( self.first_tab, "PictureUtilTab" )
 
-
         tab                 = OutputTab( self  )
         self.output_tab     = tab
         main_notebook.addTab( tab, "Output" )
@@ -445,16 +463,17 @@ class DbManagementSubWindow( QMdiSubWindow ):
 
 
     # --------------------------------
-    def open_file_out( self,  ):
+    def open_file_out( self, file_name = "data_management_out.txt" ):
         """
 
         """
-        self.file_name_out   = parameters.PARAMETERS.output_dir + "/" + "data_management_out.txt"
+        self.file_name_out   = parameters.PARAMETERS.output_dir + "/" + file_name
         self.file_out        = open( self.file_name_out,
                                     'w',
                                     encoding  = "utf8",
                                     errors    = 'ignore' )
 
+        return self.file_name_out
     # --------------------------------
     def close_file_out( self,  ):
         """
@@ -1186,6 +1205,12 @@ class PictureUtilTab( QWidget ):
 
         self.tab_name               = "PictureUtilTab"
 
+        self.picture_dir_default    = "../"
+        self.picture_dir_default    = AppGlobal.parameters.picture_browse
+
+
+        self.disptach_dict          = {}
+
         self.build_gui()
 
     # -----------------------------
@@ -1195,27 +1220,65 @@ class PictureUtilTab( QWidget ):
         """
         vlayout              = QVBoxLayout( self )
 
-        # ---- new row
-        layout              = QHBoxLayout( self )
-        vlayout.addLayout( layout )
+        # ---- arguments
+        #groupbox   = QGroupBox()  # no title
+        groupbox   = QGroupBox( "Arguments ( see help for required args )" )   # version with title
 
-        # ---- table combobox
-        widget              = QComboBox()
+        groupbox.setStyleSheet("""
+            QGroupBox {
+                border: 2px solid blue;
+                border-radius: 10px;
+                margin-top: 15px;
+            }
 
-        self.go_widget      = widget
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top center;
+                padding: 0 3px;
+                background-color: white;
+            }
+        """)
 
-        a_list              = [ "find_dirs",
-                                "pictures not in albums",
-                                "pictures missing dates",
-                                "find_file_missing",
-                                "find_record_missing",
-                                "clean_file_sub_dir",
+        # layout the groupbox and make
+        # another layout inside it
 
-                                 ]
+        vlayout.addWidget( groupbox )
 
-        widget.addItems( a_list )
-        widget.setCurrentIndex( 0 )
-        layout.addWidget( widget )
+        self.build_gui_arguments( groupbox )
+
+        # ---- actions
+        groupbox   = QGroupBox( "Actions" )   # version with title
+
+        groupbox.setStyleSheet("""
+            QGroupBox {
+                border: 2px solid blue;
+                border-radius: 10px;
+                margin-top: 15px;
+            }
+
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top center;
+                padding: 0 3px;
+                background-color: white;
+            }
+        """)
+
+        # layout the groupbox and make
+        # another layout inside it
+
+        vlayout.addWidget( groupbox )
+
+        self.build_gui_actions( groupbox )
+
+
+
+    def build_gui_arguments( self, groupbox ):
+        """
+
+
+        """
+        layout     = QHBoxLayout( groupbox )
 
         # ---- set dir
         widget              = QPushButton( "Set Dir" )
@@ -1227,7 +1290,7 @@ class PictureUtilTab( QWidget ):
         self.dir_widget     = widget
         layout.addWidget( widget )
 
-        # ---- set dir
+        # ---- set file
         widget              = QPushButton( "Set File" )
         connect_to          = self.get_file
         widget.clicked.connect( connect_to  )
@@ -1237,14 +1300,53 @@ class PictureUtilTab( QWidget ):
         self.file_widget     = widget
         layout.addWidget( widget )
 
+    def build_gui_actions( self, groupbox ):
+        """
+
+
+        """
+        layout              = QHBoxLayout( groupbox )
+
+        # ---- table combobox
+        widget              = QComboBox()
+
+        self.go_widget      = widget
+        self.disptach_dict[ "find_dirs" ]                  = self.find_dirs
+        self.disptach_dict[ "pictures_not_in albums" ]     = self.find_dirs
+        self.disptach_dict[ "pictures missing dates" ]     = self.find_dirs
+        self.disptach_dict[ "find_file_missing" ]          = self.find_file_missing
+        self.disptach_dict[ "find_record_missing" ]        = self.find_record_missing
+        self.disptach_dict[ "clean_file_sub_dir" ]         = self.clean_file_sub_dir
+        self.disptach_dict[ "find_if_dups" ]               = self.find_if_dups
+
+        a_list              = [key for key in self.disptach_dict.keys() ]
+
+        widget.addItems( a_list )
+        widget.setCurrentIndex( 0 )
+        layout.addWidget( widget )
+
+        # ---- buttons
         widget              = QPushButton( "Go" )
         connect_to          = self.go
         widget.clicked.connect( connect_to  )
         layout.addWidget( widget )
 
-        # ---- new row
-        layout              = QHBoxLayout( self )
-        vlayout.addLayout( layout )
+        widget              = QPushButton( "Help" )
+        connect_to          = self.help
+        widget.clicked.connect( connect_to  )
+        layout.addWidget( widget )
+
+    # -------------------------
+    def help( self,   ):
+        """
+        What it says, read
+            parse the args yourself
+            use convention for about 1 hit
+        """
+        go_item      = self.go_widget.currentText()
+        go_item      = go_item.replace( "_", " " )
+        search_args = [ "stuffdbhelp", "pictureutiltab", go_item ]
+        AppGlobal.mdi_management.stuffdb_help( search_args = search_args )
 
     # ---- reports
     # -------------------------
@@ -1254,40 +1356,53 @@ class PictureUtilTab( QWidget ):
             better make dict based inc dropdown
         """
         go_item      = self.go_widget.currentText()
+        self.disptach_dict[ go_item ]()
 
-        if go_item == "xxxx":
-            pass
-        elif go_item == "find_dirs":
-            self.find_dirs()
+        # if go_item == "xxxx":
+        #     pass
+        # elif go_item == "find_dirs":
+        #     self.find_dirs()
 
-        elif go_item == "clean_file_sub_dir":
-            self.clean_file_sub_dir()
+        # elif go_item == "clean_file_sub_dir":
+        #     self.clean_file_sub_dir()
 
-        elif go_item == "find_file_missing":
-            self.find_file_missing()
-
-
-        elif go_item == "find_record_missing":
-            self.find_record_missing()
+        # elif go_item == "find_file_missing":
+        #     self.find_file_missing()
 
 
-        else:
-            print( f"do not know what {go_item = } is")
+        # elif go_item == "find_record_missing":
+        #     self.find_record_missing()
+
+        # elif go_item == "find_if_dups":
+        #     self.find_if_dups()
+
+
+        # else:
+        #     print( f"do not know what {go_item = } is")
 
 
     def get_dir( self,   ):
         """ """
-        dirs    = open_directory_dialog( self )
+        dirs    = open_directory_dialog( self, self.picture_dir_default )
         if dirs:
-            self.dir_widget.setText(  dirs[0] )
+            #file_name_path              = Path( files[0] )
+            self.picture_dir_default   = dirs[0]
+
+            self.dir_widget.setText( dirs[0] )
 
     def get_file( self,   ):
-        """ """
-        files    = open_file_dialog( self )
+        """
+        self.picture_file_default   = "../"
+        self.picture_dir_default    = "../"
+
+        """
+        files    = open_file_dialog( self, self.picture_file_default )
         if files:
-            self.dir_widget.setText(  files[0] )
+            file_name_path              = Path( files[0] )
+            self.picture_file_default   = str( file_name_path.parent )
+            msg              = ( f"setting {self.picture_file_default = }" )
 
-
+            self.file_widget.setText( files[0] )
 
     # ---- go functions
 
@@ -1342,6 +1457,7 @@ class PictureUtilTab( QWidget ):
             bool: True if all updates succeed, False if any error occurs.
         """
         # Query to select all records
+
         db                  = AppGlobal.qsql_db_access.db
         select_query        = QSqlQuery( db )
         select_query_str = """
@@ -1390,6 +1506,82 @@ class PictureUtilTab( QWidget ):
                 return False
 
         return True
+
+    # -------------------------
+    def find_if_dups( self,   ):
+        """
+        work thru the files in a directory and see if already in db
+
+        --- old
+        #max_dir_depth 0 is unlimited
+        self.parent_window.close_file_out( )
+        ?? open output file on output window
+        ?? do a lookup without the extension ??
+        ?? enable delete but keep report
+
+        """
+        indent      = "    "
+        file_out    = self.parent_window.open_file_out( "find_if_dups.txt" )
+        db          = AppGlobal.qsql_db_access.db
+        query       = QSqlQuery(db)
+        sql         =   ( "SELECT id,  sub_dir, file  FROM photo "
+                         " WHERE  file = :file_path_name " )
+
+        # a_sub_dir   = full_dir.removeprefix( parameters.PARAMETERS.picture_db_root )
+        starting_dir       = self.dir_widget.text()
+        #msg    = f"Done find_if_dups {starting_dir = } {ix_file =}  "
+
+
+        msg    = f"Start find_if_dups {starting_dir = }  "
+        self.parent_window.output_to_file( msg )
+        self.parent_window.output_msg(  msg, clear = True )
+
+        ix_file            = -1 # in case no files
+        a_file_itterator   = FileIterator( starting_dir )
+        for ix_file, i_file_name in enumerate( a_file_itterator ):
+            file_path      = Path( i_file_name )
+            full_file_name = str( file_path.resolve() )
+            file_path_name = file_path.name
+            msg         = (f"checking {ix_file}  {full_file_name = }")
+            self.parent_window.output_to_file( msg )
+
+            if not query.prepare(sql):  # do we need to prep and bind ove and over
+                msg     = ( f"Prepare failed: {query.lastError().text()}" )
+                self.parent_window.output_to_file( msg )
+                return
+
+            query.bindValue(":file_path_name", file_path_name )
+
+            if not query.exec_():
+                msg     = ("Error executing query:" + query.lastError().text())
+                self.parent_window.output_to_file( msg )
+
+            ix_record_count  = 0
+            while query.next():
+                ix_record_count     += 1
+                a_id                = query.value(0)
+                sub_dir             = query.value(1)
+                file                = query.value(2)
+
+                msg         = (f"{indent} ---- found {ix_file} id={a_id}, sub_dir={sub_dir}, file={file} {ix_record_count = }")
+                self.parent_window.output_to_file( msg )
+                self.parent_window.output_msg(  msg )
+
+            if ix_record_count == 0:
+                msg         = (f"{indent} ++++ NOT FOUND {ix_file} {file_path_name = }")
+                self.parent_window.output_to_file( msg )
+                self.parent_window.output_msg(  msg )
+
+        msg    = f"Done find_if_dups {starting_dir = } {ix_file =}  "
+        self.parent_window.output_msg(  msg, ) #clear = True )
+        self.parent_window.output_to_file( msg )
+
+        self.parent_window.close_file_out( )
+        self.parent_window.activate_output_tab()
+        msg    = f"Now opeining output file for you {file_out}"
+        self.parent_window.output_msg(  msg, ) #
+        #AppGlobal.os_popen_file( file_out )  # what
+        AppGlobal.os_open_txt_file( file_out )
 
     # -------------------------
     def find_file_missing( self,   ):

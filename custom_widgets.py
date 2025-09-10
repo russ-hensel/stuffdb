@@ -27,6 +27,7 @@ import pdb
 import traceback
 import time
 import webbrowser
+import textwrap
 
 from datetime  import datetime
 from functools import partial
@@ -103,7 +104,7 @@ from PyQt5.QtWidgets import (QAction,
                              QTextEdit,
                              QVBoxLayout,
                              QWidget)
-# ---- imports local
+# ---- imports local -- then constants
 import string_util
 import wat_inspector
 from app_global import AppGlobal
@@ -121,11 +122,19 @@ logger              = logging.getLogger( )
 SCAN_LINES          = 100
 
 #does order matter
-REPLACE_LIST        = [    ( "*>url ",   ">>url " ),   # note deliberate space
+REPLACE_LIST        = [    ( "*>url ",   ">>url " ),   # note deliberate spacemay neee tab as well?
                            ( "*>url0 ",  ">>url " ),
                            ( "*>shell ",  ">>shell " ),
                     ]
 
+
+# make sure equivalent
+QT_DATE_FORMAT         = "yyyy-MM-dd"  # "yyyy-MM-dd"
+PY_DATE_FORMAT         = "%Y-%m-%d"   # strftime("%Y-%m-%d")
+
+# DATE_FORMAT         = "yyyy-MM-dd"
+# "%Y-%m-%d" )
+    # my standard date format
 
 class ValidationIssue(  Exception ):
     """
@@ -676,6 +685,14 @@ class TextEditExtMixin(  ):
         capture all the key presses
         """
         # breakpoint()
+        # ---- is next block indent
+        if event.key() == Qt.Key_Tab:
+            self.indent_selected_text()
+            return
+        elif event.key() == Qt.Key_Backtab or (event.key() == Qt.Key_Tab and event.modifiers() & Qt.ShiftModifier):
+            self.unindent_selected_text()
+            return
+
         if event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_F:
 
             self.ctrl_f_search_down()
@@ -695,7 +712,7 @@ class TextEditExtMixin(  ):
         ⇑ Up Double Arrow (U+21D1)
         ⇓ Down Double Arrow (U+21D3)
         """
-        widget      = QPushButton( "Up ⇑")
+        widget      = QPushButton( "⇑ Up ⇑")
         self.up_button  = widget
         widget.clicked.connect(  self.search_up  )
 
@@ -790,58 +807,70 @@ class TextEditExtMixin(  ):
     # ---------------------------------------
     def show_context_menu( self, pos ):
         """
-        from chat, refactor please !!
-        !! needs extension
+        refactor please !! just use action
+           ?? extend further
 
         """
         widget      = self
         menu        = QMenu( widget )
 
         # Add standard actions
-        undo_action = menu.addAction("*Undo")
+        undo_action = menu.addAction("Undo")
         undo_action.triggered.connect(widget.undo)
         menu.addSeparator()
 
-        cut_action = menu.addAction("*Cut")
+        cut_action = menu.addAction("Cut")
         cut_action.triggered.connect(widget.cut)
 
-        copy_action = menu.addAction("**Copy")
-        copy_action.triggered.connect(widget.copy)
+        copy_action = menu.addAction("Copy")
+        copy_action.triggered.connect( widget.copy )
 
-        paste_action = menu.addAction("**Paste")
+        paste_action = menu.addAction("Paste")
         paste_action.triggered.connect( widget.paste )
         #menu.addSeparator()
 
         # ---- "Smart Paste"
-        foo_action = menu.addAction("**Smart Paste")
+        foo_action = menu.addAction("Smart Paste")
         foo_action.triggered.connect(self.smart_paste_clipboard )
         menu.addSeparator()
 
+        # ---- "Smarten"
+        foo_action = menu.addAction("Smarten")
+        foo_action.triggered.connect(self.smarten )
+        menu.addSeparator()
+
+        # ---- "coyp all "
+        foo_action = menu.addAction("Copy All")
+        foo_action.triggered.connect(self.copy_all )
+        menu.addSeparator()
+
+
+
         # ---- "Strip Sel"
-        foo_action = menu.addAction("!Strip Sel")
+        foo_action = menu.addAction("!!Strip Sel")
         #foo_action.triggered.connect( self.strip_lines_in_selection)
         #menu.addSeparator()
 
         # ---- "RStrip Sel"
-        foo_action = menu.addAction("!RStrip Sel")
+        foo_action = menu.addAction("!!RStrip Sel")
         #foo_action.triggered.connect( self.strip_eol_lines_in_selection )
         #menu.addSeparator()
 
         # ---- ""Update Markup""
-        foo_action = menu.addAction("!!Update Markup")
+        foo_action = menu.addAction("Update Markup")
         foo_action.triggered.connect( self.update_markup )
         menu.addSeparator()
 
         # ---- "Open Urls"
-        foo_action = menu.addAction("!!Open Urls")
+        foo_action = menu.addAction("Open Urls")
         foo_action.triggered.connect( self.goto_urls_in_selection )
         menu.addSeparator()
 
-        select_all_action = menu.addAction("**Select All")
+        select_all_action = menu.addAction("Select All")
         select_all_action.triggered.connect(widget.selectAll)
 
         # ---- >>   go
-        menu_action = menu.addAction("**>>   go ...")
+        menu_action = menu.addAction(">> Go ...")
         menu_action.triggered.connect( self.cmd_exec )
         menu.addSeparator()
 
@@ -866,7 +895,7 @@ class TextEditExtMixin(  ):
         is this worth a function
         selected_text    = self.capture_selected_text()
         """
-        cursor = self.textCursor()
+        cursor        = self.textCursor()
         selected_text = cursor.selectedText()
 
         if selected_text:
@@ -882,16 +911,18 @@ class TextEditExtMixin(  ):
     def cmd_exec( self   ):
         """
         execute command parsed out of text
+        probably should be refactored to use
+        a disptach dict
 
-        !! change to use marker
-        py
-        sh
-        url
-        shell
-        text
-        idle
-        copy
-
+          read the code find on cmd ==
+                py
+                sh
+                url
+                shell
+                text
+                idle
+                copy
+                find_dn
         """
         text_edit        = self
         # ---- do some parsing
@@ -912,10 +943,10 @@ class TextEditExtMixin(  ):
         if len( splits) == 0:
             return
 
-        if splits[0] == ">>":
+        if splits[0] == MARKER:
             splits = splits[1:]        # toss the >>
 
-        if splits[0].startswith( ">>" ):
+        if splits[0].startswith( MARKER ):
             splits[0]  = splits[0][ 2: ]  # again toss the >>
 
         cmd         = splits[0].lower()
@@ -1027,10 +1058,16 @@ class TextEditExtMixin(  ):
             # #                     # STUFF_DB.main_window may be what you want
             # #                     # go_active_sub_window_func
 
+        # ---- find_dn
+        elif cmd == "find_dn":
+            selected_text         = cmd_args[ 0 ] # make more general later !!
+            # selected_text    = self.capture_selected_text()
+            #self.append( f"ctrl_f_search_down {selected_text = }")
+            self.search_text_widget.setText( selected_text )
+            self.search_down()
 
         elif cmd == "xxx":
             pass
-
         else:
             msg   = ( f"{cmd = } \n {cmd_args = }" )
             print( msg )
@@ -1182,9 +1219,12 @@ class TextEditExtMixin(  ):
         """
 
         may want to strip eol while at it ??
+        may have tab or space, we do not want tabs at all in text
+        so replace with 2 spaces
         """
         # print( "do_line_replacements {line =}" )
         #breakpoint()
+        line    = line.replace( "\t", "  " )
         for old, new in REPLACE_LIST:
                 line   = line.replace( old, new )
 
@@ -1235,26 +1275,49 @@ class TextEditExtMixin(  ):
         text    = QApplication.clipboard().text( )
         self.insert_text_at_cursor( text )
 
+    #-----------------------------------
+    def copy_all( self, ):
+        """
+        what it says
+
+
+        """
+        QApplication.clipboard().setText(self.toPlainText())
+
+
+    #-----------------------------------
+    def smarten( self, ):
+        """
+        like smart paste but copy then smart paste
+
+        text_edit       = self
+        cursor          = text_edit.textCursor()
+        selected_text   = cursor.selectedText()
+
+        later do withot going thru the clipboard
+
+        see capture selected text -- how differnt thena copy
+
+
+        """
+        self.copy()
+        self.smart_paste_clipboard()
+
 
     #-----------------------------------
     def smart_paste_clipboard( self, ):
         """
         what it says
 
-        consider strip out tabs....
-        detect line contentns and prefix with >> ...
-        string_util.begins_with_url( a_string )
+            consider strip out tabs....
+            detect line contentns and prefix with >> ...
+            string_util.begins_with_url( a_string )
 
-        may want to make more advanced, look at file extension
-        .txt  .py????
+            may want to make more advanced, look at file extension
+            .txt  .py????
 
-        /home/russ/anaconda.sh
-
-         ~/russ/anaconda.sh
-
-    Google Calendar - June 2025
-    https://calendar.google.com/calendar/u/0/r
-
+            /home/russ/anaconda.sh
+             ~/russ/anaconda.sh
 
         """
         text            = QApplication.clipboard().text( )
@@ -1286,7 +1349,7 @@ class TextEditExtMixin(  ):
 
             and/or look in clipboard utils
         """
-        text_edit       = self.text_edit
+        text_edit       = self
         cursor          = text_edit.textCursor()
         selected_text   = cursor.selectedText()
 
@@ -1296,9 +1359,15 @@ class TextEditExtMixin(  ):
         lines           = selected_text.split('\u2029')
         stripped_lines  = [line.strip() for line in lines]
         for i_line in stripped_lines:
-            i_line.replace( ">>url", "") # what about caps -- do better
-            i_line.strip( )
+            j_line    = i_line.lower()
+            if j_line.startswith( ">>url" ):
+                i_line = i_line[ 5: ]
+
+            # i_line.replace( ">>url", "") # what about caps -- do better
+            i_line    = i_line.strip( )
             if string_util.begins_with_url( i_line ):
+                # msg    = f" webbrowser.open {i_line = }"
+                # print( msg )
                 splits = i_line.split( " " )
                 i_line = splits[0]
                 webbrowser.open( i_line, new = 0, autoraise = True )
@@ -1311,6 +1380,184 @@ class TextEditExtMixin(  ):
         text_edit       = self
         cursor          = text_edit.textCursor()
         cursor.insertText( text )
+
+    # ---- new stuff for block indent from claude check and debug
+
+    def indent_selected_text(self):
+        """Indent selected text to the next tab stop."""
+        cursor = self.textCursor()
+
+        # If no selection, insert spaces to next tab stop at cursor position
+        if not cursor.hasSelection():
+            self._indent_at_cursor(cursor)
+            return
+
+        # Get selection boundaries
+        start_pos = cursor.selectionStart()
+        end_pos = cursor.selectionEnd()
+
+        # Move cursor to start of selection to get line information
+        cursor.setPosition(start_pos)
+        start_block = cursor.block()
+
+        # Move cursor to end of selection
+        cursor.setPosition(end_pos)
+        end_block = cursor.block()
+
+        # Calculate indentation needed
+        indent_spaces = self._calculate_indent_spaces(start_block)
+        if indent_spaces <= 0:
+            return  # No indentation needed or error occurred
+
+        # Store original selection for restoration
+        original_start = start_pos
+        original_end = end_pos
+
+        # Begin editing operation
+        cursor.beginEditBlock()
+
+        try:
+            # Indent all lines in selection
+            current_block = start_block
+            position_offset = 0
+
+            while current_block.isValid() and current_block.blockNumber() <= end_block.blockNumber():
+                # Move cursor to beginning of current line
+                cursor.setPosition(current_block.position())
+
+                # Insert spaces at the beginning of the line
+                spaces_to_add = ' ' * indent_spaces
+                cursor.insertText(spaces_to_add)
+
+                # Update position offset for selection restoration
+                position_offset += indent_spaces
+
+                # Move to next block
+                current_block = current_block.next()
+
+            # Restore selection with adjusted positions
+            new_start = original_start + indent_spaces
+            new_end = original_end + position_offset
+
+            cursor.setPosition(new_start)
+            cursor.setPosition(new_end, QTextCursor.KeepAnchor)
+
+        except Exception as e:
+            print(f"Error during indentation: {e}")
+        finally:
+            cursor.endEditBlock()
+            self.setTextCursor(cursor)
+
+    def unindent_selected_text(self):
+        """Remove indentation (Shift+Tab functionality)."""
+        cursor = self.textCursor()
+
+        if not cursor.hasSelection():
+            return
+
+        # Get selection boundaries
+        start_pos = cursor.selectionStart()
+        end_pos = cursor.selectionEnd()
+
+        cursor.setPosition(start_pos)
+        start_block = cursor.block()
+
+        cursor.setPosition(end_pos)
+        end_block = cursor.block()
+
+        # Begin editing operation
+        cursor.beginEditBlock()
+
+        try:
+            current_block = start_block
+            total_removed = 0
+
+            while current_block.isValid() and current_block.blockNumber() <= end_block.blockNumber():
+                line_text = current_block.text()
+
+                # Calculate how many spaces to remove (up to tab_width)
+                spaces_to_remove = 0
+                for char in line_text[:self.tab_width]:
+                    if char == ' ':
+                        spaces_to_remove += 1
+                    else:
+                        break
+
+                if spaces_to_remove > 0:
+                    # Remove spaces from beginning of line
+                    cursor.setPosition(current_block.position())
+                    cursor.setPosition(current_block.position() + spaces_to_remove, QTextCursor.KeepAnchor)
+                    cursor.removeSelectedText()
+                    total_removed += spaces_to_remove
+
+                current_block = current_block.next()
+
+            # Restore selection with adjusted positions
+            spaces_removed_from_start = min(self.tab_width, len(start_block.text()) - len(start_block.text().lstrip(' ')))
+            new_start = max(start_pos - spaces_removed_from_start, start_block.position())
+            new_end = end_pos - total_removed
+
+            cursor.setPosition(new_start)
+            cursor.setPosition(new_end, QTextCursor.KeepAnchor)
+
+        except Exception as e:
+            print(f"Error during unindentation: {e}")
+        finally:
+            cursor.endEditBlock()
+            self.setTextCursor(cursor)
+
+    def _indent_at_cursor(self, cursor):
+        """Handle tab when there's no selection - insert spaces to next tab stop."""
+        try:
+            # Get current line and cursor position within the line
+            current_block = cursor.block()
+            cursor_pos_in_block = cursor.positionInBlock()
+
+            # Calculate spaces needed to reach next tab stop
+            spaces_to_next_tab = self.tab_width - (cursor_pos_in_block % self.tab_width)
+
+            # Insert spaces
+            cursor.insertText(' ' * spaces_to_next_tab)
+
+        except Exception as e:
+            print(f"Error during cursor indentation: {e}")
+
+    def _calculate_indent_spaces(self, start_block):
+        """Calculate how many spaces to add based on the first non-blank line."""
+        try:
+            current_block = start_block
+
+            # Find the first non-blank line
+            while current_block.isValid():
+                line_text = current_block.text()
+                stripped_text = line_text.lstrip(' \t')
+
+                if stripped_text:  # Found non-blank line
+                    # Count leading spaces (convert tabs to spaces for calculation)
+                    leading_spaces = 0
+                    for char in line_text:
+                        if char == ' ':
+                            leading_spaces += 1
+                        elif char == '\t':
+                            leading_spaces += self.tab_width
+                        else:
+                            break
+
+                    # Calculate spaces needed to reach next tab stop
+                    next_tab_stop = ((leading_spaces // self.tab_width) + 1) * self.tab_width
+                    return next_tab_stop - leading_spaces
+
+                current_block = current_block.next()
+
+            # If no non-blank lines found, default to tab_width spaces
+            return self.tab_width
+
+        except Exception as e:
+            print(f"Error calculating indent spaces: {e}")
+            return 0
+
+
+
 
 # ---- Edits are criteria
 # ---------------------------------
@@ -1771,6 +2018,37 @@ class CQEditBase(   ):
         # return qdate
 
     #----------------------------
+    def cnv_str_to_qdate( self, data ):
+        """
+        converted_data  is QDate
+        """
+        #date_string = "2019-08-10"
+        try:
+            converted_data  = QDate.fromString( data, QT_DATE_FORMAT )
+
+        except ValueError as error:
+            error_message   = str(error)
+            msg             = (f"Caught an error: for {self.field_name = } {error_message}")
+            logging.error( msg )
+
+        return converted_data
+
+    #----------------------------
+    def cnv_qdate_to_str( self, data ):
+        """
+        data is a qdate we assume
+        """
+        try:
+            converted_data = data.toString( QT_DATE_FORMAT )
+
+        except ValueError as error:
+            error_message   = str(error)
+            msg             = ( f"Caught an error: for {self.field_name = } {error_message}" )
+            logging.error( msg )
+
+        return converted_data
+
+    #----------------------------
     def cnv_int_to_qdate( self, data ):
         """
         convert dictionary data to a new data type
@@ -1785,12 +2063,15 @@ class CQEditBase(   ):
             # raise ValueError( msg )
 
         else:
-            data    = int( data )   # assume this works from float
+            # may need something for floats
+
             if not isinstance( data, int ):
                 msg   = ( f"Data {self.field_name} is not instance of int = timestamp {data = } {type(data) = }  " )
                 logging.error( msg )
-                raise ValueError( msg )
 
+                raise ValueError( msg )
+                return   QDate( 1901, 1, 1 ) # surrogate for None but after raise
+            data    = int( data )   # assume this works from float
             a_datetime          = datetime.fromtimestamp( data )
 
             converted_data      = QDate( a_datetime.year, a_datetime.month, a_datetime.day )
@@ -1827,7 +2108,6 @@ class CQEditBase(   ):
 
             info_ignored   = self.get_info_for_id( raw_data )
                 # will fix the dict
-
 
     #----------------------------
     def dict_cb_to_rec( self, record, format = None  ):
@@ -2744,7 +3024,21 @@ class CQTextEdit(QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         TextEditExtMixin.__init__( self, )
 
         # ---- set functions
-        a_partial           = partial( self.set_value, "\n\nnew default text" )
+
+        # think about how to get to parametes with minimun coupling
+        # monkey patch into module on first import
+        note_default_text  = AppGlobal.parameters.note_default_text
+
+
+
+        # note_default_text  = ( "\n\n>>Search  \n"
+        #                         ">>Search  \n\n"
+        #                       )
+
+        #note_default_text = "\n\n" + textwrap.dedent( note_default_text ).strip()
+
+
+        a_partial               = partial( self.set_value, note_default_text )
 
         self.set_clear          = a_partial
         self.set_default        = a_partial
@@ -2906,8 +3200,8 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         # ---- set functions
         # a_partial           = partial( self.do_ct_value, "do_ct_value!!" )
         # self.ct_default     = a_partial
-
-        a_partial           = partial( self.set_value, QDate() ) # invalid date
+        today                   = QDate.currentDate()
+        a_partial               = partial( self.set_value, today ) # invalid date
         #self.ct_default     = a_partial
 
         self.set_clear          = a_partial
@@ -2933,6 +3227,9 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         # prior value, prior_type
         self.is_editable            = True  #  --- by the user   may be built in
                                         # will nee a configure for it
+
+        self.setDisplayFormat( QT_DATE_FORMAT )
+
     # --------------------------
     def setPlaceholderText( self, ignoered ):
         """

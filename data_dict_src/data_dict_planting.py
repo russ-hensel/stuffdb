@@ -351,7 +351,7 @@ def build_it( a_data_dict ):
                                           display_type = "integer",
                                           max_len        = None,
                                           default_func   = None,
-                                          col_head_text      = "!!Date",
+                                          col_head_text      = "!!Date",  # in the table
                                           col_head_width     = 90, )
     a_table_dict.add_column( a_column_dict )
 

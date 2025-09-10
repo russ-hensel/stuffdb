@@ -387,7 +387,7 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         model               = parent_document.list_tab.list_model
         view                = parent_document.list_tab.list_view
         #rint( "begin channel_select for the list")
-        query               = QSqlQuery()
+        query               = QSqlQuery( AppGlobal.qsql_db_access.db )
         query_builder       = qt_sql_query.QueryBuilder( query, print_it = False, )
 
         kw_table_name       = "stuff_key_words"
@@ -543,7 +543,12 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         self.key_word_table_name        = "stuff_key_word"
         self.enable_send_topic_update   = True
 
-        self.post_init()
+        self.post_init()  # will make data manger and guild the gui
+
+        # can the build gui do this -- yes in build_fields
+        # self.topic_field_list           = need to find by name, may be slow
+        # field_list_names                = [ "name" ]
+        # for
 
     # -------------------------------------
     def _build_gui( self ):
@@ -623,6 +628,8 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
                  *tweak a field to drop down a info on other stuff that is containers
                 use CQComboBox or something more advanced
                 see tweak for in_id old
+
+                need add_topic = True for some
         """
         width  = 50
         for ix in range( self.max_col ):  # try to tweak size to make it work
@@ -664,7 +671,7 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         self.name_field     = edit_field
         edit_field.is_keep_prior_enabled        = True
         edit_field.setPlaceholderText( "name" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
+        self.data_manager.add_field( edit_field, is_key_word = True, is_topic = True )
         layout.addWidget( edit_field, columnspan = 4 )
 
         # ---- descr
@@ -1124,7 +1131,6 @@ class EventSqlTableModel( QSqlTableModel ):
                 return Qt.AlignRight | Qt.AlignVCenter
         # Default to base class implementation for other roles
         return super().data(index, role)
-
 
 # ----------------------------------------
 class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):

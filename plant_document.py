@@ -508,7 +508,7 @@ class PlantCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         model                           = parent_document.list_tab.list_model
 
-        query                           = QSqlQuery()
+        query                           = QSqlQuery( AppGlobal.qsql_db_access.db )
         query_builder                   = qt_sql_query.QueryBuilder( query, print_it = False, )
 
         kw_table_name                   = "plant_key_words"

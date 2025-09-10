@@ -71,13 +71,13 @@ class QsqlDbAccess(   ):
     """
     for connections to the db
     """
-    def __init__( self,   ):
+    def __init__( self, connection_name  ):
         """
         usual
         """
-        self.connection   = None
-        self.db           = None   # use as interface
-
+        self.connection         = None
+        self.db                 = None   # use as interface
+        self.connection_name    = connection_name
         self.init_db()
 
         #rint( "")
@@ -103,8 +103,9 @@ class QsqlDbAccess(   ):
         logging.log( LOG_LEVEL,  debug_msg, )
 
         db_file_name    = AppGlobal.parameters.db_file_name
-        self.db         = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type  )
-        self.db.setDatabaseName(            db_file_name   )
+        self.db         = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type, self.connection_name  )
+                # make this name unique -- from utils....
+        self.db.setDatabaseName( db_file_name )
 
         if not self.db.open():
             msg    = f"Database Error: {self.db.lastError().databaseText()} {db_file_name =} "
@@ -169,6 +170,7 @@ class QsqlDbAccess(   ):
             # db_type    =  ..... ??
             self.connection = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type  )
             self.connection.setDatabaseName( AppGlobal.parameters.db_fn   )
+                # not the name the file_name
 
         if not self.connection.open():
             QMessageBox.critical(

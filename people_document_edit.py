@@ -64,7 +64,10 @@ class EditPeopleContact( QDialog ):
     """
 
     def __init__(self, parent=None, edit_data = None ):
-        """ """
+        """
+        looks promotable if there were a sutitable parent
+
+        """
 
         super().__init__(parent)
         self.setWindowTitle("Add New Contact Info" if edit_data is None else "Edit Contact Info")
@@ -109,7 +112,7 @@ class EditPeopleContact( QDialog ):
         place fields into layout, a sub layout is ok
         tweaks
             none yet
-
+            !! what about field dict
         """
         widget_list         = []
         self.widget_list    = widget_list
@@ -208,6 +211,7 @@ class EditPeopleContact( QDialog ):
     def get_form_data( self ):
         """
         Get the data from the form fields as a dictionary.
+        looks promotable
         """
         #edit_data     = self.edit_data
         for i_widget in self.widget_list:

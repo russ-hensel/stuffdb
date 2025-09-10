@@ -3,16 +3,14 @@
 """
 Created on Sun Aug 11 08:28:36 2024
 
-stuff_document_edit.EditStuffEvents( model, keygen, index = None, parent = None)
-
 
 
 """
-
+# ---- tof
 # --------------------
 if __name__ == "__main__":
     import main
-    main.main()
+
 # --------------------
 
 # ---- imports
@@ -113,7 +111,6 @@ def fix_none_str( obj ):
     else:
         return str( obj )
 
-
 #--------------------------------
 class EditPlantingEvent( QDialog ):
     """Dialog for adding or editing a record in the stuff_event table.
@@ -121,10 +118,14 @@ class EditPlantingEvent( QDialog ):
     """
 
     def __init__(self, parent=None, edit_data = None ):
-        """ """
+        """
+        """
 
         super().__init__(parent)
         self.setWindowTitle("Add New Event Info" if edit_data is None else "Edit Event Info")
+
+        self.resize(400, 250)
+
         if parent is None:
             1/0 # need parent which is the tab where the model is
         # Create form layout and fields
@@ -144,6 +145,7 @@ class EditPlantingEvent( QDialog ):
 
         else:
             for i_widget in self.widget_list:
+                # date here is comming as a fromatted string, why is this
                 i_widget.dict_to_edit( edit_data )
 
         # ---- Button box
@@ -166,7 +168,8 @@ class EditPlantingEvent( QDialog ):
         place fields into layout, a sub layout is ok
         tweaks
             none yet
-
+        !! can we use the field dict to automate this
+            will do manually for now
 
 CREATE TABLE  planting_event    (
      id  INTEGER,
@@ -205,14 +208,13 @@ CREATE TABLE  planting_event    (
         widget.setMaxLength( 10 )
         layout.addRow( "ID:", widget )
 
-        # ---- people_id
+        # ----  field_name     = "planting_id",
         widget              = cw.CQLineEdit(
                                         parent         = None,
                                         field_name     = "planting_id",
                                          )
         widget.dict_to_edit_cnv    =  widget.cnv_int_to_str
         widget.edit_to_dict_cnv    =  widget.cnv_str_to_int
-
 
         #self.id_edit        = widget
         widget_list.append( widget )
@@ -230,7 +232,7 @@ CREATE TABLE  planting_event    (
 
         self.id_edit        = widget
         widget_list.append( widget )
-        widget.setMaxLength( 20 )
+        widget.setMaxLength( 250 )
         layout.addRow( "Comment:", widget )
 
         # ---- event_dt
@@ -238,18 +240,33 @@ CREATE TABLE  planting_event    (
         # self.event_date_edit = QDateTimeEdit(QDateTime.currentDateTime())
         # form_layout.addRow( "Event Date:", self.event_date_edit )
 
-
         widget                      = cw.CQDateEdit(
                                         parent         = None,
                                         field_name     = "event_dt",
                                          )
-        widget.dict_to_edit_cnv     =  widget.cnv_int_to_qdate
+
+        print( "planting_document_edit_fix_me" )
+        #think this should be string to string later string to qdate and inverse
+        widget.dict_to_edit_cnv     =  widget.cnv_str_to_qdate
         widget.edit_to_dict_cnv     =  widget.cnv_qdate_to_int
 
-        self.id_edit                = widget
         widget_list.append( widget )
         # widget.setMaxLength( 20 ) not a method
         layout.addRow( "Event Date:", widget )
+
+        # ---- cmnt
+        widget                      = cw.CQLineEdit(
+                                        parent         = None,
+                                        field_name     = "dlr",
+                                         )
+        widget.dict_to_edit_cnv     =  widget.cnv_int_to_str
+        widget.edit_to_dict_cnv     =  widget.cnv_str_to_int
+
+        self.id_edit        = widget
+        widget_list.append( widget )
+        widget.setMaxLength( 50 )
+        layout.addRow( "Dollars $", widget )
+
 
     #-----------------------
     def get_form_data( self ):
