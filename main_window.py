@@ -251,6 +251,7 @@ class StuffdbMainWindow( QMainWindow ):
         # action.triggered.connect( a_function )
         # toolbar.addAction(action)
 
+        # ---- hide in menu
         action          = QAction(   "break...", self )
         # a_function      = functools.partial(  AppGlobal.key_gen.get_next_key,
         #                                       "channel"     )
@@ -270,26 +271,29 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         toolbar.addAction( action )
 
-        # ---- "data_manager_inspect"
-        action          = QAction( "data_manager_inspect", self )
-        connect_to      = functools.partial(  self.go_active_sub_window_func,
-                                              "data_manager_inspect"     )
-        action.triggered.connect( connect_to )
-        toolbar.addAction( action )
+        # ---- left ofve debug
 
-        # ---- doc -->str
-        action          = QAction( "Doc->Str", self )
-        connect_to      = functools.partial(  self.go_active_sub_window_func,
-                                              "doc_str"     )
-        action.triggered.connect( connect_to )
-        toolbar.addAction( action )
 
-        # ---- "Tab->Str"
-        action          = QAction( "Tab->Str", self )
-        connect_to      = functools.partial(  self.go_active_sub_window_func,
-                                              "tab_str"     )
-        action.triggered.connect( connect_to )
-        toolbar.addAction( action )
+        # # ---- "data_manager_inspect"   --- functiondose not exist
+        # action          = QAction( "data_manager_inspect", self )
+        # connect_to      = functools.partial(  self.go_active_sub_window_func,
+        #                                       "data_manager_inspect"     )
+        # action.triggered.connect( connect_to )
+        # toolbar.addAction( action )
+
+        # # ---- doc -->str
+        # action          = QAction( "Doc->Str", self )
+        # connect_to      = functools.partial(  self.go_active_sub_window_func,
+        #                                       "doc_str"     )
+        # action.triggered.connect( connect_to )
+        # toolbar.addAction( action )
+
+        # # ---- "Tab->Str"
+        # action          = QAction( "Tab->Str", self )
+        # connect_to      = functools.partial(  self.go_active_sub_window_func,
+        #                                       "tab_str"     )
+        # action.triggered.connect( connect_to )
+        # toolbar.addAction( action )
 
         # # ---- tests
         # action          = QAction(   "fetch id test", self )

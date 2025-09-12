@@ -14,7 +14,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver .078: 2025 08 19.01"
+__version__   = "Ver .079: 2025 09 11.01"
 
 # ---- imports
 import datetime
@@ -50,6 +50,7 @@ from PyQt5.QtGui import (QIcon,
 from PyQt5.QtPrintSupport import QPrintDialog, QPrinter
 
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+
 from PyQt5.QtWidgets import (QAction,
                              QActionGroup,
                              QApplication,
@@ -69,7 +70,6 @@ from PyQt5.QtWidgets import (QAction,
                              QTextEdit,
                              QVBoxLayout,
                              QWidget)
-
 
 from app_global import AppGlobal
 import app_logging
@@ -109,13 +109,10 @@ def delete_file( file_name ):
             print( error )
             print( f"delete_file os.remove threw error on file {file_name} file probably does not exist this should be ok?")
 
-
     # else:
     #     print( f"file already gone  {file_name}
 
-
-
-
+# -----------------------
 class StuffApplication(QtWidgets.QApplication):
     """
     from gok then modified
@@ -133,7 +130,6 @@ class StuffApplication(QtWidgets.QApplication):
             # Optionally re-raise or handle
             raise  # Re-raise to stop execution or debug
             # return False  # Or return False to stop event propagation
-
 
 # ============================================
 class App( ):
@@ -280,18 +276,6 @@ class App( ):
         return
 
     # ----------------------------------------------
-    def get_stuff_text_edit_extxxxx( self, text_edit  ):
-        """
-        would be nice if the object was all static  -- but not
-        could move state back into edit or its mixin
-        or maybe already there??
-
-        """
-        # a_filename = self.starting_dir  + os.path.sep + "parameters.py"
-        an_ext     = StuffTextEditExt( text_edit_)
-        return an_ext
-
-    # ----------------------------------------------
     def os_open_parmfile( self,  ):
         """
         used as callback from gui button
@@ -327,6 +311,5 @@ def main():
 #  # mainWin     = stuff_db_main_window.StuffDbMainWindow()
 #  # mainWin.show()
 #  # sys.e
-
 
 # ---- eof

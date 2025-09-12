@@ -21,8 +21,6 @@ import time
 from   datetime import datetime
 from   functools import partial
 
-
-
 from PyQt5.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, pyqtSlot
 from PyQt5.QtGui import (QIntValidator,
                          QPainter,
@@ -95,7 +93,7 @@ from app_global import AppGlobal
 # ---- end imports
 
 logger              = logging.getLogger( )
-LOG_LEVEL           = 20
+LOG_LEVEL           = 5
     # level form much debug    higher is more debugging
 
 FIF                 = info_about.INFO_ABOUT.find_info_for

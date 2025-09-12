@@ -626,7 +626,7 @@ class MdiManagement():
             a_str     = f"{a_str}\n    {i_window.menu_action_id = }"
             a_str     = f"{a_str}\n    {i_window.detail_table_id = }"
 
-            a_str     = f"{a_str}\n    {i_window.topic  = }"
+            # a_str     = f"{a_str}\n    {i_window.topic  = }"
             a_str     = f"{a_str}\n    {i_window.record_state = }"
             # rsn       = base_document_tabs.RECORD_STATE_DICT[ i_window.record_state ]
             # a_str     = f"{a_str}\n    {rsn = }"

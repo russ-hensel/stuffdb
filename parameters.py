@@ -33,7 +33,6 @@ import startup_functions
 VERBOSE   = False
 SYS_ARGS  = sys.argv
 
-
 if VERBOSE:
     print( "parameters from -----  /_projects/stuffdb/parameters.py")
     print( __file__ )
@@ -59,15 +58,12 @@ class Parameters( ):
         if you set the mode from the command line you will not
         get here"""
 
-
-
-        # ---- russ_2025
-        self.mode_mh_2025_hd()  # may be hidden
+        # ----mode_mh_2025_hd
+        #self.mode_mh_2025_hd()
+        self.mode_russ_2025_hd()
 
         # self.mode_russ_2025_ram()
         #self.mode_github()
-
-
 
     # -------
     def mode_new_user( self ):
@@ -81,7 +77,6 @@ class Parameters( ):
         self.db_type            = "QSQLITE"
             # the type of database, so far we only support SQLite
         self.db_file_name       = "./data/python_ex.db"
-
 
     # -------
     def mode_russ_2025_ram( self ):
@@ -103,62 +98,26 @@ class Parameters( ):
     # -------
     def mode_russ_2025_hd( self ):
         """
-
+        moved code to running+on_tweaks
         """
         self.mode               = "mode_russ_2025_hd"
 
-        # ---- type and location of the db file
-        self.db_type            = "QSQLITE"
-        self.db_file_name       = "./data/russ2025/russ2025.db"
-        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
-
-        self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
-        ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
-
-
-        self.picture_db_sub     = "/99"
-        self.picture_db_sub     = "/test_delete"
-        self.picture_db_sub     = "/25"
-
-        self.picture_browse     = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
-        self.picture_browse     = "/mnt/WIN_D/PhotosRaw/2025"
-
-        self.logging_level      = logging.DEBUG   # ERROR
-
-        self.icon               =  "./misc/db_red_on_yellow.png"
-        self.icon               =  "./misc/db_green_on_black.png"
-        #self.icon               =  "./misc/db_red_on_black.png"
 
     # -------
     def mode_mh_2025_hd( self ):
         """
 
         """
-        self.mode               = "mode_russ_2025_hd"
-
-        # ---- type and location of the db file
-        self.db_type            = "QSQLITE"
-        self.db_file_name       = "./data/russ2025/russ2025.db"
-        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
-        self.db_file_name       = "./data/russ2025/russ2025.db"
+        self.mode               = "mode_mh_2025_hd"
 
 
-        self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
-        ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
 
+    # -------
+    def mode_fattony( self ):
+        """
 
-        self.picture_db_sub     = "/99"
-        self.picture_db_sub     = "/test_delete"
-        self.picture_db_sub     = "/25"
-
-        self.picture_browse     = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
-        self.picture_browse     = "/mnt/WIN_D/PhotosRaw/2025"
-
-        self.logging_level      = logging.DEBUG   # ERROR
-
-        self.icon               =  "./misc/db_red_on_yellow.png"
-        self.icon               =  "./misc/db_green_on_black.png"
-        #self.icon               =  "./misc/db_red_on_black.png"
+        """
+        self.mode               = "mode_fattony"
 
 
 
@@ -173,7 +132,6 @@ class Parameters( ):
         # # ---- type and location of the db file
         # self.db_type            = "QSQLITE"
         #     # the type of database, so far we only support SQLite
-
 
         # self.db_file_name       = "./data/python_ex.db"
 
@@ -191,11 +149,12 @@ class Parameters( ):
             version of os_tweaks and computer name tweaks which
         may replace them
         this is computer name tweaks code,
-
+'russ-ThinkPad-P72'
         """
         self.os_tweaks()
 
         computer_id    =   self.running_on.computer_id
+            # same as hostname
 
         if computer_id == "smithers":
             self.win_geometry       = '1450x700+20+20'      # width x height position
@@ -207,11 +166,36 @@ class Parameters( ):
             self.ex_editor          =  r"gedit"
             self.db_file_name       =  "bulldog_db.db"
 
-
         elif computer_id == "millhouse":
             self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
             #self.win_geometry   = '1300x600+20+20'
             self.db_file_name       =  "millhouse_db.db"
+            # ---- type and location of the db file
+            self.db_type            = "QSQLITE"
+            self.db_file_name       = "./data/russ2025/russ2025.db"
+            self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
+            self.db_file_name       = "./data/russ2025/russ2025.db"
+            self.db_file_name       = "./data/millhouse/millhouse.db"
+
+
+            self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
+            self.picture_db_root    = "/home/russ/sync_with_fattony/PhotoDB"
+            ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
+
+
+            self.picture_db_sub     = "/99"
+            self.picture_db_sub     = "/test_delete"
+            self.picture_db_sub     = "/25"
+
+
+            self.picture_browse     = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
+            self.picture_browse     = "/mnt/WIN_D/PhotosRaw/2025"
+
+            self.logging_level      = logging.DEBUG   # ERROR
+
+            self.icon               =  "./misc/db_red_on_yellow.png"
+            self.icon               =  "./misc/db_green_on_black.png"
+            #self.icon               =  "./misc/db_red_on_black.png"
 
         elif computer_id == "millhouse-mint":
             #self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
@@ -224,7 +208,37 @@ class Parameters( ):
             self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
             self.db_file_name       =  "the_prof_db.db"
 
-        # ---- "russ-thinkpad-p72":
+
+        # ---- fattony
+        elif computer_id == "fattony":
+            self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
+
+            # ---- type and location of the db file
+            self.db_type            = "QSQLITE"
+            self.db_file_name       = "./data/russ2025/russ2025.db"
+            self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
+            self.db_file_name       = "./data/russ2025/russ2025.db"
+            self.db_file_name       = "./data/fattony/fattony.db"
+
+            self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
+            ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
+            self.picture_db_root    = "//media/russ/m_toshiba_silver/sync_on_fattony/PhotoDB"
+
+            self.picture_db_sub     = "/99"
+            self.picture_db_sub     = "/test_delete"
+            self.picture_db_sub     = "/25"
+
+            self.picture_browse     = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
+            self.picture_browse     = "/mnt/WIN_D/PhotosRaw/2025"
+
+            self.logging_level      = logging.DEBUG   # ERROR
+            self.logging_level      = logging.INFO
+
+            self.icon               =  "./misc/db_red_on_yellow.png"
+            self.icon               =  "./misc/db_green_on_black.png"
+            #self.icon               =  "./misc/db_red_on_black.png"
+
+        # ---- "russ-thinkpad-p72": theprof mint
         elif computer_id == "russ-thinkpad-p72":
             # ---- appearance -- including sizes
 
@@ -248,6 +262,31 @@ class Parameters( ):
 
             self.logging_level      = logging.DEBUG
 
+            # ---- type and location of the db file
+            self.db_type            = "QSQLITE"
+            self.db_file_name       = "./data/russ2025/russ2025.db"
+            self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
+
+            self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
+            ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
+
+
+            self.picture_db_sub     = "/99"
+            self.picture_db_sub     = "/test_delete"
+            self.picture_db_sub     = "/25"
+
+            self.picture_browse     = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
+            self.picture_browse     = "/mnt/WIN_D/PhotosRaw/2025"
+
+            self.logging_level      = logging.DEBUG   # ERROR
+
+            self.icon               =  "./misc/db_red_on_yellow.png"
+            self.icon               =  "./misc/db_green_on_black.png"
+            #self.icon               =  "./misc/db_red_on_black.png"
+
+
+
+
         elif computer_id == "bulldog-mint-russ":
             self.ex_editor          =  r"xed"
 
@@ -259,7 +298,6 @@ class Parameters( ):
                 self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
             else:
                 self.ex_editor          =  r"leafpad"    # Linux raspberry pi maybe
-
 
     # ------->> default mode, always call
     def mode_default( self ):
@@ -341,7 +379,6 @@ class Parameters( ):
         self.icon               =  "./misc/iconfinder_database_103466.png"
         self.icon               =  "./misc/db_red_on_yellow.png"
 
-
         self.text_edit_font     = ("Arial", 12)
 
         # ---- logging
@@ -377,18 +414,14 @@ class Parameters( ):
             # subdir for above used when adding new pictures
 
         self.output_dir             = "./output"
-
+            # the directory used for most output
 
         self.picture_editor         = "gimp-2.10"
+            # the editor that will be envoked when you edit a picture
 
         # ---- .... db type and location of the db file
         self.db_type                = "QSQLITE"
             # the type of database, so far we only support SQLite
-
-        # self.db_fn              = "./data/appdb.db"
-        # self.db_fn              = "/mnt/WIN_D/Russ/0000/python00/python3/_projects/stuffdb/data/sept_26.db"
-        # self.db_fn              = "/tmp/ramdisk/sept_28.db"
-        # self.db_fn              = "/tmp/ramdisk/sept_35.db"
 
         # think for qt4_by_example not stuff
         self.db_file_name      = ":memory:"
@@ -412,15 +445,16 @@ class Parameters( ):
         # or anything else ( will try to shell out may or may not work )
         self.help_fn       =  "./docs/help.txt"   #  >>. this is the path to our main .py file self.py_path + "/" +
         self.help_path     =  "./docs"
+            # what it says, but not used much as most help is in the db
 
         self.idle_venv     = "py_12_misc"   # idle will open in this python venv
             # path leading to all docs and help
 
-        # ---- note_default_test  --- not working because Iparameters
+        # ---- note_default_text
         # do not want to couple custom widgets to parametes, but maybe I should
         # or a try except to app globals ??
         self.note_default_text  = (
-                                    ">>Search   x\n"
+                                    ">>Search   zz\n"
                                     ">>Search   y\n"
                                     "    \n"
                                     "    \n"
@@ -433,9 +467,11 @@ class Parameters( ):
         # ---- startup   for now choose from members of startup functions  -- add argument??
         #self.startup_function   = startup_functions.say_hello
         self.startup_function   = startup_functions.default_startup
+            # function, perhaps open note_1 will be called at startup
 
         self.poll_delta_t      = 200      # 200 ok at least on win longer does not fix linux prob
         self.poll_delta_t      = 100
+            # not used, reserved if we add a second thread
             # how often we poll for clip changes, in ms,
             # think my computer works well as low as 10ms
 
@@ -479,7 +515,7 @@ class Parameters( ):
         ------------------------
 
 
-        ========================
+        ============ end ============
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
@@ -558,13 +594,11 @@ class Parameters( ):
 
         # ---- add a sort for the systems
 
-
     # ------->> default mode, always call
     def mode_from_command_line( self ):
         """
         checks to see if command line wants to set the mode
-        we will look for the name of a mode in the list of methods
-        and the execute it
+        this is done with an eval with just a bit of checking
         """
         if len( SYS_ARGS ) > 1:
             mode_str    = SYS_ARGS[1]
@@ -586,6 +620,7 @@ class Parameters( ):
             return True
 
         return False
+
     # ------->> default mode, always call
     def mode_from_command_line_old( self ):
         """
@@ -672,7 +707,6 @@ class Parameters( ):
         else:
             pass
             #self.gui_style          = "linux"
-
 
     # ---------------------
     def to_columns( self, current_str, item_list, format_list = [ "{: <30}", "{:<30}" ], indent = "    "  ):
@@ -787,8 +821,6 @@ class Parameters( ):
 
         #---- sort into above
 
-
-        return a_str
 
 # something like this for creating on import
 # ---------------

@@ -490,7 +490,8 @@ class DocumentBase( QMdiSubWindow ):
         self.help_filename          = "help_file_not_set.txt"
 
         self.detail_table_id        = None    # set in descendant
-        self.current_id             = None    # same as above, !! delete one
+        #self.current_id             = None    # same as above, !! delete one
+            # seems not to be used
             # probably should be deleted in favor of one in detail in data_manager
         self.detail_table_name      = None    # set in descendant
         self.menu_action_id         = None    # set by midi_management id the menu
@@ -605,6 +606,7 @@ class DocumentBase( QMdiSubWindow ):
     def on_list_clicked( self, index: QModelIndex ):
         """
         this opens a detail item for the criteria list clicked
+        look for call in the list tab
         Args:
             index (QModelIndex): DESCRIPTION.
 
@@ -1527,8 +1529,8 @@ class ListTabBase( DetailTabBase ):
         col_names        = [  ]
         col_head_widths  = [  ]
         for i_column in columns:
-            col_names.append(        i_column.column_name  )
-            col_head_texts.append(   i_column.col_head_text  )
+            col_names.append(        i_column.column_name     )
+            col_head_texts.append(   i_column.col_head_text   )
             col_head_widths.append(  i_column.col_head_width  )
 
         # !! better done in on loop over columns, do not need the lists
@@ -1698,7 +1700,7 @@ class SubTabWithEditBase( QWidget ):
             else:
                 view.setColumnHidden( ix_col, True )  # view or model
 
-        view.setEditTriggers(QTableView.NoEditTriggers) # make view only ?? zz
+        view.setEditTriggers(QTableView.NoEditTriggers) # make view only ??
 
         layout.addWidget( view )
 
@@ -2522,14 +2524,69 @@ class HistoryTabBase( QWidget ):
             none
         """
         tab                 = self
+        layout              = QVBoxLayout()
+        layout2             = layout   # retiere soon
+        tab.setLayout( layout2 )
+
         columns             = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
 
-        table                = QTableWidget(
+        # ---- pinned
+        table               = self.make_a_table( columns )
+        self.pinned_table   = table
+        self.set_table_height_for_rows( table, 2 )
+        self.add_empty_rows_batch( table, 2 )
+
+        connect_to  =  functools.partial( self.on_cell_clicked_new, table )
+        table.cellClicked.connect( connect_to )
+
+
+        layout.addWidget( table )
+
+        row_layout      = QHBoxLayout()
+        layout.addLayout( row_layout )
+
+        # ---- Clear
+        label           = "Clear"
+        widget          = QPushButton( label )
+        connect_to      = self.clear
+        widget.clicked.connect( connect_to )
+        row_layout.addWidget( widget )
+
+        # ---- pin 1
+        label           = "Pin Current Row as 1"
+        widget          = QPushButton( label )
+        #connect_to      = self.current_record_to_pinned_0
+        connect_to  =  functools.partial( self.current_record_to_pinned, 0 )
+        widget.clicked.connect( connect_to )
+        row_layout.addWidget( widget )
+
+        # ---- pin 2
+        label           = "Pin Current Row as 2"
+        widget          = QPushButton( label )
+        connect_to  =  functools.partial( self.current_record_to_pinned, 1 )
+        widget.clicked.connect( connect_to )
+        row_layout.addWidget( widget )
+
+        # ---- history
+        table               = self.make_a_table( columns )
+
+        self.history_table  = table
+
+        table.cellClicked.connect( self.on_cell_clicked )
+
+        layout.addWidget( table )
+
+
+    # ------------------------
+    def make_a_table( self, columns ):
+        """
+        one for history one for pinned
+        """
+        table               = QTableWidget(
                                        0, len( columns ), self )  # row column  parent
         self.history_table  = table
 
         # ---- column header and width
-
         for ix_col, i_column in enumerate( columns):
             #rint( f" {ix_col = } { i_width = }")
             table.setHorizontalHeaderItem( ix_col, QTableWidgetItem( i_column.col_head_text )  )
@@ -2539,13 +2596,31 @@ class HistoryTabBase( QWidget ):
 
         table_widget_no_edit( table )
 
-        # table.clicked.connect( self.parent_window.on_history_clicked )
-        # table.clicked.connect( self.on_list_clicked )
-        table.cellClicked.connect( self.on_cell_clicked )
+        return table
 
-        layout2     = QVBoxLayout()
-        layout2.addWidget( table )
-        tab.setLayout( layout2 )
+    def set_table_height_for_rows(self, table, num_rows):
+        """
+        Set a QTableWidget's height to fit exactly the specified number of rows
+
+        Args:
+            table (QTableWidget): The table widget to resize
+            num_rows (int): Number of rows to display
+        """
+        # Get row height (use first row or default)
+        if table.rowCount() > 0:
+            row_height = table.rowHeight(0)
+        else:
+            row_height = 30  # Default row height
+
+        # Get header height
+        header_height = table.horizontalHeader().height()
+
+        # Calculate total height
+        total_height = header_height + (row_height * num_rows) + 4  # +4 for padding
+
+        # Set fixed height
+        table.setFixedHeight(total_height)
+
 
     # ------------------------
     def find_id_in_table( self, a_id  ):
@@ -2577,6 +2652,26 @@ class HistoryTabBase( QWidget ):
         return ix_found   # check the caller for -1
 
     # ----------------------------
+    def on_cell_clicked_new( self, table, ix_row, ix_col  ):
+        """
+        what it says read
+        call to self.parent_window so the detail tab selects the id
+        does not use prior next but could
+        """
+        self.parent_window.update_db()
+
+        item            = table.item( ix_row, self.ix_col_id  )
+        self.list_ix    = ix_row
+        a_id             = int( item.text() )
+
+        if a_id == "" or a_id is None:
+            return
+        # msg        = f"on_cell_clicked  Row {ix_row}, Column
+        #    {self.ix_col_id}, Data: {a_id = }"
+        # rint( msg )
+        self.parent_window.select_record( a_id )
+
+    # ----------------------------
     def on_cell_clicked( self, ix_row, ix_col  ):
         """
         what it says read
@@ -2603,6 +2698,70 @@ class HistoryTabBase( QWidget ):
         """
         #rint( "StuffdbHistoryTabselect_row {row_index = }" )
         self.history_table.selectRow( row_index )
+
+    # # -------------------------------------
+    # def current_record_to_pinned_0( self,   ):
+    #     """replace with partial """
+    #     self.current_record_to_pinned( 0 )
+
+    # -------------------------------------
+    def current_record_to_pinned( self, ix_row ):
+        """
+        get detail record and put in pinned table at position
+        ix_row
+        zz
+        """
+        table           = self.pinned_table  # QTableWidget(
+
+        # get the record from detail -- assume has one
+        detail_tab      = self.parent_window.detail_tab
+        record          = detail_tab.data_manager.current_record
+
+        a_id            = record.value( "id" )
+        str_id          = str( a_id )
+
+
+        # this seq thing is a hold over or future thing
+        columns             = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
+        col_head_texts      = [ "seq" ]  # plus one for sequence
+        col_names           = [ "seq" ]
+        col_head_widths     = [ "10"  ]
+
+        # this works with the wrong column headings, they may be defined elsewhere like in build gui
+        # but this is at least better
+        col_head_texts      = [  ]  # we were off so
+        col_names           = [  ]
+        col_head_widths     = [  ]
+
+        for i_column in columns:
+            col_names.append(        i_column.column_name  )
+            col_head_texts.append(   i_column.col_head_text  )
+            col_head_widths.append(  i_column.col_head_width  )
+
+        # ---- insert not assume ther
+        # self.ix_seq     row_index
+        # row_position    = table.rowCount()
+        # table.insertRow( row_position )
+        # ix_col          = -1
+        # ix_row          = row_position   # or off by 1
+
+        # for get about seq
+        # ix_col          += 1
+        # item             = QTableWidgetItem( str( self.ix_seq  ) )
+        # table.setItem( ix_row, ix_col, item   )
+
+        ix_col          = 0
+        for i_col_name in col_names:
+
+            # # begin code gen ?  --- no drive from data dict
+            #ix_col          += 1
+            #rint( f"base record_to_tablerecord-to_table {ix_col}, {i_col_name}" )
+
+         # ---- zz put back in
+            pass
+            item             = QTableWidgetItem( str( record.value( i_col_name ) ) )
+            table.setItem( ix_row, ix_col, item   )
+            ix_col          += 1
 
     # -------------------------------------
     def record_to_table( self, record ):
@@ -2659,7 +2818,35 @@ class HistoryTabBase( QWidget ):
             table.setItem( ix_row, ix_col, item   )
             ix_col          += 1
 
+    #-------------------------------------
+    def clear( self, ):
+        """
+        get current id, then loop thru line
+        delete all where id does not match
+        """
+        current_id = self.parent_window.detail_table_id
+        table      = self.history_table
 
+        # Iterate through rows from bottom to top to avoid index shifting
+        for row in reversed(range(table.rowCount())):
+            item = table.item(row, 0)
+            if item and item.text() != str(current_id):
+                # print(f"Deleting row {row} with   {item = }")
+                table.removeRow(row)
+
+    def add_empty_rows_batch(self, table_widget, num_rows):
+        """
+        More efficient method to add multiple empty rows
+
+        Args:
+            table_widget (QTableWidget): The table to add rows to
+            num_rows (int): Number of empty rows to add
+        """
+        current_row_count = table_widget.rowCount()
+        table_widget.setRowCount(current_row_count + num_rows)
+
+
+    # --------------------------------
     def delete_row_by_id( self, id_to_delete ):
         """
         Delete a row from QTableWidget where the value in column 0 matches id_to_delete.

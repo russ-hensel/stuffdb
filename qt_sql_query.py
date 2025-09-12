@@ -67,7 +67,6 @@ class QueryBuilder(    ):
         self.log_level               = log_level    # higher more logging
         self.qt_query                = qt_query
 
-
         # ---- not in init
         self.write_gui               = None     # see:
         self.sql_from                = None     # see:

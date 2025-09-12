@@ -78,7 +78,7 @@ print( f"{app_dir_path     = }")
 print( f"{project_dir_path = }")
 
 
-if hostname  in [ "russ-ThinkPad-P72", 'millhouse-mint' ]:
+if hostname  in [ "russ-ThinkPad-P72", 'millhouse-mint', 'fattony' ]:
     sys.path.insert( 1, f"{app_dir_path}/libs" )
     sys.path.insert( 1, f"{app_dir_path}/data_dict_src" )
     sys.path.insert( 1, f"{app_dir_path}/sql" )
