@@ -1,8 +1,10 @@
 StuffDb  -- A database system about lots of different kinds of Stuff
 
 A desktop gui system using qt to track all sorts of "stuff"  
+As an addition provides for nice workflow tracking, executable code examples
+bookmarks and more.
 
-  stuff includes:
+  stuff categories include:
 * text notes = help 
 * physical item, a collection, a set of woodworking = stuff
 * tools... like hammers, cnc mills, computers  = stuff document
