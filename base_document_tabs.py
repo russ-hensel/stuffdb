@@ -2661,6 +2661,12 @@ class HistoryTabBase( QWidget ):
         self.parent_window.update_db()
 
         item            = table.item( ix_row, self.ix_col_id  )
+        if item is None:
+            # consider make it fill in current !!
+            # might do this on right click, if already populated
+            self.current_record_to_pinned( ix_row )
+            return
+
         self.list_ix    = ix_row
         a_id             = int( item.text() )
 

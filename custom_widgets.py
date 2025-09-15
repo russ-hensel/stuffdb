@@ -807,6 +807,8 @@ class TextEditExtMixin(  ):
     # ---------------------------------------
     def show_context_menu( self, pos ):
         """
+        this is really just for the text edit
+        so is !! wrong in some way
         refactor please !! just use action
            ?? extend further
 
@@ -843,7 +845,6 @@ class TextEditExtMixin(  ):
         foo_action = menu.addAction("Copy All")
         foo_action.triggered.connect(self.copy_all )
         menu.addSeparator()
-
 
 
         # ---- "Strip Sel"
@@ -2263,6 +2264,21 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         data  = self.text()
         return data
 
+    # ---------------------------------------
+    def show_context_menu( self, pos ):
+        """
+
+        chat thinks this is way to go
+
+        """
+        widget      = self
+        # self.my_special_function(event) for context
+
+        # Call the base implementation (shows default context menu)
+        super(CQLineEdit, self).contextMenuEvent( event )
+
+
+
     # ---- crud cycle -------------------------------
     # # -----------------------
     # def set_data_to_clear( self   ):
@@ -2320,7 +2336,8 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         # Show the context menu at the cursor position
         # context_menu.exec(QCursor.pos())
 
-        self.mousePressEvent = self.handle_right_click
+        #self.mousePressEvent = self.handle_right_click
+        # !! disable as we do not have yet
         # Disable the default context menu
         self.setContextMenuPolicy(Qt.NoContextMenu)
 

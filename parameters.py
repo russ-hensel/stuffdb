@@ -115,11 +115,9 @@ class Parameters( ):
     # -------
     def mode_fattony( self ):
         """
-
+        moved to running_on
         """
         self.mode               = "mode_fattony"
-
-
 
     # -------
     def mode_github( self ):
@@ -149,7 +147,7 @@ class Parameters( ):
             version of os_tweaks and computer name tweaks which
         may replace them
         this is computer name tweaks code,
-'russ-ThinkPad-P72'
+
         """
         self.os_tweaks()
 
@@ -166,22 +164,21 @@ class Parameters( ):
             self.ex_editor          =  r"gedit"
             self.db_file_name       =  "bulldog_db.db"
 
-        elif computer_id == "millhouse":
+        # ----  ["millhouse", "millhouse-mint" ]
+        elif computer_id in ["millhouse", "millhouse-mint" ]:
             self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
             #self.win_geometry   = '1300x600+20+20'
-            self.db_file_name       =  "millhouse_db.db"
-            # ---- type and location of the db file
+
+            # type and location of the db file
             self.db_type            = "QSQLITE"
             self.db_file_name       = "./data/russ2025/russ2025.db"
             self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
             self.db_file_name       = "./data/russ2025/russ2025.db"
             self.db_file_name       = "./data/millhouse/millhouse.db"
 
-
             self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
             self.picture_db_root    = "/home/russ/sync_with_fattony/PhotoDB"
             ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
-
 
             self.picture_db_sub     = "/99"
             self.picture_db_sub     = "/test_delete"
@@ -265,7 +262,7 @@ class Parameters( ):
             # ---- type and location of the db file
             self.db_type            = "QSQLITE"
             self.db_file_name       = "./data/russ2025/russ2025.db"
-            self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
+            self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/stuffdb.db"
 
             self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
             ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
@@ -454,12 +451,10 @@ class Parameters( ):
         # do not want to couple custom widgets to parametes, but maybe I should
         # or a try except to app globals ??
         self.note_default_text  = (
-                                    ">>Search   zz\n"
-                                    ">>Search   y\n"
-                                    "    \n"
-                                    "    \n"
+                                    ">>Search   ...\n"
+                                    ">>Search   ...\n"
+                                    "\n\n\n\n"
                                     )
-
 
         #self.note_default_text = textwrap.dedent( self.note_default_text ).strip()
         #self.help_file       =  "http://www.opencircuits.com/Python_Smart_ClipBoard"

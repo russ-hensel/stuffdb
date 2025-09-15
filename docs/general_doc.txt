@@ -1,9 +1,9 @@
 this is the general document help
 
 -------------------
-Help on Help
+Help on Help -- master of this in Help on Help -- copy back to here
 
-Most of the documentation/help is imbedded in the Notes in the system.
+Most of the documentation/help is embedded in the Notes in the system.
 So to get to the help you need to know how to use the system.
 
 This is sort of a bootstrap system, you need to know how to use
@@ -14,7 +14,7 @@ it is focused on the Notes part of the system, documentation for
 other parts are found in the Notes.
 
 From the Open menu open "Note 1"
-( Note 2 is the same window but can view a differnt note )
+( Note 2 is the same window but can view a different note )
 
 The "Note Document" will open to a "Criteria Tab"
 in the key words enter "help on help" and pres the <Go> button
@@ -22,7 +22,7 @@ The "Note Document" will change to the "List Tab" and one of the
 items show will be
         Help on Help for the StuffDB
 
-Click on this row and the document will shif to the detail tab
+Click on this row and the document will shift to the detail tab
 and the same ( or almost ) the same information will be shown there
 as in this file.
 
@@ -40,7 +40,7 @@ So the general flow is:
 Search base on criteria is a key function of the system so a bit more about it here:
 
     The search is based on key word from the title and key words field of the note.
-    When searching the capitilizaion and order of the words does not matter but
+    When searching the capitalization and order of the words does not matter but
     all the key words must match up with the notes for them to be listed
 
     Search is not just based on key words, but other criteria may be used ( look at the tab )
@@ -48,7 +48,46 @@ Search base on criteria is a key function of the system so a bit more about it h
 
     A note may "embed" a search command in itself:
 
-        A line that looks like   >>search ardvark
+        A line that looks like   >>search aardvark
+        will do a search for the key word aardvark. To use the search
+        put your cursor anywhere on the line and press <Go... > ( at the bottom of the window  )
+        You should get a topic about aardvarks.
+
+        After reading about Aardvarks you may want to get back to this text
+
+        There are number of ways to do this.
+
+            Go to the criteria tab and enter help on help .....
+            Use the >>search help on help line in the aardvark note
+
+            or ... something new go to the history tab
+
+            There are two lists here, for now focus on the lower one
+            it will be a list of all the notes you have viewed since
+            opening the Note 1 window.  Click on any line to go to that
+            note.  The <Clear> button will clear the list except for the
+            current note.
+
+
+There are lots more detail for all the tabs.  We will do one more
+here.  Go to the aardvark topic and you will notice lines that begin
+
+        >>url ....
+
+    If you put your cursor on one of these lines and press <Go ...> then your
+    web browser will open to the url on that line.
+
+At this point you should know enough about how the system works so that you
+can find the help you need ( if it has be written ) by using the system itself.
+
+Here are some high level search's that might be useful:
+
+
+
+
+
+
+
 
 
 
@@ -74,10 +113,10 @@ Topics include:
         stuff
 
     * People
-        Here you can keep infomation about people of interest including
-        their addres, phone numbers and pictures.
+        Here you can keep information about people of interest including
+        their address, phone numbers and pictures.
 
-This document covers general use of the documents, each documen type has
+This document covers general use of the documents, each document type has
 it own help topic about things that are unique to that document type.
 
 Documents are made up of several different tabs.  The primary tab has the
@@ -107,7 +146,7 @@ document you want or navigate between documents :
         ....
 
     History
-        a list of the documents that you have viewd.
+        a list of the documents that you have viewed.
         Like the list click on any row to select that
         item in the detail tab.
 
@@ -116,7 +155,7 @@ A typical use of the document is to:
 
     Enter some criteria in the Criteria tab and select records which
     appear in the List Tab.  When a row in this tab is clicked
-    the corresponding record is opend in other tabs:
+    the corresponding record is opened in other tabs:
 
     The detail tab has the detail of the record where the data can
     be viewed or edited.
@@ -154,5 +193,5 @@ These tabs may include:
     *Pictures
         ( example picture of a person )
 
-Tyoical interactions with documents include:
+Typical interactions with documents include:
     full cycle of add, update, delete
