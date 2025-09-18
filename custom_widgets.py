@@ -846,14 +846,15 @@ class TextEditExtMixin(  ):
         foo_action.triggered.connect(self.copy_all )
         menu.addSeparator()
 
+        # ---- "Strip Trail in Sel"
+        foo_action = menu.addAction("Strip Trail in Sel")
+        foo        = partial( self.strip_selected,  keep_leading = True )
+        foo_action.triggered.connect( foo )
 
-        # ---- "Strip Sel"
-        foo_action = menu.addAction("!!Strip Sel")
-        #foo_action.triggered.connect( self.strip_lines_in_selection)
-        #menu.addSeparator()
-
-        # ---- "RStrip Sel"
-        foo_action = menu.addAction("!!RStrip Sel")
+        # ---- "Strip Lead and Trail in Sel"
+        foo_action = menu.addAction( "Strip Lead and Trail in Sel" )
+        foo        = partial( self.strip_selected,  keep_leading = False )
+        foo_action.triggered.connect( foo )
         #foo_action.triggered.connect( self.strip_eol_lines_in_selection )
         #menu.addSeparator()
 
@@ -1284,6 +1285,45 @@ class TextEditExtMixin(  ):
 
         """
         QApplication.clipboard().setText(self.toPlainText())
+
+    #-----------------------------------
+    def strip_selected( self, keep_leading = True ):
+        """
+        default not working from menu ??
+        """
+        # Get the current cursor and selection
+
+        text_edit   = self
+        cursor      = text_edit.textCursor()
+        if not cursor.hasSelection():
+            return
+
+        # Get selected text
+        selected_text = cursor.selectedText()
+
+        # Split into lines and remove trailing spaces
+        lines = selected_text.split('\u2029')  # QTextEdit uses Unicode paragraph separator
+
+        if keep_leading:
+            trimmed_lines = [line.rstrip() for line in lines]
+        else:
+            trimmed_lines = [line.strip() for line in lines]
+
+        trimmed_text = '\n'.join(trimmed_lines)
+
+        # Store selection positions
+        selection_start = cursor.selectionStart()
+        selection_end   = cursor.selectionEnd()
+
+        # Replace selected text
+        cursor.insertText(trimmed_text)
+
+        # Restore selection
+        cursor.setPosition(selection_start)
+        cursor.setPosition(selection_end, cursor.KeepAnchor)
+        text_edit.setTextCursor(cursor)
+
+
 
 
     #-----------------------------------

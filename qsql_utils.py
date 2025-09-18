@@ -7,11 +7,9 @@ the global logging where using logging should not throw an error
 an existing app if message box is called
 
 
-
-
-
-
 """
+# ---- tof
+
 
 APP      = None
 

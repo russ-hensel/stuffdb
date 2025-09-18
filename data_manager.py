@@ -73,6 +73,10 @@ class DataManager(   ):
     extract from stuff then put back
     assumes option of key word update
     may emit some signals somehow
+
+    gets its db connection from the model
+
+
     debug
         self.table_name
     """

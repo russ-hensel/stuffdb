@@ -411,6 +411,11 @@ class Parameters( ):
             # subdir for above used when adding new pictures
 
         self.output_dir             = "./output"
+            # ISSUES WITH ./ SO USE FULL PATH FOR HOW -- RESOLVE IT LATER
+        self.output_dir             = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/output"
+
+
+
             # the directory used for most output
 
         self.picture_editor         = "gimp-2.10"
