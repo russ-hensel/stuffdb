@@ -1,8 +1,12 @@
 StuffDb  -- A database system about lots of different kinds of Stuff
 
-A desktop gui system using qt to track all sorts of "stuff"  
+( Also see the Wiki )
 
-  stuff includes:
+A desktop gui system using qt to track all sorts of "stuff"  
+As an addition provides for nice workflow tracking, executable code examples
+bookmarks and more.
+
+  stuff categories include:
 * text notes = help 
 * physical item, a collection, a set of woodworking = stuff
 * tools... like hammers, cnc mills, computers  = stuff document
@@ -35,7 +39,7 @@ Status:
   Will soon have a db for all the documents, mostly empty.
   I am not yet shipping a good starter db but will make one on request.
 
-This is a reimplemtation of a system I wrote 20 years ago in powerbulider, it
+This is a reimplemtation of a system I wrote 20 years ago in Powerbulider, it
 will take a long time to replicat all of its features, but I will be able
 to add new many new features, such as geolocation for maps, and builtin
 editor for long text.
@@ -51,16 +55,16 @@ Install:
   
   When it complains about dependencies add them
 
-  I am running in Python and Python 13 it is built in Spyder
+  I am running in Linux Mint, Python 13 it is developed/built in AnacondaSpyder
 
   There is a parameter.py file and a adjust_path.py file that you will probably
-  need help in tweaking.  I have had others install and get running.
+  need help in tweaking.  I have had others install this application and get running in about 15 minutes.
 
 Requirements  no .txt file
   Biggest one is probably pyqt5 -- i install by using anaconda and spyder which
     includes it.
 
-  wat inspector -- on github 
+  wat inspector -- on github think it is pip install wat-inspector 
 
   will work on this in a bit feel free to send feedback
 
