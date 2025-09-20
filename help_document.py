@@ -36,6 +36,7 @@ from PyQt5.QtWidgets import (QAction,
                              QFileDialog,
                              QFrame,
                              QGridLayout,
+                             QGroupBox,
                              QHBoxLayout,
                              QInputDialog,
                              QLabel,
@@ -629,7 +630,9 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
         box_layout_1    =  QVBoxLayout( page )
 
+        # next seems to be for the form
         layout          = gui_qt_ext.CQGridLayout( col_max = 12 )
+            # impact of col_max = ??
         box_layout_1.addLayout( layout )
 
         # ----fields
@@ -910,6 +913,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         text_edit_widget    = edit_field
         font                = QFont( * parameters.PARAMETERS.text_edit_font ) # ("Arial", 12)
         edit_field.setFont(font)
+        edit_field.is_prior_text_enabled  = True
         self.text_data_field = edit_field    # may be used for editing
         edit_field.setPlaceholderText( "Some Long \n   text on a new line " )
         data_manager.add_field( edit_field, )
@@ -930,16 +934,45 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         button_layout.addWidget( widget, )
 
         # ---- snippets
-        ddl_widget, ddl_button_widget  = self.snippet_manager.make_widgets()
+        groupbox   = QGroupBox( "Snippets" )   # version with title
+        groupbox.setMaximumHeight(80 )
+        groupbox.setStyleSheet("""
+            QGroupBox {
+                border: 2px solid blue;
+                border-radius: 10px;
+                margin-top: 15px;
+            }
 
-        button_layout.addWidget( ddl_widget  )
-        button_layout.addWidget( ddl_button_widget  )
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top center;
+                padding: 0 3px;
+                background-color: white;
+            }
+        """)
+
+        # layout the groupbox and make
+        # another layout inside it
+
+        button_layout.addWidget( groupbox )
+        layout_g     = QVBoxLayout( groupbox  )
+        # layout in the groubpox
+
+        # widget = QPushButton("do_nothing\n")
+        # #widget.clicked.connect(  self.show_values  )
+        # layout_g.addWidget( widget )
+
+
+        ddl_widget, ddl_button_widget  = self.snippet_manager.make_widgets()
+        ddl_button_widget.setText( "Paste")
+        layout_g.addWidget( ddl_widget  )
+        layout_g.addWidget( ddl_button_widget  )
 
 
         # ---- Paste Prior
         label           = "Paste Prior"
         widget          = QPushButton( label )
-        widget.clicked.connect( text_edit_widget.paste_cache )
+        widget.clicked.connect( text_edit_widget.paste_cache_text )
         button_layout.addWidget( widget, )
 
         # # ---- !!To_Smart
@@ -950,13 +983,13 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         # #widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
         # button_layout.addWidget( widget, )
 
-        # ---- Remove Lead/Trail"
-        label           = "Remove Lead/Trail"
-        widget          = QPushButton( label )
-        # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        #widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
-        button_layout.addWidget( widget, )
+        # # ---- Remove Lead/Trail"
+        # label           = "Remove Lead/Trail"
+        # widget          = QPushButton( label )
+        # # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
+        # # widget.clicked.connect( connect_to )
+        # #widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
+        # button_layout.addWidget( widget, )
 
         # ---- search text
         search_layout       = QHBoxLayout()

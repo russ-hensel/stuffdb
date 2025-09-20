@@ -646,18 +646,7 @@ class TextEditExtMixin(  ):
         #self.stuff_text_ext         = self.stuffdb.get_stuff_text_edit_ext( self )
 
 
-    def cache_current( self ):
-        """
-        save contents of the text in one level deep buffer
-        probably trigger before select or add
-        this code would go
-        """
-        text_edit   = self.text_edit
-        cursor      = text_edit.textCursor()  # Save the current cursor position
 
-        self.prior_text     = text_edit.toPlainText()  # Get all text as a string
-
-        text_edit.setTextCursor(cursor)
 
 
     def paste_cache_xxxxx( self ):
@@ -1797,7 +1786,8 @@ class CQEditBase(   ):
         self.set_prepped_data( data ) or pass at the end
 
 
-        really want three variations, clear, clear_default ( if a default value ) clear_or_prior, clear_or_default clear  all from clear_or
+        really want three variations, clear, clear_default ( if a default value )
+            clear_or_prior, clear_or_default clear  all from clear_or
         """
         msg         = f"set_clear should have been replaced for {self.field_name = }"
         logging.error( msg )
@@ -2291,6 +2281,10 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         self.setText( a_string  )   #
             # with prior there ? depending on is_changed ??
         self.prior_value  = a_string
+
+        if self.field_name == "text_data":
+            pass   # conditional breakpoint
+
         if is_changed is not None:
             self.is_changed = is_changed
 
@@ -3087,18 +3081,17 @@ class CQTextEdit(QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         note_default_text  = AppGlobal.parameters.note_default_text
 
 
-
-        # note_default_text  = ( "\n\n>>Search  \n"
-        #                         ">>Search  \n\n"
-        #                       )
-
-        #note_default_text = "\n\n" + textwrap.dedent( note_default_text ).strip()
-
-
         a_partial               = partial( self.set_value, note_default_text )
 
         self.set_clear          = a_partial
         self.set_default        = a_partial
+
+        # special is_prior_text_enabled tor text '
+
+        self.is_prior_text_enabled   = False
+            #
+        self.prior_text      = ""
+
         if self.is_keep_prior_enabled:
             self.set_prior      = self.set_pass
         else:
@@ -3116,6 +3109,9 @@ class CQTextEdit(QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         self.edit_to_dict_cnv   = self.cnv_str_to_str
 
         self.text_edit_ext_obj  = None # may be set externally
+
+        # self.do_paste_cache     = True # !! change to fallse and
+            # make gui turn on -- used in data maager
 
         # Connect the textEdited signal to on_data_changed method -- not here for line edit
         #self.textChanged.connect( self.on_data_changed )  # no argument sent
@@ -3170,15 +3166,29 @@ class CQTextEdit(QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         logging.debug( msg )
         CQEditBase.get_data_for_record( self, record, record_state )
 
+    #-----------------------------
+    def cache_current_text( self ):
+        """
+        save contents of the text in one level deep buffer
+        probably trigger before select or add
+        this code would go
+            maybe move to the QCText... or pull paste_up from there
+        """
+        text_edit   = self
+        cursor      = text_edit.textCursor()  # Save the current cursor position
+
+        self.prior_text     = text_edit.toPlainText()  # Get all text as a string
+
+        text_edit.setTextCursor(cursor)
 
     #-----------------------------
-    def paste_cache( self ):
+    def paste_cache_text( self ):
         """
         save contents of the text in one level deep buffer
         """
         pass   # some confusion with added mixin _cache may have been bad choice here
         #self.insert_text_at_cursor( self.prior_text )
-        self.insert_text_at_cursor( self.prior_value )
+        self.insert_text_at_cursor( self.prior_text )
         pass # debug
 
     def keyPressEvent_for_tab(self, event):   # automatically called? no setup

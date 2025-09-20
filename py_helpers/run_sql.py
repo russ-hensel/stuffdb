@@ -277,7 +277,25 @@ class RunSql(   ):
         self.init_db()
         self.open_file_output()
 
+        msg         =  f"for file output see {self.file_out_full_name} "
+        print( msg )
+        self.output_to_file( msg )
+
+
         self.parse_column_list()
+
+
+
+        col_width        = self.sql_dict.get( "col_width", None )
+        if col_width is None:
+            col_widths  = [30] * len( self.columns )
+        else:
+            if type(col_width) == list:  # !! use is instance
+                pass
+                # assume width of columns as ints
+            else:
+                # should just be a number
+                col_widths  = [col_width] * len( self.columns )
 
         query       = QSqlQuery( self.db  )
 
@@ -302,19 +320,31 @@ class RunSql(   ):
             pass
             #rint("Query executed successfully.")
 
-
-
+        ix_line    = 0
         while query.next():
             # a_id        = query.value(0)
             # name        = query.value(1)
             # frequency   = query.value(1)
+            ix_line     += 1
+            msg         = f"{ix_line:<5} "
+            for ix, i_column in enumerate( self.columns):
+                msg   = f"{msg}{str(query.value(ix)):{col_widths[ix]}} "
+            # msg      = (f"row: {query.value(0) = }  { query.value(1) = }  {query.value(1)} ")
 
-            msg      = (f"row: {query.value(0) = }  { query.value(1) = }  {query.value(1)} ")
             print( msg )
             self.output_to_file( msg )
 
 
         self.finalize_db()
+
+        msg         =  "number of lines {ix_line} "
+        print( msg )
+        self.output_to_file( msg )
+
+        msg         =  f"for file output see {self.file_out_full_name} "
+        print( msg )
+        self.output_to_file( msg )
+
         print( "-------------- all done ---------------------")
 
     #-----------------------------------------------
@@ -349,8 +379,12 @@ class RunSql(   ):
     #-----------------------------------------------
     def parse_column_list( self ):
         """
+        call from select_data
         for the select
+        words should be in upper or lower case but not mixed
         require FROM in upper?
+        mutates
+            self.columns    to contain the column names of the select
         """
         sql      = self.sql_dict["sql"].strip()
 
@@ -431,9 +465,14 @@ class RunSql(   ):
         print( "-------------- all done ---------------------")
 
 
+    #-----------------------------------------------
+    def update_data( self ):
+        """
+        basically the same as delete in how we manage it
 
-
-
+        """
+        #-----------------------------------------------
+        self.delete_data(   )
 
 
 
@@ -464,6 +503,9 @@ class RunSql(   ):
         output_file_name    = parameters.PARAMETERS.output_dir + "/" + output_file_name
         output_file_name    = output_file_name.replace( "//", "/" )
         output_file_name    = output_file_name.replace( "//", "/" )  # super sure
+
+
+        self.file_out_full_name = output_file_name
 
         self.file_out       = open( output_file_name,
                                     'w',

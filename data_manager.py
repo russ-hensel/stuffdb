@@ -682,6 +682,8 @@ def delete_record_by_id(model, id_value):
         move data from the fields to the record
         name for qt5_by_example,  text_data for stuff
         <class 'PyQt5.QtSql.QSqlRecord'>
+            !! probably field_name should come out
+            !! seems to be done every time text changes
         """
         for i_field in  self.field_list:
             if ( ( i_field.field_name  == "text_data" ) and
@@ -689,8 +691,8 @@ def delete_record_by_id(model, id_value):
 
                 debug_msg   = ( f"field_to_record {i_field.field_name = } " )
                 logging.log( LOG_LEVEL,  debug_msg, )
-                if  i_field.text_edit_ext_obj is not None:
-                    i_field.text_edit_ext_obj.cache_current()
+                if  i_field.is_prior_text_enabled:
+                    i_field.cache_current_text()
 
             if  ( i_field.field_name  == "id_in_old" ):
                 pass   # debug

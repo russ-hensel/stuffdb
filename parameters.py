@@ -111,7 +111,6 @@ class Parameters( ):
         self.mode               = "mode_mh_2025_hd"
 
 
-
     # -------
     def mode_fattony( self ):
         """
@@ -175,6 +174,8 @@ class Parameters( ):
             self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
             self.db_file_name       = "./data/russ2025/russ2025.db"
             self.db_file_name       = "./data/millhouse/millhouse.db"
+            self.db_file_name       = "./data/millhouse/stuffdb.db"
+
 
             self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
             self.picture_db_root    = "/home/russ/sync_with_fattony/PhotoDB"
@@ -233,6 +234,8 @@ class Parameters( ):
 
             self.icon               =  "./misc/db_red_on_yellow.png"
             self.icon               =  "./misc/db_green_on_black.png"
+                                         #/misc/db_green_on_black.png
+            # /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/misc/db_green_on_black.png
             #self.icon               =  "./misc/db_red_on_black.png"
 
         # ---- "russ-thinkpad-p72": theprof mint
