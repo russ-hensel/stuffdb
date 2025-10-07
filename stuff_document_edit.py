@@ -64,10 +64,18 @@ class EditStuffEvents( QDialog ):
     """
     Dialog for adding or editing a record in the stuff_event table.
     my first tweak before custom edits
+    see also the planting_eent  verstion which uses custom edits
+    perhaps this should as well
+
     """
 
     def __init__(self, parent=None, edit_data=None ):
-        """ """
+        """
+        includes the building of the form which is not
+        done in planting_event
+
+
+        """
         super().__init__(parent)
         self.setWindowTitle("Add New Event" if edit_data is None else "Edit Event")
         if parent is None:
@@ -136,7 +144,6 @@ class EditStuffEvents( QDialog ):
             pennies     = int( float( edit_data["dlr"] ) )
             self.dlr_spinbox.setValue(int( pennies ) )
 
-
             self.comment_edit.setText(edit_data["cmnt"])
 
             # Find and set the index for the type
@@ -186,7 +193,8 @@ class EditStuffEvents( QDialog ):
             "cmnt":      self.comment_edit.text(),
             "type":      self.type_combobox.currentText()
         }
-
+        msg    = f"EditStuffEvents.get_form_data {data = }"
+        print( msg )
         return data
 
 # ---- eof

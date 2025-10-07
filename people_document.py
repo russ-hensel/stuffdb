@@ -1366,7 +1366,6 @@ class PeopleEventSubTab( base_document_tabs.SubTabBase ):
             a_table    = data_dict.DATA_DICT.get_table( self.table_name )
             PEOPLE_CONTACT_COLUMN_DICT   = a_table.make_name_to_ix_dict()
 
-
         model              = ContactSqlTableModel(  self, self.db    )
         self.model         = model
 

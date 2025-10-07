@@ -1081,20 +1081,30 @@ class EventSqlTableModel( QSqlTableModel ):
         """
         for special formatting
         and alignment
+        seems to be called an awful lot of times
         """
         col = index.column()
+
+        # for debug
+        # value = super().data(index, Qt.EditRole)
+        # msg   = f"EventSqlTableModel.data() {col} >{value}< {type(value)} {role = }"
+        # print( msg )
 
         if False:
             pass
         # Check role first
         elif role == Qt.DisplayRole:
-            if col == 4:  # match to code in veiw
+            if col == 4:  # match to code in veiw seems to be timestamp
                 value = super().data(index, Qt.EditRole)
+                if value =="":  # seems to sometimes happen
+                    value = None
                 if value is not None:
+                    # msg  = f"possible error from value = >{value}<"
+                    # print( msg )
                     return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
                 return value  # Return raw value if None
 
-            if col == 5:  # match to code in veiw
+            if col == 5:  # match to code in veiw seems to be amount
                 value = super().data(index, Qt.EditRole)
                 if value is not None:
                     return f"{value:.2f}"
@@ -1396,12 +1406,12 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
             form_data = dialog.get_form_data()
 
             # Update the row with the new data
-            model.setData( model.index(row, 0), form_data["id"])
-            model.setData( model.index(row, 2), form_data["stuff_id"])
-            model.setData( model.index(row, 4), form_data["event_dt"])
-            model.setData( model.index(row, 5), form_data["dlr"])
-            model.setData( model.index(row, 6), form_data["cmnt"])
-            model.setData( model.index(row, 7), form_data["type"])
+            model.setData( model.index(row, 0), form_data["id"],        Qt.EditRole)
+            model.setData( model.index(row, 2), form_data["stuff_id"],  Qt.EditRole)
+            model.setData( model.index(row, 4), form_data["event_dt"],  Qt.EditRole)
+            model.setData( model.index(row, 5), form_data["dlr"],       Qt.EditRole)
+            model.setData( model.index(row, 6), form_data["cmnt"],      Qt.EditRole)
+            model.setData( model.index(row, 7), form_data["type"],      Qt.EditRole)
 
     # ----------------------------------
     def delete_selected_event(self):
@@ -1424,6 +1434,22 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
     #-------------------------------
     def submit_changes(self):
         """Submit all changes to the database."""
+
+        model  = self.model
+
+        print( f"Edit strategy:  {model.editStrategy()= } ")
+        print(f"submit_changes Primary key:  {model.primaryKey() =}" )
+        # Before submitAll(), check the model's state
+        print(f"submit_changes  {model.isDirty() = }" )
+        # print( f"submit_changes row dirty:  {model.isDirty(row_index) }" )
+
+        # Check what SQL would be generated
+        for i in range(model.rowCount()):
+            record = model.record(i)
+            ix_col  = 4 # perhaps a loop but so much data
+            print(f"Row {i}  , { record.isGenerated( ix_col ) = }" )
+
+
         if self.model.submitAll():
             pass
             #QMessageBox.information(self, "Success", "Changes saved to database successfully.")

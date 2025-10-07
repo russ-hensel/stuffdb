@@ -120,7 +120,7 @@ RECORD_STATE_DICT   = { RECORD_NULL:    "RECORD_NULL",
 
 
 # ---- open in idle
-def open_python_file_in_idle( python_filename, ): # conda_env ):
+def open_python_file_in_idlexxxx( python_filename, ): # conda_env ):
     """
     may have been replaced by some object IdleExe
     open_python_file_in_idle_may_need_move_broken
@@ -1879,6 +1879,7 @@ class SubTabBase( QWidget ):
     # -----------------------
     def update_db( self,    ):
         """
+        beware may be overridden
         for debugging
 
         do not need key generation on new

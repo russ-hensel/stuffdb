@@ -3080,9 +3080,7 @@ class CQTextEdit(QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         # monkey patch into module on first import
         note_default_text  = AppGlobal.parameters.note_default_text
 
-
         a_partial               = partial( self.set_value, note_default_text )
-
         self.set_clear          = a_partial
         self.set_default        = a_partial
 
