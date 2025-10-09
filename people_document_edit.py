@@ -122,7 +122,7 @@ class EditPeopleContact( QDialog ):
         # ---- ID field
         widget              = custom_widgets.CQLineEdit(
                                         parent         = None,
-                                        field_name     = "seq_id",
+                                        field_name     = "id",
                                          )
         widget.dict_to_edit_cnv    =  widget.cnv_int_to_str
         widget.edit_to_dict_cnv    =  widget.cnv_str_to_int
@@ -131,6 +131,21 @@ class EditPeopleContact( QDialog ):
         widget.setReadOnly( True )
         widget.setMaxLength( 10 )
         layout.addRow( "ID:", widget )
+
+        # # ---- seq ID field drop ??
+        # widget              = custom_widgets.CQLineEdit(
+        #                                 parent         = None,
+        #                                 field_name     = "seq_id",
+        #                                  )
+        # widget.dict_to_edit_cnv    =  widget.cnv_int_to_str
+        # widget.edit_to_dict_cnv    =  widget.cnv_str_to_int
+
+        # widget_list.append( widget )
+        # widget.setReadOnly( True )
+        # widget.setMaxLength( 10 )
+        # layout.addRow( "Seq ID:", widget )
+
+
 
         # ---- people_id
         widget              = custom_widgets.CQLineEdit(
@@ -192,7 +207,7 @@ class EditPeopleContact( QDialog ):
         widget.edit_to_dict_cnv     =  widget.cnv_str_to_str
 
         widget_list.append( widget )
-        widget.setMaxLength( 10 )
+        widget.setMaxLength( 20 )   # 123 456 7890
         layout.addRow( "Phone:", widget )
 
         # ---- autodial

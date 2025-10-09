@@ -13,7 +13,6 @@ if __name__ == "__main__":
 
 # --------------------
 
-
 import functools
 import sqlite3
 import time
@@ -51,7 +50,6 @@ from PyQt5.QtWidgets import (QAction,
 
 #from   functools import partial
 #import collections
-
 
 # ---- Qt
 from PyQt5.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, pyqtSlot
@@ -105,8 +103,6 @@ from PyQt5.QtWidgets import (QAbstractItemView,
                              QTextEdit,
                              QVBoxLayout,
                              QWidget)
-
-
 
 # ---- imports local
 import base_document_tabs
@@ -183,6 +179,8 @@ class PlantingDocument( base_document_tabs.DocumentBase ):
     def _build_gui( self, ):
         """
         what it says
+            pretty much build the tabs in the usual way
+            from criteira to history
         """
         main_notebook           = self.tab_folder   # create in parent
         # main_notebook           = QTabWidget()
@@ -266,7 +264,6 @@ class PlantingDocument( base_document_tabs.DocumentBase ):
 
     # ---- capture events ----------------------------
     # ------------------------------------------
-
 
     # ------------------------------------------
     def on_list_double_clicked( self, index: QModelIndex ):
@@ -1078,63 +1075,6 @@ class PlantingEventSubTab( base_document_tabs.SubTabWithEditBase ):
         self._build_model()
         self._build_gui()
 
-    # ------------------------------------------
-    def _build_gui_promoted( self, ):
-        """
-        what it says, read
-        extend method
-        see parent some of this promoted
-        """
-        # super()._build_gui()
-        # pass    # continue here
-
-        # model     = self.model
-        # view      = self.view
-
-        page                = self
-
-        layout              = QVBoxLayout( page )
-        button_layout       = QHBoxLayout()
-
-        layout.addLayout( button_layout )
-
-        # model.setHeaderData( 0, Qt.Horizontal, "ID")
-        # model.setHeaderData( 1, Qt.Horizontal, "YT ID"  )
-
-        # Set up the view
-        view                 = QTableView()
-        model                = self.model
-        #self.list_view       = view
-        self.view            = view
-        view.setModel( self.model )
-
-        view.setEditTriggers(QTableView.NoEditTriggers)  # Disable all edit triggers make non-edit
-           # now do not need stuff in EventSql.....
-
-        view.setSelectionBehavior( QTableView.SelectRows )
-
-        self.adj_event_columns()
-
-        layout.addWidget( view )
-
-        # ---- buttons
-        widget        = QPushButton( 'Add' )
-        #add_button    = widget
-        widget.clicked.connect( self.add )
-        button_layout.addWidget( widget )
-
-        #
-        widget        = QPushButton('Edit')
-        #add_button    = widget
-        widget.clicked.connect(self.edit_selected_event )
-        button_layout.addWidget( widget )
-
-        #
-        widget        = QPushButton('Delete')
-        #add_button    = widget
-        #widget.clicked.connect(self.delete_record)
-        button_layout.addWidget( widget )
-
 
     # ---------------------------------
     def _build_model( self, ):
@@ -1181,81 +1121,6 @@ class PlantingEventSubTab( base_document_tabs.SubTabWithEditBase ):
         model.select()
 
     # ----------------------------------
-    def adj_event_columnsxxx( self ):
-        """
-        from _build_gui
-           so some of it can be factored to parent
-           or has it already been see parent
-            think done automatically
-
-0        id
-
-
-1         id_old
-2         planting_id_old
-3         planting_id
-4         event_dt
-5         dlr
-6         cmnt
-7         type
-8           dt_mo  INTEGER,
-9           dt_day  INTEGER,
-10           day_of_year  INTEGER
-
-
-        """
-        view                 = self.view
-        model                = self.model
-
-
-        ix_col = 0
-        model.setHeaderData( ix_col, Qt.Horizontal, "ID" )
-        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-        view.setColumnHidden( ix_col, True )  # view or model visible
-
-        ix_col = 1
-        model.setHeaderData( ix_col, Qt.Horizontal, "ID_Old" )
-        view.setColumnWidth( ix_col, 100)
-        #view.setColumnHidden( ix_col, True )
-        #view.setColumnHidden( 1, True )  # view or model
-
-        ix_col  = 2 #   planting_id_old
-        model.setHeaderData( ix_col, Qt.Horizontal, "P_Id_O" )
-        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-        # view.setColumnHidden( ix_col, True )  # view or model  # cmnt out for debug
-
-        ix_col  = 3 # planting_id
-        model.setHeaderData( ix_col, Qt.Horizontal, "P_Id" )
-        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-        #view.setColumnHidden( ix_col, True )  # view or model
-
-        ix_col  = 4  # 4 event_dt
-        model.setHeaderData( ix_col, Qt.Horizontal, "Event Date" )
-        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-
-        ix_col  = 5  # 5 dlr
-        model.setHeaderData( ix_col, Qt.Horizontal, "$ Amount" )
-        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-
-        ix_col = 6  # 6 cmnt
-        model.setHeaderData( ix_col, Qt.Horizontal, "Comment" )
-        view.setColumnWidth( ix_col, 300)  # Set  width in  pixels
-
-        ix_col = 7  # 7 type
-        model.setHeaderData( ix_col, Qt.Horizontal, "Type" )
-        view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-
-
-        # 8 dt_mo INTEGER, 9 dt_day INTEGER, 10 day_of_year INTEGER
-        for ix in range( 8, 11 ):
-            view.setColumnHidden( ix, True )  # view or model
-
-        # might want a loop for this
-        # seems to be only after set model
-        # STUFF_ID_COL    = 1
-        # view.hideColumn( STUFF_ID_COL )
-
-    # ----------------------------------
     def edit_selected_event(self):
         """
         Open dialog to edit the currently selected event.
@@ -1288,206 +1153,6 @@ class PlantingEventSubTab( base_document_tabs.SubTabWithEditBase ):
 
             for field_name, field_ix in  EVENT_FIELD_DICT.items():
                 model.setData( model.index( row, field_ix ), form_data[ field_name ] )
-
-
-# ----------------------------------------
-class PlantingEventSubTabOld( base_document_tabs.SubTabBaseOld  ):
-    """
-    """
-    def __init__(self, parent_window ):
-        """
-        """
-        super().__init__( parent_window )
-
-        self.list_ix         = 5  # should track selected an item in detail
-        # needs work
-        self.db              = AppGlobal.qsql_db_access.db
-
-        self.table_name      = "planting_event"
-        self.list_table_name = self.table_name   # delete this
-        #self.tab_name            = "PlantingEventSubTab  not needed this is a sub tab
-        self.current_id      = None
-        #self.current_id      = 28
-        #rint( "fix planting event select and delete line above should be select_by_id  ")
-        self._build_model()
-        self._build_gui()
-
-        self.parent_window.sub_tab_list.append( self )    # a function might be better
-
-    # ------------------------------------------
-    def _build_gui( self, ):
-        """
-        what it says, read
-        !! initial query should come out
-
-        """
-        page            = self
-        tab             = page
-        # a_notebook.addTab( page, 'Channels ' )
-        # placer          = gui_qt_ext.PlaceInGrid(
-        #     central_widget=page,
-        #     a_max=0,
-        #     by_rows=False  )
-
-        layout                     = QVBoxLayout( tab )
-        button_layout              = QHBoxLayout()
-
-        layout.addLayout( button_layout )
-
-        # Set up the model
-
-        # Line 20 sets the edit strategy of the model to OnFieldChange.
-        # This strategy allows the model to automatically update the data
-        # in your database if the user modifies any of the data directly in the view.
-
-
-        # model.setHeaderData( 4, Qt.Horizontal, "mypref")
-        # model.setHeaderData( 5, Qt.Horizontal, "mygroup")
-
-        # Set up the view
-        view                 = QTableView()
-        self.list_view       = view
-        self.view            = view
-
-        view.setModel( self.model_write )
-
-        layout.addWidget( view )
-        #placer.place(  view )
-
-        # ---- buttons
-        widget        = QPushButton( 'add_record' )
-        #add_button    = widget
-        widget.clicked.connect( self.add_record )
-        button_layout.addWidget( widget )
-
-        #
-        widget        = QPushButton('edit_record')
-        #add_button    = widget
-        widget.clicked.connect(self.edit_record)
-        button_layout.addWidget( widget )
-
-        #
-        widget        = QPushButton('delete_record')
-        #add_button    = widget
-        widget.clicked.connect(self.delete_record)
-        button_layout.addWidget( widget )
-
-    # ---------------------------------
-    def _build_model( self, ):
-        """
-        may have too many instances
-        Returns:
-            modifies self, establishes -- wrong names
-
-        """
-        model              = qt_with_logging.QSqlTableModelWithLogging(  self, self.db    )
-
-        self.model_write   = model
-        self.model         = model
-
-        model.setTable( self.list_table_name )
-        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
-        # model_write.setEditStrategy( QSqlTableModel.OnFieldChange )
-        model.setFilter( "planting_id = 28 " )
-        print( "!!fix planting_id = 28 ")
-
-
-    # ---------------------------------------
-    def select_by_id( self, id ):
-        """
-        maybe make ancestor and promote
-
-        Args:
-            id (TYPE): DESCRIPTION.
-
-        Returns:
-            None.
-
-        """
-        # ---- write
-        model           = self.model_write
-
-        self.current_id  = id
-        model.setFilter( f"planting_id = {id}" )
-        # model_write.setFilter( f"pictureshow_id = {id} " )
-        model.select()
-
-        print( "do we need next ")
-        #self.list_view.setModel( model_write )
-
-    # -------------------------------------
-    def i_am_hsw(self):
-        """
-        make sure call is to here
-
-        """
-        print( "i_am_hsw")
-
-    # -------------------------------------
-    def default_new_row( self ):
-        """tail_tab.default_new_row( next_key )
-        default values for a new row in the detail and the
-        text tabs
-
-        Returns:
-            None.
-
-        """
-        next_key      = AppGlobal.key_gen.get_next_key(
-            self.detail_table_name )
-        self.detail_tab.default_new_row( next_key )
-        self.text_tab.default_new_row(   next_key )
-
-    # ------------------------------------------
-    def add_record(self):
-        """
-        what it says, read?
-        add test for success an refactor??
-        """
-        model      = self.model_write
-        dialog     = planting_document_edit.EditPlantingEvents( model, index = None, parent = self )
-        if dialog.exec_() == QDialog.Accepted:
-            #self.model.submitAll()
-            ok     = base_document_tabs.model_submit_all(
-                       model,  f"PlantingEventsSubTab.add_record " )
-            self.model.select()
-
-    # ------------------------------------------
-    def edit_record(self):
-        """
-        what it says, read?
-        """
-        index       = self.view.currentIndex()
-        model       = self.model
-        if index.isValid():
-            dialog = planting_document_edit.EditPlantingEvents( self.model, index, parent = self )
-            if dialog.exec_() == QDialog.Accepted:
-                #self.model.submitAll()
-                ok     = base_document_tabs.model_submit_all(
-                           model,  f"PlantingEventsSubTab.add_record " )
-                #ia_qt.q_sql_table_model( self.model, "post edit_record submitAll()" )
-                self.model.select()
-        else:
-            msg   = "Click on row to edit..."
-            QMessageBox.warning(self, "Please", msg )
-
-    # ------------------------------------------
-    def delete_record(self):
-        """
-        what it says, read?
-
-        set current id, get children
-        """
-        msg   = "delete_record ... not implemented"
-        QMessageBox.warning(self, "Sorry", msg )
-
-    # -----------------------
-    def __str__( self ):
-
-        a_str   = ""
-        a_str   = ">>>>>>>>>>* PlantingEventSubTab  *<<<<<<<<<<<<"
-
-        return a_str
 
 # ------------------------------------
 class PlantingPictureSubTab( base_document_tabs.PictureListSubTabBase ):

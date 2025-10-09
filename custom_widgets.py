@@ -2095,12 +2095,14 @@ class CQEditBase(   ):
 
         else:
             # may need something for floats
+            if isinstance( data, float ):
+                data = int( data )
 
             if not isinstance( data, int ):
                 msg   = ( f"Data {self.field_name} is not instance of int = timestamp {data = } {type(data) = }  " )
                 logging.error( msg )
 
-                raise ValueError( msg )
+                raise ValueError( msg )  # or should we continue
                 return   QDate( 1901, 1, 1 ) # surrogate for None but after raise
             data    = int( data )   # assume this works from float
             a_datetime          = datetime.fromtimestamp( data )

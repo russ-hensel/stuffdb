@@ -405,7 +405,7 @@ def build_it( a_data_dict ):
                                              max_len        = None,
                                              default_func   = None,
                                              col_head_text      = "ID",
-                                             col_head_width     = 10,
+                                             col_head_width     = 80,
                                              col_head_order     = 1,
                                              form_col_span      = 1,
                                            )
@@ -420,7 +420,9 @@ def build_it( a_data_dict ):
                                           max_len        = None,
                                           default_func   = None,
                                           col_head_text      = "Seq Id",
-                                          col_head_width     = 100, )
+                                          # next cannot be used to suppress with -1 or 0
+                                          #col_head_order     = -1,      # will this hid it no
+                                          col_head_width     = 0, )   # =0 to hide
 
     a_table_dict.add_column( a_column_dict )
 
@@ -432,7 +434,7 @@ def build_it( a_data_dict ):
                                           max_len        = None,
                                           default_func   = None,
                                           col_head_text      = "people_id_old",
-                                          col_head_width     = 100, )
+                                          col_head_width     = 0, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "people_id",
@@ -448,7 +450,7 @@ def build_it( a_data_dict ):
                                              max_len        = None,
                                              default_func   = None,
                                              col_head_text      = "People ID",
-                                             col_head_width     = 10,
+                                             col_head_width     = 80,
                                              col_head_order     = 1,
                                              form_col_span      = 1,
                                            )
@@ -472,7 +474,7 @@ def build_it( a_data_dict ):
                                           max_len        = None,
                                           default_func   = None,
                                           col_head_text      = "Phone Old",
-                                          col_head_width     = 40, )
+                                          col_head_width     = 0, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "cmnt",
@@ -482,7 +484,7 @@ def build_it( a_data_dict ):
                                           max_len        = None,
                                           default_func   = None,
                                           col_head_text      = "Comment",
-                                          col_head_width     = 50, )
+                                          col_head_width     = 250, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "phone",
@@ -492,7 +494,7 @@ def build_it( a_data_dict ):
                                           max_len        = None,
                                           default_func   = None,
                                           col_head_text      = "Phone",
-                                          col_head_width     = 100, )
+                                          col_head_width     = 150, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "autodial",
@@ -502,7 +504,7 @@ def build_it( a_data_dict ):
                                           max_len        = None,
                                           default_func   = None,
                                           col_head_text      = "AutoDial",
-                                          col_head_width     = 100, )
+                                          col_head_width     = 70, )
     a_table_dict.add_column( a_column_dict )
 
 

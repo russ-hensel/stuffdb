@@ -1836,12 +1836,48 @@ class SubTabWithEditBase( QWidget ):
     # ------------------------------------------
     def delete_record(self):
         """
-        what it says, read?
 
-        set current id, get children
+        what it says, read?
+            check row selected and ok with user
+
         """
-        msg   = "delete_record ... not implemented"
-        QMessageBox.warning(self, "Sorry", msg )
+        # msg   = "delete_record ... not implemented"
+        # QMessageBox.warning(self, "Sorry", msg )
+        model       = self.model
+
+        indexes     = self.view.selectedIndexes()
+        if not indexes:
+            QMessageBox.warning( self, "Sorry", "No record selected." )
+            return
+
+        # couyld be many we will do the first -- probably overdone for stuffdb
+        rows        = sorted({index.row() for index in indexes}, reverse=True)
+        row_number  = rows[0]
+
+        if not is_delete_ok():
+            return
+            msg = (model.lastError().text())
+
+        if model.removeRow( row_number ):
+             # Submit changes to the database
+             if model.submitAll():
+                 pass
+                 #print(f"Row {row_number} deleted successfully.")
+             else:
+                 msg = (model.lastError().text())
+                 logging.error( msg )
+
+                 msg  = ("Failed to submit changes to the database.")
+                 logging.error( msg )
+                 QMessageBox.warning( self, "Error", msg)
+
+        else:
+            msg = ("delete_record Failed to remove row from the model.")
+            logging.error( msg )
+            QMessageBox.warning( self, "Error", msg)
+
+
+
 
     # -----------------------
     def __str__( self ):
@@ -2004,7 +2040,7 @@ class SubTabBase( QWidget ):
 
         indexes     = self.view.selectedIndexes()
         if not indexes:
-            QMessageBox.warning( self, "Warning", "No record selected." )
+            QMessageBox.warning( self, "Sorry", "No record selected." )
             return None
 
         # Get the model row index
@@ -2056,12 +2092,46 @@ class SubTabBase( QWidget ):
     # ------------------------------------------
     def delete_record(self):
         """
+        is this supported here
         what it says, read?
+            check row selected and ok with user
 
-        set current id, get children
         """
         msg   = "delete_record ... not implemented"
         QMessageBox.warning(self, "Sorry", msg )
+        # model       = self.model
+
+        # indexes     = self.view.selectedIndexes()
+        # if not indexes:
+        #     QMessageBox.warning( self, "Sorry", "No record selected." )
+        #     return
+
+        # # couyld be many we will do the first -- probably overdone for stuffdb
+        # rows        = sorted({index.row() for index in indexes}, reverse=True)
+        # row_number  = rows[0]
+
+        # if not self.is_delete_ok():
+        #     return
+        #     msg = (model.lastError().text())
+
+        # if model.removeRow( row_number ):
+        #      # Submit changes to the database
+        #      if model.submitAll():
+        #          pass
+        #          #print(f"Row {row_number} deleted successfully.")
+        #      else:
+        #          msg = (model.lastError().text())
+        #          logging.error( msg )
+
+        #          msg  = ("Failed to submit changes to the database.")
+        #          logging.error( msg )
+        #          QMessageBox.warning( self, "Error", msg)
+
+        # else:
+        #     msg = ("delete_record Failed to remove row from the model.")
+        #     logging.error( msg )
+        #     QMessageBox.warning( self, "Error", msg)
+
 
     # -----------------------
     def __str__( self ):
@@ -2074,6 +2144,7 @@ class SubTabBase( QWidget ):
 # ----------------------------------------
 class SubTabBaseOld( QWidget ):
     """
+    shold probably delete fut still seems to be in use .080
     used for detail many sub tabs but some like text and picture may be special
 
     """
@@ -2135,9 +2206,6 @@ class CriteriaTabBase( QWidget ):
         self.tab_name               = "CriteriaTab set in child"
         self._build_tab()
         self.clear_criteria()
-
-
-
 
     # -----------------------------
     def add_date_widgets( self, placer, row_lables = ("Edit", "Add") ):

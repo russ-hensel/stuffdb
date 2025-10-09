@@ -9,9 +9,8 @@
 # ---- tof
 # --------------------
 if __name__ == "__main__":
-    #----- run the full app
     import main
-    #main.main()
+
 # --------------------
 
 import functools

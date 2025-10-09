@@ -8,7 +8,7 @@ Created on Thu Jan  2 18:17:55 2025
 # ---- tof
 
 import data_dict
-# ---- build it
+
 def build_it( a_data_dict ):
     """
     build the data_dict for these tables
@@ -300,7 +300,7 @@ def build_it( a_data_dict ):
                                           max_len        = None,
                                           default_func   = None,
                                           col_head_text      = "Id",
-                                          col_head_width     = 100, )
+                                          col_head_width     = 80, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "id_old",
@@ -311,7 +311,7 @@ def build_it( a_data_dict ):
                                           max_len        = None,
                                           default_func   = None,
                                           col_head_text      = "Id Old",
-                                          col_head_width     = 100, )
+                                          col_head_width     =  0, ) # 0 hides column
     a_table_dict.add_column( a_column_dict )
 
     # ---- "planting_id_old",
@@ -320,6 +320,7 @@ def build_it( a_data_dict ):
                                           display_type = "error",
                                           max_len        = None,
                                           default_func   = None,   )
+                                           # above may also hide
     a_table_dict.add_column( a_column_dict )
 
     # ---- "planting_id",
@@ -334,7 +335,7 @@ def build_it( a_data_dict ):
                                           max_len        = None,
                                           default_func   = None,
                                           col_head_text      = "Planting Id",
-                                          col_head_width     = 50, )
+                                          col_head_width     = 0, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "event_dt",
@@ -351,7 +352,7 @@ def build_it( a_data_dict ):
                                           display_type = "integer",
                                           max_len        = None,
                                           default_func   = None,
-                                          col_head_text      = "!!Date",  # in the table
+                                          col_head_text      = "Date",  # in the table
                                           col_head_width     = 90, )
     a_table_dict.add_column( a_column_dict )
 
@@ -362,7 +363,7 @@ def build_it( a_data_dict ):
                                           max_len        = None,
                                           default_func   = None,
                                           col_head_text      = "Dlr",
-                                          col_head_width     = 50, )
+                                          col_head_width     = 80, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- "cmnt",

@@ -60,7 +60,8 @@ class Parameters( ):
 
         # ----mode_mh_2025_hd
         #self.mode_mh_2025_hd()
-        self.mode_russ_2025_hd()
+        #self.mode_russ_2025_hd()
+        self.mode_russ_2025_ram()
 
         # self.mode_russ_2025_ram()
         #self.mode_github()
@@ -87,7 +88,7 @@ class Parameters( ):
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
-        self.db_file_name       = "/tmp/ramdisk/russ2025/russ2025.db"
+        self.db_file_name       = "/tmp/ramdisk/russ2025/stuffdb.db"
 
         self.logging_level      = logging.DEBUG   # ERROR
 

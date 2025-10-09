@@ -13,7 +13,6 @@ if __name__ == "__main__":
 
 # --------------------
 
-
 import functools
 import inspect
 import logging
@@ -1141,7 +1140,7 @@ class EventSqlTableModel( QSqlTableModel ):
         return super().data(index, role)
 
 # ----------------------------------------
-class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
+class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
 
     def __init__(self, parent_window ):
         """
@@ -1149,7 +1148,6 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
         """
         super().__init__( parent_window )
         #self.parent_window   = parent_window
-        self.list_ixxx         = 5  # should track selected an item in detail
 
         self.table_name      = "stuff_event"
         self.list_table_name = self.table_name   # delete this
@@ -1306,16 +1304,6 @@ class StuffEventSubTab( base_document_tabs.SubTabBaseOld  ):
             self.detail_table_name )
         self.detail_tab.default_new_row( next_key )
         self.text_tab.default_new_row(   next_key )
-
-    # ------------------------------------------
-    def delete_record(self):
-        """
-        what it says, read?
-
-        set curent id, get children
-        """
-        msg   = "delete_record ... not implemented"
-        QMessageBox.warning(self, "Sorry", msg )
 
     #---------------- restart here model view dialog name
     #  ---- chat functions

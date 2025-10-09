@@ -149,7 +149,7 @@ class ParmsTemp( ):
         self.db_file_name      = ":memory:"
         self.db_file_name      = "/tmp/ramdisk/russ2025/russ2025.db"
         self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
-
+        self.db_file_name      = "/tmp/ramdisk/russ2025/stuffdb.db"
 
 
 

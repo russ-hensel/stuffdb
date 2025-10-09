@@ -1272,8 +1272,6 @@ class PictureTextTab( base_document_tabs.TextTabBase   ):
 
         self.id_field.setText( str( key ) )
 
-
-
     # -----------------------------
     def delete_detail_row(self):
         """
@@ -2013,8 +2011,10 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
             #  QSqlTableModel
 
         # ---- other   model_other
-        headers = [ "Table", "Id", "Information(model_other)"]   # other is items from other windows, clears when
-        model_other           = table_model.TableModel( headers )   # why not QTableWidget
+        headers = [ "Table", "Id", "Information(model_other)"]
+            # other is items from other windows, clears when
+        model_other           = table_model.TableModel( headers )
+            # why not QTableWidget
         self.model_other      = model_other
         model_other.add_indexer(  self.model_other_ituple )
 

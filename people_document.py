@@ -98,13 +98,31 @@ LOG_LEVEL       = 20 # level form much debug
       #   higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
 
 # one of two can we combine or at least improve name
-PEOPLE_CONTACT_COLUMN_DICT         = None
+#PEOPLE_CONTACT_COLUMN_DICT         = None
     # search for build location  or put here and call back
     # map from name to column #
 
 
-EVENT_FIELD_DICT          = None
-PHONE_FIELD_DICT          = None
+EVENT_FIELD_DICT          = None  # NOT IMPLEMENTD YET NOT FOR THIS TAB
+CONTACT_FIELD_DICT        = None
+
+# EVENT_FIELD_DICT        = None  # created later?
+
+
+# IX_EVENT_ID             = 0 # many are magic convert to this
+# IX_EVENT_ID_OLD         = 1
+# IX_EVENT_PLANT_ID       = 2
+# IX_EVENT_PLANT_ID_OLD   = 3
+# IX_EVENT_DATE           = 4
+# IX_EVENT_DLR            = 5
+# IX_EVENT_CMNT           = 6
+# IX_EVENT_TYPE           = 7
+
+
+
+
+
+
 
 
 # def build_pccd( ):
@@ -1336,7 +1354,7 @@ class PeopleHistorylTab( base_document_tabs.HistoryTabBase   ):
         self.tab_name            = "PeopleHistorylTab"
 
 # ----------------------------------------
-class PeopleEventSubTab( base_document_tabs.SubTabBase ):
+class PeopleEventSubTab( base_document_tabs.SubTabWithEditBase ):
     """
     """
     def __init__(self, parent_window ):
@@ -1346,6 +1364,7 @@ class PeopleEventSubTab( base_document_tabs.SubTabBase ):
 
         self.table_name      = "people_phone"
 
+        # global EVENT_FIELD_DICT
         global EVENT_FIELD_DICT
         if EVENT_FIELD_DICT is None:
             EVENT_FIELD_DICT   = data_dict.rpt_sub_tab_columns_order( self.table_name, verbose = False  )
@@ -1358,14 +1377,8 @@ class PeopleEventSubTab( base_document_tabs.SubTabBase ):
     # ---------------------------------
     def _build_model( self, ):
         """
-        put in some init do delay build = lazy
+        same for all subclasses except model class
         """
-        global PEOPLE_CONTACT_COLUMN_DICT
-
-        if PEOPLE_CONTACT_COLUMN_DICT is None:
-            a_table    = data_dict.DATA_DICT.get_table( self.table_name )
-            PEOPLE_CONTACT_COLUMN_DICT   = a_table.make_name_to_ix_dict()
-
         model              = ContactSqlTableModel(  self, self.db    )
         self.model         = model
 
@@ -1405,320 +1418,54 @@ class PeopleEventSubTab( base_document_tabs.SubTabBase ):
         # model_write.setFilter( f"pictureshow_id = {id} " )
         model.select()
 
-
 # ----------------------------------------
-class PeopleEventSubTabOld( base_document_tabs.SubTabBaseOld ):
+class PeopleContactSubTab( base_document_tabs.SubTabWithEditBase ):
     """
+    headers and width are in the data dick
     """
     def __init__(self, parent_window ):
         """
         """
         super().__init__( parent_window )
-
-        self.list_ix         = 5  # should track selected an item in detail
-        # needs work
-        self.db              = AppGlobal.qsql_db_access.db
-
-        self.table_name      = "people_event"
-        self.list_table_name = self.table_name   # delete this
-        #self.tab_name            = "PeopleEventSubTab  not needed tis is a sub tab
-        self.current_id      = None
-
-        self._build_model()
-        self._build_gui()
-
-        self.parent_window.sub_tab_list.append( self )    # a function might be better
-
-    # ------------------------------------------
-    def _build_gui( self, ):
-        """
-        what it says, read
-        !! initial query should come out
-
-        """
-        page            = self
-
-        layout                     = QVBoxLayout( page )
-        button_layout              = QHBoxLayout()
-
-        layout.addLayout( button_layout )
-
-
-        # Set up the view
-        view                 = QTableView()
-        self.list_view       = view
-        self.view            = view
-
-        view.setModel( self.model_write )
-
-        layout.addWidget( view )
-        #placer.place(  view )
-
-        # ---- buttons
-        widget        = QPushButton( 'add_record' )
-        #add_button    = widget
-        widget.clicked.connect( self.add_record )
-        button_layout.addWidget( widget )
-
-        #
-        widget        = QPushButton('edit_record')
-        #add_button    = widget
-        widget.clicked.connect(self.edit_record)
-        button_layout.addWidget( widget )
-
-        #
-        widget        = QPushButton('delete_record')
-        #add_button    = widget
-        widget.clicked.connect(self.delete_record)
-        button_layout.addWidget( widget )
-
-    # ---------------------------------
-    def _build_model( self, ):
-        """
-        may have too many instances
-        Returns:
-            modifies self, establishes -- wrong names
-
-        """
-        #model              = QSqlTableModel( self, self.db )
-
-        model              = qt_with_logging.QSqlTableModelWithLogging(  self, self.db    )
-        self.model_write   = model
-        self.model         = model
-
-        model.setTable( self.list_table_name )
-        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
-
-
-    # ---------------------------------------
-    def select_by_id( self, id ):
-        """
-        maybe make anscestor and promote
-
-        Args:
-            id (TYPE): DESCRIPTION.
-
-        Returns:
-            None.
-
-        """
-        # ---- write
-        model           = self.model_write
-
-        self.current_id  = id
-        model.setFilter( f"people_id = {id}" )
-        # model_write.setFilter( f"pictureshow_id = {id} " )
-        model.select()
-
-    # -------------------------------------
-    def i_am_hsw(self):
-        """
-        make sure call is to here
-
-        """
-        print( "i_am_hsw")
-
-    # -------------------------------------
-    def default_new_row( self ):
-        """
-
-        tail_tab.default_new_row( next_key )
-        default values for a new row in the detail and the
-        text tabs
-
-        Returns:
-            None.
-
-        """
-        next_key      = AppGlobal.key_gen.get_next_key(
-            self.detail_table_name )
-        self.detail_tab.default_new_row( next_key )
-        self.text_tab.default_new_row(   next_key )
-
-    # ------------------------------------------
-    def add_record(self):
-        """
-        what it says, read?
-        add test for success an refactor??
-        """
-        model      = self.model_write
-        dialog     = people_document_edit.EditPeopleEvents( model, index = None, parent = self )
-        if dialog.exec_() == QDialog.Accepted:
-            #self.model.submitAll()
-            ok     = base_document_tabs.model_submit_all(
-                       model,  f"PeopleEventsSubTab.add_record " )
-            self.model.select()
-
-    # ------------------------------------------
-    def edit_record(self):
-        """
-        what it says, read?
-        """
-        index       = self.view.currentIndex()
-        model       = self.model
-        if index.isValid():
-            dialog = people_document_edit.EditPeopleEvents( self.model, index, parent = self )
-            if dialog.exec_() == QDialog.Accepted:
-                #self.model.submitAll()
-                ok     = base_document_tabs.model_submit_all(
-                           model,  f"PeopleEventsSubTab.add_record " )
-                #ia_qt.q_sql_table_model( self.model, "post edit_record submitAll()" )
-                self.model.select()
-        else:
-            msg   = "Click on row to edit..."
-            QMessageBox.warning(self, "Please", msg )
-
-    # ------------------------------------------
-    def delete_record(self):
-        """
-        what it says, read?
-        set curent id, get children
-        """
-        msg   = "delete_record ... not implemented"
-        QMessageBox.warning(self, "Sorry", msg )
-
-    # -----------------------
-    def __str__( self ):
-
-        a_str   = ""
-        a_str   = ">>>>>>>>>>* PeopleEventSubTab  *<<<<<<<<<<<<"
-
-        return a_str
-
-# ----------------------------------------
-class PeopleContactSubTab( base_document_tabs.SubTabBaseOld ):
-    """
-    """
-    def __init__(self, parent_window ):
-        """
-        """
-        super().__init__( parent_window )
-
 
         self.table_name      = "people_contact"  # revise
         self.table_name      = "people_phone"
         # self.list_table_name = self.table_name   # delete this
         self.current_id      = None  # probably get from somewher else ??
 
+        global CONTACT_FIELD_DICT   # where when is used ??
+        if CONTACT_FIELD_DICT is None:
+            CONTACT_FIELD_DICT   = data_dict.rpt_sub_tab_columns_order( self.table_name, verbose = False  )
+
+        self.field_dict     = CONTACT_FIELD_DICT  # order is ix  key is field_name then a dict
+
         self._build_model()
         self._build_gui()
 
         self.parent_window.sub_tab_list.append( self )    # a function might be better
 
-    # ------------------------------------------
-    def _build_gui( self, ):
-        """
-        what it says, read
-        !! initial query should come out
-        """
-        page                = self
-
-        layout              = QVBoxLayout( page )
-        button_layout       = QHBoxLayout()
-
-        layout.addLayout( button_layout )
-
-        # Set up the view
-        view                 = QTableView()
-        model                = self.model
-        #self.list_view       = view
-        self.view            = view
-        view.setModel( self.model )
-
-        # print( "_build_gui  this may be in wrong place ")
-        # layout.addWidget( view )
-        #placer.place(  view )
-
-        col_header_dict   = data_dict.rpt_sub_tab_columns_order( self.table_name, verbose = False  )
-            # could be done at module level
-
-        ix_col = -1   # could make loop or even list comp
-        for i_column_name, col_dict in col_header_dict.items():
-            ix_col    += 1
-
-            model.setHeaderData( ix_col, Qt.Horizontal, col_dict[ "col_head_text"  ] )
-            view.setColumnWidth( ix_col,                col_dict[ "col_head_width" ] )
-
-
-# ---------
-# CREATE TABLE  people_phone    (
-#      seq_id  VARCAR(10),
-#      people_id  VARCAR(10),
-#      type  VARCAR(10),
-#      phone_old  VARCAR(35),
-#      cmnt  VARCAR(40),
-#      phone  VARCAR(100),
-#      autodial  INTEGER
-#     )
-# ----------
-        # ix_col += 1
-        # model.setHeaderData( ix_col, Qt.Horizontal, "seq_id" )
-        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-
-        # ix_col += 1
-        # model.setHeaderData( ix_col, Qt.Horizontal, "people_id" )
-        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-
-        # ix_col += 1
-        # model.setHeaderData( ix_col, Qt.Horizontal, "Type" )
-        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-
-        # ix_col += 1
-        # model.setHeaderData( ix_col, Qt.Horizontal, "Phone Old" )
-        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-
-        # ix_col += 1
-        # model.setHeaderData( ix_col, Qt.Horizontal, "Comment" )
-        # view.setColumnWidth( ix_col, 300)  # Set  width in  pixels
-
-        # ix_col += 1
-        # model.setHeaderData( ix_col, Qt.Horizontal, "Phone" )
-        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-
-        # ix_col += 1
-        # model.setHeaderData( ix_col, Qt.Horizontal, "AutoDial" )
-        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
-
-        #view.setColumnHidden( 1, True )  # view or model
-
-        layout.addWidget( view )
-
-        # ---- buttons
-        widget        = QPushButton( 'Add' )
-        #add_button    = widget
-        widget.clicked.connect( self.add_new_contact )
-        button_layout.addWidget( widget )
-
-        #
-        widget        = QPushButton('Edit')
-        #add_button    = widget
-        widget.clicked.connect( self.edit_selected_record )
-        button_layout.addWidget( widget )
-
-        #
-        widget        = QPushButton('Delete')
-        #add_button    = widget
-        widget.clicked.connect(self.delete_record)
-        button_layout.addWidget( widget )
-
     # ---------------------------------
     def _build_model( self, ):
         """
-
+        MAY BE PROMATABLE
         put in some init do delay build = lazy
         """
-        global PEOPLE_CONTACT_COLUMN_DICT
-
-        if PEOPLE_CONTACT_COLUMN_DICT is None:
-            a_table    = data_dict.DATA_DICT.get_table( self.table_name )
-            PEOPLE_CONTACT_COLUMN_DICT   = a_table.make_name_to_ix_dict()
-
-
         model              = ContactSqlTableModel(  self, self.db    )
         self.model         = model
 
         model.setTable( self.table_name )
         model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+
+    # ------------------------------------------
+    def _build_dialog( self, edit_data ):
+        """
+        what it says, read
+        # Open dialog with the current data
+        #dialog = StuffEventDialog(self, edit_data=data)
+        """
+        dialog   = people_document_edit.EditPeopleContact( self, edit_data )
+        return   dialog
+
 
     # ---------------------------------------
     def select_by_id( self, id ):
@@ -1732,6 +1479,15 @@ class PeopleContactSubTab( base_document_tabs.SubTabBaseOld ):
         model.setFilter( f"people_id = {id}" )  # for stuff_event
         # model_write.setFilter( f"pictureshow_id = {id} " )
         model.select()
+
+    # ------------------------------------------
+    def fix_add_keys( self, form_data ):
+        """ """
+        # print( "SubTabBase still need to fix this perahps add_dict_adjust( form_data ) not clear how to paramaterize ")
+        # ver 3  --- but some may be passed in ?
+        a_id                        = AppGlobal.key_gen.get_next_key( self.table_name )
+        form_data[ "id" ]           = a_id
+        form_data[ "people_id" ]    = self.current_id
 
     # -------------------------------------
     def i_am_hsw(self):
@@ -1756,189 +1512,7 @@ class PeopleContactSubTab( base_document_tabs.SubTabBaseOld ):
         self.detail_tab.default_new_row( next_key )
         self.text_tab.default_new_row(   next_key )
 
-    # ------------------------------------------
-    def add_record_old_may_rename (self):
-        """
-        what it says, read?
-        add test for success an refactor??
-        """
-        model      = self.model
-        dialog     = people_document_edit.EditPeopleContact( model, index = None, parent = self )
-        if dialog.exec_() == QDialog.Accepted:
-            #self.model.submitAll()
-            ok     = base_document_tabs.model_submit_all(
-                       model,  f"PeopleEventsSubTab.add_record " )
-            self.model.select()
 
-    #---------------- restart here model view dialog name
-    #  ---- chat functions
-    def add_new_contact(self):
-        """
-        Open dialog to add a new event and insert it into the model.
-        """
-        #dialog = StuffEventDialog(self)
-        dialog      = people_document_edit.EditPeopleContact( self )  # the parent tab
-        model       = self.model
-        # parent=None, edit_data=None ):
-
-        if dialog.exec_() == QDialog.Accepted:
-            form_data   = dialog.get_form_data()
-
-            # Create a new record
-            row         = self.model.rowCount()
-            self.model.insertRow(row)
-
-            # key
-            # Set data for each field
-            #model.setData( model.index(row, 0), form_data["id"])
-            a_id    = AppGlobal.key_gen.get_next_key( self.table_name )
-            # model.setData( model.index(row, 0), a_id )
-            # old_non_editable                = model.non_editable_columns
-            model.non_editable_columns  = { 99 } # beyond all columns
-
-            debug_id  = self.current_id
-            # model.setData( model.index(row, 1), form_data["stuff_id"])
-
-            # ver 1
-            #model.setData( model.index(row, 1), self.current_id )
-
-            # model.non_editable_columns  = old_non_editable
-
-            # ver 1
-            # model.setData( model.index(row, 2), form_data["people_id"])
-            # model.setData( model.index(row, 3), form_data["phone_old"])
-
-            # ver 2
-            # # can convert to loop ??
-            # field_name   = "people_id"
-            # field_ix     = PEOPLE_CONTACT_COLUMN_DICT[ field_name ]
-            # model.setData( model.index( row, field_ix ), form_data[ field_name] )
-
-            # field_name   = "phone_old"
-            # field_ix     = PEOPLE_CONTACT_COLUMN_DICT[ field_name ]
-            # model.setData( model.index( row, field_ix ), form_data[ field_name] )
-
-            # ver 3  --- but some may be passed in ?
-            form_data[ "seq_id" ]     = a_id
-            form_data[ "people_id" ]  = self.current_id
-
-            for field_name, field_ix in  PEOPLE_CONTACT_COLUMN_DICT.items():
-                model.setData( model.index( row, field_ix ), form_data[ field_name ] )
-
-
-            # model.setData( model.index(row, 4), form_data["cmnt"])
-            # model.setData( model.index(row, 5), form_data["type"])
-
-    # -------------------------------------------
-    def get_selected_row_data(self):
-        """
-        Get the data from the currently selected row.
-        """
-        # Get the currently selected row
-        model       = self.model
-
-        indexes     = self.view.selectedIndexes()
-        if not indexes:
-            QMessageBox.warning(self, "Warning", "No record selected.")
-            return None
-
-        # Get the model row index
-        model_row = indexes[0].row()
-
-        # a_timestamp = self.model.data(self.model.index(0, 2), Qt.EditRole)
-        # print(f"Raw timestamp: {a_timestamp = }")
-
-        # ver 1
-        # # Extract data from the row
-        # data = {
-        #     "id":         model.data( model.index( model_row, 0)),
-        #     "people_id":  model.data( model.index( model_row, 1)),
-
-        #     # # "event_dt":  model.data( model.index( model_row, 2)),
-        #     # "event_dt":  a_timestamp,
-
-        #     "phone_old":       model.data( model.index( model_row, 2)),
-        #     # "cmnt":      model.data( model.index( model_row, 4)),
-        #     # "type":      model.data( model.index( model_row, 5))
-        # }
-
-        # ver 2
-        data  = {}
-        for field_name, field_ix in  PEOPLE_CONTACT_COLUMN_DICT.items():
-            #model.setData( model.index( row, field_ix ), form_data[ field_name ] )
-            data[field_name]   = model.data( model.index( model_row, field_ix))
-        # # Extract data from the row
-        # data = {
-        #     "id":         model.data( model.index( model_row, 0)),
-        #     "people_id":  model.data( model.index( model_row, 1)),
-
-        #     # # "event_dt":  model.data( model.index( model_row, 2)),
-        #     # "event_dt":  a_timestamp,
-
-        #     "phone_old":       model.data( model.index( model_row, 2)),
-        #     # "cmnt":      model.data( model.index( model_row, 4)),
-        #     # "type":      model.data( model.index( model_row, 5))
-        # }
-
-
-        return (model_row, data)
-
-    # ----------------------------------
-    def edit_selected_record(self):
-        """
-        from stuff then update
-        Open dialog to edit the currently selected event.
-        """
-        selected_data = self.get_selected_row_data()
-        if selected_data is None:
-            return
-
-        row, data = selected_data
-
-        # Open dialog with the current data
-        #dialog = StuffEventDialog(self, edit_data=data)
-        dialog = people_document_edit.EditPeopleContact( self, edit_data = data )
-            # self the parent tab
-
-        model     = self.model
-
-        if dialog.exec_() == QDialog.Accepted:
-            form_data = dialog.get_form_data()
-
-            # # Update the row with the new data
-            # model.setData( model.index(row, 0), form_data["id"])
-            # model.setData( model.index(row, 1), form_data["people_id"])
-            # model.setData( model.index(row, 2), form_data["phone_old"])
-            # model.setData( model.index(row, 3), form_data["dlr"])
-            # model.setData( model.index(row, 4), form_data["cmnt"])
-            # model.setData( model.index(row, 5), form_data["type"])
-            # ver 3  --- but some may be passed in ?
-            # form_data[ "seq_id" ]     = a_id
-            # form_data[ "people_id" ]  = self.current_id
-
-            for field_name, field_ix in  PEOPLE_CONTACT_COLUMN_DICT.items():
-                model.setData( model.index( row, field_ix ), form_data[ field_name ] )
-
-
-
-    # ------------------------------------------
-    def edit_record_xxx(self):
-        """
-
-        in stuff as edit_selected_event ... will make edit_selected_record
-        what it says, read?
-        """
-
-
-    # ------------------------------------------
-    def delete_record(self):
-        """
-        what it says, read?
-
-        set curent id, get children
-        """
-        msg   = "delete_record ... not implemented"
-        QMessageBox.warning(self, "Sorry", msg )
 
     # -----------------------
     def __str__( self ):
@@ -1981,6 +1555,9 @@ class ContactSqlTableModel(QSqlTableModel):
         """
         for special formatting
         and alignment
+        col = 222 is placholder does nothin
+        this probably needs work
+
         """
         col = index.column()
 
