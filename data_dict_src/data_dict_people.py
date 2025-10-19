@@ -168,7 +168,7 @@ def build_it( a_data_dict ):
                                              col_head_text      = "Last Name",
                                              col_head_width     = 40,
                                              col_head_order     = 5,
-                                             topic_colunm_order = 2,
+                                             topic_column_order = 2,
                                              form_col_span      = 4, )
 
     a_table_dict.add_column( a_column_dict )
@@ -184,7 +184,7 @@ def build_it( a_data_dict ):
                                              col_head_text      = "First Name",
                                              col_head_width     = 40,
                                              col_head_order     = 4,
-                                             topic_colunm_order = 1,
+                                             topic_column_order = 1,
                                              form_col_span      = 4, )
 
     a_table_dict.add_column( a_column_dict )

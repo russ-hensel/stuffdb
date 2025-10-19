@@ -59,9 +59,9 @@ class Parameters( ):
         get here"""
 
         # ----mode_mh_2025_hd
-        #self.mode_mh_2025_hd()
+        # self.mode_mh_2025_hd()
         #self.mode_russ_2025_hd()
-        self.mode_russ_2025_ram()
+        #self.mode_russ_2025_ram()
 
         # self.mode_russ_2025_ram()
         #self.mode_github()
@@ -202,8 +202,10 @@ class Parameters( ):
 
             pass
 
-        # ---- theprof
-        elif computer_id == "theprof":
+        # ---- theprof   == russ-thinkpad-p72
+        elif computer_id == "russ-xxxxxxxxxxxxxxxxxx-p72":
+            self.use_add_where      = True    # on criteria have add_where field
+            self.use_geo_photo      = True   # True use the photo geo parts of app
             self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
             self.db_file_name       =  "the_prof_db.db"
 
@@ -217,7 +219,7 @@ class Parameters( ):
             self.db_file_name       = "./data/russ2025/russ2025.db"
             self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
             self.db_file_name       = "./data/russ2025/russ2025.db"
-            self.db_file_name       = "./data/fattony/fattony.db"
+            self.db_file_name       = "./data/fattony/stuffdb.db"
 
             self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
             ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
@@ -239,7 +241,7 @@ class Parameters( ):
             # /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/misc/db_green_on_black.png
             #self.icon               =  "./misc/db_red_on_black.png"
 
-        # ---- "russ-thinkpad-p72": theprof mint
+        # ---- "russ-thinkpad-p72": === theprof mint
         elif computer_id == "russ-thinkpad-p72":
             # ---- appearance -- including sizes
 
@@ -262,6 +264,9 @@ class Parameters( ):
             self.doc_qt_ypos        = 20
 
             self.logging_level      = logging.DEBUG
+
+            self.use_add_where      = True    # on criteria have add_where field
+            self.use_geo_photo      = True   # True use the photo geo parts of app
 
             # ---- type and location of the db file
             self.db_type            = "QSQLITE"
@@ -456,6 +461,13 @@ class Parameters( ):
         self.idle_venv     = "py_12_misc"   # idle will open in this python venv
             # path leading to all docs and help
 
+        self.use_add_where = False    # on criteria have add_where field
+
+        # default for the list
+        self.add_where_defaults = [ "",
+                                    "", ]
+
+
         # ---- note_default_text
         # do not want to couple custom widgets to parametes, but maybe I should
         # or a try except to app globals ??
@@ -472,6 +484,9 @@ class Parameters( ):
         #self.startup_function   = startup_functions.say_hello
         self.startup_function   = startup_functions.default_startup
             # function, perhaps open note_1 will be called at startup
+
+        self.use_geo_photo     = False   # True use the photo geo parts of app
+            # if true add a lot of dependencies
 
         self.poll_delta_t      = 200      # 200 ok at least on win longer does not fix linux prob
         self.poll_delta_t      = 100
@@ -753,7 +768,11 @@ class Parameters( ):
         a_str   = string_util.to_columns( a_str, [ "delete_log_on_start -- deprecate for log_mode",
                                                   f"{self.delete_log_on_start}" ] )
 
+        a_str   = string_util.to_columns( a_str, [ "use_geo_photo",
+                                                  f"{self.use_geo_photo}" ] )
 
+        a_str   = string_util.to_columns( a_str, [ "use_add_where",
+                                                  f"{self.use_add_where}" ] )
         # a_str   = string_util.to_columns( a_str, ["gui_text_log_fn", f"{self.gui_text_log_fn}" ] )
 
         a_str   = string_util.to_columns( a_str, ["readme_fn", f"{self.readme_fn}" ] )

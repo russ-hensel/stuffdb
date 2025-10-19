@@ -196,7 +196,6 @@ def make_name_to_ix_dict( table_name, verbose = False ):
             print( msg )
             ix      += 1
 
-
 # -------------------------------------------
 def rpt_sub_tab_columns_order( table_name, verbose = False ):
     """
@@ -289,6 +288,7 @@ class DataDict(   ):
     #------------------------------------------------
     def get_list_columns_sql_order( self, a_table_name   ):
         """
+        deprocate use the TableDict
         """
         a_table      = self.table_dicts.get( a_table_name  )
         if a_table is None:
@@ -304,6 +304,7 @@ class DataDict(   ):
     # ----------------------
     def get_list_columns(self, a_table_name  ):
         """
+        deprocate use the TableDict
         simplify call to a given table
             columns for a history tab to move data from a record to a history table
             see history_tab record_to_table
@@ -321,6 +322,7 @@ class DataDict(   ):
     #------------------------------------------------
     def make_name_to_ix_dict( self, a_table_name ):
         """
+        deprocate use the TableDict  i think
         get the columns name and corresponding
         index  make into a dict
         """
@@ -418,8 +420,6 @@ class TableDict(  ):
         return column_list
 
 
-
-
     #------------------------------------------------
     def get_key_word_columns(self,    ):
         """
@@ -470,7 +470,7 @@ class TableDict(  ):
             i_placeholder   = i_column.placeholder_text
             i_default_func  = i_column.default_func
             i_is_topic      = i_column.is_topic
-            i_in_history    = i_column.in_history   # do not include id ... number for order
+            # i_in_history    = i_column.in_history   # do not include id ... number for order
             i_detail_edit_class = i_column.detail_edit_class
             # i_db_convert_type   = i_column.db_convert_type   # string for VARCHAR text....
 
@@ -481,7 +481,7 @@ class TableDict(  ):
                 continue
 
             if i_detail_edit_class is None:
-                i_detail_edit_class          = cw.CQLineEdit
+                i_detail_edit_class          = "cw.CQLineEdit is this right in data dict"
                 i_column.detail_edit_class   = i_detail_edit_class
 
             column_list.append( i_column )
@@ -591,16 +591,16 @@ class TableDict(  ):
             i_col_head_order          = i_column.col_head_order
             i_col_head_text      = i_column.col_head_text
             i_col_head_width     = i_column.col_head_width
-            topic_colunm_order   = i_column.topic_colunm_order
+            topic_column_order   = i_column.topic_column_order
 
-            if   topic_colunm_order < 0:
+            if   topic_column_order < 0:
                 continue
 
             #rint( f"appending {i_column.column_name}"  )
 
             column_list.append( i_column )
 
-        column_list.sort( key = lambda i_column: i_column.topic_colunm_order )
+        column_list.sort( key = lambda i_column: i_column.topic_column_order )
 
 
         column_names    = [i_column.column_name for i_column in column_list ]
@@ -704,7 +704,7 @@ class TableDict(  ):
             placeholder_text   = i_column.placeholder_text
             i_default_func      = i_column.default_func
             i_is_topic              = i_column.is_topic   # phasing out
-            topic_colunm_order      = i_column.topic_colunm_order
+            topic_column_order      = i_column.topic_column_order
             form_col_span           = i_column.form_col_span
             is_keep_prior_enabled   = i_column.is_keep_prior_enabled
             form_read_only          = i_column.form_read_only
@@ -794,8 +794,8 @@ class TableDict(  ):
                 if value is not SKIP:
                     line_list.append( f'{indent_1}edit_field.is_keep_prior_enabled        = {value}' )
 
-                if topic_colunm_order >=0:
-                    line_list.append( f'{indent_1}self.topic_edits.append( (edit_field, {topic_colunm_order} ) ) ' )
+                if topic_column_order >=0:
+                    line_list.append( f'{indent_1}self.topic_edits.append( (edit_field, {topic_column_order} ) ) ' )
 
                 line_list.append( f'{indent_1}edit_field.setPlaceholderText( "{placeholder_text}" ) ' )
 
@@ -861,7 +861,7 @@ class TableDict(  ):
             i_placeholder   = i_column.placeholder_text
             i_default_func      = i_column.default_func
             i_is_topic              = i_column.is_topic   # phasing out
-            topic_colunm_order      = i_column.topic_colunm_order
+            topic_column_order      = i_column.topic_column_order
             form_col_span           = i_column.form_col_span
             is_keep_prior_enabled   = i_column.is_keep_prior_enabled
             # self.edit_to_rec            = edit_to_rec    # string name of function
@@ -915,7 +915,7 @@ class TableDict(  ):
                 if is_keep_prior_enabled:
                     line_list.append( f'{indent_1}edit_field.is_keep_prior_enabled        = True' )
 
-                if topic_colunm_order >=0 :
+                if topic_column_order >=0 :
                     line_list.append( f'{indent_1}self.topic_edits.append( (edit_field, {topic_column_order} ) ) ' )
 
                 line_list.append( f'{indent_1}edit_field.setPlaceholderText( "{i_placeholder}" ) ' )
@@ -1034,10 +1034,10 @@ class TableDict(  ):
             if item is not None:
                 a_str      = f'{a_str}\n                                             is_topic     = {item}, '
 
-            # ----  topic_colunm_order
-            item       = i_column.topic_colunm_order
+            # ----  topic_column_order
+            item       = i_column.topic_column_order
             if item is not None and item > -1:
-                a_str      = f'{a_str}\n                                             topic_colunm_order = {item}, '
+                a_str      = f'{a_str}\n                                             topic_column_order = {item}, '
 
 
 
@@ -1095,16 +1095,23 @@ class TableDict(  ):
     def to_sql_create( self, ):
         """
         what it says, read
+                 primay_key_ix          = None,       # None not part of prirmy key
+                 use_index              = None,
+           id INTEGER PRIMARY KEY NOT NULL,
+
+        for now for only one key part primary
         """
         sql      = f"CREATE TABLE  {self.table_name}    ("
 
         for ix_column, i_column in enumerate( self.columns ):
-
+            key_part    = ""
+            if i_column.primay_key_ix is not None:
+                key_part    = " PRIMARY KEY NOT NULL "
             if ix_column > 0:
                 line    = ","
             else:
                 line    = ""
-            line        = f"{line}\n     {i_column.column_name}  {i_column.db_type}"
+            line        = f"{line}\n     {i_column.column_name}  {i_column.db_type} {key_part}"
             sql         = f"{sql}{line}"
         sql             = f"{sql}\n    )"
 
@@ -1280,7 +1287,7 @@ class ColumnDict(  ):
                  col_head_text          = None,
                  col_head_width         = -1,
                  col_head_order         = -1,      # my default based on sql
-                 topic_colunm_order     = -1,      # not a topic column
+                 topic_column_order     = -1,      # not a topic column
                  rec_to_edit            = None,    # no _build_gui output, edit will default
                  edit_to_rec            = None,
                  form_col_span          = None,    # defaulted later
@@ -1294,8 +1301,10 @@ class ColumnDict(  ):
                                                     # bool False, no tip
                                                     # bool True, use field name or something derived
                                                     # string, use string
-
+                 primay_key_ix          = None,       # None not part of prirmy key
+                 use_index              = None,     # None no index
                  is_keep_prior_enabled  = False,
+                 initial_value          = None      # may mean nyll or not
 
                  # rec_to_edit         = "rec_to_edit_str_to_str",
                  # edit_to_rec         = "edit_to_rec_str_to_str",
@@ -1308,7 +1317,7 @@ class ColumnDict(  ):
         #self.in_history         = in_history
         self.column_name            = column_name
         self.db_type                = db_type
-        self.topic_colunm_order     = topic_colunm_order
+        self.topic_column_order     = topic_column_order
         self.display_order          = display_order
         self.form_col_span          = form_col_span
         self.form_read_only         = form_read_only
@@ -1331,7 +1340,7 @@ class ColumnDict(  ):
 
         self.detail_edit_class      = detail_edit_class
         self.edit_tool_tip          = edit_tool_tip
-
+        self.primay_key_ix          = primay_key_ix
         # # ---- edit_in_type
         # if edit_in_type is None:
         #     if  db_type  == "INTEGER":
@@ -1508,6 +1517,9 @@ def  build_it( db_schema_name = None ):
 
     import data_dict_photo     # missing photo_subject
     data_dict_photo.build_it(  DATA_DICT )
+
+    import data_dict_photo_new     # missing photo_subject
+    data_dict_photo_new.build_it(  DATA_DICT )
 
     import data_dict_plant
     data_dict_plant.build_it(  DATA_DICT )

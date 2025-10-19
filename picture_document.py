@@ -310,7 +310,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         self._build_top_widgets_grid( grid_layout )
 
-
         # ----key words
         widget                = QLabel( "Key Words" )
         grid_layout.new_row()
@@ -448,7 +447,10 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             # add value changed to custom edits widget.textChanged.connect
             i_widget.function_on_changed    = ( lambda: self.criteria_changed( True ) )
             i_widget.function_on_return     = self.criteria_select
+            #i_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
+        #self.id_field.setFocus()  # seems not to work try
+        QTimer.singleShot( 0, self.key_words_widget.setFocus )
     # -------------
     def criteria_select( self,     ):
         """

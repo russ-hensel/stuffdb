@@ -83,6 +83,8 @@ if hostname  in [ "russ-ThinkPad-P72", 'millhouse-mint', 'fattony' ]:
     sys.path.insert( 1, f"{app_dir_path}/data_dict_src" )
     sys.path.insert( 1, f"{app_dir_path}/sql" )
     sys.path.insert( 1, f"{app_dir_path}/py_helpers" )
+    sys.path.insert( 1, f"{app_dir_path}/py_helpers" )
+    sys.path.insert( 1, f"{app_dir_path}/geo_photo" )
 
     sys.path.insert( 1, f"{project_dir_path}/rshlib" )
     sys.path.insert( 1, f"{project_dir_path}/rshlib/app_services" )

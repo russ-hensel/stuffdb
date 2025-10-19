@@ -17,47 +17,30 @@ import functools
 import sqlite3
 import time
 from   datetime import datetime
-import sqlite3
-import time
 
-from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import QStandardItem, QStandardItemModel
 
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
-                             QApplication,
-                             QButtonGroup,
-                             QDateEdit,
-                             QDockWidget,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QSizePolicy,
-                             QSpacerItem,
-                             QSpinBox,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
-                             QTextEdit,
-                             QWidget)
+
+
 
 
 #from   functools import partial
 #import collections
 
-# ---- Qt
-from PyQt5.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, pyqtSlot
+from PyQt5.QtCore import(   QModelIndex,
+                            QRectF,
+                            QDate,
+                            QModelIndex,
+                            Qt,
+                            QTimer,
+                            pyqtSlot, )
+
+
 from PyQt5.QtGui import (QIntValidator,
                          QPainter,
                          QPixmap,
                          QStandardItem,
-                         QStandardItemModel)
+                         QStandardItemModel,
+                     )
 
 # from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSql_Model
 from PyQt5.QtSql import (QSqlDatabase,
@@ -69,40 +52,43 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlTableModel)
 
 from PyQt5.QtWidgets import (QAbstractItemView,
-                             QAction,
-                             QActionGroup,
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
-                             QDialog,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGraphicsPixmapItem,
-                             QGraphicsScene,
-                             QGraphicsView,
-                             QGridLayout,
-                             QHBoxLayout,
-                             QInputDialog,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QSpinBox,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
+                        QAction,
+                        QActionGroup,
+                        QApplication,
+                        QButtonGroup,
+                        QCheckBox,
+                        QComboBox,
+                        QDateEdit,
+                        QDialog,
+                        QDockWidget,
+                        QFileDialog,
+                        QFrame,
+                        QGraphicsPixmapItem,
+                        QGraphicsScene,
+                        QGraphicsView,
+                        QGridLayout,
+                        QHBoxLayout,
+                        QInputDialog,
+                        QLabel,
+                        QLineEdit,
+                        QListWidget,
+                        QMainWindow,
+                        QMdiArea,
+                        QMdiSubWindow,
+                        QMenu,
+                        QMessageBox,
+                        QPushButton,
+                        QSizePolicy,
+                        QSpacerItem,
+                        QSpinBox,
+                        QTabWidget,
+                        QTableView,
+                        QTableWidget,
+                        QTableWidgetItem,
+                        QTextEdit,
+                        QVBoxLayout,
+                        QWidget,
+                        )
 
 # ---- imports local
 import base_document_tabs
@@ -454,7 +440,8 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         kw_table_name                   = "platning_key_word"
         column_list                     = [ "id", "id_old", "name", "add_kw", "bed_id",       ]
 
-        a_key_word_processor            = key_words.KeyWords( kw_table_name, AppGlobal.qsql_db_access.db )
+        a_key_word_processor            = key_words.KeyWords( kw_table_name,
+                                             AppGlobal.qsql_db_access.db )
         query_builder.table_name        = parent_document.detail_table_name
         query_builder.column_list       = column_list
 
@@ -628,10 +615,15 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         """
         width  = 50
         for ix in range( self.max_col ):  # try to tweak size to make it work
-            widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
+            widget   = QSpacerItem( width,
+                                   10,
+                                   QSizePolicy.Expanding,
+                                   QSizePolicy.Minimum)
+
             layout.addItem( widget, 0, ix  )  # row column
 
-        # ---- code_gen: TableDict.to_build_form 2025_04_01 for planting -- begin table entries -----------------------
+        # ---- code_gen: TableDict.to_build_form
+            #2025_04_01 for planting -- begin table entries
 
         # ---- id
         edit_field                  = cw.CQLineEdit(
@@ -825,80 +817,6 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
 
-
-
-
-    #---------------------------------
-    def _build_fields_old( self, layout ):
-        """
-        What it says, read
-            this is generated code except
-            tweaks
-                for spacing
-                plant_id   is done by hand
-
-
-        """
-        width  = 50
-        for ix in range( self.max_col ):  # try to tweak size to make it work
-            widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
-            layout.addItem( widget, 0, ix  )  # row column
-
-
-        # ---- code_gen: TableDict.to_build_form 2025_02_01 for planting -- begin table entries -----------------------
-
-
-
-        # ---- plant_id ============================== ddl
-        # edit_field                  = cw.CQLineEdit(
-        #                                         parent         = None,
-        #                                         field_name     = "plant_id",
-        #                                         db_type        = "string",
-        #                                         display_type   = "string",
-        #                                          )
-        # self.plant_id_field     = edit_field
-        # edit_field.setPlaceholderText( "plant_id" )
-        # # still validator / default func  None
-        # self.data_manager.add_field( edit_field, is_key_word = False )
-        # layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- plant_id   id_in_old
-        edit_field                  = cw.CQDictComboBox(
-                                                parent         = None,
-                                                field_name     = "plant_id",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.plant_id_field           = edit_field
-        widget_ext                    = combo_dict_ext.PLANT_COMBO_DICT_EXT
-        widget_ext.add_widget( edit_field )
-        edit_field.setPlaceholderText( "plant_id" )
-        #edit_field.set_dictionary     = self.parent_window.stuff_containers
-        #edit_field.get_info_for_id    = get_info_for_id          # will self get passed
-
-        #edit_field.set_dictionary( AppGlobal.mdi_management.plant_containers )
-
-            # to get info given an id
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-
-        layout.addWidget( edit_field, columnspan = 2 )
-
-
-        # ---- plant_id with ddl
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "plant_id",
-                                                db_type        = "string",
-                                                display_type   = "string",
-                                                 )
-        self.plant_id_field     = edit_field
-        edit_field.setPlaceholderText( "plant_id" )
-        # still validator / default func  None
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-
     # ----------------------------
     def fetch_detail_row( self, id = None ):
         """
@@ -1001,7 +919,6 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         #self.add_kw_field.clear()
         # self.url_field.clear()
         # self.mypref_field.clear()
-
 
     # ------------------------
     def get_picture_file_name(self):
@@ -1140,7 +1057,8 @@ class PlantingEventSubTab( base_document_tabs.SubTabWithEditBase ):
 
         if dialog.exec_() == QDialog.Accepted:
             form_data = dialog.get_form_data()
-            # 0 id 1 id_old 2 planting_id_old 3 planting_id 4 event_dt 5 dlr 6 cmnt 7 type 8 dt_mo INTEGER, 9 dt_day INTEGER, 10 day_of_year INTEGER
+            # 0 id 1 id_old 2 planting_id_old 3 planting_id 4
+            # event_dt 5 dlr 6 cmnt 7 type 8 dt_mo INTEGER, 9 dt_day INTEGER, 10 day_of_year INTEGER
             # Update the row with the new data
             # model.setData( model.index(row, 0), form_data["id"])
             # model.setData( model.index(row, 2), form_data["stuff_id"])
@@ -1224,7 +1142,6 @@ class EventSqlTableModel( QSqlTableModel ):
                     # print( msg )
                     return None   # is this ok
 
-
         elif role == Qt.EditRole:
             # Return raw value for editing/database for my dates an int
             if col == 4:
@@ -1242,6 +1159,5 @@ class EventSqlTableModel( QSqlTableModel ):
 
         # Default to base class for all other roles and columns
         return super().data(index, role)
-
 
 # ---- eof ------------------------------

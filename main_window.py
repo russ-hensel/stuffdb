@@ -378,7 +378,7 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         menu.addAction( action )
 
-        # ---- "set size o"
+        # ---- "set size pos"
         action          = QAction( "set size", self )
         #connect_to      = functools.partial( self.add_subwindow, window_type = "channel" )
         connect_to      = functools.partial(  self.go_active_sub_window_func,
@@ -412,6 +412,18 @@ class StuffdbMainWindow( QMainWindow ):
         connect_to      = self.show_parameters
         open_action.triggered.connect( connect_to )
         a_menu.addAction( open_action )
+
+        ok     = parameters.PARAMETERS.use_geo_photo
+        if ok:
+            import photo_util_subwindow   # needs to be differed
+            # ---- "D"Photo Util"
+            instance_ix     = 1
+            action          = QAction( "Photo Util", self )
+            connect_to      = functools.partial( self.add_subwindow,
+                                                     window_class   = photo_util_subwindow.PhotoUtilSubWindow,
+                                                     instance_ix    = instance_ix )
+            action.triggered.connect( connect_to )
+            a_menu.addAction( action )
 
         # ---- "DB Maint"
         instance_ix     = 1
@@ -741,7 +753,6 @@ class StuffdbMainWindow( QMainWindow ):
         asw     = self.get_active_subwindow(  )
         asw.search_me( criteria )
 
-
     # ---------------------------------------
     def go_active_sub_window_func( self, a_function_name  ):
         """
@@ -811,10 +822,8 @@ class StuffdbMainWindow( QMainWindow ):
         # etc.
         pass
 
-
     # ---- test actions ----------------------
     # -----------------------------
-
 
     # -----------------------------
     def show_message1(self):

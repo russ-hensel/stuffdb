@@ -84,7 +84,7 @@ import mdi_management
 import qt_sql_query
 import qt_with_logging
 import combo_dict_ext
-#import plant_document_edit
+# import plant_document_edit
 
 
 logger          = logging.getLogger( )
@@ -1170,6 +1170,7 @@ class PlantHistorylTab( base_document_tabs.HistoryTabBase   ):
 # ----------------------------------------
 class PlantEventSubTab( base_document_tabs.SubTabBaseOld  ):
     """
+    do plants even have this !! !!
     """
     def __init__(self, parent_window ):
         """
@@ -1332,6 +1333,14 @@ class PlantEventSubTab( base_document_tabs.SubTabBaseOld  ):
     def edit_record(self):
         """
         what it says, read?
+
+        !! promotable but for 2 lines so could
+            pass a bit to a more general finction
+            same for add ... look for other uses
+
+            args in self
+                self.dialog_calss = plant_document_edit.EditPlantEvents
+                self.xxx          = "PlantEventsSubTab.add_record "
         """
         index       = self.view.currentIndex()
         model       = self.model
@@ -1340,7 +1349,7 @@ class PlantEventSubTab( base_document_tabs.SubTabBaseOld  ):
             if dialog.exec_() == QDialog.Accepted:
                 #self.model.submitAll()
                 ok     = base_document_tabs.model_submit_all(
-                           model,  f"PlantEventsSubTab.add_record " )
+                           model,  "PlantEventsSubTab.add_record " )
                 #ia_qt.q_sql_table_model( self.model, "post edit_record submitAll()" )
                 self.model.select()
         else:

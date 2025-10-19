@@ -9,7 +9,6 @@ Created on Thu Jan  2 18:17:55 2025
 import data_dict
 import custom_widgets
 
-# ---- build it
 def build_it( a_data_dict ):
     """
     build then entier data dictionary
@@ -153,7 +152,7 @@ def build_it( a_data_dict ):
                                              is_keep_prior_enabled  = True,
                                              is_key_word        = True,
                                              is_topic           = True,
-                                             topic_colunm_order = 3,
+                                             topic_column_order = 3,
                                              col_head_text      = "Key Words",
                                              col_head_width     = 20,
                                              col_head_order     = 10,
@@ -171,7 +170,7 @@ def build_it( a_data_dict ):
                                              is_keep_prior_enabled  = True,
                                              is_key_word        = True,
                                              is_topic           = True,
-                                             topic_colunm_order = 2,
+                                             topic_column_order = 2,
                                              col_head_text      = "Description",
                                              col_head_width     = 20,
                                              col_head_order     = 3, )
@@ -456,7 +455,7 @@ def build_it( a_data_dict ):
                                              is_keep_prior_enabled  = True,
                                              is_key_word            = True,
                                              is_topic           = True,
-                                             topic_colunm_order = 1,
+                                             topic_column_order = 1,
                                              default_func           = None,
                                              col_head_text      = "Name",
                                              col_head_width     = 20,
@@ -617,8 +616,8 @@ def build_it( a_data_dict ):
                                           display_type = "string",
                                           max_len        = None,
                                           default_func   = None,
-                                           col_head_text      = "Comment",
-                                             col_head_width     = 20,
+                                           col_head_text      = "Comment!",
+                                             col_head_width     = 200,
                                              col_head_order     = 30, )
     a_table_dict.add_column( a_column_dict )
 

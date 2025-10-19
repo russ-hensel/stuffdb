@@ -620,7 +620,7 @@ class CQGridLayout( QGridLayout ) :
                ix_row       = None,
                ix_col       = None,
                *,
-               columnspan   = 1,
+               columnspan   = 1,   # implemented
                rowspan      = 1,
                #stretch      = None,
                ):
@@ -650,7 +650,7 @@ class CQGridLayout( QGridLayout ) :
         self.last_columnspan = columnspan
 
         # later check for nones and delta
-        super().addWidget( widget, self.ix_row, self.ix_col, rowspan, columnspan   )
+        super().addWidget( widget, self.ix_row, self.ix_col, rowspan, columnspan )
 
         # if columnspan is None: not sure what is devault
         #     # make default

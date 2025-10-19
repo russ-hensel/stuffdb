@@ -85,9 +85,9 @@ def rpt_topic_columns( table_name ):
         col_head_text       = i_column.col_head_text
         col_head_width      = i_column.col_head_width
         col_head_order      = i_column.col_head_order
-        topic_colunm_order  = i_column. topic_colunm_order
+        topic_column_order  = i_column. topic_column_order
 
-        debug_msg    = f"rpt_topic_columns {ix} { column_name = } {topic_colunm_order = }  "
+        debug_msg    = f"rpt_topic_columns {ix} { column_name = } {topic_column_order = }  "
         logging.log( LOG_LEVEL,  debug_msg, )
 
 def gen_build_fields( table_name ):

@@ -79,7 +79,6 @@ def fix_none_int( obj ):
     except:
         pass
 
-
     if obj is None:
         ret_val  = -999
         print( f"fix_none_int object is none return {ret_val}")
@@ -91,6 +90,7 @@ def fix_none_int( obj ):
         print( f"fix_none_int object is non int string {ret_val}")
         blow_on_error()
         return  ret_val
+
     else:
         333/0
 
@@ -112,7 +112,6 @@ class EditPlantingEvent( QDialog ):
     def __init__(self, parent=None, edit_data = None ):
         """
         """
-
         super().__init__(parent)
         self.setWindowTitle("Add New Event Info" if edit_data is None else "Edit Event Info")
 

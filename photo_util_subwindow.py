@@ -90,7 +90,8 @@ import text_edit_ext
 import wat_inspector
 from app_global     import AppGlobal
 import qsql_utils
-
+import geo_track
+import photo_ext
 #import ex_qt
 #import exec_qt
 #import mdi_management
@@ -114,7 +115,6 @@ ALL_TABLES  = [
                     "people_phone", ""
                     "people_text",
                     "photo",
-                    "photo_new",
                     "photoshow",
                     "photoshow_key_word",
                     "photo_in_show",
@@ -301,10 +301,8 @@ class ExploreArgs(   ):
         """
         self.max_dir_depth    = max_dir_depth
 
-
-
 # ----------------------------------------
-class DbManagementSubWindow( QMdiSubWindow ):
+class PhotoUtilSubWindow( QMdiSubWindow ):
     """
     db_management_subwindow.DbManagementSubWindow( )
     """
@@ -316,7 +314,7 @@ class DbManagementSubWindow( QMdiSubWindow ):
         """
         super().__init__()
 
-        self.subwindow_name     = "Database Management"
+        self.subwindow_name     = "Photo Utilities and Test"
 
         self.instance_ix        = instance_ix
 
@@ -365,14 +363,14 @@ class DbManagementSubWindow( QMdiSubWindow ):
 
         # ix                       += 1
         # self.criteria_tab_index   = ix
-        self.first_tab         = BasicsTab( self  )
-        main_notebook.addTab(       self.first_tab, "BasicsTab" )
+        # self.first_tab         = BasicsTab( self  )
+        # main_notebook.addTab(       self.first_tab, "BasicsTab" )
 
-        self.first_tab         = KeyWordTab( self  )
-        main_notebook.addTab( self.first_tab, "Key Words" )
+        # self.first_tab         = KeyWordTab( self  )
+        # main_notebook.addTab( self.first_tab, "Key Words" )
 
-        self.first_tab         = RecordMatchTab( self  )
-        main_notebook.addTab( self.first_tab, "RecordMatchTab" )
+        # self.first_tab         = RecordMatchTab( self  )
+        # main_notebook.addTab( self.first_tab, "RecordMatchTab" )
 
         self.first_tab         = PictureUtilTab( self  )
         main_notebook.addTab( self.first_tab, "PictureUtilTab" )
@@ -461,7 +459,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
         """
         self.file_out.write( msg + "\n" )
         print( msg )
-
 
     # --------------------------------
     def open_file_out( self, file_name = "data_management_out.txt" ):
@@ -612,578 +609,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
 
 
 # ----------------------------------------
-class BasicsTab( QWidget ):
-    """
-    what it says
-    """
-    def __init__(self, parent_window ):
-        """
-
-        """
-        super().__init__()
-
-        # self.criteria_dict          = {}
-        # self.critera_widget_list    = []
-        # self.critera_is_changed     = True
-        self.parent_window          = parent_window
-        self.key_words_widget       = None      # set to value in gui if used
-
-        self.tab_name               = "DbMaint"
-        self.build_gui()
-
-    # -----------------------------
-    def build_gui( self,   ):
-        """
-
-        """
-        vlayout              = QVBoxLayout( self )
-
-        layout              = QHBoxLayout( self )
-        vlayout.addLayout( layout )
-
-        # ---- table combobox
-        widget              = QComboBox()
-
-        self.table_widget   = widget
-
-        a_list              = ALL_TABLES
-
-        widget.addItems( a_list )
-        widget.setCurrentIndex( 0 )
-        layout.addWidget( widget )
-
-        widget              = QPushButton( "create sql" )
-        self.q_pbutton_1    = widget
-        connect_to          = self.create_sql
-        widget.clicked.connect(  connect_to   )
-        layout.addWidget( widget )
-
-        widget              = QPushButton( "record count" )
-        connect_to          = self.record_count_rpt
-        widget.clicked.connect( connect_to  )
-        layout.addWidget( widget )
-
-        # ---- max_id row
-        widget              = QPushButton( "max_id" )
-        connect_to          = self.max_id_rpt
-        widget.clicked.connect( connect_to  )
-        layout.addWidget( widget )
-
-        # ---- max_id row
-        widget              = QPushButton( "set_key_max_id" )
-        connect_to          = self.set_key_max_id
-        widget.clicked.connect( connect_to  )
-        layout.addWidget( widget )
-
-        # ---- Systems and SubSystes
-        layout              = QHBoxLayout( self )
-        vlayout.addLayout( layout )
-
-        widget              = QPushButton( "Systems and SubSystes" )
-        connect_to          = self.system_sub_count_rpt
-        widget.clicked.connect( connect_to  )
-        layout.addWidget( widget )
-
-    # -------------------------------
-    def _build_top_widgets_placer_delete( self, placer ):
-        """
-        what it says read, std for all criteria tabs
-        lets add a Hbox
-        """
-        placer.new_row()
-        button_layout    = QHBoxLayout()
-        placer.layout.addLayout( button_layout, placer.ix_col, placer.ix_row, 0, 5  )
-        #row: int, column: int, rowSpan: int, columnSpan: int, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = Qt.Alignment()):
-        placer.new_row()
-        # ---- buttons
-        a_widget        = QPushButton( "Clear" )
-        a_widget.clicked.connect(  self.clear_criteria )
-        button_layout.addWidget( a_widget )
-
-        a_widget        = QPushButton( "Go -->" )
-        a_widget.clicked.connect(  self.parent_window.criteria_select )
-        button_layout.addWidget( a_widget )
-
-        a_widget        = QPushButton( "Paste/Go -->" )
-        a_widget.clicked.connect(  self.paste_go )
-        button_layout.addWidget( a_widget )
-
-        a_widget        = QPushButton( "Clear/Paste/Go -->" )
-        a_widget.clicked.connect(  self.clear_go )
-        button_layout.addWidget( a_widget )
-
-
-    # -------------------------
-    # ---- reports
-    # -------------------------
-    def set_key_max_id( self,   ):
-        """
-        What it says, read
-
-        """
-        # KeyGenerator( db)   # there is one hanging around   strange_vibes
-        # AppGlobal.key_gen       = a_key_gen
-        table_name      = self.table_widget.currentText()
-        a_key_gen       = AppGlobal.key_gen
-
-        max_id          = a_key_gen.get_max_for_table( table_name )
-
-        if max_id < 0:
-            msg      = f"Table {table_name} {max_id = } so this did not work "
-            self.parent_window.output_msg( msg, clear = True )
-
-            self.parent_window.activate_output_tab()
-
-            return
-
-        max_id   += 10
-        a_key_gen.update_key_for_table( table_name, max_id )
-
-        msg      = f"Table {table_name} {max_id = }"
-        self.parent_window.output_msg( msg, clear = True )
-
-        self.parent_window.activate_output_tab()
-
-    # -------------------------
-    def max_id_rpt( self,   ):
-        """
-        What it says, read
-
-        """
-        # KeyGenerator( db)   # there is one hanging around   strange_vibes
-        # AppGlobal.key_gen       = a_key_gen
-        table_name      = self.table_widget.currentText()
-        a_key_gen       = AppGlobal.key_gen
-
-        max_id          = a_key_gen.get_max_for_table( table_name )
-
-        msg      = f"Table {table_name} {max_id = }"
-        self.parent_window.output_msg( msg, clear = True )
-
-        #self.parent_window.output_msg(  msg )
-        self.parent_window.activate_output_tab()
-    # -------------------------
-    def record_count_rpt( self,   ):
-        """
-        What it says, read
-
-        """
-        table_name     = self.table_widget.currentText()
-
-        msg    = ( f"record_count_rpt for table {table_name = }" )
-        self.parent_window.output_msg(  msg, clear = True )
-
-        db                  = AppGlobal.qsql_db_access.db
-        check_fix.line_out  = self.parent_window.output_msg
-        check_fix.print_record_count( db, table_name )
-
-        #self.parent_window.output_msg(  msg )
-        self.parent_window.activate_output_tab()
-
-    def system_sub_count_out( self, system, subsystem_counts ):
-        """ """
-        # how about a generator instead
-        total    = sum( [ i_count for  i_gnore, i_count in subsystem_counts] )
-        line     = f"{system = } {total}"
-
-        self.parent_window.output_msg( line  )
-
-        for i_subsystem, i_count in subsystem_counts:
-            i_line     = (f"        {i_subsystem} {i_count}" )
-            self.parent_window.output_msg( i_line  )
-
-
-    #----------------------------
-    def system_sub_count_rpt( self, ):
-        """
-        What it says, read
-
-        """
-        table_name     = "stuff"
-
-        db             = AppGlobal.qsql_db_access.db
-
-        msg      = ("System_sub_count_rpt:")
-        self.parent_window.output_msg( msg, clear = True )
-
-        sql     = """
-            SELECT system, sub_system, COUNT(*) as sub_system_count
-            FROM help_info
-            WHERE system IS NOT NULL AND sub_system IS NOT NULL
-            GROUP BY system, sub_system
-            ORDER BY system, sub_system;
-            """
-
-        query      = QSqlQuery( db )
-
-        query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
-
-        # self.parent_window.output_msg( sql )
-        current_system      = None
-        i_subsystem_counts  = []
-        while query.next():
-            # a_id        = query.value(0)
-            # value_1        = query.value(1)
-            # value_2   = query.value(2)
-            i_system        = str( query.value(0) )
-            if i_system == "" or i_system is None:
-                i_system = "none"
-            i_sub_system    = str( query.value(1) )
-            if i_sub_system == "" or i_system is None:
-                i_sub_system = "none"
-            i_count         = query.value(2)
-
-            if current_system != i_system:
-                if current_system is not None:
-                    self.system_sub_count_out( system = current_system, subsystem_counts = i_subsystem_counts )
-                current_system      = i_system
-                i_subsystem_counts  = []
-
-            i_subsystem_counts.append( (i_sub_system, i_count ) )
-
-        if current_system is not None:
-            self.system_sub_count_out( system = i_system, subsystem_counts = i_subsystem_counts )
-
-        self.parent_window.activate_output_tab()
-        self.parent_window.to_top_of_msg()
-
-
-
-    def system_sub_count_rpt_old( self,   ):
-        """
-        What it says, read
-
-        """
-        table_name     = "stuff"
-
-        db             = AppGlobal.qsql_db_access.db
-
-        msg      = ("System_sub_count_rpt:")
-        self.parent_window.output_msg( msg, clear = True )
-
-        sql     = """
-            SELECT system, sub_system, COUNT(*) as sub_system_count
-            FROM help_info
-            WHERE system IS NOT NULL AND sub_system IS NOT NULL
-            GROUP BY system, sub_system
-            ORDER BY system, sub_system;
-            """
-
-        query      = QSqlQuery( db )
-        query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
-
-        # self.parent_window.output_msg( sql )
-
-        while query.next():
-            # a_id        = query.value(0)
-            # value_1        = query.value(1)
-            # value_2   = query.value(2)
-
-            msg      = (f" : {query.value(0) = }  { query.value(1) = }  { query.value(2) = }  ")
-
-            self.parent_window.output_msg(  msg )
-
-        self.parent_window.activate_output_tab()
-
-    #-------------------------
-    def create_sql( self,   ):
-        """
-        What it says, read
-
-        """
-        table_name  = self.table_widget.currentText()
-        self.parent_window.output_msg(   f"for table {table_name = }", clear = True )
-
-        a_table     = data_dict.DATA_DICT.get_table( table_name )
-
-        sql         = a_table.to_sql_create()
-        msg         = f"{sql} "
-        self.parent_window.output_msg(  msg )
-        self.parent_window.activate_output_tab()
-
-
-# ----------------------------------------
-class KeyWordTab( QWidget ):
-    """
-    what it says
-
-    maint and report on key word tables
-    """
-    def __init__(self, parent_window ):
-        """
-
-        """
-        super().__init__()
-
-        # self.criteria_dict          = {}
-        # self.critera_widget_list    = []
-        # self.critera_is_changed     = True
-        self.parent_window          = parent_window
-        self.key_words_widget       = None      # set to value in gui if used
-
-        self.tab_name               = "DbMaint"
-        self.build_gui()
-
-    # -----------------------------
-    def build_gui( self,   ):
-        """
-
-        """
-        vlayout              = QVBoxLayout( self )
-
-        # ---- new row
-        layout              = QHBoxLayout( self )
-        vlayout.addLayout( layout )
-
-        # ---- table combobox
-        widget              = QComboBox()
-
-        self.table_widget   = widget
-
-        a_list              = [
-                         'help_key_word',
-                         'stuff_key_word',
-                         'photo_key_word',
-                         'photoshow_key_word',
-                         'plant_key_word',
-                         'planting_key_word',
-                         'people_key_word' ]
-
-        widget.addItems( a_list )
-        widget.setCurrentIndex( 0 )
-        layout.addWidget( widget )
-
-        widget              = QPushButton( "key_word_dups" )
-        self.q_pbutton_1    = widget
-        connect_to          = self.key_word_dups
-        widget.clicked.connect(  connect_to   )
-        layout.addWidget( widget )
-
-        widget              = QPushButton( "rebuild_key_words" )
-        connect_to          = self.rebuild_key_word
-        widget.clicked.connect( connect_to  )
-        layout.addWidget( widget )
-
-        # ---- new row
-        layout              = QHBoxLayout( self )
-        vlayout.addLayout( layout )
-
-        widget              = QPushButton( "!!" )
-        # connect_to          = self.system_sub_count_rpt
-        # widget.clicked.connect( connect_to  )
-        layout.addWidget( widget )
-
-
-    # -------------------------
-    # -------------------------
-    def rebuild_key_word( self,   ):
-        """
-        What it says, read
-
-        """
-        db                  = AppGlobal.qsql_db_access.db
-
-        IKW_TABLE_DICT
-        kw_table_name       = self.table_widget.currentText()
-        table_name          = IKW_TABLE_DICT[ kw_table_name ]
-
-
-        check_fix.line_out  = self.parent_window.output_msg
-        db_check            = check_fix.DbCheck( db )
-
-        msg    = f"Rebuild {table_name = } for key words"
-        self.parent_window.output_msg(  msg, clear = True )
-
-        # does it run off data_dict  ??
-        db_check.fix_key_word_index( base_table_name        = table_name,
-                                     key_word_table_name    = kw_table_name )
-
-        #check_fix.check_key_words_for_dups( db, table_name )
-
-        # msg    = f"{sql} "
-        # self.parent_window.output_msg(  msg )
-        self.parent_window.activate_output_tab()
-
-    # ---- reports
-    # -------------------------
-    def key_word_dups( self,   ):
-        """
-        What it says, read
-
-        """
-        db             = AppGlobal.qsql_db_access.db
-        table_name     = self.table_widget.currentText()
-
-        msg    = f"Check {table_name = } for key word duplicates"
-        self.parent_window.output_msg(  msg, clear = True )
-
-        check_fix.line_out    = self.parent_window.output_msg
-        check_fix.check_key_words_for_dups( db, table_name )
-
-        # msg    = f"{sql} "
-        # self.parent_window.output_msg(  msg )
-        self.parent_window.activate_output_tab()
-
-
-
-    # -------------------------
-    def system_sub_count_rpt( self,   ):
-        """
-        What it says, read
-
-        """
-        table_name     = "stuff"
-        db             = AppGlobal.qsql_db_access.db
-
-        msg    = f"Record Count for systems and subsudtems {table_name = }"
-        self.parent_window.output_msg( msg, clear = True )
-
-        sql     = """
-            SELECT system, sub_system, COUNT(*) as sub_system_count
-            FROM help_info
-            WHERE system IS NOT NULL AND sub_system IS NOT NULL
-            GROUP BY system, sub_system
-            ORDER BY system, sub_system;
-            """
-
-        query      = QSqlQuery( db )
-
-        query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
-
-        msg      = ("system_sub_count_rpt:")
-        self.parent_window.output_msg( msg, )
-
-        self.parent_window.output_msg( sql, )
-
-        while query.next():
-            # a_id        = query.value(0)
-            # value_1        = query.value(1)
-            # value_2   = query.value(2)
-
-            msg      = (f" : {query.value(0) = }  { query.value(1) = }  { query.value(2) = }  ")
-            self.parent_window.output_msg( msg, )
-
-        self.parent_window.activate_output_tab()
-
-    #------------------------
-    def create_sql( self,   ):
-        """
-        What it says, read
-
-        """
-        table_name     = self.table_widget.currentText()
-
-        msg    = ( f"Create SQL for table {table_name = }" )
-        self.parent_window.output_msg( msg, clear = True )
-
-        a_table    = data_dict.DATA_DICT.get_table( table_name )
-
-        sql        = a_table.to_sql_create()
-
-        msg    = f"{sql} "
-        self.parent_window.output_msg( msg, )
-
-        self.parent_window.activate_output_tab()
-
-
-# ----------------------------------------
-class RecordMatchTab( QWidget ):
-    """
-    what it says
-
-    maint and report on key word tables
-    """
-    def __init__(self, parent_window ):
-        """
-
-        """
-        super().__init__()
-
-        # self.criteria_dict          = {}
-        # self.critera_widget_list    = []
-        # self.critera_is_changed     = True
-        self.parent_window          = parent_window
-        self.key_words_widget       = None      # set to value in gui if used
-
-        self.tab_name               = "RecordMatch"
-
-
-        self.build_gui()
-
-    # -----------------------------
-    def build_gui( self,   ):
-        """
-
-        """
-        vlayout              = QVBoxLayout( self )
-
-        # ---- new row
-        layout              = QHBoxLayout( self )
-        vlayout.addLayout( layout )
-
-        # ---- table combobox
-        widget              = QComboBox()
-
-        self.table_widget   = widget
-
-        a_list              =  TABLE_DICT.keys()
-
-        widget.addItems( a_list )
-        widget.setCurrentIndex( 0 )
-        layout.addWidget( widget )
-
-        widget              = QPushButton( "Missing Text" )
-        self.q_pbutton_1    = widget
-        connect_to          = self.find_missing_text
-        widget.clicked.connect(  connect_to   )
-        layout.addWidget( widget )
-
-        widget              = QPushButton( "Excess Text " )
-        connect_to          = self.find_excess_text
-        widget.clicked.connect( connect_to  )
-        layout.addWidget( widget )
-
-        # ---- new row
-        layout              = QHBoxLayout( self )
-        vlayout.addLayout( layout )
-
-    # ---- reports
-    # -------------------------
-    def find_excess_text( self,   ):
-        """
-        What it says, read
-
-        """
-        db                  = AppGlobal.qsql_db_access.db
-        table_name          = self.table_widget.currentText()
-        text_table_name     = TABLE_DICT[table_name]
-
-        msg    = f"Check find_excess_text {table_name = } {text_table_name = } "
-        self.parent_window.output_msg(  msg, clear = True )
-
-        check_fix.line_out    = self.parent_window.output_msg
-        check_fix.find_excess_text( db, table_name, text_table_name )
-
-        self.parent_window.activate_output_tab()
-
-    # -------------------------
-    def find_missing_text( self,   ):
-        """
-        What it says, read
-
-        """
-        db                  = AppGlobal.qsql_db_access.db
-        table_name          = self.table_widget.currentText()
-        text_table_name     = TABLE_DICT[table_name]
-
-        msg    = f"Check find_missing_text {table_name = } {text_table_name = } "
-        self.parent_window.output_msg(  msg, clear = True )
-
-        check_fix.line_out    = self.parent_window.output_msg
-        check_fix.find_missing_text( db, table_name, text_table_name )
-
-        self.parent_window.activate_output_tab()
-
 
 # ----------------------------------------
 class PictureUtilTab( QWidget ):
@@ -1209,9 +634,12 @@ class PictureUtilTab( QWidget ):
         self.picture_dir_default    = "../"
         self.picture_dir_default    = AppGlobal.parameters.picture_browse
 
+        self.picture_file_default    = "../"
+        self.picture_file_default    = "/mnt/WIN_D/PhotoDB/25/DSCF0013.JPG"
 
         self.disptach_dict          = {}
-
+        self.was_app                = geo_track.WasApp()
+        self.photo_plus             = photo_ext.PhotoPlus()
         self.build_gui()
 
     # -----------------------------
@@ -1273,7 +701,6 @@ class PictureUtilTab( QWidget ):
         self.build_gui_actions( groupbox )
 
 
-
     def build_gui_arguments( self, groupbox ):
         """
 
@@ -1312,13 +739,15 @@ class PictureUtilTab( QWidget ):
         widget              = QComboBox()
 
         self.go_widget      = widget
-        self.disptach_dict[ "find_dirs" ]                  = self.find_dirs
-        self.disptach_dict[ "pictures_not_in albums" ]     = self.find_dirs
-        self.disptach_dict[ "pictures missing dates" ]     = self.find_dirs
-        self.disptach_dict[ "find_file_missing" ]          = self.find_file_missing
-        self.disptach_dict[ "find_record_missing" ]        = self.find_record_missing
-        self.disptach_dict[ "clean_file_sub_dir" ]         = self.clean_file_sub_dir
-        self.disptach_dict[ "find_if_dups" ]               = self.find_if_dups
+        # self.disptach_dict[ "find_dirs" ]                  = self.find_dirs
+        # self.disptach_dict[ "pictures_not_in albums" ]     = self.find_dirs
+        # self.disptach_dict[ "pictures missing dates" ]     = self.find_dirs
+        # self.disptach_dict[ "find_file_missing" ]          = self.find_file_missing
+        # self.disptach_dict[ "find_record_missing" ]        = self.find_record_missing
+        # self.disptach_dict[ "clean_file_sub_dir" ]         = self.clean_file_sub_dir
+        self.disptach_dict[ "get_geo_photo_data" ]               = self.get_geo_photo_data
+        self.disptach_dict[ "make_file_list_debug" ]             = self.make_file_list_debug
+        self.disptach_dict[ "is_dup_debug" ]                     = self.is_dup_debug
 
         a_list              = [key for key in self.disptach_dict.keys() ]
 
@@ -1359,27 +788,7 @@ class PictureUtilTab( QWidget ):
         go_item      = self.go_widget.currentText()
         self.disptach_dict[ go_item ]()
 
-        # if go_item == "xxxx":
-        #     pass
-        # elif go_item == "find_dirs":
-        #     self.find_dirs()
 
-        # elif go_item == "clean_file_sub_dir":
-        #     self.clean_file_sub_dir()
-
-        # elif go_item == "find_file_missing":
-        #     self.find_file_missing()
-
-
-        # elif go_item == "find_record_missing":
-        #     self.find_record_missing()
-
-        # elif go_item == "find_if_dups":
-        #     self.find_if_dups()
-
-
-        # else:
-        #     print( f"do not know what {go_item = } is")
 
 
     def get_dir( self,   ):
@@ -1406,6 +815,217 @@ class PictureUtilTab( QWidget ):
             self.file_widget.setText( files[0] )
 
     # ---- go functions
+    # -------------------------
+    def is_dup_debug( self,   ):
+        """
+        What it says, read
+        get the geo and photo data for a single file
+        seems to work
+        photo_util_subwindow.is_dup_debug
+        """
+        db                  = AppGlobal.qsql_db_access.db
+        base_photo_dir      = parameters.PARAMETERS.picture_db_root
+
+        dir_path_name       = self.dir_widget.text()
+        dup_rows            = []
+        #self.was_app.gpx_to_pp( file_name )
+        file_list           = photo_ext.make_file_list( dir_path_name )
+
+        print( "file_list follows")
+        for ix_file, i_file_name in enumerate( file_list):
+            msg    = (f"    {ix_file} {i_file_name}  ")
+            print( msg )
+            file_path           = Path( i_file_name )
+            i_short_file_name   = file_path.name   # string
+            long_file_name      = str( file_path.resolve() )
+
+            """
+            for the following table
+            for table table_name = 'photo'
+            CREATE TABLE  photo    (
+                 id  INTEGER,
+                 id_old  VARCHAR(15),
+                 name  VARCHAR(150),
+                 add_kw  VARCHAR(50),
+                 descr  VARCHAR(240),
+                 type  VARCHAR(15),
+                 series  VARCHAR(15),
+                 author  VARCHAR(35),
+                 dt_enter  INTEGER,
+                 format  VARCHAR(20),
+                 inv_id  VARCHAR(15),
+                 cmnt  VARCHAR(250),
+                 status  VARCHAR(15),
+                 dt_item  INTEGER,
+                 c_name  VARCHAR(40),
+                 title  VARCHAR(35),
+                 tag  DECIMAL(50),
+                 old_inv_id  VARCHAR(15),
+                 file  VARCHAR(100),
+                 sub_dir  VARCHAR(25),
+                 photo_url  VARCHAR(75),
+                 camera  VARCHAR(20),
+                 lens  VARCHAR(20),
+                 f_stop  DECIMAL(52),
+                 shutter  INTEGER,
+                 copyright  VARCHAR(50)
+                )
+
+                i would like to select the following fields
+                id  INTEGER,
+                 file  VARCHAR(100),
+                 sub_dir  VARCHAR(25),
+
+                 where file =  file_to_find
+
+                 file to find is a python variable
+
+                 for the program use python with sqllite and at5
+                 use bind variables in the code avoid ? syntax
+                    """
+            # from PyQt5.QtSql import QSqlDatabase, QSqlQuery
+            # from PyQt5.QtCore import QVariant
+
+
+            # Create query with named bind variable
+            query = QSqlQuery(db)
+            query.prepare("""
+                SELECT id, file, sub_dir
+                FROM photo
+                WHERE file = :file_name
+            """)
+
+            # Bind the variable using named parameter
+            query.bindValue(':file_name', i_short_file_name )
+
+            # Execute query
+            if not query.exec_():
+                print(f"Query error: {query.lastError().text()}")
+                db.close()
+                return []
+
+
+            rows = []
+            # ix_results  = 0
+            while query.next():
+                record = {
+                    'id': query.value(0),
+                    'file': query.value(1),
+                    'sub_dir': query.value(2)
+                }
+                full_file           = f"{base_photo_dir}/{record['sub_dir']}/{record['file']}"
+                full_file           = full_file.replace( "//", "/")
+                record['full_file'] = full_file
+                rows.append(record)
+                print( f"found {record}")
+            if len( rows ) > 0:
+                # later insert original name
+                dup_rows.append( rows )
+
+
+        print( "listing of dup rows follows:" )
+        for ix, i_item in enumerate( dup_rows ):
+            if long_file_name  == full_file:
+                print( "super duper" )
+            msg     = f"    {ix}:{long_file_name}  in db: {i_item}"
+            print( msg )
+
+    # -------------------------
+    def make_file_list_debug( self,   ):
+        """
+        What it says, read
+        get the geo and photo data for a single file
+        """
+        db                  = AppGlobal.qsql_db_access.db
+        dir_path_name       = self.dir_widget.text()
+
+
+
+        #self.was_app.gpx_to_pp( file_name )
+        file_list   = photo_ext.make_file_list( dir_path_name )
+
+        print( "file_list follows")
+        for ix_file, i_file_name in enumerate( file_list):
+            msg    = (f"    {ix_file} {i_file_name}  ")
+            print( msg )
+
+
+        return
+
+
+    # -------------------------
+    def get_geo_photo_data( self,   ):
+        """
+        What it says, read
+        get the geo and photo data for a single file
+        """
+        db                  = AppGlobal.qsql_db_access.db
+        file_name           = self.file_widget.text()
+
+        if not os.path.isfile( file_name ):
+            1/0
+
+        #self.was_app.gpx_to_pp( file_name )
+        self.photo_plus.reset( file_name = file_name, )
+        # this will get fast data
+        # !! so why do we do this
+
+        # msg    =  self.photo_plus.exif_string()
+        # print( msg )
+
+        a_dict  =  self.photo_plus.get_exif_dict_from_pil()
+        print( "---------------exif_dict_from_pil")
+        #print( a_dict )
+        # but comes back as empty dict
+        if a_dict is not None:
+            for key, value in a_dict.items():
+                msg    = (f"{key} {value}  {type(value)}")
+                print( msg )
+        else:
+            msg    = (f"get_exif_dict_from_pil returned None")
+            print( msg )
+
+        a_dict  =  self.photo_plus.get_os_dict()
+        print( "---------------get_os_dict")
+        #print( a_dict )
+        # but comes back as empty dict
+        if a_dict is not None:
+            for key, value in a_dict.items():
+                msg    = (f"{key} {value}  {type(value)}")
+                print( msg )
+        else:
+            msg    = (f"get_exif_dict_from_pil returned None")
+            print( msg )
+
+        # can use PhotoPlus and its instance variables
+
+        return
+
+        # ---- return above
+
+        # --- run the query for unique sub_dir values ---
+        query = QSqlQuery( db )
+        sql = """
+            SELECT DISTINCT sub_dir
+            FROM photo
+            WHERE sub_dir IS NOT NULL AND sub_dir <> ''
+            ORDER BY sub_dir ASC
+        """
+        if not query.exec(sql):
+            print("Query failed:", query.lastError().text())
+            return
+
+        # --- print results ---
+        print("Unique sub_dir values (alphabetical):")
+        while query.next():
+            sub_dir = query.value(0)
+            msg     = sub_dir
+            #print(sub_dir)
+
+            self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+
 
     # -------------------------
     def find_dirs( self,   ):
@@ -1439,7 +1059,7 @@ class PictureUtilTab( QWidget ):
 
 
     # -------------------------
-    def find_dup_file( self, path  ):
+    def find_dup_filexx( self, path  ):
         """
         work through files in a path ( and descendants )
         and ouput possible duplicates for deletion
@@ -1509,7 +1129,7 @@ class PictureUtilTab( QWidget ):
         return True
 
     # -------------------------
-    def find_if_dups( self,   ):
+    def find_if_dupsxxx( self,   ):
         """
         work thru the files in a directory and see if already in db
 
@@ -1585,7 +1205,7 @@ class PictureUtilTab( QWidget ):
         AppGlobal.os_open_txt_file( file_out )
 
     # -------------------------
-    def find_file_missing( self,   ):
+    def find_file_missingxxx( self,   ):
         """
         work through records with file names and
         see if file exists, output is file name for records
@@ -1667,7 +1287,7 @@ class PictureUtilTab( QWidget ):
 
 
     # -------------------------
-    def find_record_missing( self,   ):
+    def find_record_missingxx( self,   ):
         """
         work through files ( perhaps of a given directory )
         and see if they have 1 or more files
@@ -2015,4 +1635,4 @@ def test_clean_path_part(   ):
 # if __name__ == "__main__":
 #     test_clean_path_part()
 
-# # ---- eof
+# ---- eof

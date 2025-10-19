@@ -18,7 +18,6 @@ import logging
 import time
 from functools import partial
 
-
 from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
 # ---- Qt
 from PyQt5.QtGui import QFont, QIntValidator, QStandardItem, QStandardItemModel
@@ -59,7 +58,6 @@ from PyQt5.QtWidgets import (QAction,
                              QWidget)
 
 # ---- imports local
-
 
 import data_dict
 import gui_qt_ext
@@ -227,9 +225,16 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         page            = self
         layout          = QHBoxLayout( page )
                 # can we fold in to next
-
-        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 12 )
+        col_max = 12
+        grid_layout      = gui_qt_ext.CQGridLayout( col_max = col_max )
         layout.addLayout( grid_layout )
+
+        # changes layout but still jumps
+        # # stabalize with spacres ??
+        # for ix in range( col_max ):  # layout.col_max
+        #     widget   = QSpacerItem( 50, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
+        #     grid_layout.addItem( widget, 0, ix  )
+
 
         self._build_top_widgets_grid( grid_layout )
 
@@ -269,10 +274,13 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
                                    field_name = "id_old" )
         self.critera_widget_list.append( widget )
         # widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget, )    # columnspan = 3 )
-
+        #try to fix jump with columnspan did not work
+        #grid_layout.addWidget( widget, columnspan = 11 )
+        grid_layout.addWidget( widget,   )
         # ---- grid_layout.new_row()
         grid_layout.new_row()
+
+        # ---- title likd
         widget  = QLabel( "Title (like)" )
         grid_layout.addWidget( widget )
 
@@ -287,7 +295,8 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget          = QLabel( "System" )
         grid_layout.addWidget( widget  )
 
-        widget                  = cw.CQComboBox( field_name = "system" )
+        # ---- !! TWEAK NEED TO ADD TO DATA DICT
+        widget                  = cw.CQHistoryComboBox( field_name = "system" )
         self.critera_widget_list.append( widget )
         widget.setMaxVisibleItems( 25 )
         grid_layout.addWidget( widget )
@@ -341,6 +350,31 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget  = QLabel( "<<<Direction" )
         grid_layout.addWidget( widget )
 
+        # ---- "add where"
+        if parameters.PARAMETERS.use_add_where:
+            """
+            allow comment ?
+            """
+            grid_layout.new_row()
+            widget  = QLabel( "additional where" )
+            grid_layout.addWidget( widget )
+
+            widget                    = cw.CQHistoryComboBox(
+                                           field_name = "add_where" )
+
+            self.add_where_widget     = widget   # not this one at least not yet
+            widget.addItem( 'id  > 9000 and id < 11000' )
+            widget.addItem( 'id  > 10000 and id < 12000' )
+
+            widget.addItem( 'id  > 44186   and  and id < 50007' )
+            widget.addItem( 'id_old is not Null or id_old != ""' )
+
+            # self.key_word_widget        = None      # set to value in gui if used
+            widget.setPlaceholderText( "add_where"  )
+            self.critera_widget_list.append( widget )
+            #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+            grid_layout.addWidget( widget )
+
         # ---- criteria changed should be in parent
         print( f"{self.tab_name} build_tab build criteria change put in as marker ")
         grid_layout.new_row()
@@ -354,8 +388,32 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
             i_widget.on_value_changed       = lambda: self.criteria_changed( True )
             i_widget.on_return_pressed      = self.criteria_select
 
+            # ---- try to stop the jump
+            #i_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+                # try to stop the jump does not work
+            #i_widget.setMinimumWidth(120)
+                # also does not work
+
+        # TRY WOTH LAYOUT AND GRID layout  from chat but does ont work
+        # self.layout().activate()             # Force a full layout pass
+        # self.adjustSize()                    # Resize window to final layout size
+        # self.updateGeometry()                # Recompute geometry hints
+
+
         #self.id_field.setFocus()  # seems not to work try
         QTimer.singleShot( 0, self.key_words_widget.setFocus )
+
+        # QTimer.singleShot(0, self._stabilize_layout)
+
+    def _stabilize_layout(self):
+        """another stablization attempt
+        from chat, do not think it is used """
+        print( "_stabilize_layout" )
+        self.layout().activate()
+        self.adjustSize()
+        self.updateGeometry()
+
+
 
     # -------------
     def criteria_select( self, ):
@@ -442,6 +500,39 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )
 
+
+        # add where
+
+        # ---- add_where
+        """
+        where id > 5000
+
+        """
+        if parameters.PARAMETERS.use_add_where:
+            add_where      = criteria_dict[ "add_where" ].strip()
+            # if   system == "<none>":
+            #     #add_where       =  f' help_info.system)= "{system}" '
+            #     add_where       =  ' help_info.system  IS NULL OR TRIM(help_info.system)= "" '
+            #     #WHERE system IS NULL OR TRIM(system) = ''
+            #     query_builder.add_to_where( add_where, [ ])
+
+            # elif system:
+            #     add_where       =  f' lower(help_info.system)= "{system}" '
+            #     query_builder.add_to_where( add_where, [ ])
+
+            # ---- key words
+            criteria_key_words              = criteria_dict[ "key_words" ]
+            criteria_key_words              = a_key_word_processor.string_to_key_words( criteria_key_words )
+            key_word_count                  = len( criteria_key_words )
+
+            criteria_key_words              = ", ".join( [ f'"{i_word}"' for i_word in criteria_key_words ] )
+            criteria_key_words              = f'( {criteria_key_words} ) '    # ( "one", "two" )
+
+            if not add_where   == "":
+
+                query_builder.add_to_where( f"  {add_where} " , [] )
+
+
         #- ---- title like
         title                          = criteria_dict[ "title" ].strip().lower()
         if title:
@@ -483,7 +574,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         else:
             literal   = "DESC"
 
-        query_builder.add_to_order_by(  column_name, literal,   )
+        query_builder.add_to_order_by( column_name, literal, )
 
         query_builder.prepare_and_bind()
 
@@ -532,39 +623,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         #self.criteria_select_if()    # may need to select is changed
         self.criteria_select()
 
-    # -----------------------------
-    def search_me_old(self, criteria ):
-        """
-        external search should be overridden in each document type
-        for now just key words
-
-            save
-            activate criteria tab
-            clear criteria
-            set value of key words with criteria
-                self.key_words_widget
-            run criteria select
-        """
-        parent_window    = self.parent_window
-        parent_window.update_db()
-
-        criteria  = criteria.strip()
-
-        # msg   = f"made it to help document {criteria =}"
-        # logging.debug( msg )
-
-        # tab_widget.setCurrentIndex( tab_index )
-        tab_index     = parent_window.criteria_tab_index
-
-        parent_window.tab_folder.setCurrentIndex(  tab_index )
-        self.clear_criteria()
-
-
-        self.key_words_widget.set_data( criteria )
-
-        # mayb this maybe not
-        #self.criteria_select_if()    # may need to select is changed
-        self.criteria_select()
 
 # ----------------------------------------
 class HelpListTab( base_document_tabs.ListTabBase  ):
@@ -995,6 +1053,14 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         text_layout.addLayout( search_layout )
 
         search_text_widget,  up_button,  dn_button  =  text_edit_widget.make_search_widgets(  )
+
+        widget = QPushButton( "Top")
+        widget.clicked.connect(  text_edit_widget.scroll_to_top   )
+        search_layout.addWidget( widget )
+
+        widget = QPushButton( "Bottom")
+        widget.clicked.connect(  text_edit_widget.scroll_to_bottom   )
+        search_layout.addWidget( widget )
 
         search_layout.addWidget( search_text_widget )
         search_layout.addWidget( dn_button )

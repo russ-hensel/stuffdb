@@ -39,7 +39,7 @@ import subprocess
 from PyQt5 import QtGui
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtCore import QDate, QDateTime, QTime
+from PyQt5.QtCore import QDate, QDateTime, QTime, QPoint
 from PyQt5.QtGui  import QColor, QPalette, QTextCursor, QTextDocument
 
 
@@ -51,6 +51,7 @@ from PyQt5.QtCore import (QAbstractTableModel,
                           Qt,
                           QTimer,
                           pyqtSlot)
+
 from PyQt5.QtGui import (QCursor,
                          QIntValidator,
                          QPainter,
@@ -116,7 +117,7 @@ import mdi_management
 
 EXEC_RUNNER         = None  # setup below -- do we really want to do this
 MARKER              = ">>"
-LOG_LEVEL           = 20    # higher is more
+LOG_LEVEL           = 1    # higher is more
         # logging.log( LOG_LEVEL,  debug_msg, )
 logger              = logging.getLogger( )
 SCAN_LINES          = 100
@@ -155,6 +156,27 @@ class ValidationIssue(  Exception ):
         """
         super( ).__init__(  why  )  # message
         self.control   = widget
+
+#-------------------------------
+def move_cursor_to_button( button ):
+    """
+    likely works with any widget
+
+    """
+    # Get the button's rectangle in global coordinates
+    button_rect = button.geometry()
+
+    # Get the center point relative to the button's parent (the window)
+    center_point = button_rect.center()
+
+    # Convert to global screen coordinates
+    global_point = button.mapToGlobal(QPoint(
+        button_rect.width() // 2,
+        button_rect.height() // 2
+    ))
+
+    # Move the cursor
+    QCursor.setPos(global_point)
 
 # -----------------------
 def validate_no_z( a_string   ):
@@ -646,9 +668,6 @@ class TextEditExtMixin(  ):
         #self.stuff_text_ext         = self.stuffdb.get_stuff_text_edit_ext( self )
 
 
-
-
-
     def paste_cache_xxxxx( self ):
         """
         save contents of the text in one level deep buffer
@@ -690,10 +709,9 @@ class TextEditExtMixin(  ):
         self.keyPressEvent( event )
 
     #------------------------------
-    def foo(self):
+    def fooxxx(self):
         print("Ctrl+F pressed!")
         self.append("foo() executed!")
-
 
     def make_search_widgets( self, ):
         """
@@ -786,7 +804,7 @@ class TextEditExtMixin(  ):
         what it says
             call in the init of the final widget ?
         """
-        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
         self.customContextMenuRequested.connect( self.show_context_menu )
 
         # widget.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
@@ -805,29 +823,48 @@ class TextEditExtMixin(  ):
         widget      = self
         menu        = QMenu( widget )
 
+        # Enable/disable actions based on context
+        cursor = widget.textCursor()
+        has_selection   = cursor.hasSelection()
+        can_undo        = widget.document().isUndoAvailable()
+        can_paste       = QApplication.clipboard().text() != ""
+
+
+        # cut_action.setEnabled(has_selection)
+        # copy_action.setEnabled(has_selection)
+        # paste_action.setEnabled(can_paste)
+        # foo_action.setEnabled(can_paste)
+
         # Add standard actions
         undo_action = menu.addAction("Undo")
         undo_action.triggered.connect(widget.undo)
+        undo_action.setEnabled(can_undo)
         menu.addSeparator()
+
 
         cut_action = menu.addAction("Cut")
         cut_action.triggered.connect(widget.cut)
+        cut_action.setEnabled(has_selection)
 
         copy_action = menu.addAction("Copy")
         copy_action.triggered.connect( widget.copy )
+        copy_action.setEnabled(has_selection)
 
         paste_action = menu.addAction("Paste")
         paste_action.triggered.connect( widget.paste )
+        paste_action.setEnabled(can_paste)
         #menu.addSeparator()
 
         # ---- "Smart Paste"
         foo_action = menu.addAction("Smart Paste")
         foo_action.triggered.connect(self.smart_paste_clipboard )
+        foo_action.setEnabled(can_paste)
         menu.addSeparator()
 
         # ---- "Smarten"
         foo_action = menu.addAction("Smarten")
         foo_action.triggered.connect(self.smarten )
+        foo_action.setEnabled(has_selection)
         menu.addSeparator()
 
         # ---- "coyp all "
@@ -839,22 +876,26 @@ class TextEditExtMixin(  ):
         foo_action = menu.addAction("Strip Trail in Sel")
         foo        = partial( self.strip_selected,  keep_leading = True )
         foo_action.triggered.connect( foo )
+        foo_action.setEnabled(has_selection)
 
         # ---- "Strip Lead and Trail in Sel"
         foo_action = menu.addAction( "Strip Lead and Trail in Sel" )
         foo        = partial( self.strip_selected,  keep_leading = False )
         foo_action.triggered.connect( foo )
+        foo_action.setEnabled(has_selection)
         #foo_action.triggered.connect( self.strip_eol_lines_in_selection )
         #menu.addSeparator()
 
         # ---- ""Update Markup""
         foo_action = menu.addAction("Update Markup")
         foo_action.triggered.connect( self.update_markup )
+        foo_action.setEnabled(has_selection)
         menu.addSeparator()
 
         # ---- "Open Urls"
         foo_action = menu.addAction("Open Urls")
         foo_action.triggered.connect( self.goto_urls_in_selection )
+        foo_action.setEnabled(has_selection)
         menu.addSeparator()
 
         select_all_action = menu.addAction("Select All")
@@ -864,18 +905,6 @@ class TextEditExtMixin(  ):
         menu_action = menu.addAction(">> Go ...")
         menu_action.triggered.connect( self.cmd_exec )
         menu.addSeparator()
-
-        # Enable/disable actions based on context
-        cursor = widget.textCursor()
-        has_selection   = cursor.hasSelection()
-        can_undo        = widget.document().isUndoAvailable()
-        can_paste       = QApplication.clipboard().text() != ""
-
-        undo_action.setEnabled(can_undo)
-        cut_action.setEnabled(has_selection)
-        copy_action.setEnabled(has_selection)
-        paste_action.setEnabled(can_paste)
-        foo_action.setEnabled(can_paste)
 
         # Show the context menu
         menu.exec_(widget.mapToGlobal(pos))
@@ -975,10 +1004,11 @@ class TextEditExtMixin(  ):
         elif cmd == "snippet":
             #rint( "you need to implement >>idle")
             # QApplication.clipboard().setText( " ".join( cmd_args )   )
+            #breakpoint()
             code    = "\n".join( code_lines[ 1:] )  # title in line 0 !!
             msg     = " ".join( cmd_args )
 
-            QApplication.clipboard().setText( code   )
+            QApplication.clipboard().setText( code )
 
         # ---- idle and idle file
         elif cmd == "idle":   # want a one line and may line
@@ -990,7 +1020,6 @@ class TextEditExtMixin(  ):
             file_name     = cmd_args[0]
             self.idle_exe.idle_file( file_name  )
             pass  # debug
-
 
         # ---- text
         elif cmd == "text":
@@ -1022,6 +1051,12 @@ class TextEditExtMixin(  ):
             # msg   = ( "implementing >>search")
             # logging.debug( msg )
             #breakpoint( )
+
+
+            # reject if >>search not on line clicked -- will dake a bigger fix
+            # if len( code_lines ) > 1:
+            #     return
+
             if  self.stuffdb  is None:
                 msg   = ( f"cannot do search as STUFF_DB  = none  ")
                 #self.logging.error( msg )
@@ -1051,10 +1086,17 @@ class TextEditExtMixin(  ):
 
         # ---- find_dn
         elif cmd == "find_dn":
-            selected_text         = cmd_args[ 0 ] # make more general later !!
+            # code lines >>       find_dn exe
+            parse_0 = code_lines[0][2:].strip()  #  strip >> and spaces
+            parse_1 = parse_0[ 7: ]              # strip find_dn
+            parse_2 = parse_1.split( "#" )[0]    # remove comments
+            parse_3 = parse_2.strip()            # strip lead and trail spaces
+            selected_text         =  parse_3     # could clean up code
             # selected_text    = self.capture_selected_text()
             #self.append( f"ctrl_f_search_down {selected_text = }")
             self.search_text_widget.setText( selected_text )
+            # self.dn_button.setFocus()
+            move_cursor_to_button( self.dn_button )
             self.search_down()
 
         elif cmd == "xxx":
@@ -1068,6 +1110,8 @@ class TextEditExtMixin(  ):
     # ------------------------
     def get_snippet_lines( self, do_undent = True  ):
         """
+        !! for some uses need to know which line or content
+              of the first line for single line commands
         title is line 0
         often for code
         assume cursor in the body
@@ -1270,8 +1314,6 @@ class TextEditExtMixin(  ):
     def copy_all( self, ):
         """
         what it says
-
-
         """
         QApplication.clipboard().setText(self.toPlainText())
 
@@ -1313,8 +1355,6 @@ class TextEditExtMixin(  ):
         text_edit.setTextCursor(cursor)
 
 
-
-
     #-----------------------------------
     def smarten( self, ):
         """
@@ -1328,11 +1368,9 @@ class TextEditExtMixin(  ):
 
         see capture selected text -- how differnt thena copy
 
-
         """
         self.copy()
         self.smart_paste_clipboard()
-
 
     #-----------------------------------
     def smart_paste_clipboard( self, ):
@@ -1589,7 +1627,7 @@ class TextEditExtMixin(  ):
 
 
 
-# ---- Edits are criteria
+# ---- Edits are also for criteria
 # ---------------------------------
 class CQEditBase(   ):
     """
@@ -3218,6 +3256,25 @@ class CQTextEdit(QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         """from a ChatBot is it ok?? """
         self.insertPlainText(source.text())  #  removes formatting
 
+    # ------------------------------------
+    def scroll_to_top(self, ):
+        """
+
+        """
+        cursor = self.textCursor()
+        cursor.movePosition(cursor.Start)
+        self.setTextCursor(cursor)
+        self.ensureCursorVisible()
+
+    # ------------------------------------
+    def scroll_to_bottom(self, ):
+        """
+
+        """
+        cursor = self.textCursor()
+        cursor.movePosition(cursor.End)
+        self.setTextCursor(cursor)
+        self.ensureCursorVisible()
 
     # --------------------------------------------------
     def __str__( self ):
@@ -3422,8 +3479,7 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
             qdate         = QDate()   # says chat invalid
 
         else:
-
-        #timestamp = 1710432000  # Example Unix timestamp in seconds
+            #timestamp = 1710432000  # Example Unix timestamp in seconds
 
             qdate         = QDateTime.fromSecsSinceEpoch( int( raw_data ) ).date()
 
@@ -3484,6 +3540,5 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         # more    = CQEditBase.__str__( self, )
         # a_str   = f"{a_str}\n{more}"
         return a_str
-
 
 # ---- eof ----------------------------
