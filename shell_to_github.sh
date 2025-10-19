@@ -27,8 +27,8 @@ rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuf
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/sql/*.*               /mnt/WIN_D/for_github/stuffdb/sql
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data_dict_src/*.*     /mnt/WIN_D/for_github/stuffdb/data_dict_src
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/py_helpers/*.*        /mnt/WIN_D/for_github/stuffdb/py_helpers
-  
- 
+rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/geo_photo/*.*         /mnt/WIN_D/for_github/stuffdb/geo_photo
+
 
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/python_ex.db     /mnt/WIN_D/for_github/stuffdb/data
 
@@ -46,7 +46,7 @@ rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshl
 
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/string_util.py     /mnt/WIN_D/for_github/stuffdb/libs
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/os_call.py         /mnt/WIN_D/for_github/stuffdb/libs
-
+rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/photo_ext.py       /mnt/WIN_D/for_github/stuffdb/libs
 
 #rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/qsql_utils.py     /mnt/WIN_D/for_github/qt5_by_example/libs
 
@@ -56,7 +56,7 @@ rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshl
 
 
 
-# ---------------------
+# ---------------------ModuleNotFoundError: No module named 'photo_ext
 
 
 
