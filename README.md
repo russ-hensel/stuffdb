@@ -30,9 +30,11 @@ This is my first time with qt for sql, it has been an adventure
 Status:
   At this point a lot of the Stuffdb works, but still very far from polished system.
   The current db is around the notes/help document which works fairly well.
+  See https://github.com/russ-hensel/stuffdb/wiki/Status/_edit for better info.
 
-  Other documents basically work but can be rough.
+  Other documents basically work but can be rough.https://github.com/russ-hensel/stuffdb/wiki/Status/_edit
   
+Trying it out:  
   If you want to try it out: contact me and I will make the repository work ( for you ), right
   now while it works on my desktop the repo is primarly for backup not distribution.
 
