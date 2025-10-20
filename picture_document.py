@@ -727,11 +727,10 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         What it says, read
         self.sub_dir_field.  !! find file field need manual add
 
-
         gen the code then tweak -- this now out of date some is auto
 
         spacer code at the top
-
+            tweak untill in data dict
             this not in this tab but far below
                  form_id          = parent_window.id_field.get_raw_data()
                  form_sub_dir     = parent_window.sub_dir_field.get_raw_data()
@@ -740,7 +739,9 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
                 self.id_field            = edit_field
                 self.sub_dir_field       = edit_field
 
+        tweaks
 
+                 look innot drop down for name and combo.setMaxVisibleItems(10)
         a_partial               = partial( self.set_value, PARAMETERS.picture_db_sub  )
         edit_field.set_clear    = a_partial
 
@@ -780,12 +781,14 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 1 )
 
-        # ---- name
-        edit_field                  = cw.CQLineEdit(
+        # ---- name tweak
+        #edit_field                  = cw.CQLineEdit(
+        edit_field                  = cw.CQHistoryComboBox(
                                                 parent         = None,
                                                 field_name     = "name",
                                                 is_keep_prior_enabled     = True, )
         edit_field.is_keep_prior_enabled        = True
+        edit_field.setMaxVisibleItems( 30 )
         edit_field.setPlaceholderText( "name" )
         self.data_manager.add_field( edit_field, is_key_word = True )
         layout.addWidget( edit_field, columnspan = 4 )
@@ -1445,7 +1448,7 @@ class PictureBrowseSubTab( QWidget ):
             "JPEG Images (*.jpg *.jpeg *.JPG *.JPEG)",
             "All Files (*)"
              ]
-        file_dialog.setNameFilter( name_filters )
+        file_dialog.setNameFilters( name_filters )
         file_dialog.setDirectory( initial_dir )
         # file_dialog.setWindowTitle(  title      )
         # #file_dialog.setNameFilter(   file_types  )

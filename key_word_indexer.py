@@ -84,6 +84,8 @@ KEY_WORD_SQL[ "tabs" ] = """SELECT
         FROM    tabs """
 
 # ---- end imports
+
+# ---- log level
 LOG_LEVEL  = 50
 
 # ------------------------------------------

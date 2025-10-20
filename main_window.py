@@ -712,7 +712,8 @@ class StuffdbMainWindow( QMainWindow ):
         msg      =  "get the size this process thru its pid "
         memory   = process_pid.memory_info().rss/1_000_000
         memory   = f"Memory = {memory} Mbytes"
-        repo     = " coming soom          "
+        repo     = "https://github.com/russ-hensel/stuffdb"
+        repo     = "https://github.com/russ-hensel/stuffdb/wiki"
         msg      = ( f"Stuff DB {version} {mode}"
                      f"\n{memory}"
                      f"\n{repo}"

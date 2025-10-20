@@ -475,6 +475,9 @@ class Parameters( ):
                                     ">>Search   ...\n"
                                     ">>Search   ...\n"
                                     "\n\n\n\n"
+                                    "find_dn ...."
+                                    "find_dn ...."
+                                    "\n\n\n\n"
                                     )
 
         #self.note_default_text = textwrap.dedent( self.note_default_text ).strip()

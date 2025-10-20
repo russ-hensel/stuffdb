@@ -2687,11 +2687,10 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         self.setInsertPolicy(QComboBox.NoInsert)
 
         # Store maximum history size
-        self.max_history = 10
+        self.max_history = 30
 
         # Connect signals
-        self.lineEdit().returnPressed.connect(self.add_current_text_to_history)
-
+        self.lineEdit().returnPressed.connect( self.add_current_text_to_history )
 
         #self.default_value         = "default-value"     # deprecate
         self.prior_value           = ""  # something of a valid type
@@ -2715,7 +2714,10 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         #self.addItems( [ "", "atest", "bbbbbb", "cccccc", ] )
 
     def add_current_text_to_history(self):
-        """Add the current text to the history if not empty and not a duplicate."""
+        """
+        Add the current text to the history if not empty and not a duplicate.
+
+        """
         text = self.currentText().strip()
 
         if not text:
@@ -2729,7 +2731,7 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
             self.removeItem(index)
 
         # Insert at the beginning
-        self.insertItem(0, text)
+        self.insertItem( 0, text )
 
         # If we've exceeded the maximum history size, remove the oldest item
         if self.count() > self.max_history:
@@ -3082,7 +3084,7 @@ class CQDictComboBox(QComboBox, CQEditBase ):
         pass
 
 # -------------------------------
-class CQTextEdit(QTextEdit,  CQEditBase, TextEditExtMixin,   ):
+class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin, ):
     """
     Custom QTextEdit subclass with CQEditBase integration
 
@@ -3360,7 +3362,6 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         so we can call without harm
         """
         pass
-
 
     # -------------------
     def config_calender_popup( self, is_popup ):
