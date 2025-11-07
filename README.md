@@ -33,13 +33,19 @@ Status:
   See https://github.com/russ-hensel/stuffdb/wiki/Status/_edit for better info.
 
   Other documents basically work but can be rough.https://github.com/russ-hensel/stuffdb/wiki/Status/_edit
-  
+Version:
+  I bump the version id each time I hit some kind of milestone, Versions are a combination of a numbr
+  and a date, for exzmple "Ver .080: 2025 10 25.01"
+
 Trying it out:  
   If you want to try it out: contact me and I will make the repository work ( for you ), right
   now while it works on my desktop the repo is primarly for backup not distribution.
 
   Will soon have a db for all the documents, mostly empty.
   I am not yet shipping a good starter db but will make one on request.
+
+  You can run by running most any module ( with exceptions ) but main.py is a good reliable
+  place to start.  Always start with a fresh and clean interperter.
 
 This is a reimplemtation of a system I wrote 20 years ago in Powerbulider, it
 will take a long time to replicat all of its features, but I will be able
