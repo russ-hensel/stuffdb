@@ -644,7 +644,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
     def __init__(self, parent_window  ):
         """
         Args:
-            parent_window (TYPE): DESCRIPTION.
+            parent_window  -- the document
 
         """
         super().__init__( parent_window )
@@ -682,13 +682,13 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
         page            = self
 
-        max_col         = 12
+        max_col         = 12       # for the shorter fields above the lared testedit
         self.max_col    = max_col
 
         box_layout_1    =  QVBoxLayout( page )
 
         # next seems to be for the form
-        layout          = gui_qt_ext.CQGridLayout( col_max = 12 )
+        layout          = gui_qt_ext.CQGridLayout( col_max = max_col )
             # impact of col_max = ??
         box_layout_1.addLayout( layout )
 
@@ -959,6 +959,9 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         # ---- text layout lets favor it for space
         text_layout     = QVBoxLayout()
         tab_layout.addLayout( text_layout, stretch=2 )
+            # 2 started exp
+            # 3 did not seem to make a difference
+            # 6 did not change much
 
         data_manager    = self.text_data_manager
 
@@ -979,7 +982,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         self.snippet_manager        = base_document_tabs.SnippetManager( edit_field )
         text_edit_widget.set_stuffdb( AppGlobal.controller )
 
-
         # ---- id really fro debug hide --- no data manager needs this
         widget          =  cw.CQLineEdit(
                                      parent         = None,
@@ -991,8 +993,9 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         button_layout.addWidget( widget, )
 
         # ---- snippets
-        groupbox   = QGroupBox( "Snippets" )   # version with title
-        groupbox.setMaximumHeight(80 )
+        groupbox   = QGroupBox( "Snippets" )
+        groupbox.setMaximumHeight( 80 )
+        groupbox.setMaximumWidth( 120 )  # by experiment
         groupbox.setStyleSheet("""
             QGroupBox {
                 border: 2px solid blue;
@@ -1021,6 +1024,11 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
 
         ddl_widget, ddl_button_widget  = self.snippet_manager.make_widgets()
+        # ddl_widget.setMaximumWidth( 20 )   # see also groupbox
+        # ddl_widget.view().setMinimumWidth( 30 )   # did not fix my issue
+        ddl_widget.setFixedWidth( 100 )   # see also groupbox
+        ddl_widget.view().setFixedWidth( 100 )   # did not fix my issue
+        ddl_widget.setStyleSheet("QComboBox { width: 20px; }")  # did not work
         ddl_button_widget.setText( "Paste")
         layout_g.addWidget( ddl_widget  )
         layout_g.addWidget( ddl_button_widget  )

@@ -49,6 +49,9 @@ class Parameters( ):
             and if you wish add the plus_test_mode
             if you comment all out all modes you get the default mode which should
             run, perhaps not in the way you want
+
+                    self.db_file_name      = "/tmp/ramdisk/helpdb_from_scratch.db"
+
         """
         #breakpoint( )
         if self.mode_from_command_line():
@@ -62,6 +65,7 @@ class Parameters( ):
         # self.mode_mh_2025_hd()
         #self.mode_russ_2025_hd()
         #self.mode_russ_2025_ram()
+        self.mode_build_new_ram()
 
         # self.mode_russ_2025_ram()
         #self.mode_github()
@@ -78,6 +82,23 @@ class Parameters( ):
         self.db_type            = "QSQLITE"
             # the type of database, so far we only support SQLite
         self.db_file_name       = "./data/python_ex.db"
+
+    # -------
+    def mode_build_new_ram( self ):
+        """
+
+        """
+        self.mode               = "mode_build_new_ram"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+        self.db_file_name       = "/tmp/ramdisk/russ2025/stuffdb.db"
+
+        self.logging_level      = logging.DEBUG   # ERROR
+
+       # self.icon               =  "./misc/db_red_on_yellow.png"
+        self.icon               =  "./misc/db_green_on_black.png"
+       # self.icon               =  "./misc/db_red_on_black.png"
 
     # -------
     def mode_russ_2025_ram( self ):
@@ -475,8 +496,8 @@ class Parameters( ):
                                     ">>Search   ...\n"
                                     ">>Search   ...\n"
                                     "\n\n\n\n"
-                                    "find_dn ...."
-                                    "find_dn ...."
+                                    ">>find_dn ...\n"
+                                    ">>find_dn ..."
                                     "\n\n\n\n"
                                     )
 
@@ -643,42 +664,6 @@ class Parameters( ):
 
         return False
 
-    # ------->> default mode, always call
-    def mode_from_command_line_old( self ):
-        """
-        checks to see if command line wants to set the mode
-        note case statement so need to set up
-            this sort of sucks esp since qt captures the exception
-            consider something more like eval, perhaps hasattr
-            and a dialog on failure
-        """
-        if len( SYS_ARGS ) > 1:
-            mode_string     = SYS_ARGS[1]
-
-            if mode_string     == "mode_new_user":
-                self.mode_new_user()
-
-            elif mode_string   == "mode_helpdb_on_theprof":
-                self.mode_helpdb_on_theprof()
-
-            elif mode_string   == "mode_github_example_code_on_theprof":
-                self.mode_github_example_code_on_theprof()
-
-            elif mode_string   == "mode_russ2025_on_theprof":
-                self.mode_russ2025_on_theprof()
-
-            elif mode_string   == "mode_github":
-                self.mode_github()
-
-            else:
-                print( f"unknown_mode_string {mode_string =}")
-                1/0   # !! fix better
-
-            print( f"============== mode set from command line {mode_string = } ===================")
-                # consider popup
-            return True
-
-        return False
 
     # -------
     def __init__( self, ):

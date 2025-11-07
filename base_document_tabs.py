@@ -1612,7 +1612,6 @@ class ListTabBase( DetailTabBase ):
                         f" (in model only id = {id_to_delete} ).")
         logging.log( LOG_LEVEL,  debug_msg, )
 
-
 # ----------------------------------------
 class CriteriaTabBase( QWidget ):
     """
@@ -2626,11 +2625,10 @@ class HistoryTabBase( QWidget ):
         columns             = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
 
         # ---- pinned table
-        table               = self.make_a_table( columns )
+        table               = self.make_pinned_table( columns )
         self.pinned_table   = table
         self.set_table_height_for_rows( table, 2 )
         self.add_empty_rows_batch( table, 2 )
-
         connect_to  =  partial( self.on_cell_clicked_new, table )
         table.cellClicked.connect( connect_to )
 
@@ -2662,20 +2660,15 @@ class HistoryTabBase( QWidget ):
         row_layout.addWidget( widget )
 
         # ---- history
-        table               = self.make_a_table( columns )
-
-        self.history_table  = table
-
-        table.cellClicked.connect( self.on_cell_clicked )
+        table  = self.make_history_table( columns )
+        self.history_table   = table
 
         layout.addWidget( table )
-
 
     # ---------------------------------------
     def show_context_menu( self, pos ):
         """
-         from a text edit
-
+        should olnly be called from self.history_table
         """
         widget      = self.history_table
 
@@ -2694,7 +2687,6 @@ class HistoryTabBase( QWidget ):
         action.triggered.connect( connect_to   )
         action.setEnabled( True )
 
-
         action  = menu.addAction("Pin as #2")
         connect_to      = partial( self.history_to_pinned, ix_src_row = ix_src_row, ix_dest_row = 1 )
         action.triggered.connect( connect_to   )
@@ -2710,17 +2702,48 @@ class HistoryTabBase( QWidget ):
         menu.exec_(widget.mapToGlobal(pos))
 
     # ------------------------
+    def make_history_table( self, columns ):
+
+        """
+        """
+        table               = self.make_a_table( columns  )
+
+        self.history_table  = table
+
+        table.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
+        table.customContextMenuRequested.connect( self.show_context_menu )
+
+        #table.setSelectionBehavior( QTableWidget.SelectRows )  # Select entire rows
+
+        #table_widget_no_edit( table )
+
+        #table.cellClicked.connect( self.on_cell_clicked )
+        return table
+    # ------------------------
+    def make_pinned_table( self, columns ):
+        """
+        clean up where instance created etch
+        """
+
+        table               = self.make_a_table( columns  )
+
+        #self.pinned_table  = table
+
+        # table.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
+        # table.customContextMenuRequested.connect( self.show_context_menu )
+        return table
+
+
+    # ------------------------
     def make_a_table( self, columns ):
         """
         one for history one for pinned
+
+        return
+            a table for history or pined
         """
         table               = QTableWidget(
                                        0, len( columns ), self )  # row column  parent
-        self.history_table  = table
-
-        self.history_table.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
-        self.history_table.customContextMenuRequested.connect( self.show_context_menu )
-
         # ---- column header and width
         for ix_col, i_column in enumerate( columns):
             #rint( f" {ix_col = } { i_width = }")
@@ -2731,7 +2754,10 @@ class HistoryTabBase( QWidget ):
 
         table_widget_no_edit( table )
 
+        table.cellClicked.connect( self.on_cell_clicked )
+
         return table
+
 
     def set_table_height_for_rows(self, table, num_rows):
         """

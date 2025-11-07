@@ -529,7 +529,7 @@ class TableDict(  ):
     #------------------------------------------------
     def get_list_columns_sql_order( self,    ):
         """
-        get the columns ( not including id ) in the correct order  --- not sorted
+        get the columns ( including id ) in the correct order  --- not sorted
             combine with  get_list_columns
             assume order in data_dict is the sql order
 
@@ -537,6 +537,9 @@ class TableDict(  ):
 
         for the history tab, add column heading
         column    = data_dict.DATA_DICT.get_history_columns( a_table_name )
+
+        lots of unneded code here
+
         """
         column_list    = []
 
@@ -552,7 +555,7 @@ class TableDict(  ):
             i_default_func  = i_column.default_func
             i_is_topic      = i_column.is_topic
 
-            i_col_head_order          = i_column.col_head_order
+            i_col_head_order     = i_column.col_head_order
             i_col_head_text      = i_column.col_head_text
             i_col_head_width     = i_column.col_head_width
 

@@ -81,25 +81,7 @@ class ParmsTemp( ):
 
         self.platform           = self.our_os           #  redundant
 
-        # ---- appearance -- including sizes
 
-        # control initial size and position with:
-        self.qt_width           = 1200
-        self.qt_height          = 500
-        self.qt_xpos            = 50
-        self.qt_ypos            = 50
-
-        # sizes for the wat-inspector in qt
-        self.wat_qt_width       = 1300
-        self.wat_qt_height      = 800
-        self.wat_qt_xpos        = 10
-        self.wat_qt_ypos        = 10
-
-        # ---- doc is a mdi doc like help_document
-        self.doc_qt_width       = 900
-        self.doc_qt_height      = 600
-        self.doc_qt_xpos        = 20
-        self.doc_qt_ypos        = 20
 
         # icon for running app
         self.icon               = r"./misc/icon_red.png"
@@ -150,7 +132,7 @@ class ParmsTemp( ):
         self.db_file_name      = "/tmp/ramdisk/russ2025/russ2025.db"
         self.db_file_name      = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
         self.db_file_name      = "/tmp/ramdisk/russ2025/stuffdb.db"
-
+        self.db_file_name      = "/tmp/ramdisk/helpdb_from_scratch.db"
 
 
         self.idle_venv          = "py_12_misc"   # idle will open in this python venv

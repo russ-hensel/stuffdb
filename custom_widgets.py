@@ -2277,7 +2277,7 @@ class CQLineEdit( QLineEdit, CQEditBase ):
 
             # call in all edits where it applies
         self.setPlaceholderText( self.field_name )
-        self._build_context_menu()
+        #self._build_context_menu()
 
     # ---- required implementations
     #----------------------------
@@ -2338,18 +2338,54 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         data  = self.text()
         return data
 
+    #----------------------------
+    def set_custom_context_menu( self, ):
+        """
+        what it says
+            call in the init of the final widget ?
+        """
+        self.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect( self.show_context_menu )
+
     # ---------------------------------------
     def show_context_menu( self, pos ):
         """
+        from text edit mixin
+
+        """
+        widget      = self
+        menu        = QMenu( widget )
+
+        # Enable/disable actions based on context
+        #cursor = widget.textCursor()
+       # has_selection   = cursor.hasSelection()
+        #can_undo        = widget.document().isUndoAvailable()
+        #can_paste       = QApplication.clipboard().text() != ""
+
+
+        # cut_action.setEnabled(has_selection)
+        # copy_action.setEnabled(has_selection)
+        # paste_action.setEnabled(can_paste)
+        # foo_action.setEnabled(can_paste)
+
+        # Add standard actions
+        undo_action = menu.addAction("Undo_just_test")
+        #undo_action.triggered.connect(widget.undo)
+        undo_action.setEnabled( False )
+        menu.addSeparator()
+
+    # ---------------------------------------
+    def show_context_menu_old_ng( self, pos ):
+        """
 
         chat thinks this is way to go
-
+        get code from text edit and model on it
         """
         widget      = self
         # self.my_special_function(event) for context
 
         # Call the base implementation (shows default context menu)
-        super(CQLineEdit, self).contextMenuEvent( event )
+        super( CQLineEdit, self).contextMenuEvent( event )
 
 
 
@@ -2377,7 +2413,7 @@ class CQLineEdit( QLineEdit, CQEditBase ):
     #     #rint(f"line edit on_data_changed: {new_data} saved to prior_value ")  !!
 
     # -------------------------
-    def _build_context_menu( self ):
+    def _build_context_menu_is_used_correct ( self ):
         """ """
 
         context_menu        = QMenu(self)
@@ -2413,7 +2449,7 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         #self.mousePressEvent = self.handle_right_click
         # !! disable as we do not have yet
         # Disable the default context menu
-        self.setContextMenuPolicy(Qt.NoContextMenu)
+        #self.setContextMenuPolicy(Qt.NoContextMenu)
 
     # -------------------------------
     def __str__( self ):
@@ -2518,7 +2554,6 @@ class CQComboBox( QComboBox, CQEditBase ):
             changes contents of edit
             may change self.is_changed
             self.prior_value  -- so far unchanged, this is probably wrong
-
 
         """
         # next !! debug
@@ -2687,10 +2722,11 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         self.setInsertPolicy(QComboBox.NoInsert)
 
         # Store maximum history size
-        self.max_history = 30
+        self.max_history = 10
 
         # Connect signals
-        self.lineEdit().returnPressed.connect( self.add_current_text_to_history )
+        self.lineEdit().returnPressed.connect(self.add_current_text_to_history)
+
 
         #self.default_value         = "default-value"     # deprecate
         self.prior_value           = ""  # something of a valid type
@@ -2714,10 +2750,7 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         #self.addItems( [ "", "atest", "bbbbbb", "cccccc", ] )
 
     def add_current_text_to_history(self):
-        """
-        Add the current text to the history if not empty and not a duplicate.
-
-        """
+        """Add the current text to the history if not empty and not a duplicate."""
         text = self.currentText().strip()
 
         if not text:
@@ -2731,7 +2764,7 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
             self.removeItem(index)
 
         # Insert at the beginning
-        self.insertItem( 0, text )
+        self.insertItem(0, text)
 
         # If we've exceeded the maximum history size, remove the oldest item
         if self.count() > self.max_history:
@@ -3084,7 +3117,7 @@ class CQDictComboBox(QComboBox, CQEditBase ):
         pass
 
 # -------------------------------
-class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin, ):
+class CQTextEdit(QTextEdit,  CQEditBase, TextEditExtMixin,   ):
     """
     Custom QTextEdit subclass with CQEditBase integration
 
@@ -3362,6 +3395,7 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         so we can call without harm
         """
         pass
+
 
     # -------------------
     def config_calender_popup( self, is_popup ):
