@@ -18,15 +18,26 @@ if __name__ == "__main__":
 import sqlite3
 
 from app_global import AppGlobal
+
+
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+
+
+
+
+
 # ---- QtSql
-from PyQt5.QtSql import (QSqlDatabase,
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlError,
                          QSqlField,
                          QSqlQuery,
                          QSqlRecord,
                          QSqlTableModel)
 # ----QtWidgets
-from PyQt5.QtWidgets import QWidget
+from PyQt.QtWidgets import QWidget
 
 
 class KeyGenerator:
@@ -90,7 +101,12 @@ class KeyGenerator:
         """
         query = QSqlQuery( self.db )
         sql   =  f"SELECT MAX(id) FROM  {table_name}"
-        query.exec_( sql )
+
+
+        if qt_version == 6:
+            query.exec( sql )
+        else:
+            query.exec_( sql )
 
         if query.next():
             max_id     = query.value(0)

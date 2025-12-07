@@ -20,9 +20,17 @@ if __name__ == "__main__":
 import logging
 import sys
 
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+from qt_compat import CQDialogButtonBox
+
+
+
 from app_global import AppGlobal
-from PyQt5.QtCore import QDateTime, Qt
-from PyQt5.QtSql import (QSqlDatabase,
+from PyQt.QtCore import QDateTime, Qt
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlDriver,
                          QSqlQuery,
                          QSqlRecord,
@@ -31,7 +39,7 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
-from PyQt5.QtWidgets import (QApplication,
+from PyQt.QtWidgets import (QApplication,
                              QComboBox,
                              QDateTimeEdit,
                              QDialog,
@@ -153,7 +161,7 @@ class EditStuffEvents( QDialog ):
 
         # Button box
         button_box = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+            CQDialogButtonBox.Ok | CQDialogButtonBox.Cancel)
 
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)

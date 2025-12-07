@@ -33,13 +33,21 @@ from pprint import pprint as pp
 from subprocess import PIPE, STDOUT, Popen, run
 
 # import wat
-from PyQt5 import QtGui
-from PyQt5.QtGui import QFont
-from PyQt5.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
-from PyQt5.QtGui import QTextCursor, QTextDocument
+
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+
+
+from PyQt import QtGui
+from PyQt.QtGui import QFont
+from PyQt.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
+from PyQt.QtGui import QTextCursor, QTextDocument
 # sql
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
-from PyQt5.QtWidgets import (QAction,
+from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+
+# from PyQt.QtGui import ( QAction, QActionGroup, )
+from PyQt.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,

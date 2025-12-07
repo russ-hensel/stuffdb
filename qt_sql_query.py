@@ -21,7 +21,7 @@ import logging
 # import collections
 import sqlite3 as lite
 import time
-from tkinter import messagebox
+#from tkinter import messagebox
 
 # ------- local imports
 # from   app_global import AppGlobal

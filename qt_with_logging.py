@@ -32,9 +32,14 @@ unclear on how well this works -- keep trying for awhile
 """
 # ---- imports
 
-from PyQt5.QtCore import Qt
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+
+
+from PyQt.QtCore import Qt
 # ---- QtSql
-from PyQt5.QtSql import (QSqlDatabase,
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlDriver,
                          QSqlError,
                          QSqlField,
@@ -247,8 +252,8 @@ class QSqlRelationalTableModelWithLogging( QSqlRelationalTableModel ):
 
 """
 !! russ set this up
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery
-from PyQt5.QtCore import Qt
+from PyQt.QtSql import QSqlDatabase, QSqlQuery
+from PyQt.QtCore import Qt
 
 # Assuming db is your QSqlDatabase connection
 db = QSqlDatabase.addDatabase('QSQLITE')

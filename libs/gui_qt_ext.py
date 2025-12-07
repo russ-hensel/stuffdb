@@ -43,14 +43,22 @@ gui_qt_ext.
 
 
 
-#import PyQt5.QtWidgets as qtw    #  qt widgets avaoid so much import below
-from   PyQt5.QtCore import Qt, QTimer
-from   PyQt5 import QtGui
+#import PyQt.QtWidgets as qtw    #  qt widgets avaoid so much import below
 
-from PyQt5.QtWidgets import QApplication,  QMainWindow
-from PyQt5.QtWidgets import QGridLayout,   QVBoxLayout
-from PyQt5.QtWidgets import QLabel,      QTextEdit, QGroupBox,  QPushButton
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from qt_compat import QTextCursor
+from qt_compat import QCheckBox
+
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+
+from   PyQt.QtCore import Qt, QTimer
+from   PyQt import QtGui
+
+from PyQt.QtWidgets import QApplication,  QMainWindow
+from PyQt.QtWidgets import QGridLayout,   QVBoxLayout
+from PyQt.QtWidgets import QLabel,        QTextEdit,    QGroupBox,  QPushButton
+from PyQt.QtWidgets import QApplication,  QWidget,      QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox
 
 
 import sys
@@ -73,6 +81,16 @@ logger          = logging.getLogger( )
 # for custom logging level at module
 LOG_LEVEL  = 5   # higher is more
 
+# ----- style sheets  gui_qt_ext.LINE_EDIT_READ_ONLY
+
+LINE_EDIT_READ_ONLY = (
+    "QLineEdit { "
+     "   background-color: #ececec; "
+     "   border: 1px solid #cccccc; "
+     "  border-radius: 4px; "
+     " padding: 4px; "
+    " } "
+      )
 
 #---------------------
 def bring_to_top( root_frame  ):
@@ -147,38 +165,11 @@ def about(  controller  ):
     message_box.setText( msg )
 
     # message_box.setIcon(QMessageBox.Information)
-    message_box.exec_()
+    if qt_version == 6:
+        box_exec  = message_box.exec( )
+    else:
+        box_exec  = message_box.exec_( )
 
-#---------------------
-def make_rootxxxxxxxx( parameters  ):
-    """
-    What it says, read code
-    make a root window with support for themes
-    """
-    root = None   # for qt ??
-    # # ----- start building gui  -- may need root stuff at top
-    # if  parameters.gui_theme_type  in ["none", "ttk" ]:
-    #     # valid values see gui_with_tabs
-
-    #     root      = tk.Tk()
-    #     style     = ttk.Style()
-
-    #     style.theme_use( parameters.gui_ttk_theme )
-    #         # may throw error if not compatible with
-    #         # the .gui_ttk_theme
-
-    # elif parameters.gui_theme_type  in [ "ttkthemes", ]:
-    #     from ttkthemes import ThemedTk
-    #     #a_theme    = "blue"  #Adapta arc aquativo
-    #     #a_theme    = "plastik"  # bad name seem to fall back to default without error
-    #     root     = ThemedTk( theme = parameters.gui_ttk_theme )
-
-    #     print( f"available themes are:  {root.pixmap_themes}" )
-
-    # else:
-    #     1/0   # poor man's exception
-
-    return root
 
 # ---------------------------------
 class FileBrowseWidget( QWidget ):
@@ -360,10 +351,12 @@ class MessageArea( QGroupBox  ):
 
     """
         super().__init__()
+
+        # ---- build gui
         group_placer   = PlaceInGrid(  self, by_rows = False )
 
         copy_button = QPushButton( "Copy Text" )
-        copy_button.clicked.connect(lambda: self.copy_text(text_edit))
+        copy_button.clicked.connect(lambda: self.copy_text( ))
         group_placer.place( copy_button, rowspan = 1, columnspan = 1 )
 
         # Create QTextEdit widget
@@ -373,20 +366,20 @@ class MessageArea( QGroupBox  ):
         group_placer.place( text_edit, rowspan = 8, columnspan = 3 )
 
         widget = QPushButton( "Delete Text" )
-        widget.clicked.connect(lambda: self.delete_text(text_edit))
+        widget.clicked.connect(lambda: self.delete_text( ))
         widget.setMaximumWidth(150)
         #widget       = delete_button
         group_placer.new_row( )
         group_placer.place( widget, rowspan = 1, columnspan = 1 )
 
         insert_button = QPushButton("Insert Text")
-        insert_button.clicked.connect(lambda: self.insert_text(text_edit, "Inserted Text"))
+        insert_button.clicked.connect(lambda: self.insert_text(  "Inserted Text"))
         widget        = insert_button
         group_placer.new_row( )
         group_placer.place( widget, rowspan = 1, columnspan = 1 )
 
         copy_selected_button = QPushButton("Copy Selected Text")
-        copy_selected_button.clicked.connect(lambda: self.copy_selected_text(text_edit))
+        copy_selected_button.clicked.connect(lambda: self.copy_selected_text( ))
         widget = copy_selected_button
         # layout.addWidget(copy_selected_button, 6, 0)
         group_placer.new_row( )
@@ -399,9 +392,19 @@ class MessageArea( QGroupBox  ):
         group_placer.new_row( )
         group_placer.place( widget, rowspan = 1, columnspan = 1 )
 
+        widget                      = QCheckBox( "Auto Scroll")
+        widget.clicked.connect( self.set_auto_scroll )
+        self.auto_scroll_widget     = widget
+        state                       = True
+        self.auto_scroll_widget.setChecked( state )
+        self.auto_scroll = state
+        # layout.addWidget(copy_selected_button, 6, 0)
+        group_placer.new_row( )
+        group_placer.place( widget, rowspan = 1, columnspan = 1 )
+
     # ---------------  end of button actions and class
     # ---------------------------------------
-    def print_string( self, a_string,
+    def print_stringxxxx( self, a_string,
                      plus_newline    = True,
                      title           = "",
                      clear           = False,
@@ -540,27 +543,58 @@ class MessageArea( QGroupBox  ):
     def print_message(self, text):
         print("Button clicked:", text)
 
-    #  --------
+    #--------
     def clear_text( self ):
         self.text_edit.clear()
 
     #  --------
-    def copy_text(self, text_edit):
+    def set_auto_scroll( self ):
+        """
+        the state you get is the new one
+        """
+        pass
+        return
+
+        state  =  self.auto_scroll_widget.isChecked() # after  state has xhanged
+        self.auto_scroll_widget.setChecked( state )
+
+        self.auto_scroll = state
+
+    #  --------
+    def copy_text(self,  ):
+        text_edit     = self.text_edit
         selected_text = text_edit.toPlainText()
         QApplication.clipboard().setText(selected_text)
         print(  f" copy_text -> {selected_text }" )
 
-    # ----
-    def delete_text(self, text_edit):
-        text_edit.clear()
 
-    # ----
-    def insert_text(self, text_edit, text):
-        cursor = text_edit.textCursor()
+    def delete_text(self,  ):
+        self.text_edit.clear()
+
+    #------------------------------
+    def append_text(self, text, add_nl = True ):
+        """may include new line """
+        text_edit   = self.text_edit
+        # self.text_edit.append( text )  adds nl at end
+        text_edit.moveCursor( QTextCursor.MoveOperation.End )
+        if add_nl:
+            text = text + "\n"  # and cr ???
+        text_edit.insertPlainText( text )
+        if self.auto_scroll:
+
+            text_edit   = self.text_edit
+            cursor      = text_edit.textCursor()
+            # cursor.movePosition(cursor.Start)
+            # text_edit.setTextCursor(cursor)
+            text_edit.ensureCursorVisible()
+
+    #------------------------------
+    def insert_text(self,  text):
+        cursor = self.text_edit.textCursor()
         cursor.insertText(text)
 
-    def copy_selected_text(self, text_edit):
-        selected_text = text_edit.textCursor().selectedText()
+    def copy_selected_text(self,  ):
+        selected_text = self.text_edit.textCursor().selectedText()
         QApplication.clipboard().setText(selected_text)
         print(  f" copy_selected_text -> {selected_text }" )
 
@@ -569,7 +603,7 @@ class MessageArea( QGroupBox  ):
 class CQGridLayout( QGridLayout ) :
     """
     a custom grid layout from PlaceInGrid but this is a layout
-    gui_qt_ext.CQGridLayout( col_max = 10 )
+    layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
 
     --- next two may have been fixed
     indent is not properly handled in all the code

@@ -23,15 +23,21 @@ import sqlite3
 import time
 from   datetime import datetime
 
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
 
-from PyQt5.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import (QIntValidator,
+
+
+from PyQt.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, pyqtSlot
+from PyQt.QtGui import (QIntValidator,
                          QPainter,
                          QPixmap,
                          QStandardItem,
                          QStandardItemModel)
 
-from PyQt5.QtSql import (QSqlDatabase,
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
@@ -39,8 +45,9 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
+#from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -1551,7 +1558,7 @@ class ContactSqlTableModel(QSqlTableModel):
         return flags
 
     # -------------------------------
-    def data(self, index: QModelIndex, role=Qt.DisplayRole):
+    def data(self, index: QModelIndex, role= DisplayRole):
         """
         for special formatting
         and alignment
@@ -1562,20 +1569,20 @@ class ContactSqlTableModel(QSqlTableModel):
         col = index.column()
 
         # Check role first
-        if role == Qt.DisplayRole:
+        if role == DisplayRole:
             # Handle display formatting for event_dt (column 2)
             if col == 222:
-                value = super().data(index, Qt.EditRole)
+                value = super().data(index, EditRole)
                 if value is not None:
                     return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
                 return value  # Return raw value if None
 
-        elif role == Qt.EditRole:
+        elif role == EditRole:
             # Return raw value for editing/database sync
             if col == 222:
-                return super().data(index, Qt.EditRole)
+                return super().data(index, EditRole)
 
-        elif role == Qt.TextAlignmentRole:
+        elif role == TextAlignmentRole:
             # Handle alignment for all columns
             if col == 0:  # id
                 return Qt.AlignLeft | Qt.AlignVCenter

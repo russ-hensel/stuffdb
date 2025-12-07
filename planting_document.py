@@ -26,7 +26,18 @@ from   datetime import datetime
 #from   functools import partial
 #import collections
 
-from PyQt5.QtCore import(   QModelIndex,
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum, QSizePolicy_Fixed, QSizePolicy_Preferred
+from qt_compat import OnManualSubmit, OnRowChange, OnFieldChange
+from qt_compat import NoEditTriggers
+from qt_compat import SelectRows, SelectItems,ExtendedSelection
+
+
+
+from PyQt.QtCore import(   QModelIndex,
                             QRectF,
                             QDate,
                             QModelIndex,
@@ -35,15 +46,15 @@ from PyQt5.QtCore import(   QModelIndex,
                             pyqtSlot, )
 
 
-from PyQt5.QtGui import (QIntValidator,
+from PyQt.QtGui import (QIntValidator,
                          QPainter,
                          QPixmap,
                          QStandardItem,
                          QStandardItemModel,
                      )
 
-# from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSql_Model
-from PyQt5.QtSql import (QSqlDatabase,
+# from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSql_Model
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
@@ -51,9 +62,10 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
-from PyQt5.QtWidgets import (QAbstractItemView,
-                        QAction,
-                        QActionGroup,
+#from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (QAbstractItemView,
+
                         QApplication,
                         QButtonGroup,
                         QCheckBox,
@@ -617,8 +629,8 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         for ix in range( self.max_col ):  # try to tweak size to make it work
             widget   = QSpacerItem( width,
                                    10,
-                                   QSizePolicy.Expanding,
-                                   QSizePolicy.Minimum)
+                                   QSizePolicy_Expanding,
+                                   QSizePolicy_Minimum )
 
             layout.addItem( widget, 0, ix  )  # row column
 
@@ -1002,7 +1014,7 @@ class PlantingEventSubTab( base_document_tabs.SubTabWithEditBase ):
         self.model         = model
 
         model.setTable( self.table_name )
-        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+        model.setEditStrategy(  OnManualSubmit )
 
     # ------------------------------------------
     def _build_dialog( self, edit_data ):
@@ -1104,7 +1116,7 @@ class EventSqlTableModel( QSqlTableModel ):
         return flags
 
     # -------------------------------
-    def data(self, index: QModelIndex, role=Qt.DisplayRole):
+    def data(self, index: QModelIndex, role= DisplayRole):
         """
         for special formatting
         and alignment
@@ -1114,7 +1126,7 @@ class EventSqlTableModel( QSqlTableModel ):
         col = index.column()
 
         # Check role first
-        if role == Qt.DisplayRole:
+        if role == DisplayRole:
             # Handle display formatting for event_dt (column 2)
             # data_dict may have column ix from name
             if False:
@@ -1127,7 +1139,7 @@ class EventSqlTableModel( QSqlTableModel ):
             #     return value  # Return raw value if None
 
             elif col == IX_EVENT_DATE:  # this a string should it be an int?
-                value = super().data(index, Qt.EditRole)
+                value = super().data(index, EditRole)
                 # better try except
                 # if value is not None:
                 #     return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
@@ -1142,13 +1154,13 @@ class EventSqlTableModel( QSqlTableModel ):
                     # print( msg )
                     return None   # is this ok
 
-        elif role == Qt.EditRole:
+        elif role == EditRole:
             # Return raw value for editing/database for my dates an int
             if col == 4:
-                debug    = super().data(index, Qt.EditRole)
-                return super().data(index, Qt.EditRole)
+                debug    = super().data(index, EditRole)
+                return super().data(index, EditRole)
 
-        elif role == Qt.TextAlignmentRole:
+        elif role == TextAlignmentRole:
             # Handle alignment for all columns
             if col == 0:  # id
                 return Qt.AlignLeft | Qt.AlignVCenter

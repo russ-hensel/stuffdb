@@ -41,7 +41,11 @@ main    - > stuff_db_qt  --> stuff_db_main_window --> document_maker
 
 ----
 
-----
+
+/media/sf_WIN_D/russ/0000/python00/python3/_projects/stuffdb
+
+
+
 
     ====>    album picture display broken
 

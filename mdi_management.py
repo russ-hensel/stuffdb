@@ -38,15 +38,26 @@ import sys
 
 from app_global import AppGlobal
 
-from PyQt5.QtCore import (QDate,
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from qt_compat import Window_SubWindow, Window_SystemMenuHint, Window_CloseButtonHint
+
+
+
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+
+
+from PyQt.QtCore import (QDate,
                           QModelIndex,
                           QObject,
                           Qt,
                           QTimer,
                           pyqtSignal,
                           pyqtSlot)
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
+
+# from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -678,7 +689,15 @@ class MdiManagement():
         sub_window      = window_class( instance_ix )  # sub window is a doc
 
         # because sometims missing -- grok fix
-        sub_window.setWindowFlags(Qt.SubWindow | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint)
+
+
+
+
+
+        #sub_window.setWindowFlags(Qt.SubWindow | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint)
+        sub_window.setWindowFlags( Window_SubWindow | Window_SystemMenuHint | Window_CloseButtonHint ) # 5 6 compat
+
+
         if AppGlobal.parameters.set_doc_maximized:
             sub_window.showMaximized()
 

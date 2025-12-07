@@ -104,7 +104,7 @@ NEW_LINE        = info_about.NEW_LINE
 if DEBUGGING:
     pass
 
-print( "lots of rest should be redirected to info_about")
+#print( "lots of rest should be redirected to info_about")
 # ---------------------
 def to_columns( item_list, format_list = ( "{: <30}", "{:<30}" ), indent = "    "  ):
     """

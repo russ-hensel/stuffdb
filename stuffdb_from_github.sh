@@ -6,7 +6,7 @@ echo "Run .... with python in a conda environment"
 
 # Activate conda environment
 source /home/russ/anaconda3/etc/profile.d/conda.sh
-conda activate py_12_misc
+conda activate py_13
 
 # Navigate to the directory with main.py
 #cd /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb

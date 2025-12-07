@@ -13,25 +13,31 @@ import logging
 import re
 import time
 
-# ---- local imports
+# ----   imports
 import string_util
-from PyQt5 import QtGui
-from PyQt5.QtCore import (QDate,
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+from PyQt import QtGui
+from PyQt.QtCore import (QDate,
                           QModelIndex,
                           QSize,
                           QSortFilterProxyModel,
                           Qt,
                           QTimer)
 # sql
-from PyQt5.QtSql import (QSqlDatabase,
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-from PyQt5.QtWidgets import (QAbstractItemView,
-                             QAction,
+
+# from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (QAbstractItemView,
+
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -63,6 +69,7 @@ from PyQt5.QtWidgets import (QAbstractItemView,
                              QTextEdit,
                              QVBoxLayout,
                              QWidget)
+
 
 import qsql_utils
 
@@ -188,7 +195,15 @@ class KeyWords(   ):
 
         # this may be a repeat that we want to elimiante
         # Execute the DELETE statement
-        if not query.exec_():
+
+        if qt_version == 6:  # 5 6 compat
+            ret  =  query.exec()
+        else:
+            ret  =  query.exec_()
+
+
+
+        if not ret:
             error = query.lastError()
             msg   = (f"Error deleting id {table_id}: {error.text()}")
             logging.error( msg )
@@ -247,7 +262,13 @@ class KeyWords(   ):
             query.bindValue( ":table_id", table_id )
 
             # Execute the DELETE statement
-            if not query.exec_():
+
+            if qt_version == 6:  # 5 6 compat
+                ret  =  query.exec()
+            else:
+                ret  =  query.exec_()
+
+            if not ret:
                 error = query.lastError()
                 msg   = (f"Error deleting word {word}: {error.text()}")
                 logging.error( msg )
@@ -282,7 +303,13 @@ class KeyWords(   ):
             query.bindValue( ":id",        table_id )
             query.bindValue( ":key_word",  i_key_word )
 
-            if not query.exec_():
+
+            if qt_version == 6:  # 5 6 compat
+                ret  =  query.exec()
+            else:
+                ret  =  query.exec_()
+
+            if not ret:
                 msg   = ( f"Error inserting record {i_key_word}: {query.lastError().text()}" )
                 logging.error( msg )
                 1/0

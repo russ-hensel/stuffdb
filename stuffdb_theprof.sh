@@ -12,7 +12,7 @@ conda activate py_13
 cd /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb
 
 # Run the Python program
-python main.py  mode_helpdb_on_theprof
+python main.py  mode_theprof
 
 # Deactivate the conda environment
 conda deactivate

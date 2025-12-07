@@ -9,7 +9,7 @@ Created on Mon Jul  8 16:41:23 2024
 
 my reference list of qt imports comes from import_qt.py
 
-PyQt5.QtSql.QSqlError
+PyQt.QtSql.QSqlError
 
 qsql_db_access.QsqlDbAcess()
 
@@ -28,11 +28,23 @@ import sqlite3
 
 import time
 
-from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
-from PyQt5.QtSql import QSqlDatabase, QSqlError, QSqlQuery, QSqlTableModel
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
+
+
+
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+
+
+
+from PyQt.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+from PyQt.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
+from PyQt.QtSql import QSqlDatabase, QSqlError, QSqlQuery, QSqlTableModel
+
+#from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,

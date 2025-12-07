@@ -32,18 +32,7 @@ import time
 from pathlib import Path
 
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
-from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum, QSizePolicy_Fixed, QSizePolicy_Preferred
-from qt_compat import OnManualSubmit, OnRowChange, OnFieldChange
-from qt_compat import SelectRows, SelectItems
-from qt_compat import NoEditTriggers
-from qt_compat import Horizontal, Vertical
-from qt_compat import QFileDialog, ExistingFiles, ExistingFile, AnyFile, Directory
-
-from PyQt.QtCore import (QAbstractTableModel,
+from PyQt5.QtCore import (QAbstractTableModel,
                           QDate,
                           QModelIndex,
                           QRectF,
@@ -51,14 +40,12 @@ from PyQt.QtCore import (QAbstractTableModel,
                           Qt,
                           QTimer,
                           pyqtSlot)
-from PyQt.QtGui import (QIntValidator,
+from PyQt5.QtGui import (QIntValidator,
                          QPainter,
                          QPixmap,
                          QStandardItem,
                          QStandardItemModel)
-
-
-from PyQt.QtSql import (QSqlDatabase,
+from PyQt5.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRecord,
@@ -66,11 +53,8 @@ from PyQt.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-    # from qt_compat import QFileDialog, ExistingFiles, ExistingFile, AnyFile, Directory
-    
-#from PyQt.QtGui import ( QAction, QActionGroup, )
-
-from PyQt.QtWidgets import (
+from PyQt5.QtWidgets import (QAction,
+                             QActionGroup,
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -763,7 +747,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         """
         width    = 200
         for ix in range( layout.col_max ):  # layout.col_max
-            widget   = QSpacerItem( width, 10, QSizePolicy_Expanding, QSizePolicy_Minimum )
+            widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
             layout.addItem( widget, 0, ix  )  # row column
 
 
@@ -1400,7 +1384,7 @@ class PictureBrowseSubTab( QWidget ):
         # table_view.setModel( self.model )
         table_view.setModel( proxy_model )  # table_model for no sorting
 
-        table_view.setSelectionBehavior( SelectRows )
+        table_view.setSelectionBehavior(QTableView.SelectRows)
 
         table_view.setSortingEnabled( True )
             # Enables sorting by clicking column headers may need QSort....
@@ -1453,7 +1437,7 @@ class PictureBrowseSubTab( QWidget ):
 
         file_dialog     = QFileDialog(self, "Select Files")
 
-        file_dialog.setFileMode( ExistingFiles ) #multiple file selection
+        file_dialog.setFileMode(QFileDialog.ExistingFiles) #multiple file selection
         # Define name filters (case insensitive)
         name_filters = [
             "Common Graphics (*.jpg *.jpeg *.png *.gif *.bmp *.tiff *.tif *.webp *.svg *.ico *.JPG *.JPEG *.PNG *.GIF *.BMP *.TIFF *.TIF *.WEBP *.SVG *.ICO)",
@@ -1461,17 +1445,12 @@ class PictureBrowseSubTab( QWidget ):
             "JPEG Images (*.jpg *.jpeg *.JPG *.JPEG)",
             "All Files (*)"
              ]
-        file_dialog.setNameFilters( name_filters )
+        file_dialog.setNameFilter( name_filters )
         file_dialog.setDirectory( initial_dir )
         # file_dialog.setWindowTitle(  title      )
         # #file_dialog.setNameFilter(   file_types  )
 
-        if qt_version == 6:
-            dialog_exec  = file_dialog.exec
-        else:
-            dialog_exec  = file_dialog.exec_
-
-        if not dialog_exec():
+        if not file_dialog.exec_():
             return
 
         files = file_dialog.selectedFiles()
@@ -1657,9 +1636,6 @@ class PictureBrowseSubTab( QWidget ):
 
         a bit of a mess some check made twice
 
-        args
-            index  sort of look like it is not used -- seem to key off selected rows
-
         """
         msg       = ( "\n move_to_pic")
         logging.debug( msg )
@@ -1697,8 +1673,8 @@ class PictureBrowseSubTab( QWidget ):
 
             # Iterate over the selected rows
             for i_index in selected_indexes:
-                row         = i_index.row()
-                msg         = ( f"move_to_picSelected row: {row = }" )
+                row = i_index.row()
+                msg       = ( f"move_to_picSelected row: {row = }" )
                 logging.debug( msg )
 
                 break   # only get one file
@@ -1765,7 +1741,7 @@ class PictureBrowseSubTab( QWidget ):
         parent_window.file_field.set_preped_data( str( file_name_path_name ), is_changed = True )
 
         if not file_name_path_src.exists():
-            msg    = "that odd {file_name_path_src} does not exist!!!!!!!!!!!!!!!!"
+            msg    = "that odd {} does not exist!!!!!!!!!!!!!!!!"
             logging.error( msg )
             return
 
@@ -2046,7 +2022,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
 
         view_other            = QTableView()
         self.view_other       = view_other
-        view_other.setSelectionBehavior(  SelectRows )
+        view_other.setSelectionBehavior( QTableView.SelectRows )
         view_other.doubleClicked.connect( self.on_row_other_dclicked )
         view_other.setModel( model_other)
 
@@ -2066,7 +2042,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         self.model_history      = model_history
         view_history            = QTableView()
         self.view_history       = view_history
-        view_history.setSelectionBehavior(  SelectRows )
+        view_history.setSelectionBehavior( QTableView.SelectRows )
         #select_view.clicked.connect( self.on_row_clicked )
         view_history.setModel(  model_history)
 
@@ -2083,7 +2059,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         model_display.add_indexer( ( 1,2 ) )   # what is the right tuple
         view_display            = QTableView()
         self.view_display       = view_display
-        view_display.setSelectionBehavior( SelectRows )
+        view_display.setSelectionBehavior( QTableView.SelectRows )
 
 
         #select_view.clicked.connect( self.on_row_clicked )
@@ -2112,7 +2088,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         # ---- self.list_view
         view                    = QTableView()
         self.list_view          = view
-        view.setSelectionBehavior( SelectRows )
+        view.setSelectionBehavior( QTableView.SelectRows )
         self.view               = view
         view.setModel( self.model )
         right_layout.addWidget( view )
@@ -2164,7 +2140,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         self.model_ituple   = ( 3, 5 ) # to index table, table_id check with table
         model_indexer       = table_model.ModelIndexer( model, self.model_ituple  ) # to index table, table_id )
         self.model_indexer  = model_indexer
-        model.setEditStrategy(  OnManualSubmit )
+        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
         # model_write.setEditStrategy( QSqlTableModel.OnFieldChange )
         # model.setFilter( "stuff_id = 28 " )
         # print( "!!fix stuff_id = 28 ")
@@ -2510,7 +2486,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
 
                 # Optionally, retrieve data from each selected row
                 row_data = [self.model.data(self.model.index(row, col),
-                            DisplayRole) for col in range(self.model.columnCount())]
+                            Qt.DisplayRole) for col in range(self.model.columnCount())]
 
                 msg       = (f"get_selected_row Row data: {row_data}")
                 logging.debug( msg )
@@ -2641,13 +2617,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         else:
             query.bindValue(":a_id", a_id )
 
-            if qt_version == 6:
-                query_exec  = query.exec
-            else:
-                query_exec  = query.exec_
-
-
-            if not query_exec():
+            if not query.exec_():
                 msg       = (f"Execution failed: {query.lastError().text()}")
                 logging.error( msg )
 
@@ -2695,14 +2665,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         else:
             query.bindValue(":a_id", a_id )
 
-            if qt_version == 6:
-                query_exec  = query.exec
-            else:
-                query_exec  = query.exec_
-
-
-
-            if not query_exec():
+            if not query.exec_():
                 msg     = (f"Execution failed: {query.lastError().text()}")
                 logging.debug( msg )
             else:
@@ -2743,13 +2706,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         else:
             query.bindValue(":stuff_id", stuff_id )
 
-
-            if qt_version == 6:
-                result  = query.exec( )  # sql already in the query
-            else:
-                result  = query.exec_( )  # sql already in the query
-
-            if not result:
+            if not query.exec_():
                 print( f"Execution failed: {query.lastError().text()}")
 
             else:
@@ -3009,7 +2966,7 @@ class AlbumSqlTableModel( QSqlRelationalTableModel ):
         return flags
 
     # ----------------------------
-    def data(self, index: QModelIndex, role=DisplayRole):
+    def data(self, index: QModelIndex, role=Qt.DisplayRole):
         """
         for special formatting
         and alignment
@@ -3019,7 +2976,7 @@ class AlbumSqlTableModel( QSqlRelationalTableModel ):
         if False:
             pass
         # Check role first
-        elif role == DisplayRole:
+        elif role == Qt.DisplayRole:
             pass
             # if col == 4:  # match to code in veiw
             #     value = super().data(index, Qt.EditRole)
@@ -3028,24 +2985,24 @@ class AlbumSqlTableModel( QSqlRelationalTableModel ):
             #     return value  # Return raw value if None
 
             if ix_col == 5:  # match to code in veiw  ix_col
-                value = super().data(index, EditRole)
+                value = super().data(index, Qt.EditRole)
                 if value is not None and value != "":   # or True may need empty string also
                     return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
                 return value  # Return raw value if None
 
             if ix_col == 6:  # match to code in veiw  ix_col
-                value = super().data(index, EditRole)
+                value = super().data(index, Qt.EditRole)
                 if value:         # new for  is not None:
                     return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
                 return value  # Return raw value if None
 
-        elif role == EditRole:
+        elif role == Qt.EditRole:
             # Return raw value for editing/database sync
             pass
             # if col == 2:
             #     return super().data(index, Qt.EditRole)
 
-        elif role == TextAlignmentRole:
+        elif role == Qt.TextAlignmentRole:
             # Handle alignment for all columns
             pass
             # if col == 0:  # id
@@ -3156,7 +3113,7 @@ class PictureAlbumtSubTab(  QWidget  ):
 
         model.setTable( self.table_name )
 
-        model.setEditStrategy(  OnManualSubmit )
+        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
         # model_write.setEditStrategy( QSqlTableModel.OnFieldChange )
 
         ix_foreign_key        = 0         # key to   position in table
@@ -3197,15 +3154,7 @@ class PictureAlbumtSubTab(  QWidget  ):
             logging.log( LOG_LEVEL,  debug_msg, )
 
             query = QSqlQuery(self.db)
-
-            if qt_version == 6:
-                query_exec  = query.exec  # sql already in the query
-            else:
-                query_exec  = query.exec_  # sql already in the query
-
-
-
-            query_exec("SELECT * FROM photo_in_show WHERE photo_id = 1023")
+            query.exec_("SELECT * FROM photo_in_show WHERE photo_id = 1023")
             while query.next():
                 debug_msg =  ( f'{query.value("photo_show_id")} ' )  # Check if rows exist
                 logging.log( LOG_LEVEL,  debug_msg, )
@@ -3263,29 +3212,29 @@ CREATE TABLE  photoshow    (
         view    = self.view
 
         # make non editable
-        view.setEditTriggers( NoEditTriggers )
+        view.setEditTriggers(QTableView.NoEditTriggers)
 
         return
 
         ix_col  = 0
-        model.setHeaderData( ix_col, Horizontal , "ID")
+        model.setHeaderData( ix_col, Qt.Horizontal , "ID")
         view.setColumnWidth( ix_col, 50  )
 
         ix_col  = 1
-        model.setHeaderData(  ix_col, Horizontal , "Old ID")
+        model.setHeaderData(  ix_col, Qt.Horizontal , "Old ID")
         view.setColumnWidth(  ix_col, 50  )
         view.setColumnHidden( ix_col, True )
 
         ix_col  = 2
-        model.setHeaderData( ix_col, Horizontal , "Name")
+        model.setHeaderData( ix_col, Qt.Horizontal , "Name")
         view.setColumnWidth( ix_col, 250  )
 
         ix_col  = 3
-        model.setHeaderData( ix_col, Horizontal , "Comment")
+        model.setHeaderData( ix_col, Qt.Horizontal , "Comment")
         view.setColumnWidth( ix_col, 250  )
 
         ix_col  = 4
-        model.setHeaderData( ix_col, Horizontal , "Add KW")
+        model.setHeaderData( ix_col, Qt.Horizontal , "Add KW")
         view.setColumnWidth( ix_col, 250  )
 
         ix_col  = 5   # start date   get stuff from data dict ?
@@ -3296,12 +3245,12 @@ CREATE TABLE  photoshow    (
 
         ix_col  = 6   # start end create_date ?
         col_head    = f"{ix_col} End"
-        model.setHeaderData( ix_col, Horizontal , col_head )
+        model.setHeaderData( ix_col, Qt.Horizontal , col_head )
         view.setColumnWidth( ix_col, 80  )  # make a date constant
 
         ix_col  = 7   # start end create_date ?
         col_head    = f"{ix_col} type"
-        model.setHeaderData( ix_col, Horizontal , col_head )
+        model.setHeaderData( ix_col, Qt.Horizontal , col_head )
         view.setColumnWidth( ix_col, 80  )
 
         # ix_col  = 2

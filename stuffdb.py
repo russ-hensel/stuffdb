@@ -14,7 +14,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver .080: 2025 10 25.01"
+__version__   = "Ver .084: 2025-12-04.01"
 
 # ---- imports
 import datetime
@@ -26,11 +26,12 @@ import sys
 import time
 import traceback
 
-from PyQt5.QtWidgets import (
-                             QMessageBox,
-                                 )
-from PyQt5 import QtWidgets, uic
-from PyQt5.QtCore import (PYQT_VERSION_STR,
+from qt_compat      import QApplication, QAction, QActionGroup, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+
+from PyQt import QtWidgets, uic
+from PyQt.QtCore import (PYQT_VERSION_STR,
                           QT_VERSION_STR,
                           QFile,
                           QFileInfo,
@@ -38,21 +39,23 @@ from PyQt5.QtCore import (PYQT_VERSION_STR,
                           Qt,
                           QTimer,
                           QVariant)
-from PyQt5.QtCore import pyqtSignal as Signal
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import (QIcon,
+from PyQt.QtCore import pyqtSignal as Signal
+from PyQt.QtCore import pyqtSlot
+from PyQt.QtGui import (QIcon,
                          QImage,
                          QImageReader,
                          QImageWriter,
                          QKeySequence,
                          QPainter,
                          QPixmap)
-from PyQt5.QtPrintSupport import QPrintDialog, QPrinter
+from PyQt.QtPrintSupport import QPrintDialog, QPrinter
 
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
+#from PyQt.QtGui import ( QAction, QActionGroup, )
+
+
+from PyQt.QtWidgets import (
                              QApplication,
                              QDockWidget,
                              QFileDialog,
@@ -209,7 +212,8 @@ class App( ):
         a_wat_inspector  = wat_inspector.WatInspector( self.q_app )
 
         QTimer.singleShot(0, self.parameters.startup_function  )
-        self.q_app.exec_()   # perhaps move to run method
+        #self.q_app.exec_()   # perhaps move to run method
+        exec_app()
 
     # -------------------------
     def assign_icon( self,  ):

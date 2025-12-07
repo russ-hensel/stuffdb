@@ -12,12 +12,22 @@
 import adjust_path
 # ---- begin pyqt from import_qt.py
 
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
 
+
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+
+
+
+from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+
+#from PyQt.QtGui import ( QAction, QActionGroup, )
 # # ----QtWidgets big
-from PyQt5.QtWidgets import (
-    QAction,
+from PyQt.QtWidgets import (
+
     QMenu,
     QApplication,
     QMainWindow,

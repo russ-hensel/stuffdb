@@ -20,7 +20,17 @@ check --- posibbly fix?
 
 # ---- imports
 from pathlib import Path
-from PyQt5.QtWidgets import (
+
+
+from qt_compat import (
+    QApplication, QMainWindow, QToolBar, QAction, exec_app,
+    DisplayRole, TextAlignmentRole, AlignCenter, WindowMaximized,
+    NoInsert, OnManualSubmit
+)
+
+
+
+from PyQt.QtWidgets import (
                              QInputDialog,
                              QLabel,
                              QLineEdit,

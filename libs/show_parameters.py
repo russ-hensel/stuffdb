@@ -21,8 +21,17 @@ if __name__ == "__main__":
 #import sys
 
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtSql import (QSqlDatabase,
+
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+from qt_compat import MoveStart, KeepAnchor
+
+
+
+from PyQt.QtCore import Qt
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlDriver,
                          QSqlQuery,
                          QSqlRecord,
@@ -30,9 +39,9 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-from PyQt5.QtGui import QFont
+from PyQt.QtGui import QFont
 
-from PyQt5.QtWidgets import (QApplication,
+from PyQt.QtWidgets import (QApplication,
                              QComboBox,
                              QDialog,
                              QFormLayout,
@@ -97,21 +106,37 @@ class DisplayParameters( QDialog ):
 
         text_edit           = QTextEdit()
         # layout.addWidget(text_edit, 4, 0, 1, 3)  # Row 4, Column 0, RowSpan 1, ColumnSpan 3
-        self.text_edit  = text_edit
+        self.text_edit      = text_edit
         font = QFont( "Courier New" )  # Set a monospaced font "Courier New"
         font.setPointSize( 10 )
         text_edit.setFont(font)
 
         layout.addWidget( text_edit )
 
-        parm_text      = str( parameters.PARAMETERS )
+        # parm_text           = str( parameters.PARAMETERS )
+        parm_text           =  str( AppGlobal.parameters )
 
         cursor = text_edit.textCursor()
         cursor.insertText( parm_text )
 
-        cursor.movePosition(cursor.Start)
+        # cursor.movePosition(cursor.Start)
+        cursor.movePosition( MoveStart, KeepAnchor )  # 5 6 compat
         text_edit.setTextCursor(cursor)
         text_edit.ensureCursorVisible()
+
+        # cursor = text_edit.textCursor()
+        # cursor.insertText( parm_text )
+
+        # --- ADD/REPLACE THESE LINES ---
+        cursor.clearSelection()                  # removes the selection
+       # cursor.movePosition(cursor.Start)        # move cursor to the very beginning
+        text_edit.setTextCursor(cursor)          # apply the new cursor (no selection)
+        text_edit.setReadOnly(True)               # write-protect the widget
+        # --------------------------------
+
+
+
+
 
         #  ---- buttons
         button_layout           = layout

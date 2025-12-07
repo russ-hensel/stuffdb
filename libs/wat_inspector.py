@@ -69,15 +69,22 @@ FIF       = info_about.INFO_ABOUT.find_info_for
 
 
 import wat
-from PyQt5 import QtGui
-from PyQt5.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
-from PyQt5.QtGui import QTextCursor, QTextDocument
+
+from qt_compat import QApplication, QAction, QActionGroup, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+
+from PyQt import QtGui
+from PyQt.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
+from PyQt.QtGui import QTextCursor, QTextDocument
+
 # sql
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
-# widgets biger
-# widgets -- small
-# layouts
-from PyQt5.QtWidgets import (QAction,
+from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+
+
+# from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,

@@ -23,24 +23,38 @@ import os
 from pathlib import Path
 
 
-from PyQt5.QtCore   import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtCore   import Qt, QDateTime
-from PyQt5.QtWidgets import QStyledItemDelegate
-from PyQt5.QtGui import (QFont,
+
+
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+
+
+
+
+
+
+from PyQt.QtCore   import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+from PyQt.QtCore   import Qt, QDateTime
+from PyQt.QtWidgets import QStyledItemDelegate
+from PyQt.QtGui import (QFont,
                          QIntValidator,
                          QStandardItem,
                          QStandardItemModel,
                          QTextCursor)
 
-from PyQt5.QtSql import (QSqlDatabase,
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
+
+from PyQt.QtGui import ( QAction, QActionGroup, )   # role
+
+from PyQt.QtWidgets import (
                              QFileDialog,
                              QApplication,
                              QButtonGroup,
@@ -883,8 +897,8 @@ class PictureUtilTab( QWidget ):
                  for the program use python with sqllite and at5
                  use bind variables in the code avoid ? syntax
                     """
-            # from PyQt5.QtSql import QSqlDatabase, QSqlQuery
-            # from PyQt5.QtCore import QVariant
+            # from PyQt.QtSql import QSqlDatabase, QSqlQuery
+            # from PyQt.QtCore import QVariant
 
 
             # Create query with named bind variable

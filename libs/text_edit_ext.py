@@ -46,14 +46,18 @@ import os
 from collections import defaultdict
 
 # ---- Qt
-from PyQt5 import QtCore
-from PyQt5.QtGui import QIntValidator, QStandardItem, QStandardItemModel, QTextCursor
-from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import  QTextDocument
 
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
+from PyQt import QtCore
+from PyQt.QtGui import QIntValidator, QStandardItem, QStandardItemModel, QTextCursor
+from PyQt.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+from PyQt.QtGui import  QTextDocument
+
+#from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -125,6 +129,7 @@ REPLACE_LIST    = [ ( "*>url ",   ">>url " ),   # note deliberate space
 
 class TextEditExt( ):
     """
+    is this obsolete seems to be overlap with custom widgets extenions see mixin
     About this class.....
     self.text_edit_ext_obj         = text_edit_ext.TextEditExt( AppGlobal.parameters, entry_widget)
     """

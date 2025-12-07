@@ -58,15 +58,24 @@ sql
 
 # ---- imports qt
 
-from PyQt5 import QtGui
-from PyQt5.QtCore import (QAbstractTableModel, QDate, QDateTime, QModelIndex,
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+
+
+from PyQt import QtGui
+from PyQt.QtCore import (QAbstractTableModel, QDate, QDateTime, QModelIndex,
                           QSize, Qt, QTimer, pyqtSlot)
-from PyQt5.QtGui import QTextCursor, QTextDocument
-from PyQt5.QtSql import (QSqlDatabase, QSqlError, QSqlField, QSqlQuery,
+from PyQt.QtGui import QTextCursor, QTextDocument
+from PyQt.QtSql import (QSqlDatabase, QSqlError, QSqlField, QSqlQuery,
                          QSqlQueryModel, QSqlRecord, QSqlRelation,
                          QSqlRelationalDelegate, QSqlRelationalTableModel,
                          QSqlTableModel)
-from PyQt5.QtWidgets import (QAction, QApplication, QBoxLayout, QButtonGroup,
+
+
+#from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (  QApplication, QBoxLayout, QButtonGroup,
                              QCheckBox, QComboBox, QDateEdit, QGridLayout,
                              QGroupBox, QHBoxLayout, QLabel, QLineEdit,
                              QListWidget, QListWidgetItem, QMainWindow, QMenu,
@@ -104,7 +113,7 @@ NEW_LINE        = info_about.NEW_LINE
 if DEBUGGING:
     pass
 
-print( "lots of rest should be redirected to info_about")
+#print( "lots of rest should be redirected to info_about")
 # ---------------------
 def to_columns( item_list, format_list = ( "{: <30}", "{:<30}" ), indent = "    "  ):
     """
@@ -348,7 +357,7 @@ def short_str( a_obj, max_len = MAX_STR_LEN ):
 #         Purpose:
 #             list out some __dir__() info as a string
 
-#             <class 'PyQt5.QtSql.QSqlError.ErrorType'>
+#             <class 'PyQt.QtSql.QSqlError.ErrorType'>
 #             databaseText
 #             a_atter = <built-in method databaseText of QSqlError object at 0x7f84245a0350>
 #             driverText

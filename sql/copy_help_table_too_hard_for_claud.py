@@ -104,20 +104,20 @@ class TableCopier:
             # Clear the query results to free resources
             query.finish()
 
-    def copy_data_claud(self, ref_table_name, src_table_name, where_clause=""):
+
+
+    def copy_data_too_fancy_too_bad(self, ref_table_name, src_table_name, where_clause=""):
         """
         Copies data safely with ZERO duplicates and NO parameter mismatch.
         """
         db_src = self.db_src
         db_dst = self.db_dest
 
-        dest_table_name  = src_table_name # but in db_dest
-
         if not db_src.isOpen() or not db_dst.isOpen():
             return "Error: Database not open."
 
-        rows_copied         = 0
-        batch_commit_size   = 1000
+        rows_copied = 0
+        batch_commit_size = 1000
 
         try:
             COLUMNS = get_columns(src_table_name)  # Must return exact order as in table
@@ -174,7 +174,7 @@ class TableCopier:
                     db_dst.rollback()
                     raise Exception(f"INSERT failed for ID {id_val}: {query_dst.lastError().text()}")
 
-                query_dst.finish()  # Prevents reuse bugs query_dst.finish()
+                query_dst.finish()  # Prevents reuse bugs
                 rows_copied += 1
                 print(f" → COPIED ({rows_copied})")
 
@@ -319,7 +319,7 @@ class TableCopier:
             return error_msg
 
 
-    def copy_data(self,  ref_table_name, src_table_name, where_clause  ):
+    def copy_data_buggy(self,  ref_table_name, src_table_name, where_clause  ):
         """
         Copies data from source to destination using QSqlQuery,
         named bind variables, and a WHERE clause.
@@ -351,7 +351,7 @@ class TableCopier:
             COLUMNS =   get_columns( src_table_name )
 
             for id_val in self.id_generator(  ref_table_name, where_clause , batch_size=500 ):
-                print(f"copy_data user ID: {id_val}")
+                print(f"Processing user ID: {id_val}")
 
                 # Create the named bind variable placeholders for the INSERT statement
                 BIND_VARS = [f":{col}" for col in COLUMNS]
@@ -390,17 +390,13 @@ class TableCopier:
                         value_list.append( value )
 
                         # Bind the value using the named placeholder, e.g., ":id"
-                        #print( f"binding to {col_name} {value = }")
                         query_dst.bindValue(f":{col_name}", value)
 
-                    if not query_dst.exec():
-                        db_dst.rollback() # Rollback on error
-                        msg     = (f"Destination INSERT failed (Row {rows_copied + 1}): {query_dst.lastError().text()}")
-                        print( msg )
-                        raise Exception(msg)
-                    query_dst.finish()
-
-                    print( f"{value_list = }" )
+                        if not query_dst.exec():
+                            db_dst.rollback() # Rollback on error
+                            raise Exception(f"Destination INSERT failed (Row {rows_copied + 1}): {query_dst.lastError().text()}")
+                        query_dst.finish()
+                    print( value_list )
                     rows_copied += 1
 
 
@@ -417,7 +413,6 @@ class TableCopier:
                 f"Destination table 'help_info' now has {total_rows} total rows."
             )
             print( msg )
-
         except Exception as e:
             return f"Operation FAILED: {e}"
 
@@ -463,11 +458,6 @@ def do_copyxxx(table_name ):
                          columns )
 
 
-# ---- where_clause_list
-where_clause_list       = [ "system = 'Linux' ",
-                                "system = 'StuffDB' ",
-                                "system = 'Python' ",   ]
-
 
 def test_copy_text():
     """
@@ -482,14 +472,14 @@ def test_copy_text():
     dest_db_file_name       = a_parms_temp.db_file_name
     ref_table_name          = "help_info"
     src_table_name          = "help_text"
-    a_table_copier          = TableCopier( src_db_name= src_db_file_name, dest_db_name=dest_db_file_name )
+    where_clause            = "system = 'Linux' "
 
 
-    for i_where_clause in where_clause_list:
-        a_table_copier.copy_data( ref_table_name = ref_table_name, src_table_name = src_table_name, where_clause = i_where_clause )
+    a_table_copier      = TableCopier( src_db_name= src_db_file_name, dest_db_name=dest_db_file_name )
+    a_table_copier.copy_data( ref_table_name = ref_table_name, src_table_name = src_table_name, where_clause = where_clause )
 
 
-def test_copy_info_update_for_list():
+def test_copy_info():
     """
     table needs to exist
         /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/sql/create_help_db.py
@@ -502,16 +492,13 @@ def test_copy_info_update_for_list():
     dest_db_file_name       = a_parms_temp.db_file_name
     ref_table_name          = "help_info"
     src_table_name          = "help_info"
-
+    where_clause            = "system = 'Linux' "
 
 
     a_table_copier      = TableCopier( src_db_name= src_db_file_name, dest_db_name=dest_db_file_name )
-
-    # where_clause            = "system = 'Linux' "
-    # a_table_copier.copy_data( ref_table_name = ref_table_name, src_table_name = src_table_name, where_clause = where_clause )
-
-    where_clause            = "system = 'Python' "
     a_table_copier.copy_data( ref_table_name = ref_table_name, src_table_name = src_table_name, where_clause = where_clause )
+
+
 
 def test_gen():
     """just test the generator function  """
@@ -544,8 +531,8 @@ if __name__ == "__main__":
     # table_name     = "help_info"
     #test_gen()
 
-    #test_copy_info()
-    test_copy_text()
+    test_copy_info()
+    #test_copy_text()
 # --------------------
 
 

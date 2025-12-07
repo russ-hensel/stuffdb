@@ -63,10 +63,11 @@ class Parameters( ):
 
         # ----mode_mh_2025_hd
         # self.mode_mh_2025_hd()
-        #self.mode_russ_2025_hd()
+        self.mode_theprof()
+        self.mode_king_homer()
         #self.mode_russ_2025_ram()
-        self.mode_build_new_ram()
-
+        #self.mode_build_new_ram()
+        #self.mode_helpdb_from_scratch()
         # self.mode_russ_2025_ram()
         #self.mode_github()
 
@@ -86,7 +87,7 @@ class Parameters( ):
     # -------
     def mode_build_new_ram( self ):
         """
-
+        /tmp/ramdisk/helpdb_from_scratch.db
         """
         self.mode               = "mode_build_new_ram"
 
@@ -99,6 +100,25 @@ class Parameters( ):
        # self.icon               =  "./misc/db_red_on_yellow.png"
         self.icon               =  "./misc/db_green_on_black.png"
        # self.icon               =  "./misc/db_red_on_black.png"
+
+    # -------
+    def mode_helpdb_from_scratch( self ):
+        """
+        /tmp/ramdisk/helpdb_from_scratch.db
+        """
+        self.mode               = "mode_helpdb_from_scratch"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+        self.db_file_name       = "/tmp/ramdisk/helpdb_from_scratch.db"
+
+        self.logging_level      = logging.DEBUG   # ERROR
+
+       # self.icon               =  "./misc/db_red_on_yellow.png"
+       # self.icon               =  "./misc/db_green_on_black.png"
+       # self.icon               =  "./misc/db_red_on_black.png"
+
+
 
     # -------
     def mode_russ_2025_ram( self ):
@@ -118,11 +138,18 @@ class Parameters( ):
        # self.icon               =  "./misc/db_red_on_black.png"
 
     # -------
-    def mode_russ_2025_hd( self ):
+    def mode_theprof( self ):
         """
         moved code to running+on_tweaks
         """
-        self.mode               = "mode_russ_2025_hd"
+        self.mode               = "mode_theprof"
+
+    # -------
+    def mode_king_homer( self ):
+        """
+        moved code to running+on_tweaks
+        """
+        self.mode               = "mode_king_homer"
 
 
     # -------
@@ -146,14 +173,13 @@ class Parameters( ):
         test if will run in github, will probably be a lot like new user
         """
         self.mode               = "mode_github"
-        self.mode_russ_2025_hd()
-        self.mode               += "-mode_github"
+
         # # ---- type and location of the db file
         # self.db_type            = "QSQLITE"
         #     # the type of database, so far we only support SQLite
 
         # self.db_file_name       = "./data/python_ex.db"
-
+        self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/theprof/stuffdb.db"
         # self.logging_level      = logging.DEBUG   # ERROR
 
         self.icon               =  "./misc/db_red_on_black.png"
@@ -180,9 +206,18 @@ class Parameters( ):
             self.ex_editor          =  r"D:\apps\Notepad++\notepad++.exe"
             self.db_file_name       =  "smithers_db.db"
 
+        # ---- king_homer_db  ThinkCentreThinkCentre
+        elif computer_id == "kinghomer":
+            self.ex_editor          =  r"xed"
+            self.db_file_name       =  "./data/king_homer/stuffdb.db"
+
+            self.picture_db_root    = "/mnt/8ball1/first6_root/PhotoDB/"
+            self.picture_db_sub     = "/25"
+
+
         # ---- bulldog
         elif computer_id == "bulldog":
-            self.ex_editor          =  r"gedit"
+            self.ex_editor          =  "xed"
             self.db_file_name       =  "bulldog_db.db"
 
         # ----  ["millhouse", "millhouse-mint" ]
@@ -223,12 +258,12 @@ class Parameters( ):
 
             pass
 
-        # ---- theprof   == russ-thinkpad-p72
+        # ---- txxxxx2
         elif computer_id == "russ-xxxxxxxxxxxxxxxxxx-p72":
             self.use_add_where      = True    # on criteria have add_where field
             self.use_geo_photo      = True   # True use the photo geo parts of app
             self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
-            self.db_file_name       =  "the_prof_db.db"
+            self.db_file_name       =  "./data/theprof/stuffdb.db"
 
 
         # ---- fattony
@@ -264,7 +299,7 @@ class Parameters( ):
 
         # ---- "russ-thinkpad-p72": === theprof mint
         elif computer_id == "russ-thinkpad-p72":
-            # ---- appearance -- including sizes
+            # ---- ....appearance -- including sizes
 
             # control initial size and position with:
             self.qt_width           = 1500
@@ -291,8 +326,9 @@ class Parameters( ):
 
             # ---- type and location of the db file
             self.db_type            = "QSQLITE"
-            self.db_file_name       = "./data/russ2025/russ2025.db"
-            self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/stuffdb.db"
+            # self.db_file_name       = "./data/russ2025/russ2025.db"
+            # self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/stuffdb.db"
+            self.db_file_name       =  "./data/theprof/stuffdb.db"
 
             self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
             ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
@@ -458,7 +494,7 @@ class Parameters( ):
         # think for qt4_by_example not stuff
         self.db_file_name      = ":memory:"
         self.db_file_name      = "sample.db"   #  = "sample.db"   =  ":memory:"
-        self.db_file_name      = ":memory:"     #  = "sample.db"   =  ":memory:"
+        self.db_file_name      = "default.db"     #  = "sample.db"   =  ":memory:"
         #self.db_file_name        = "/tmp/ramdisk/qt_sql.db"
 
         # this is the name of a program: its executable with path info.
@@ -539,7 +575,7 @@ class Parameters( ):
         template_text          = (
         """
         >>Bash ------------ bash_template ------------
-        ls *.py
+        ls -lah    /usr/bin/*.*
         cd ~
         ls *.py
 
@@ -597,6 +633,21 @@ class Parameters( ):
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
+        # ---- .... shell template
+        template_name          = "Note Header"
+        template_text          = (
+        """
+        >>Search
+        >>Search
+
+        >>Find_dn
+        >>Find_dn
+
+
+        """  )
+        self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
+        a_dict     = self.text_snippets
+
 
         # ---- .... shell template
         template_name          = "Shell"
@@ -614,8 +665,10 @@ class Parameters( ):
 
         # ---- systems for helpdb ??alpha  to sort make all quotes the same
         self.systems_list      =  [    '',
+                            'Arduino',
                             'Bash',
                             'CAD/Print',
+                            'CompHard',
                             'Delete',
                             'Electronics',
                             'Garden',
@@ -663,7 +716,6 @@ class Parameters( ):
             return True
 
         return False
-
 
     # -------
     def __init__( self, ):

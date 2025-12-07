@@ -18,13 +18,24 @@ import logging
 import time
 from functools import partial
 
-from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-# ---- Qt
-from PyQt5.QtGui import QFont, QIntValidator, QStandardItem, QStandardItemModel
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
+from qt_compat import CustomContextMenu # and look at qt_compat there may be more
 
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
+
+
+from PyQt.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+# ---- Qt
+from PyQt.QtGui import QFont, QIntValidator, QStandardItem, QStandardItemModel
+
+from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+
+#from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -754,7 +765,8 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
         """
         for ix in range( self.max_col ):
-            widget   = QSpacerItem( 50, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
+            #widget   = QSpacerItem( 50, 10, QSizePolicy.Expanding, QSizePolicy.Minimum) from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
+            widget   = QSpacerItem( 50, 10,  QSizePolicy_Expanding, QSizePolicy_Minimum) # 5 6 compat
             layout.addItem( widget, 0, ix  )  # row column
 
         # ---- code_gen: TableDict.to_build_form 2025_02_01 for help_info -- begin table entries -----------------------

@@ -4,7 +4,7 @@
 main window -- container for the mdi
 
 """
-
+# ---- tof
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
@@ -30,12 +30,28 @@ import show_parameters
 from app_global import AppGlobal
 
 
-from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+from qt_compat import Qt, WindowMaximized
+
+
+
+
+
+
+
+
+from PyQt.QtCore import QCoreApplication
+from PyQt.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+from PyQt.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
+from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+
+
+#from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -110,7 +126,7 @@ class StuffdbMainWindow( QMainWindow ):
         self.build_gui( )
         combo_dict_ext.build_it( AppGlobal.qsql_db_access.db )
         if AppGlobal.parameters.set_maximized:
-            self.setWindowState(Qt.WindowMaximized)
+            self.setWindowState( WindowMaximized )
 
     # -------------------------
     def assign_icon( self,  ):
@@ -712,8 +728,7 @@ class StuffdbMainWindow( QMainWindow ):
         msg      =  "get the size this process thru its pid "
         memory   = process_pid.memory_info().rss/1_000_000
         memory   = f"Memory = {memory} Mbytes"
-        repo     = "https://github.com/russ-hensel/stuffdb"
-        repo     = "https://github.com/russ-hensel/stuffdb/wiki"
+        repo     = " coming soom          "
         msg      = ( f"Stuff DB {version} {mode}"
                      f"\n{memory}"
                      f"\n{repo}"
@@ -727,12 +742,14 @@ class StuffdbMainWindow( QMainWindow ):
         what it says,
         """
         dialog     = show_parameters.DisplayParameters( parent = self )
-        if dialog.exec_() == QDialog.Accepted:
-            #self.model.submitAll()
-            # ok     = stuffdb_tabbed_sub_window.model_submit_all(
-            #            model,  f"StuffEventsSubTab.add_record " )
-            # model.select()
-            pass
+
+        # do we need the if and pass
+        if qt_version == 6:
+            if dialog.exec() == QDialog.DialogCode.Accepted:
+                pass
+        else:
+            if dialog.exec_() == QDialog.Accepted:
+                pass
 
     # ---------------------------------------
     def add_subwindow( self, window_class, instance_ix = 0 ):

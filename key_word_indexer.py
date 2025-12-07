@@ -12,23 +12,34 @@ deletes all the old entries
 # ---- tof
 import logging
 
-from PyQt5 import QtGui
-from PyQt5.QtCore import (QDate,
+
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+
+
+
+from PyQt import QtGui
+from PyQt.QtCore import (QDate,
                           QModelIndex,
                           QSize,
                           QSortFilterProxyModel,
                           Qt,
                           QTimer)
 # sql
-from PyQt5.QtSql import (QSqlDatabase,
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-from PyQt5.QtWidgets import (QAbstractItemView,
-                             QAction,
+
+#from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (QAbstractItemView,
+
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -84,8 +95,6 @@ KEY_WORD_SQL[ "tabs" ] = """SELECT
         FROM    tabs """
 
 # ---- end imports
-
-# ---- log level
 LOG_LEVEL  = 50
 
 # ------------------------------------------

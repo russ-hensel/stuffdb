@@ -104,7 +104,7 @@ class OSCall(  ):
             self.command_list = more_command_list + self.command_list
         self.ix_command          = -1
         self.working_command     = None
-        #rint( f"command list now{self.command_list}")
+        #rint( f"xxxxx list now{self.command_list}")
 
     # ----------------------------------------------
     def default_for_txt( self, append = True  ):

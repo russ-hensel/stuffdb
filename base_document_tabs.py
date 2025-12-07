@@ -25,22 +25,43 @@ from   functools import partial
 
 
 
+from qt_compat import QApplication, QMainWindow, QToolBar, QAction, exec_app
+from qt_compat import DisplayRole, TextAlignmentRole, AlignCenter, WindowMaximized
+from qt_compat import NoInsert, OnManualSubmit, HeaderInteractive
+from qt_compat import SelectRows, SelectColumns, SelectItems
+from qt_compat import Horizontal, Vertical                             # 5 6 compat global Horizontal    Horizontal
+from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
+from qt_compat import CustomContextMenu # and look at qt_compat there may be more
+from qt_compat import NoEditTriggers, KeepAspectRatioByExpanding
+from qt_compat import Select, Rows
+from qt_compat import ActionRole
 
 
-from PyQt5 import QtCore, QtWidgets
+from qt_compat import (
+    QApplication, QMainWindow, QToolBar, QAction, exec_app,
+    DisplayRole, TextAlignmentRole, AlignCenter, WindowMaximized,
+    NoInsert, OnManualSubmit, qt_version
+)
+from qt_compat import ItemIsSelectable, ItemIsEnabled
 
-from PyQt5.QtCore   import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
-from PyQt5.QtCore   import Qt, QDateTime
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import QStyledItemDelegate
-from PyQt5.QtGui import (QFont,
+
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+
+from PyQt import QtCore, QtWidgets
+
+from PyQt.QtCore   import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+from PyQt.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
+from PyQt.QtCore   import Qt, QDateTime
+from PyQt import QtCore
+from PyQt.QtWidgets import QStyledItemDelegate
+from PyQt.QtGui import (QFont,
                          QIntValidator,
                          QStandardItem,
                          QStandardItemModel,
                          QTextCursor)
 
-from PyQt5.QtSql import (QSqlDatabase,
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
@@ -48,8 +69,10 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
+
+# from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -247,12 +270,17 @@ def is_delete_ok(   ):
     msg_box.setText("Delete ok?")
 
     # Adding buttons
-    choice_no  = msg_box.addButton( "No - keep data",    QMessageBox.ActionRole )
-    choice_yes = msg_box.addButton( "Yes - delete data", QMessageBox.ActionRole )
+    choice_no  = msg_box.addButton( "No - keep data",    ActionRole )
+    choice_yes = msg_box.addButton( "Yes - delete data", ActionRole )
 
     msg_box.setModal(True)
 
-    msg_box.exec_()
+    if qt_version == 6:
+        msg_box.exec()
+    else:
+        msg_box.exec_()
+
+
     is_ok           = False
     if   msg_box.clickedButton() == choice_no:
         is_ok      = False
@@ -438,7 +466,8 @@ class ReadOnlySqlTableModel( QSqlTableModel ):
         """
         # Make all cells non-editable
         """
-        return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+        # return Qt.ItemIsSelectable | Qt.ItemIsEnabled
+        return ItemIsSelectable | ItemIsEnabled     # 5 6 compat
 
 # ---- parent of all top level documents not the detail tab  ------------------------------------
 # ----------------------------------------
@@ -940,7 +969,7 @@ class DocumentBase( QMdiSubWindow ):
             msg_box = QMessageBox()
             msg_box.setWindowTitle("Input Issue")
             msg_box.setText( msg )
-            choice_a = msg_box.addButton( "Ok", QMessageBox.ActionRole )
+            choice_a = msg_box.addButton( "Ok", ActionRole )
             msg_box.setModal( True )
             msg_box.exec_()
 
@@ -1200,8 +1229,8 @@ class DetailTabBase( QWidget ):
         self.pseodo_text_tab    = None    # may create, a data_manager in place of text_tab
                  # used by help_document only ??
 
-        debug_msg    = ( f"DetailTabBase init end  {self.tab_name}  " )
-        logging.debug( debug_msg )
+        # debug_msg    = ( f"DetailTabBase init end  {self.tab_name}  " )
+        # logging.debug( debug_msg )
 
     # ---------
     def post_init(self, ):
@@ -1512,17 +1541,20 @@ class ListTabBase( DetailTabBase ):
 
         model.setTable( self.parent_window.detail_table_name )
 
-        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+        # model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+        model.setEditStrategy( OnManualSubmit )           # 5 to 6 compat
 
         # ----view
         view                 = QTableView()
-        view.horizontalHeader().setSectionResizeMode( QHeaderView.Interactive )
+        #view.horizontalHeader().setSectionResizeMode( QHeaderView.Interactive )
+        view.horizontalHeader().setSectionResizeMode( HeaderInteractive )  # 5 to 6 compat
 
         # Use QHeaderView.Interactive to allow manual column width adjustments.
         # Avoid using QHeaderView.Stretch or QHeaderView.ResizeToContents
 
         self.list_view       = view     # consider change to just self.view\
-        view.setSelectionBehavior( QTableView.SelectRows )
+        #view.setSelectionBehavior( QTableView.SelectRows )
+        view.setSelectionBehavior( SelectRows ) # 5 6 compat
         view.setModel( model )
         placer.place(  view )
         view.clicked.connect( self.parent_window.on_list_clicked )
@@ -1540,8 +1572,8 @@ class ListTabBase( DetailTabBase ):
         # !! better done in on loop over columns, do not need the lists
         for ix_col, i_text in enumerate( col_head_texts ):
             #rint( f" {ix_col = } { i_text = }")
-            model.setHeaderData( ix_col, Qt.Horizontal,  i_text )
-
+            #model.setHeaderData( ix_col, Horizontal ,  i_text )
+            model.setHeaderData( ix_col, Horizontal,  i_text )  # 5 6 compat
         # ?? look around fro redundancy
         for ix_col, i_width in enumerate( col_head_widths ):
             #rint( f" {ix_col = } { i_width = }")
@@ -1611,6 +1643,7 @@ class ListTabBase( DetailTabBase ):
         debug_msg  = (  f"ListTabBase_delete_row_by_id Deletion loop_complete"
                         f" (in model only id = {id_to_delete} ).")
         logging.log( LOG_LEVEL,  debug_msg, )
+
 
 # ----------------------------------------
 class CriteriaTabBase( QWidget ):
@@ -2097,14 +2130,15 @@ class SubTabWithEditBase( QWidget ):
         for i_column_name, col_dict in self.field_dict.items():
             ix_col    += 1
 
-            model.setHeaderData( ix_col, Qt.Horizontal, col_dict[ "col_head_text"  ] )
+            model.setHeaderData( ix_col, Horizontal , col_dict[ "col_head_text"  ] )
             width  =   col_dict[ "col_head_width" ]
             if width > 0:
                 view.setColumnWidth( ix_col, width )
             else:
                 view.setColumnHidden( ix_col, True )  # view or model
 
-        view.setEditTriggers(QTableView.NoEditTriggers) # make view only ??
+        # view.setEditTriggers(QTableView.NoEditTriggers) # make view only ??
+        view.setEditTriggers( NoEditTriggers ) # 5 6 compat
 
         layout.addWidget( view )
 
@@ -2196,7 +2230,7 @@ class SubTabWithEditBase( QWidget ):
         for field_name, col_dict in self.field_dict.items():
             field_ix          += 1
             data[field_name]   = model.data( model.index( model_row, field_ix))
-            # model.setHeaderData( ix_col, Qt.Horizontal, col_dict[ "col_head_text"  ] )
+            # model.setHeaderData( ix_col, Horizontal , col_dict[ "col_head_text"  ] )
             # view.setColumnWidth( ix_col,                col_dict[ "col_head_width" ] )
 
         return (model_row, data)  # is this best return, even needed ??
@@ -2237,7 +2271,7 @@ class SubTabWithEditBase( QWidget ):
 
                 field_ix    += 1
                 model.setData( model.index( row, field_ix ), form_data[ i_column_name ] )
-                # model.setHeaderData( ix_col, Qt.Horizontal, col_dict[ "col_head_text"  ] )
+                # model.setHeaderData( ix_col, Horizontal , col_dict[ "col_head_text"  ] )
                 # view.setColumnWidth( ix_col,                col_dict[ "col_head_width" ] )
 
     # ------------------------------------------
@@ -2362,7 +2396,7 @@ class SubTabBase( QWidget ):
         for i_column_name, col_dict in self.field_dict.items():
             ix_col    += 1
 
-            model.setHeaderData( ix_col, Qt.Horizontal, col_dict[ "col_head_text"  ] )
+            model.setHeaderData( ix_col, Horizontal , col_dict[ "col_head_text"  ] )
             width  =   col_dict[ "col_head_width" ]
             if width > 0:
                 view.setColumnWidth( ix_col, width )
@@ -2458,7 +2492,7 @@ class SubTabBase( QWidget ):
         for field_name, col_dict in self.field_dict.items():
             field_ix          += 1
             data[field_name]   = model.data( model.index( model_row, field_ix))
-            # model.setHeaderData( ix_col, Qt.Horizontal, col_dict[ "col_head_text"  ] )
+            # model.setHeaderData( ix_col, Horizontal , col_dict[ "col_head_text"  ] )
             # view.setColumnWidth( ix_col,                col_dict[ "col_head_width" ] )
 
         return (model_row, data)  # is this best return, even needed ??
@@ -2493,7 +2527,7 @@ class SubTabBase( QWidget ):
             for i_column_name, col_dict in self.field_dict.items():
                 field_ix    += 1
                 model.setData( model.index( row, field_ix ), form_data[ i_column_name ] )
-                # model.setHeaderData( ix_col, Qt.Horizontal, col_dict[ "col_head_text"  ] )
+                # model.setHeaderData( ix_col, Horizontal , col_dict[ "col_head_text"  ] )
                 # view.setColumnWidth( ix_col,                col_dict[ "col_head_width" ] )
 
     # ------------------------------------------
@@ -2625,10 +2659,11 @@ class HistoryTabBase( QWidget ):
         columns             = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
 
         # ---- pinned table
-        table               = self.make_pinned_table( columns )
+        table               = self.make_a_table( columns )
         self.pinned_table   = table
         self.set_table_height_for_rows( table, 2 )
         self.add_empty_rows_batch( table, 2 )
+
         connect_to  =  partial( self.on_cell_clicked_new, table )
         table.cellClicked.connect( connect_to )
 
@@ -2660,15 +2695,20 @@ class HistoryTabBase( QWidget ):
         row_layout.addWidget( widget )
 
         # ---- history
-        table  = self.make_history_table( columns )
-        self.history_table   = table
+        table               = self.make_a_table( columns )
+
+        self.history_table  = table
+
+        table.cellClicked.connect( self.on_cell_clicked )
 
         layout.addWidget( table )
+
 
     # ---------------------------------------
     def show_context_menu( self, pos ):
         """
-        should olnly be called from self.history_table
+         from a text edit
+
         """
         widget      = self.history_table
 
@@ -2687,6 +2727,7 @@ class HistoryTabBase( QWidget ):
         action.triggered.connect( connect_to   )
         action.setEnabled( True )
 
+
         action  = menu.addAction("Pin as #2")
         connect_to      = partial( self.history_to_pinned, ix_src_row = ix_src_row, ix_dest_row = 1 )
         action.triggered.connect( connect_to   )
@@ -2702,62 +2743,30 @@ class HistoryTabBase( QWidget ):
         menu.exec_(widget.mapToGlobal(pos))
 
     # ------------------------
-    def make_history_table( self, columns ):
-
-        """
-        """
-        table               = self.make_a_table( columns  )
-
-        self.history_table  = table
-
-        table.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
-        table.customContextMenuRequested.connect( self.show_context_menu )
-
-        #table.setSelectionBehavior( QTableWidget.SelectRows )  # Select entire rows
-
-        #table_widget_no_edit( table )
-
-        #table.cellClicked.connect( self.on_cell_clicked )
-        return table
-    # ------------------------
-    def make_pinned_table( self, columns ):
-        """
-        clean up where instance created etch
-        """
-
-        table               = self.make_a_table( columns  )
-
-        #self.pinned_table  = table
-
-        # table.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
-        # table.customContextMenuRequested.connect( self.show_context_menu )
-        return table
-
-
-    # ------------------------
     def make_a_table( self, columns ):
         """
         one for history one for pinned
-
-        return
-            a table for history or pined
         """
         table               = QTableWidget(
                                        0, len( columns ), self )  # row column  parent
+        self.history_table  = table
+
+        #self.history_table.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
+        self.history_table.setContextMenuPolicy( CustomContextMenu )  # 5 6 compat
+
+        self.history_table.customContextMenuRequested.connect( self.show_context_menu )
+
         # ---- column header and width
         for ix_col, i_column in enumerate( columns):
             #rint( f" {ix_col = } { i_width = }")
             table.setHorizontalHeaderItem( ix_col, QTableWidgetItem( i_column.col_head_text )  )
             table.setColumnWidth(          ix_col, i_column.col_head_width * WIDTH_MULP )
 
-        table.setSelectionBehavior( QTableWidget.SelectRows )  # Select entire rows
-
+        #table.setSelectionBehavior( QTableWidget.SelectRows )  # Select entire rows
+        table.setSelectionBehavior( SelectRows )  # 5 6 compat
         table_widget_no_edit( table )
 
-        table.cellClicked.connect( self.on_cell_clicked )
-
         return table
-
 
     def set_table_height_for_rows(self, table, num_rows):
         """
@@ -3714,7 +3723,8 @@ class PictureListSubTabBase( QWidget  ):
         # ---- view
         view                = QTableView()
         self.view           = view
-        view.setSelectionBehavior( QTableView.SelectRows )
+        #view.setSelectionBehavior( QTableView.SelectRows )
+        view.setSelectionBehavior( SelectRows )  # 5 6 compat
         view.clicked.connect( self._on_list_click  )
 
         picture_layout.addWidget( self.view )
@@ -3728,7 +3738,8 @@ class PictureListSubTabBase( QWidget  ):
 
         view.setModel( self.model )
 
-        view.setEditTriggers(QTableView.NoEditTriggers)
+        # view.setEditTriggers(QTableView.NoEditTriggers)
+        view.setEditTriggers( NoEditTriggers )  # 5 6 compat
 
         # ---- buttons
         widget        = QPushButton( '<Prior')
@@ -3897,8 +3908,8 @@ class PictureListSubTabBase( QWidget  ):
         selection_model.clearSelection()
 
         # Select the entire row
-        selection_model.select( index, selection_model.Select | selection_model.Rows )
-
+        # selection_model.select( index, selection_model.Select | selection_model.Rows )
+        selection_model.select( index, Select | Rows )  # 5 6 compat
         view                    = self.view
         view.scrollTo( index )
 
@@ -3931,20 +3942,20 @@ class PictureListSubTabBase( QWidget  ):
         view    = self.view
 
         ix_col  = 0
-        model.setHeaderData( ix_col, Qt.Horizontal, "ID")
-            #  Qt.Horizontal or Qt.Vertical
+        model.setHeaderData( ix_col, Horizontal , "ID")
+            #  Horizontal  or Qt.Vertical
         view.setColumnWidth( ix_col, 50  )
 
         ix_col  += 1
-        model.setHeaderData( ix_col, Qt.Horizontal, "Name")
+        model.setHeaderData( ix_col, Horizontal , "Name")
         view.setColumnWidth( ix_col, 250 )
 
         ix_col  += 1
-        model.setHeaderData( ix_col, Qt.Horizontal, "Folder")
+        model.setHeaderData( ix_col, Horizontal , "Folder")
         view.setColumnWidth( ix_col, 100 )
 
         ix_col  += 1
-        model.setHeaderData( ix_col, Qt.Horizontal, "Photo Filename")
+        model.setHeaderData( ix_col, Horizontal , "Photo Filename")
         view.setColumnWidth( ix_col, 250 )
 
         # chat says put last

@@ -24,25 +24,34 @@ import time
 #from functools import partial
 from pathlib import Path
 
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
 
-from PyQt5.QtCore   import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtCore   import Qt, QDateTime
-from PyQt5.QtWidgets import QStyledItemDelegate
-from PyQt5.QtGui import (QFont,
+
+
+from PyQt.QtCore   import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+from PyQt.QtCore   import Qt, QDateTime
+from PyQt.QtWidgets import QStyledItemDelegate
+from PyQt.QtGui import (QFont,
                          QIntValidator,
                          QStandardItem,
                          QStandardItemModel,
                          QTextCursor)
 
-from PyQt5.QtSql import (QSqlDatabase,
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
+
+#from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (
                              QFileDialog,
                              QApplication,
                              QButtonGroup,
@@ -1896,11 +1905,12 @@ class SystemSubSystemTab( QWidget ):
         # ---- "spacer " not sure why first code is ng
         width = 50
 
-        spacer = QSpacerItem(width, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        #spacer = QSpacerItem(width, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        spacer = QSpacerItem(width, 20, QSizePolicy_Expanding, QSizePolicy_Minimum)  # 5 6 compat
         gb_layout.addItem(spacer)
 
-        spacer = QSpacerItem(width, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        gb_layout.addItem(spacer)
+        # spacer = QSpacerItem(width, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        # gb_layout.addItem(spacer)
 
         # ---- "Revised System"
         widget              = QLabel( "Revised System" )
@@ -2100,7 +2110,7 @@ class SystemSubSystemTab( QWidget ):
 
         # DEBUG GET RID OF ME
         #print( db.isOpen() )
-        # from PyQt5.QtSql import QSqlQuery
+        # from PyQt.QtSql import QSqlQuery
 
         # First, select all matching records
         select_query = QSqlQuery( db )

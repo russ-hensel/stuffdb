@@ -25,7 +25,7 @@ echo "Run backup...theprofm_bku_her_to_l.sh"
 
 # Activate conda environment
 source /home/russ/anaconda3/etc/profile.d/conda.sh
-conda activate py_10
+conda activate py_13
 
 echo "Script executed from (pwd): ${PWD}"
 

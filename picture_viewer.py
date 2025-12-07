@@ -12,6 +12,7 @@ I would like the graphics in it to fill the layout area.
 I would like some code to do this:
 
 """
+# ---- tof
 # --------------------
 if __name__ == "__main__":
     import main
@@ -23,11 +24,26 @@ import os
 import sys
 
 from app_global import AppGlobal
-from PyQt5.QtCore import QRectF, Qt
-from PyQt5.QtGui import QPainter, QPixmap
+
+
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
+from qt_compat import ScrollBarAlwaysOn, ScrollBarAsNeeded
+from qt_compat import RenderHint_Antialiasing, RenderHint_SmoothPixmapTransform, AnchorUnderMouse
+
+from qt_compat import KeepAspectRatioByExpanding
+
+
+
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+from PyQt.QtCore import QRectF, Qt
+from PyQt.QtGui import QPainter, QPixmap
 # ----QtWidgets
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
+
+#from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QDateEdit,
@@ -72,10 +88,15 @@ class PictureViewer( QGraphicsView ):
 
         self.pixmap         = QPixmap( "" )  # initial null item
         self.scene.addItem( self.pixmap_item )
-        self.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
+
+        #self.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
+        self.setSizePolicy( QSizePolicy_Expanding, QSizePolicy_Expanding ) # 5 6 compat
 
         #
-        sb_policy           = Qt.ScrollBarAlwaysOn
+        #sb_policy           = Qt.ScrollBarAlwaysOn
+        sb_policy           = ScrollBarAlwaysOn   # 5  6 compat
+
+
             #  Qt.ScrollBarAsNeeded Qt.ScrollBarAlwaysOff  Qt.ScrollBarAlwaysOn
         self.setHorizontalScrollBarPolicy(  sb_policy )
         self.setVerticalScrollBarPolicy(    sb_policy )
@@ -83,10 +104,13 @@ class PictureViewer( QGraphicsView ):
         # # Set the scene for the view  -- does this need to be done again
         # self.view.setScene(self.scene)
 
-        self.setRenderHint( QPainter.Antialiasing )
-        self.setRenderHint( QPainter.SmoothPixmapTransform)
-        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-        self.setResizeAnchor( QGraphicsView.AnchorUnderMouse )
+        # bunch of 5 6 changes
+        #from qt_compat import RenderHint_Antialiasing, RenderHint_SmoothPixmapTransform, AnchorUnderMouse
+
+        self.setRenderHint( RenderHint_Antialiasing )
+        self.setRenderHint( RenderHint_SmoothPixmapTransform )
+        self.setTransformationAnchor( AnchorUnderMouse )
+        self.setResizeAnchor( AnchorUnderMouse )
         self.file_name              = None
         self.file_name_not_found    = None
 
@@ -195,7 +219,11 @@ class PictureViewer( QGraphicsView ):
                 # Get the pixmap's bounding rectangle
                 pixmap_rect = QRectF(self.pixmap_item.pixmap().rect())
                 # Fit the pixmap in the view
-                self.fitInView( pixmap_rect, Qt.KeepAspectRatioByExpanding )
+                # self.fitInView( pixmap_rect, Qt.KeepAspectRatioByExpanding )
+                self.fitInView( pixmap_rect, KeepAspectRatioByExpanding ) # 5 6 comat
+
+
+
                 # Center the scene in the view
                 self.centerOn(self.pixmap_item)
 

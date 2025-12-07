@@ -17,8 +17,16 @@ if __name__ == "__main__":
 import sys
 
 from app_global import AppGlobal
-from PyQt5.QtCore import Qt
-from PyQt5.QtSql import (QSqlDatabase,
+
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+
+
+
+from PyQt.QtCore import Qt
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlDriver,
                          QSqlQuery,
                          QSqlRecord,
@@ -27,7 +35,7 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
-from PyQt5.QtWidgets import (QApplication,
+from PyQt.QtWidgets import (QApplication,
                              QComboBox,
                              QDialog,
                              QFormLayout,

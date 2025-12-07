@@ -18,7 +18,12 @@ import logging
 
 # --------------------
 # ---- import
-from PyQt5.QtSql import QSqlRecord
+
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+
+from PyQt.QtSql import QSqlRecord
 
 import custom_widgets
 import key_words

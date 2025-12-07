@@ -16,12 +16,22 @@ APP      = None
 import logging
 
 # ---- QtCore
-from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import QIntValidator, QStandardItem, QStandardItemModel
+
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+
+
+from PyQt.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+from PyQt.QtGui import QIntValidator, QStandardItem, QStandardItemModel
 # ---- QtSql
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
+from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+
+
+#from PyQt.QtGui import ( QAction, QActionGroup, )
+
+
+from PyQt.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -61,7 +71,7 @@ from PyQt5.QtWidgets import (QAction,
 # ----QtWidgets
 
 
-# from PyQt5.QtWidgets import (QAction,
+# from PyQt.QtWidgets import (QAction,
 #                              QActionGroup,
 #                              QApplication,
 #                              QButtonGroup,
@@ -193,11 +203,19 @@ def query_exec_error_check( *, query, sql = None, raise_except = True ):
         query_ok    True or False, but execpt may be thrown
         query_ok   =  qsql_utils.query_exec_error_check(  query = query, sql = sql, raise_except = True )
     """
+
     query_ok    = True
-    if sql is None:
-        result  = query.exec_( )  # sql already in the query
+    if qt_version == 6:
+        # qsqlquery_exec  =   # approach not taken
+        if sql is None:
+            result  = query.exec( )  # sql already in the query
+        else:
+            result  = query.exec( sql )
     else:
-        result  = query.exec_( sql )
+        if sql is None:
+            result  = query.exec_( )  # sql already in the query
+        else:
+            result  = query.exec_( sql )
 
     if not result:
         query_ok        = False

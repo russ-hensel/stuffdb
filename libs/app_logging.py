@@ -23,9 +23,50 @@ import sys
 import traceback
 
 import parameters
-from PyQt5.QtWidgets import (  # QAction,; QActionGroup,; QApplication,; QButtonGroup,; QCheckBox,; QDateEdit,; QDockWidget,; QFileDialog,; QFrame,; QGridLayout,; QInputDialog,; QListWidget,; QMainWindow,; QMdiArea,; QMdiSubWindow,; QMenu,; QMessageBox,; QSpinBox,; QTableView,; QTableWidget,; QTableWidgetItem,; QTabWidget,; QTextEdit,
-    QComboBox, QDialog, QHBoxLayout, QLabel, QLineEdit, QPushButton,
-    QVBoxLayout, QWidget)
+
+
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+#from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (
+                             QApplication,
+                             QButtonGroup,
+                             QCheckBox,
+                             QComboBox,
+                             QDataWidgetMapper,
+                             QDateEdit,
+                             QDialog,
+                             QDockWidget,
+                             QFileDialog,
+                             QFrame,
+                             QGraphicsPixmapItem,
+                             QGraphicsScene,
+                             QGraphicsView,
+                             QGridLayout,
+                             QHBoxLayout,
+                             QInputDialog,
+                             QLabel,
+                             QLineEdit,
+                             QListWidget,
+                             QMainWindow,
+                             QMdiArea,
+                             QMdiSubWindow,
+                             QMenu,
+                             QMessageBox,
+                             QPushButton,
+                             QSizePolicy,
+                             QSpacerItem,
+                             QSpinBox,
+                             QTableView,
+                             QTableWidget,
+                             QTableWidgetItem,
+                             QTabWidget,
+                             QTextEdit,
+                             QVBoxLayout,
+                             QWidget)
+
 
 # ---- local imports
 from app_global import AppGlobal

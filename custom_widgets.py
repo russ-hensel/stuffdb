@@ -12,7 +12,7 @@ coupling
     parameters
 
 """
-# ---- tof change next depending on project
+# ---- tof
 
 # --------------------
 if __name__ == "__main__":
@@ -35,15 +35,32 @@ import os
 import platform
 import subprocess
 
+
+
+
 # ---- Qt
-from PyQt5 import QtGui
-from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtCore import QDate, QDateTime, QTime, QPoint
-from PyQt5.QtGui  import QColor, QPalette, QTextCursor, QTextDocument
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+from qt_compat import (
+    QApplication, QMainWindow, QToolBar, QAction, exec_app,
+    DisplayRole, TextAlignmentRole, AlignCenter, WindowMaximized,
+    NoInsert, OnManualSubmit
+)
+from qt_compat import CustomContextMenu   # and look at qt_compat there may be more
+from qt_compat import Key_Return, Key_Enter, ShiftModifier, Key_Tab, Key_F, ControlModifier, Key_Backtab  # and look at qt_compat there may be more
+#from qt_compat import QTextCursor
 
 
-from PyQt5.QtCore import (QAbstractTableModel,
+from PyQt import QtGui
+from PyQt import QtCore
+from PyQt.QtCore import Qt, pyqtSignal
+from PyQt.QtCore import QDate, QDateTime, QTime, QPoint
+from PyQt.QtGui  import QColor, QPalette, QTextCursor, QTextDocument
+
+
+from PyQt.QtCore import (QAbstractTableModel,
                           QDate,
                           QDateTime,
                           QModelIndex,
@@ -52,14 +69,14 @@ from PyQt5.QtCore import (QAbstractTableModel,
                           QTimer,
                           pyqtSlot)
 
-from PyQt5.QtGui import (QCursor,
+from PyQt.QtGui import (QCursor,
                          QIntValidator,
                          QPainter,
                          QPixmap,
                          QStandardItem,
                          QStandardItemModel,
                          QTextCursor)
-from PyQt5.QtSql import (QSqlDatabase,
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRecord,
@@ -67,8 +84,10 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
+
+# from PyQt.QtGui import ( QAction, QActionGroup, )
+
+from PyQt.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -105,6 +124,12 @@ from PyQt5.QtWidgets import (QAction,
                              QTextEdit,
                              QVBoxLayout,
                              QWidget)
+if qt_version == 6:
+    MoveOperation = QTextCursor.MoveOperation
+else:
+    MoveOperation = QTextCursor
+
+
 # ---- imports local -- then constants
 import string_util
 import wat_inspector
@@ -402,9 +427,9 @@ class TableModel( QAbstractTableModel ):
     def columnCount(self, index=None):
         return len(self._headers)
 
-    def data(self, index, role=Qt.DisplayRole):
+    def data(self, index, role=DisplayRole):
         """ !! FIX RETURN """
-        if role == Qt.DisplayRole:
+        if role == DisplayRole:
             return self._data[index.row()][index.column()]
 
     def set_data(self, data ):
@@ -413,28 +438,28 @@ class TableModel( QAbstractTableModel ):
     # def add_data(self, data ):
     #     pass
 
-    def set_data_at_index(self, index, value, role=Qt.EditRole):
+    def set_data_at_index(self, index, value, role=EditRole):
         """
         index might be index = model.index(ix_row,  ix_col )  # Row 1, Column 1
 
         Args:
             index (TYPE): DESCRIPTION.
             value (TYPE): DESCRIPTION.
-            role (TYPE, optional): DESCRIPTION. Defaults to Qt.EditRole.
+            role (TYPE, optional): DESCRIPTION. Defaults to EditRole.
 
         Returns:
             bool: DESCRIPTION.
 
         """
-        if role == Qt.EditRole:
+        if role == EditRole:
             self._data[index.row()][index.column()] = value  # Update the data
-            self.dataChanged.emit(index, index, [Qt.DisplayRole])
+            self.dataChanged.emit(index, index, [DisplayRole])
                 # Emit dataChanged signal for this index
             return True
         return False
 
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole:
+    def headerData(self, section, orientation, role=DisplayRole):
+        if role == DisplayRole:
             if orientation == Qt.Horizontal:
                 return self._headers[section]
             elif orientation == Qt.Vertical:
@@ -694,14 +719,14 @@ class TextEditExtMixin(  ):
         """
         # breakpoint()
         # ---- is next block indent
-        if event.key() == Qt.Key_Tab:
+        if event.key() == Key_Tab:
             self.indent_selected_text()
             return
-        elif event.key() == Qt.Key_Backtab or (event.key() == Qt.Key_Tab and event.modifiers() & Qt.ShiftModifier):
+        elif event.key() == Key_Backtab or (event.key() == Key_Tab and event.modifiers() & ShiftModifier):
             self.unindent_selected_text()
             return
 
-        if event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_F:
+        if event.modifiers() == ControlModifier and event.key() == Key_F:
 
             self.ctrl_f_search_down()
             return
@@ -783,7 +808,12 @@ class TextEditExtMixin(  ):
             cursor = text_edit.textCursor()
             cursor.setPosition( self.last_position )
 
-            found = text_edit.find( search_text, QTextDocument.FindBackward )
+            if qt_version == 6:
+                found = text_edit.find( search_text,  QTextDocument.FindFlag.FindBackward )
+                    # ← Qt6 uses FindFlag, not FindBackward directly
+            else:
+                found = text_edit.find( search_text,   QTextDocument.FindBackward )
+
 
             if found:
                 self.last_position = text_edit.textCursor().position()
@@ -804,7 +834,9 @@ class TextEditExtMixin(  ):
         what it says
             call in the init of the final widget ?
         """
-        self.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
+        #self.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
+        self.setContextMenuPolicy( CustomContextMenu)   # 5 6 compat
+
         self.customContextMenuRequested.connect( self.show_context_menu )
 
         # widget.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
@@ -907,7 +939,14 @@ class TextEditExtMixin(  ):
         menu.addSeparator()
 
         # Show the context menu
-        menu.exec_(widget.mapToGlobal(pos))
+
+
+        if qt_version == 6:  # 5 6 compat
+            menu.exec(widget.mapToGlobal(pos))
+        else:
+            menu.exec_(widget.mapToGlobal(pos))
+
+
 
 
     def capture_selected_text( self ):
@@ -947,7 +986,7 @@ class TextEditExtMixin(  ):
         text_edit        = self
         # ---- do some parsing
         code_lines       = self.get_snippet_lines( text_edit  )
-        debug_msg        = ( code_lines )
+        debug_msg        = ( f"code lines >>{code_lines}<<" )
         #self.logging( debug_msg )
         self.log(  msg = debug_msg  )
         # logging.debug( debug_msg )
@@ -1032,10 +1071,12 @@ class TextEditExtMixin(  ):
             filename     = cmd_args[0]
             webbrowser.open( filename, new = 0, autoraise = True )
 
-        # ---- bash
+        # ---- bash  >>bash
         elif cmd == "bash":
             #rint( f"you need to implement >>shell {code_lines}")
-            print(f"need to fix bash{code_lines}" )
+            print(f"need to fix bash{code_lines} how comments " )
+            code_lines   = [i_line.rstrip() for i_line in code_lines ]
+            #code_lines   = code_lines.rstrip() ng it is a list
             if self.shell_exe:
                 self.shell_exe.run_code_lines( code_lines )
 
@@ -1106,9 +1147,19 @@ class TextEditExtMixin(  ):
             print( msg )
             #logging.error( msg )
         # next case based on command cmd
-
     # ------------------------
     def get_snippet_lines( self, do_undent = True  ):
+        """ """
+        if qt_version == 6:
+             lines  = self.get_snippet_lines_6( do_undent = do_undent )
+        else:
+             lines  = self.get_snippet_lines_5( do_undent = do_undent )
+
+        return lines
+
+
+    # ------------------------
+    def get_snippet_lines_5( self, do_undent = True  ):
         """
         !! for some uses need to know which line or content
               of the first line for single line commands
@@ -1223,6 +1274,118 @@ class TextEditExtMixin(  ):
             lines   = self.undent_lines( lines )
 
         return lines
+
+
+
+# SCAN_LINES = 500
+# MARKER = ">"
+
+
+
+    def get_snippet_lines_6(self, do_undent=True):
+        """
+        qt6 version I hope
+        :param do_undent: DESCRIPTION, defaults to True
+        :type do_undent: TYPE, optional
+        :return: DESCRIPTION
+        :rtype: TYPE
+
+        """
+
+        lines = []
+        cursor = self.textCursor()
+
+        consecutive_blank = 0
+        original_position = cursor.position()
+
+        # Move to start of current line (Qt6 uses StartOfBlock)
+        cursor.movePosition(QTextCursor.MoveOperation.StartOfBlock)
+        prior_start = cursor.position()
+
+        # -------------------------
+        # UPWARD SCAN
+        # -------------------------
+        for ix in range(SCAN_LINES):
+
+            # Select whole line
+            cursor.movePosition(
+                QTextCursor.MoveOperation.StartOfBlock
+            )
+            cursor.movePosition(
+                QTextCursor.MoveOperation.EndOfBlock,
+                QTextCursor.MoveMode.KeepAnchor
+            )
+
+            selected = cursor.selectedText().rstrip()
+
+            if selected == "":
+                consecutive_blank += 1
+            else:
+                consecutive_blank = 0
+
+            # Stop at begin marker
+            if selected.strip().lower().startswith(MARKER):
+                break
+
+            # Move up
+            cursor.movePosition(QTextCursor.MoveOperation.Up)
+            cursor.movePosition(QTextCursor.MoveOperation.StartOfBlock)
+            position = cursor.position()
+
+            # Hit top of document
+            if position == prior_start:
+                self.log(msg=f"hit top of text {ix=}")
+                break
+            else:
+                prior_start = position
+
+        # -------------------------
+        # DOWNWARD SCAN: collect lines
+        # -------------------------
+        consecutive_blank = 0
+        on_top_line = True
+
+        for ix in range(SCAN_LINES):
+
+            cursor.movePosition(
+                QTextCursor.MoveOperation.EndOfBlock,
+                QTextCursor.MoveMode.KeepAnchor
+            )
+
+            selected = cursor.selectedText().rstrip()
+
+            if selected == "":
+                consecutive_blank += 1
+            else:
+                consecutive_blank = 0
+
+            if consecutive_blank > 3:
+                break
+
+            # Stop if we hit the next bottom marker
+            if not on_top_line and selected.strip().lower().startswith(MARKER):
+                break
+            else:
+                on_top_line = False
+
+            lines.append(selected)
+
+            # Move to next line
+            cursor.movePosition(QTextCursor.MoveOperation.Down)
+            cursor.movePosition(QTextCursor.MoveOperation.StartOfBlock)
+            position = cursor.position()
+
+            # End of document
+            if position == prior_start:
+                break
+            else:
+                prior_start = position
+
+        if do_undent:
+            lines = self.undent_lines(lines)
+
+        return lines
+
 
     #------------------------------------
     def update_markup(self, ):
@@ -2344,7 +2507,10 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         what it says
             call in the init of the final widget ?
         """
-        self.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
+        # self.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
+        self.setContextMenuPolicy( CustomContextMenu)  # 5 6 compat
+
+
         self.customContextMenuRequested.connect( self.show_context_menu )
 
     # ---------------------------------------
@@ -2719,8 +2885,8 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         self.setEditable(True)
 
         # Set insert policy to not add duplicates automatically
-        self.setInsertPolicy(QComboBox.NoInsert)
-
+        # self.setInsertPolicy(QComboBox.NoInsert)
+        self.setInsertPolicy( NoInsert )  # 5 6 compat I hope
         # Store maximum history size
         self.max_history = 10
 
@@ -2782,7 +2948,10 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         """
         Handle key press events to add text to history when Enter is pressed.
         """
-        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+        #if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+        if event.key() == Key_Return or event.key() == Key_Enter:   # 5 6 compat
+
+
             #self.add_current_text_to_history()
             self.call_on_return_pressed()
 
@@ -3117,7 +3286,7 @@ class CQDictComboBox(QComboBox, CQEditBase ):
         pass
 
 # -------------------------------
-class CQTextEdit(QTextEdit,  CQEditBase, TextEditExtMixin,   ):
+class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
     """
     Custom QTextEdit subclass with CQEditBase integration
 
@@ -3296,20 +3465,30 @@ class CQTextEdit(QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         """
 
         """
-        cursor = self.textCursor()
-        cursor.movePosition(cursor.Start)
-        self.setTextCursor(cursor)
-        self.ensureCursorVisible()
+        # cursor = self.textCursor()
+        # cursor.movePosition(cursor.Start)
+        # self.setTextCursor(cursor)
+        # self.ensureCursorVisible()
+
+        # ----------------- new grok
+        self.moveCursor( MoveOperation.Start )
+        self.ensureCursorVisible()   # or just text_edit.verticalScrollBar().setValue(0)
 
     # ------------------------------------
     def scroll_to_bottom(self, ):
         """
 
         """
-        cursor = self.textCursor()
-        cursor.movePosition(cursor.End)
-        self.setTextCursor(cursor)
-        self.ensureCursorVisible()
+        #text_edit    = self
+
+        # cursor = self.textCursor()
+        # cursor.movePosition(cursor.End)
+        # self.setTextCursor(cursor)
+        # self.ensureCursorVisible()
+
+        # ----------------- new grok
+        self.moveCursor( MoveOperation.End )  # qt_compat
+        self.ensureCursorVisible()          # this does the scroll
 
     # --------------------------------------------------
     def __str__( self ):
@@ -3420,7 +3599,13 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         context_menu.addAction(today_action)
 
         # Show the context menu
-        context_menu.exec_(event.globalPos())
+
+
+        if qt_version == 6:  # 5 6 compat
+            context_menu.exec(event.globalPos())
+        else:
+            context_menu.exec_(event.globalPos())
+
 
     #----------------------------
     def set_data_today(self):

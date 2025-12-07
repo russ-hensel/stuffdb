@@ -13,7 +13,14 @@ so this needs to be in a global place, lets put in midi management ??
 
 # ---- imports
 
-from    PyQt5.QtSql import QSqlQuery, QSqlError
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
+
+
+
+from    PyQt.QtSql import QSqlQuery, QSqlError
 
 from collections import defaultdict
 # --------------------
