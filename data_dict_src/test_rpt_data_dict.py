@@ -11,6 +11,10 @@ Created on Tue Mar 11 13:26:54 2025
 
 # ---- imports
 
+import adjust_path
+
+
+
 # ---- end imports
 
 
@@ -32,13 +36,24 @@ table_name      = "people_phone"
 #table_name      = "photoshow"
 
 
-table_name      = "plant"
+table_name      = "help_info"
+table_name      = "help_text"
+# table_name      = "help_key_word"
+
+# table_name      = "key_gen"
+
 #table_name      = "planting"
 # ---- begin reports
 
 # ---- ....
 # ---- ....report on create sql
-rpt_data_dict.rpt_sql( table_name  )
+#rpt_data_dict.rpt_sql( table_name  )
+# ---- ........ rpt_sql_pg
+rpt_data_dict.rpt_sql_pg( table_name  )
+
+#rpt_data_dict.rpt_list_columns_sql_order( table_name )
+#rpt_data_dict.rpt_list_column_names_sql_order( table_name )
+#rpt_data_dict.rpt_list_column_varcar_limits( table_name )
 
 # ---- ....report on columh list heading..
 #rpt_data_dict.rpt_list_order( table_name  )
@@ -49,7 +64,6 @@ rpt_data_dict.rpt_sql( table_name  )
 
 # ---- ........ gen_build_fields
 #rpt_data_dict.gen_build_fields( table_name )
-
 
 
 

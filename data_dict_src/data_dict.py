@@ -527,8 +527,10 @@ class TableDict(  ):
         return column_list
 
     #------------------------------------------------
+    #------------------------------------------------
     def get_list_columns_sql_order( self,    ):
         """
+        this is all the columns, not the column names
         get the columns ( including id ) in the correct order  --- not sorted
             combine with  get_list_columns
             assume order in data_dict is the sql order
@@ -569,6 +571,45 @@ class TableDict(  ):
         # column_list.sort( key = lambda i_column: i_column.col_head_order )
 
         return column_list
+
+    #------------------------------------------------
+    def get_list_column_names_sql_order( self,    ):
+        """
+        the column names
+
+
+        """
+        column_list    = self.get_list_columns_sql_order()
+        name_list      = [ i_column.column_name for i_column in column_list ]
+
+
+        return name_list
+
+    #------------------------------------------------
+    def get_list_column_varcar_limits( self,    ):
+        """
+
+        returns ex:
+                {'id_old': 15, 'type': 15, 'sub_system': 20, 'system': 20, 'key_words': 120,
+                 'table_name': 40, 'column_name': 40, 'java_type': 20, 'java_name': 175,
+                 'java_package': 150, 'title': 150, 'is_example': 1, 'can_execute': 1}
+
+
+        """
+        column_list    = self.get_list_columns_sql_order()
+        # name_list      = [ i_column.column_name for i_column in column_list ]
+
+        limit_dict     = {}
+        for i_column in column_list :
+            db_type     = i_column.db_type
+            if db_type.startswith( "VARCHAR" ):
+                db_len     = db_type[ 8: ]
+                db_len     = db_len[ : -1]
+                db_len     = int( db_len )
+                limit_dict[i_column.column_name ] = db_len
+        return limit_dict
+
+
 
     #------------------------------------------------
     def get_topic_columns( self,    ):
@@ -1098,27 +1139,73 @@ class TableDict(  ):
     def to_sql_create( self, ):
         """
         what it says, read
+
+        """
+        sql      = f"CREATE TABLE  {self.table_name}    ("
+
+        for ix_column, i_column in enumerate( self.columns ):
+            key_part    = ""
+            # if i_column.primay_key_ix is not None:
+            #     key_part    = " PRIMARY KEY NOT NULL "
+            if ix_column > 0:
+                line    = ","
+            else:
+                line    = ""
+
+            db_type = i_column.db_type
+            if  db_type == "TIMESTAMP":
+                db_type  = "INTEGER"
+
+            line        = f"{line}\n     {i_column.column_name}  {db_type} {key_part}"
+            sql         = f"{sql}{line}"
+        sql             = f"{sql}\n    )"
+
+        return sql
+
+    #---------------------------
+    def to_sql_create_pg( self, ):
+        """
+        what it says, read
                  primay_key_ix          = None,       # None not part of prirmy key
                  use_index              = None,
            id INTEGER PRIMARY KEY NOT NULL,
 
         for now for only one key part primary
         """
-        sql      = f"CREATE TABLE  {self.table_name}    ("
+        sql      = f"CREATE TABLE {self.table_name}    ("    # spacing may be problematic
 
         for ix_column, i_column in enumerate( self.columns ):
             key_part    = ""
             if i_column.primay_key_ix is not None:
-                key_part    = " PRIMARY KEY NOT NULL "
+                key_part    = " PRIMARY KEY "
             if ix_column > 0:
                 line    = ","
             else:
                 line    = ""
-            line        = f"{line}\n     {i_column.column_name}  {i_column.db_type} {key_part}"
-            sql         = f"{sql}{line}"
-        sql             = f"{sql}\n    )"
 
+            db_type = i_column.db_type
+            if  db_type == "TIMESTAMP":
+                db_type  = "BIGINT"
+
+
+            line        = f"{line}\n     {i_column.column_name}  {db_type} {key_part}"
+            sql         = f"{sql}{line}"
+
+
+        # ---- second pass
+        for ix_column, i_column in enumerate( self.columns ):
+
+            if i_column.foreign_key_info is not None:
+                sql         = f"{sql},    "
+                line        = ""
+                line        = f"{line}\n     {i_column.foreign_key_info}  "
+                sql         = f"{sql}{line}"
+                sql         = f"{sql}\n    "
+
+
+        sql             = f"{sql}\n    ); "
         return sql
+
 
     #---------------------------
     def sql_to_insert_bind( self, debug = True ):
@@ -1304,10 +1391,19 @@ class ColumnDict(  ):
                                                     # bool False, no tip
                                                     # bool True, use field name or something derived
                                                     # string, use string
-                 primay_key_ix          = None,       # None not part of prirmy key
+                 primay_key_ix          = None,       # None not part of prirmy key  index from zero
                  use_index              = None,     # None no index
                  is_keep_prior_enabled  = False,
-                 initial_value          = None      # may mean nyll or not
+                 initial_value          = None,      # may mean nyll or not
+
+                 foreign_key_info       = None,     #
+
+                         # """
+                         # CONSTRAINT fk_help_text_help_info
+                         #     FOREIGN KEY (id)
+                         #     REFERENCES help_info(id)
+                         #     ON DELETE CASCADE
+                         # """
 
                  # rec_to_edit         = "rec_to_edit_str_to_str",
                  # edit_to_rec         = "edit_to_rec_str_to_str",
@@ -1387,7 +1483,7 @@ class ColumnDict(  ):
 
         self.col_head_width     =  col_head_width
 
-        pass
+        self.foreign_key_info    = foreign_key_info
 
         pass
 

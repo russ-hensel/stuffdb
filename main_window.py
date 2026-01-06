@@ -39,10 +39,6 @@ from qt_compat import Qt, WindowMaximized
 
 
 
-
-
-
-
 from PyQt.QtCore import QCoreApplication
 from PyQt.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
 from PyQt.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
@@ -127,6 +123,70 @@ class StuffdbMainWindow( QMainWindow ):
         combo_dict_ext.build_it( AppGlobal.qsql_db_access.db )
         if AppGlobal.parameters.set_maximized:
             self.setWindowState( WindowMaximized )
+
+        if not AppGlobal.fatal_error  is None:
+            #     this is set up back in qsql_db_access where there is no gui app
+            #     msg       = f"cannot write new lockfile {db_lock_file_name = }"
+            #    too soon for next may have to use a signal for later
+            #
+            #        AppGlobal.fatal_error   = msg
+            #
+            #
+            #print( AppGlobal.fatal_error )
+            msg   =  AppGlobal.fatal_error
+            msg   =  f"{msg}/n   I can erase this file so the next restart works\say Yes only if you think it is OK"
+            # response = QMessageBox.question( None, "Confirmation", msg,
+            #                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+            # ---- set up flags for different versions
+            if qt_version == 6:
+                qmb_flag_yes     = QMessageBox.StandardButton.Yes
+                qmb_flag_no      = QMessageBox.StandardButton.No
+                qmb_respons_yes  = QMessageBox.StandardButton.Yes
+
+            else: # qt5
+                qmb_flag_yes     = QMessageBox.Yes
+                qmb_flag_no      = QMessageBox.No
+                qmb_respons_yes  = QMessageBox.Yes
+
+            # response = QMessageBox.question( None, "Lock File Alert", msg,
+            #                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No )
+
+
+            response = QMessageBox.question(
+                None,
+                "Lock File Alert",
+                msg,
+                qmb_flag_yes | qmb_flag_no,
+                qmb_flag_no
+                    )
+
+            # Check the response  -- really none
+            if response == qmb_respons_yes:
+                #print("User clicked Yes")
+                from stuffdb import delete_file
+                delete_file( AppGlobal.parameters.db_lock_file_name )
+
+            else:
+                pass
+                print("User clicked No")
+
+            # we are gone -- might be better back in stuff db
+            # ver 1 from chat --- ran right thru it
+                # QApplication.instance().closeAllWindows()
+                # QApplication.processEvents()  # Process any pending events
+                # QApplication.quit()
+            # ver 2  worked did a clean shutdown and deleted lock file which is bad
+            import sys
+
+            QApplication.instance().closeAllWindows()
+            sys.exit(0)
+            # ver 3  -- left a dead black window
+            # from PyQt5.QtCore import QTimer
+
+            # QApplication.instance().closeAllWindows()
+            # QTimer.singleShot(0, QApplication.instance().quit)
+
 
     # -------------------------
     def assign_icon( self,  ):
@@ -491,10 +551,6 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( self.mdi_management.tile_documents )
         window_menu.addAction( action )
 
-        # action             = QAction( "Tile", self )
-        # action.triggered.connect( self.show_about_box )
-        # window_menu.addAction( action )
-
         action             = QAction( "Layer", self )
         action.triggered.connect( self.mdi_management.layer_documents )
         window_menu.addAction( action )
@@ -725,14 +781,17 @@ class StuffdbMainWindow( QMainWindow ):
         process_pid = psutil.Process(os.getpid())
         #print( f"process.memory_info().rss >>{process.memory_info().rss}<<")  # in bytes
 
-        msg      =  "get the size this process thru its pid "
+        #msg      =  "get the size this process thru its pid "
         memory   = process_pid.memory_info().rss/1_000_000
         memory   = f"Memory = {memory} Mbytes"
-        repo     = " coming soom          "
+        repo     = "https://github.com/russ-hensel/stuffdb "
         msg      = ( f"Stuff DB {version} {mode}"
                      f"\n{memory}"
                      f"\n{repo}"
                      )
+
+
+
 
         QMessageBox.about(self, "About", msg )
 
@@ -831,13 +890,17 @@ class StuffdbMainWindow( QMainWindow ):
         # Clean exit from Qt
         QCoreApplication.quit()
 
-    def cleanup(self):
-        """Perform cleanup operations"""
+    def cleanup( self ):
+        """
+        Perform cleanup operations
+        this is for closing down, signaled perhaps by main_window
+        """
         # Stop any running threads
         # Close database connections
         # Save application state
         # Clean up temporary files
         # etc.
+        AppGlobal.controller.cleanup()
         pass
 
     # ---- test actions ----------------------

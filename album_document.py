@@ -33,6 +33,8 @@ from app_global import AppGlobal
 from qt_compat import QApplication, QAction, exec_app, qt_version
 from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
 from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum, QSizePolicy_Fixed, QSizePolicy_Preferred
+
+
 from qt_compat import RModel_OnManualSubmit, RModel_OnFieldChange, RModel_OnRowChange
 from qt_compat import SelectRows, SelectItems, ExtendedSelection
 from qt_compat import NoEditTriggers
@@ -42,6 +44,13 @@ from qt_compat import AscendingOrder, DescendingOrder
 from qt_compat import  Select, Rows # and there are more
 
 from PyQt.QtWidgets import QTableView, QAbstractItemView
+
+
+
+
+
+
+
 
 from PyQt.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, pyqtSlot
 from PyQt.QtGui import (QIcon,

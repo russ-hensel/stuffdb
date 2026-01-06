@@ -344,7 +344,7 @@ class SnippetManager:
         label                   = "Paste Snippet"
         widget                  = QPushButton( label )
         self.push_button        = widget
-        connect_to            = self.paste_snippet
+        connect_to              = self.paste_snippet
         widget.clicked.connect( connect_to )
 
         return ( self.snippet_ddl, self.push_button )
@@ -980,7 +980,6 @@ class DocumentBase( QMdiSubWindow ):
 
         if self.text_tab is not None:
             self.text_tab.update_db()
-
 
     # ---------------------------------------
     def validate( self, ):
@@ -2373,6 +2372,56 @@ class SubTabBase( QWidget ):
         model.submitAll()
         self.db.commit()
 
+
+
+# ----------------------------------------
+class SubTabBaseOld( QWidget ):
+    """
+    shold probably delete fut still seems to be in use .080
+    used for detail many sub tabs but some like text and picture may be special
+
+    """
+    def __init__(self, parent_window ):
+        """
+        use in
+            moving to stuff event
+            PictureSubjectSubTab( stuffdb_tabbed_sub_window.StuffdbSubTabTab  ):
+        """
+        super().__init__()
+        self.parent_window  = parent_window
+
+        self.db             = AppGlobal.qsql_db_access.db
+
+        self.current_id     = None
+
+        debug_msg  = ( "in SubTabBase  tab appends to a window list is this correct?? -- maybe ")
+        logging.debug( debug_msg )
+
+        self.parent_window.sub_tab_list.append( self )    # a function might be better
+
+    # -----------------------
+    def update_db( self,    ):
+        """
+        for debugging
+
+        do not need key generation on new
+        model               = QSqlTableModel( self, self.db )
+        model_indexer       = table_model.ModelIndexer( model )
+        self.model_indexer  = model_indexer
+
+        self.model_subject  = model
+
+        """
+        debug_msg   = ( "update_db  StuffdbSubSubTab this simple? db commit here??  ")
+        logging.debug( debug_msg )
+
+        model       =  self.model    # QSqlTableModel( self, self.db )
+        model.submitAll()
+        self.db.commit()
+
+
+
+
     # ------------------------------------------
     def _build_gui( self, ):
         """
@@ -2583,51 +2632,6 @@ class SubTabBase( QWidget ):
         return a_str
 
 # ----------------------------------------
-class SubTabBaseOld( QWidget ):
-    """
-    shold probably delete fut still seems to be in use .080
-    used for detail many sub tabs but some like text and picture may be special
-
-    """
-    def __init__(self, parent_window ):
-        """
-        use in
-            moving to stuff event
-            PictureSubjectSubTab( stuffdb_tabbed_sub_window.StuffdbSubTabTab  ):
-        """
-        super().__init__()
-        self.parent_window  = parent_window
-
-        self.db             = AppGlobal.qsql_db_access.db
-
-        self.current_id     = None
-
-        debug_msg  = ( "in SubTabBase  tab appends to a window list is this correct?? -- maybe ")
-        logging.debug( debug_msg )
-
-        self.parent_window.sub_tab_list.append( self )    # a function might be better
-
-    # -----------------------
-    def update_db( self,    ):
-        """
-        for debugging
-
-        do not need key generation on new
-        model               = QSqlTableModel( self, self.db )
-        model_indexer       = table_model.ModelIndexer( model )
-        self.model_indexer  = model_indexer
-
-        self.model_subject  = model
-
-        """
-        debug_msg   = ( "update_db  StuffdbSubSubTab this simple? db commit here??  ")
-        logging.debug( debug_msg )
-
-        model       =  self.model    # QSqlTableModel( self, self.db )
-        model.submitAll()
-        self.db.commit()
-
-# ----------------------------------------
 class HistoryTabBase( QWidget ):
 
     def __init__(self, parent_window  ):
@@ -2682,27 +2686,22 @@ class HistoryTabBase( QWidget ):
         # ---- pin 1
         label           = "Pin Current Row as 1"
         widget          = QPushButton( label )
-        #connect_to      = self.current_record_to_pinned_0
-        connect_to  =  partial( self.current_record_to_pinned, 0 )
+        connect_to      =  partial( self.current_record_to_pinned, 0 )
         widget.clicked.connect( connect_to )
         row_layout.addWidget( widget )
 
         # ---- pin 2
         label           = "Pin Current Row as 2"
         widget          = QPushButton( label )
-        connect_to  =  partial( self.current_record_to_pinned, 1 )
+        connect_to      =  partial( self.current_record_to_pinned, 1 )
         widget.clicked.connect( connect_to )
         row_layout.addWidget( widget )
 
         # ---- history
         table               = self.make_a_table( columns )
-
         self.history_table  = table
-
         table.cellClicked.connect( self.on_cell_clicked )
-
         layout.addWidget( table )
-
 
     # ---------------------------------------
     def show_context_menu( self, pos ):
@@ -2915,7 +2914,6 @@ class HistoryTabBase( QWidget ):
         """
         get detail record and put in pinned table at position
         ix_row
-        zz
         """
         table           = self.pinned_table  # QTableWidget(
 

@@ -24,7 +24,7 @@ import logging
 import os
 import shutil
 from   functools import partial
-from   datetime  import datetime
+from   datetime import datetime
 #import functools
 #import sqlite3
 #import sys
@@ -42,8 +42,6 @@ from qt_compat import SelectRows, SelectItems
 from qt_compat import NoEditTriggers
 from qt_compat import Horizontal, Vertical
 from qt_compat import QFileDialog, ExistingFiles, ExistingFile, AnyFile, Directory
-
-from PyQt.QtCore import QCoreApplication
 
 from PyQt.QtCore import (QAbstractTableModel,
                           QDate,
@@ -133,166 +131,6 @@ LOG_LEVEL   = 30    # higher is more
 logger      = logging.getLogger( )
 PARAMETERS  = parameters.PARAMETERS
 NOGO        =  "That is a No Go"
-
-
-# ------------
-class CounterIterator:
-    def __init__(self, *, photo_browse_sub_tab ):
-        """
-        what would be out of loop locals are set up here as self.
-        what would have been self get a instance variable here like
-            self.photo_browse_sub_tab
-            this is the tab we are "calling from"
-        """
-        self.photo_browse_sub_tab   = photo_browse_sub_tab
-        self.on_first_row           = True
-        pbst                        = self.photo_browse_sub_tab
-
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-
-        # # task goes here
-        # if self.current < self.limit:
-        #     val = str(self.current)
-        #     self.current += 1
-        #     return val
-        """
-        what would have been self is now pbst"""
-        while True:
-            pbst          = self.photo_browse_sub_tab
-            #status_label
-
-            if pbst.model.rowCount() == 0:
-                break
-
-            if self.on_first_row:  # rest based on add copy
-                pbst.document.update_db()
-                self.on_first_row   = False
-
-            else:
-                # ix_debug +=1
-                # if ix_debug > 3:
-                #     msg    = "move_all  hit temp debug limit move_all"
-                #     logging.debug( msg )
-                #     break
-                # need to add a record
-                pbst.document.add_copy()  # document =
-
-            index    = pbst.model.get_index_for_row( 0 ) # always get the top row
-            pbst.move_to_pic( index )   # will send off to move_to_pic
-
-            pbst.detail_tab.add_to_show()
-                # data_in_dict["photo_id"]
-                # photo_dict    = data_in_dict["photo_id"]
-                # album_target.add_photo_to_show( photo_dict )
-
-            return "return from itr"
-
-        raise StopIteration
-
-# -------------------------. The Progress Dialog (Using Linear Loop logic)
-class ProgressDialog( QDialog ):
-
-    def __init__(self, *, iterator,  main_label_ref = None, parent = None ):
-        """ """
-        super().__init__(parent)
-        self.iterator       = iterator
-        self.main_label     = main_label_ref
-
-        # Flags for control flow
-        self._is_paused     = False
-        self._is_halted     = False
-
-        self.setWindowTitle("Direct Loop Controller")
-        self.setFixedSize(350, 180)
-
-        # UI Setup
-        self.layout = QVBoxLayout(self)
-        self.status_label = QLabel("Ready to start...", self)
-        self.layout.addWidget( self.status_label )
-
-        self.btn_layout = QHBoxLayout()
-        self.pause_btn = QPushButton("Pause")
-        self.halt_btn = QPushButton("Halt")
-
-        self.btn_layout.addWidget(self.pause_btn)
-        self.btn_layout.addWidget(self.halt_btn)
-        self.layout.addLayout(self.btn_layout)
-
-        self.pause_btn.clicked.connect(self.toggle_pause)
-        self.halt_btn.clicked.connect(self.halt_process)
-
-    #------------------------
-    def toggle_pause(self):
-        self._is_paused = not self._is_paused
-        self.pause_btn.setText("Continue") if self._is_paused else self.pause_btn.setText("Pause")
-
-    #------------------------
-    def halt_process(self):
-        self._is_halted = True
-
-    #------------------------
-    def run_loop(self):
-        """
-        The core logic. This runs a standard loop but manually
-        pumps the Qt event queue.
-        """
-        try:
-            for item in self.iterator:
-                QCoreApplication.processEvents()
-                print( f"{item =}")
-                # --- CHECK HALT ---
-                if self._is_halted:
-                    # self.main_label.setText("Main Status: Halted")
-                    self.set_main_lable_text( "Main Status: Halted")
-                    break
-
-                # --- CHECK PAUSE ---
-                while self._is_paused:
-                    # We MUST process events here, or the 'Continue' button won't work!
-                    QCoreApplication.processEvents()
-                    if self._is_halted:
-                        break
-                    time.sleep(0.01) # Avoid 100% CPU usage during pause
-
-                # --- UPDATE UI ---
-                self.status_label.setText(f"Processing: {item}")
-                # self.main_label.setText(f"Main Status: Running ({item})")
-                self.set_main_lable_text( "Main Status: Running ({item})")
-
-                # --- THE MAGIC LINE ---
-                # This keeps the UI responsive and allows clicks to be registered
-                print( "QCoreApplication.processEvents()" )
-                QCoreApplication.processEvents()
-
-                # Artificial delay so we can see it happen
-                time.sleep(0.1)
-
-            if not self._is_halted:
-                self.status_label.setText("Process Finished.")
-                #self.main_label.setText("Main Status: Idle")
-                self.set_main_lable_text( "Main Status: Idle" )
-
-        except Exception as e:
-            QMessageBox.critical(self, "Iterator Error", str(e))
-
-        finally:
-            self.pause_btn.setEnabled(False)
-            self.halt_btn.setText("Close")
-            # Disconnect old signals and set to close the dialog
-            self.halt_btn.clicked.disconnect()
-            self.halt_btn.clicked.connect(self.accept)
-
-    #------------------------
-    def set_main_lable_text(self, text ):
-        """
-        self.set_main_lable_text( text ) """
-        ml        =  self.main_label
-        if ml:
-            ml.setText( text )
 
 
 # ----------------------------------------
@@ -1592,12 +1430,10 @@ class PictureBrowseSubTab( QWidget ):
         # button_layout.addWidget( a_widget )
 
         a_widget        = QPushButton( "move_all" )
-        self.launch_btn = a_widget
         a_widget.clicked.connect( self.move_all )
         button_layout.addWidget( a_widget )
 
         a_widget        = QPushButton( "fit" )
-
         a_widget.clicked.connect( self.fit_in_view )
         button_layout.addWidget( a_widget )
 
@@ -1657,30 +1493,6 @@ class PictureBrowseSubTab( QWidget ):
             self.model.addRow( row_data)
 
         self.display_file_at_row(  0  )
-
-    #-------------------------------------------------
-    def open_move_all_dialog(self):
-        """ """
-
-
-        self.launch_btn.setEnabled(False)
-             # CRITICAL: Prevent re-entrancy
-             # not enough want to get main window i thin
-
-        it = CounterIterator( photo_browse_sub_tab = self )
-        self.dial = ProgressDialog( iterator = it   )
-
-        # Show the dialog non-modally
-        self.dial.show()
-
-        # may need time to paint
-        QCoreApplication.processEvents()
-        QCoreApplication.processEvents()
-
-        # Start the loop manually
-        self.dial.run_loop()
-
-        self.launch_btn.setEnabled(True)
 
     # --------------------------------------
     def move_all_setup( self,  ):
@@ -1747,9 +1559,7 @@ class PictureBrowseSubTab( QWidget ):
         len_album_docs   = len( album_docs )
 
         if len_album_docs == 0:
-            msg     = ( "For this to work you need 1 Album Document open, "
-                       "you have none = 0."
-                       "\n    The album should have a detail open as well" )
+            msg     = "For this to work you need 1 Album Document open, you have none = 0."
             raise app_exceptions.ReturnToGui( msg )
 
         if len_album_docs >  1:
@@ -1775,45 +1585,6 @@ class PictureBrowseSubTab( QWidget ):
     # --------------------------------------
     def move_all( self,  ):
         """
-        for use with progress dialog
-        move all picture files to new picture documents
-            want to change this to require
-                see setup
-
-        may want to change to selected rows
-
-
-        """
-        msg   = ( "move_all begin ^^^^^^^^^^^^^^^^^^^^^^^   call move to pic  but add to album in process  ")
-        logging.debug( msg )
-
-        # or perhaps resolve in itterator or send in a dits or init of itter
-        document        = self.parent_window.parent_window
-        self.document   = document
-
-        detail_tab      = self.parent_window
-        self.detail_tab = detail_tab
-
-        try:
-            album_target = self.move_all_setup()
-
-        except app_exceptions.ReturnToGui as an_except:
-            msg       = f"{str( an_except)}"
-            logging.debug( msg )
-            QMessageBox.information( AppGlobal.main_window,
-                                     NOGO, msg )
-            return
-
-        # ---- ready for dialog
-        self.open_move_all_dialog( )
-
-        msg         = ( "\n maybe finished return ++++++++++++++++++++++++++++++++++++++++++++")
-        logging.debug( msg )
-
-
-    # --------------------------------------
-    def move_all_old( self,  ):
-        """
         move all picture files to new picture documents
             want to change this to require
                 see setup
@@ -1826,8 +1597,6 @@ class PictureBrowseSubTab( QWidget ):
         logging.debug( msg )
 
         document        = self.parent_window.parent_window
-        self.document   = document
-
         detail_tab      = self.parent_window
 
         try:

@@ -21,12 +21,12 @@ def build_it( a_data_dict ):
     a_data_dict.add_table ( a_table_dict )
 
 
-
     a_column_dict = data_dict.ColumnDict( column_name  = "table_name",
                                           db_type      = "VARCHAR(30)",
                                           display_type = "error",
                                           max_len        = None,
-                                          default_func   = None,   )
+                                          default_func   = None,
+                                          primay_key_ix  = 0,)
     a_table_dict.add_column( a_column_dict )
 
     a_column_dict = data_dict.ColumnDict( column_name  = "key_value",

@@ -56,6 +56,7 @@ def build_it( a_data_dict ):
                                    col_head_order     = 1,
                                    display_order      = 0,
                                    form_col_span      = 1,
+                                   primay_key_ix      = 0,
                                    )
 
     a_table_dict.add_column( a_column_dict )
@@ -89,9 +90,9 @@ def build_it( a_data_dict ):
 
     a_table_dict.add_column( a_column_dict )
 
-    # ---- sub_system
+    # ---- sub_system expand to 20
     a_column_dict = data_dict.ColumnDict(    column_name    = "sub_system",
-                                             db_type        = "VARCHAR(15)",
+                                             db_type        = "VARCHAR(20)",
                                              display_type   = "string",
                                              detail_edit_class  = "custom_widgets.CQComboBox",
                                              form_edit          = "custom_widgets.CQComboBox",
@@ -108,9 +109,9 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
 
-    # ---- system
+    # ---- system expand to 20
     a_column_dict = data_dict.ColumnDict(    column_name    = "system",
-                                             db_type        = "VARCHAR(15)",
+                                             db_type        = "VARCHAR(20)",
                                              display_type   = "string",
                                              detail_edit_class  = "custom_widgets.CQComboBox",
                                              form_edit          = "custom_widgets.CQComboBox",
@@ -126,9 +127,9 @@ def build_it( a_data_dict ):
 
     a_table_dict.add_column( a_column_dict )
 
-    # ----key_words
+    # ----key_words    xpanded from old db  to 120
     a_column_dict = data_dict.ColumnDict(    column_name        = "key_words",
-                                             db_type            = "VARCHAR(70)",
+                                             db_type            = "VARCHAR( 120)",
                                              display_type       = "string",
                                              max_len            = None,
                                              default_func       = None,
@@ -143,7 +144,7 @@ def build_it( a_data_dict ):
 
     # ---- add_ts   --- may not exist ?? -- was missing fixed
     a_column_dict = data_dict.ColumnDict(    column_name    = "add_ts",
-                                             db_type        = "INTEGER",
+                                             db_type        = "TIMESTAMP",  # my type converted later
                                              display_type   = "timestamp",
                                              max_len        = None,
                                              default_func   = None,
@@ -156,7 +157,7 @@ def build_it( a_data_dict ):
 
     # ---- edit_ts
     a_column_dict = data_dict.ColumnDict(    column_name    = "edit_ts",
-                                             db_type        = "INTEGER",
+                                             db_type        = "TIMESTAMP",  # my type converted later
                                              display_type   = "timestamp",
                                              max_len        = None,
                                              default_func   = None,
@@ -239,7 +240,7 @@ def build_it( a_data_dict ):
                                              db_type        = "VARCHAR(1)",
                                              display_type   = "string",
                                              max_len        = None,
-                                             default_func= None, )
+                                             default_func   = None, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- can_execute
@@ -254,6 +255,12 @@ def build_it( a_data_dict ):
     a_table_dict   = data_dict.TableDict(  "help_text" )
     a_data_dict.add_table ( a_table_dict )
 
+    fk_info        =  (  "CONSTRAINT fk_help_text_help_info "
+                         "\n       FOREIGN KEY (id)  "
+                         "\n       REFERENCES help_info(id) "
+                         "\n       ON DELETE CASCADE "
+                        )
+
     a_column_dict = data_dict.ColumnDict(    column_name    = "id",
                                    db_type              = "INTEGER",
                                              form_read_only       = True,
@@ -265,7 +272,9 @@ def build_it( a_data_dict ):
                                    max_len              = None,
                                    default_func         = None,
                                    placeholder_text     = "id",
-                                   form_col_span        = 1,  )
+                                   form_col_span        = 1,
+                                   primay_key_ix        = 0,
+                                   foreign_key_info    = fk_info,    )
 
     a_table_dict.add_column( a_column_dict )
 
@@ -286,8 +295,9 @@ def build_it( a_data_dict ):
                                    db_type        = "TEXT",
                                    display_type   = "string",
                                    max_len        = None,
-                                   default_func= None,
-                                   placeholder_text   = "this is a long text\\nfield\\ncan hold many lines",)
+                                   default_func   = None,
+                                   placeholder_text   = "this is a long text\\nfield\\ncan hold many lines",
+                                    )
 
     a_table_dict.add_column( a_column_dict )
 
@@ -305,7 +315,10 @@ def build_it( a_data_dict ):
                                              db_type        = "INTEGER",
                                              display_type   = "integer",
                                              max_len        = None,
-                                             default_func   = None,   )
+                                             default_func   = None,
+                                             primay_key_ix  = 0,
+
+                                             )
     a_table_dict.add_column( a_column_dict )
 
     # ---- key_word

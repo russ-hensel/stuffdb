@@ -6,7 +6,7 @@
 
 
 # ---- tof
-#import adjust_path
+
 # --------------------
 if __name__ == "__main__":
     import main
@@ -14,10 +14,11 @@ if __name__ == "__main__":
 
 # ---- imports
 import functools
-import inspect
+from   functools import partial
+#import inspect
 import logging
-import pprint
-import subprocess
+#import pprint
+#import subprocess
 import os
 import time
 
@@ -32,7 +33,11 @@ from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at 
 
 
 
-from PyQt.QtCore   import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+
+from PyQt.QtCore   import ( QDate, QModelIndex, Qt, QTimer, pyqtSlot,  QThread, pyqtSignal )
+
+
+
 from PyQt.QtCore   import Qt, QDateTime
 from PyQt.QtWidgets import QStyledItemDelegate
 from PyQt.QtGui import (QFont,
@@ -95,17 +100,19 @@ import check_fix
 #import gui_qt_ext
 import info_about
 #import key_words
-import string_util
-import text_edit_ext
+#import string_util
+#import text_edit_ext
 #import table_model
 import wat_inspector
-from app_global     import AppGlobal
+from   app_global     import AppGlobal
 import qsql_utils
 
 #import ex_qt
 #import exec_qt
 #import mdi_management
-
+import db_dup_files
+import run_with_dialog
+import file_utils
 
 # ---- import end
 
@@ -171,7 +178,22 @@ IKW_TABLE_DICT = {value: key for key, value in KW_TABLE_DICT.items()}
 
 FileInfo        = collections.namedtuple( "FileInfo", "file_name path_name full_file_name" )
 
-def  clean_path_part( path_part ):
+# ---- perhaps file_util
+# -------------------------------
+def delete_file( file_name ):
+    """
+    what it says
+    """
+    # from pathlib import Path
+
+    file_path = Path( file_name )
+
+    # Won't raise FileNotFoundError if file doesn't exist
+    file_path.unlink( missing_ok = True )
+
+
+# -------------------------------
+def clean_path_part( path_part ):
     """
     consider add to some lib ??
     """
@@ -195,8 +217,6 @@ def open_file_dialog( parent, default_dir ):
     What it says
 
     """
-
-
     dialog = QFileDialog(parent, "Select Files")
 
     # --- dialog options ---
@@ -233,8 +253,36 @@ def open_file_dialog( parent, default_dir ):
     else:
         return []
 
+# #-----------------------------------------------
+# class AdvFileIterator:
+#     """expand later with dir depth and filters  """
+#     def __init__(self, directory):
+#         self.directory  = directory
+#         self._files     = os.listdir(directory)  # list of entries
+#         self._index     = 0
 
-class FileIterator:
+#     def __iter__(self):
+#         return self
+
+#     def __next__(self):
+#         while self._index < len(self._files):
+#             filename = self._files[self._index]
+#             self._index += 1
+#             full_path = os.path.join(self.directory, filename)
+#             if os.path.isfile(full_path):
+#                 return full_path
+#             else: # is directory
+#                 pass
+
+
+#         raise StopIteration
+
+
+
+
+
+#-----------------------------------------------
+class FileIteratorxxxx:
     """expand later with dir depth and filters  """
     def __init__(self, directory):
         self.directory = directory
@@ -254,7 +302,6 @@ class FileIterator:
         raise StopIteration
 
 
-
 # ------------------------------------
 def open_directory_dialog( parent, default_dir  ):
     """
@@ -265,9 +312,9 @@ def open_directory_dialog( parent, default_dir  ):
 
     # --- dialog options ---
     dialog.setFileMode(QFileDialog.Directory)           # directory selection
-    dialog.setOption(QFileDialog.ShowDirsOnly, True)    # show only directories
+    dialog.setOption(QFileDialog.ShowDirsOnly,        True)    # show only directories
     dialog.setOption(QFileDialog.DontUseNativeDialog, True)  # force Qt dialog
-    dialog.setOption(QFileDialog.ReadOnly, False)       # allow typing path manually
+    dialog.setOption(QFileDialog.ReadOnly,            False)       # allow typing path manually
     dialog.setOption(QFileDialog.DontResolveSymlinks, False)
 
     # --- default start directory ---
@@ -276,7 +323,7 @@ def open_directory_dialog( parent, default_dir  ):
     dialog.setDirectory( default_dir )
 
     # --- default directory suggestion ---
-    dialog.selectFile("Photos")  # highlights/suggests this folder if exists
+    dialog.selectFile( ""  )  # highlights/suggests this folder if exists
 
     # --- execute the dialog ---
     if dialog.exec_():
@@ -311,8 +358,6 @@ class ExploreArgs(   ):
         explore_args.max_dir_depth
         """
         self.max_dir_depth    = max_dir_depth
-
-
 
 # ----------------------------------------
 class DbManagementSubWindow( QMdiSubWindow ):
@@ -372,10 +417,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
         mdi_area                = AppGlobal.main_window.mdi_area
         # main_notebook.currentChanged.connect( self.on_tab_changed )
 
-        # ix                        = -1
-
-        # ix                       += 1
-        # self.criteria_tab_index   = ix
         self.first_tab         = BasicsTab( self  )
         main_notebook.addTab(       self.first_tab, "BasicsTab" )
 
@@ -415,8 +456,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
         AppGlobal.mdi_management.update_menu_item( self )
         self.set_size_pos()
 
-
-
     # --------------------------------
     def get_topic( self ):
         """
@@ -424,7 +463,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
          'DbManagementSubWindow' object has no attribute 'get_topic'
         """
         return None
-
 
     # --------------------------------
     def set_size_pos( self ):
@@ -476,7 +514,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
         self.file_out.write( msg + "\n" )
         print( msg )
 
-
     # --------------------------------
     def open_file_out( self, file_name = "data_management_out.txt" ):
         """
@@ -489,6 +526,7 @@ class DbManagementSubWindow( QMdiSubWindow ):
                                     errors    = 'ignore' )
 
         return self.file_name_out
+
     # --------------------------------
     def close_file_out( self,  ):
         """
@@ -512,7 +550,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
             self.output_edit.clear()
         self.output_edit.append( msg )
 
-
     #----------------------------
     def to_top_of_msg( self,   ):
         """
@@ -525,7 +562,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
         text_edit.setTextCursor(cursor)
         text_edit.ensureCursorVisible()
 
-
     #----------------------------
     def get_output_edit( self, ):
         """
@@ -534,7 +570,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
         may not need
         """
         return self.output_edit
-
 
     # --------------------------------
     def closeEvent(self, event):
@@ -559,8 +594,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
         """
 
         """
-
-
 
     # ------------------------------------------
     def doc_wat_inspect( self, ):
@@ -623,7 +656,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
         # a_str   = a_str + "\n" + b_str
 
         return a_str
-
 
 # ----------------------------------------
 class BasicsTab( QWidget ):
@@ -709,6 +741,7 @@ class BasicsTab( QWidget ):
         placer.layout.addLayout( button_layout, placer.ix_col, placer.ix_row, 0, 5  )
         #row: int, column: int, rowSpan: int, columnSpan: int, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = Qt.Alignment()):
         placer.new_row()
+
         # ---- buttons
         a_widget        = QPushButton( "Clear" )
         a_widget.clicked.connect(  self.clear_criteria )
@@ -726,8 +759,6 @@ class BasicsTab( QWidget ):
         a_widget.clicked.connect(  self.clear_go )
         button_layout.addWidget( a_widget )
 
-
-    # -------------------------
     # ---- reports
     # -------------------------
     def set_key_max_id( self,   ):
@@ -776,6 +807,7 @@ class BasicsTab( QWidget ):
 
         #self.parent_window.output_msg(  msg )
         self.parent_window.activate_output_tab()
+
     # -------------------------
     def record_count_rpt( self,   ):
         """
@@ -794,7 +826,7 @@ class BasicsTab( QWidget ):
         #self.parent_window.output_msg(  msg )
         self.parent_window.activate_output_tab()
 
-
+    # -------------------------
     def system_sub_count_rpt_old( self,   ):
         """
         What it says, read
@@ -846,7 +878,6 @@ class BasicsTab( QWidget ):
         msg         = f"{sql} "
         self.parent_window.output_msg(  msg )
         self.parent_window.activate_output_tab()
-
 
 # ----------------------------------------
 class KeyWordTab( QWidget ):
@@ -1154,6 +1185,7 @@ class PictureUtilTab( QWidget ):
         self.picture_dir_default    = "../"
         self.picture_dir_default    = AppGlobal.parameters.picture_browse
 
+        self.picture_file_default   = "./what.jpg"
 
         self.disptach_dict          = {}
 
@@ -1226,6 +1258,10 @@ class PictureUtilTab( QWidget ):
         """
         layout     = QHBoxLayout( groupbox )
 
+        widget              = QLineEdit( )
+        self.dir_widget     = widget
+        layout.addWidget( widget )
+
         # ---- set dir
         widget              = QPushButton( "Set Dir" )
         connect_to          = self.get_dir
@@ -1233,7 +1269,7 @@ class PictureUtilTab( QWidget ):
         layout.addWidget( widget )
 
         widget              = QLineEdit( )
-        self.dir_widget     = widget
+        self.file_widget    = widget
         layout.addWidget( widget )
 
         # ---- set file
@@ -1242,10 +1278,7 @@ class PictureUtilTab( QWidget ):
         widget.clicked.connect( connect_to  )
         layout.addWidget( widget )
 
-        widget              = QLineEdit( )
-        self.file_widget     = widget
-        layout.addWidget( widget )
-
+    #--------------------------------------
     def build_gui_actions( self, groupbox ):
         """
 
@@ -1253,7 +1286,7 @@ class PictureUtilTab( QWidget ):
         """
         layout              = QHBoxLayout( groupbox )
 
-        # ---- table combobox
+        # ---- table combobox and dispatch
         widget              = QComboBox()
 
         self.go_widget      = widget
@@ -1263,7 +1296,12 @@ class PictureUtilTab( QWidget ):
         self.disptach_dict[ "find_file_missing" ]          = self.find_file_missing
         self.disptach_dict[ "find_record_missing" ]        = self.find_record_missing
         self.disptach_dict[ "clean_file_sub_dir" ]         = self.clean_file_sub_dir
-        self.disptach_dict[ "find_if_dups" ]               = self.find_if_dups
+
+        a_partial                                          = partial( self.find_if_dups, delete = False )
+        self.disptach_dict[ "find_if_dups -- Report" ]     = a_partial
+
+        a_partial                                          = partial( self.find_if_dups, delete = True )
+        self.disptach_dict[ "find_if_dups -- Delete" ]     = a_partial
 
         a_list              = [key for key in self.disptach_dict.keys() ]
 
@@ -1291,7 +1329,7 @@ class PictureUtilTab( QWidget ):
         """
         go_item      = self.go_widget.currentText()
         go_item      = go_item.replace( "_", " " )
-        search_args = [ "stuffdbhelp", "pictureutiltab", go_item ]
+        search_args  = [ "stuffdbhelp", "pictureutiltab", go_item ]
         AppGlobal.mdi_management.stuffdb_help( search_args = search_args )
 
     # ---- reports
@@ -1304,29 +1342,7 @@ class PictureUtilTab( QWidget ):
         go_item      = self.go_widget.currentText()
         self.disptach_dict[ go_item ]()
 
-        # if go_item == "xxxx":
-        #     pass
-        # elif go_item == "find_dirs":
-        #     self.find_dirs()
-
-        # elif go_item == "clean_file_sub_dir":
-        #     self.clean_file_sub_dir()
-
-        # elif go_item == "find_file_missing":
-        #     self.find_file_missing()
-
-
-        # elif go_item == "find_record_missing":
-        #     self.find_record_missing()
-
-        # elif go_item == "find_if_dups":
-        #     self.find_if_dups()
-
-
-        # else:
-        #     print( f"do not know what {go_item = } is")
-
-
+    # -------------------------
     def get_dir( self,   ):
         """ """
         dirs    = open_directory_dialog( self, self.picture_dir_default )
@@ -1336,6 +1352,7 @@ class PictureUtilTab( QWidget ):
 
             self.dir_widget.setText( dirs[0] )
 
+    # -------------------------
     def get_file( self,   ):
         """
         self.picture_file_default   = "../"
@@ -1384,19 +1401,10 @@ class PictureUtilTab( QWidget ):
 
 
     # -------------------------
-    def find_dup_file( self, path  ):
-        """
-        work through files in a path ( and descendants )
-        and ouput possible duplicates for deletion
-
-
-        """
-        pass
-
-    # -------------------------
     def clean_file_sub_dir( self,    ):
 
         """
+        this seems to be for bad data in the db, have to read the codee to know
         Loop through all records in the photo table, read file and sub_dir, modify them,
         and update the same record with the modified values.
         Returns:
@@ -1453,10 +1461,95 @@ class PictureUtilTab( QWidget ):
 
         return True
 
+
     # -------------------------
-    def find_if_dups( self,   ):
+    def find_if_dups( self, delete = False ):
         """
+        need to investigat if we need, can get return
+        run_with_dialog.ProgressDialog( parent = None, function_to_run = None, xtra_arg = None )
+
+        function_to_run = None,
+        function_arg  = None    pass on to function   function_to_run( HealperThread, function_arg )
+        function needs to know HelperThread in order to send back progress
+
+
+        may be issues around re use, make sure destroyed fully needs more testing
+
+        """
+        enable_delete   = delete
+
+        if enable_delete:
+            set_to   = "DELETE"
+        else:
+            set_to   = "REPORT ONLY"
+        response = QMessageBox.question( None, "Confirmation",
+                                        f"This is set to {set_to} duplicates \nDo you want to proceed?",
+                               QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+        # Check the response
+        if response == QMessageBox.Yes:
+            print("User clicked Yes")
+            # and continue
+        else:
+            return
+
+        if enable_delete:
+            # # setup to find and delete
+            self.dialog             = run_with_dialog.ProgressDialog(
+                         task_function          = self.find_if_dups_helper,
+                         task_function_arg      =  delete_file )
+
+        else:
+            # # setup to find and delete
+            self.dialog             = run_with_dialog.ProgressDialog(
+                         task_function          = self.find_if_dups_helper,
+                         task_function_arg      =  None )
+
+        # self.dialog             = run_with_dialog.ProgressDialog(
+        #                                                     )
+
+        self.dialog.show()
+
+        self.dialog.start_thread()
+
+        print( "zz_do_i_need_fixing open and close file here???")
+
+
+    # # -------------------------
+    # def find_if_dups_helper_proto( self, a_helper_thread   ):
+    #     """
+    #     or put inside helper and pass in self
+
+
+    #     """
+    #     for ix in range( 10 ):
+
+    #         a_helper_thread.update_signal.emit( str(ix * ix ) )
+    #         time.sleep(0.5)
+
+    #     return "done"
+
+    # -------------------------
+    def find_if_dups_helper( self, a_helper_thread, function_arg  ):
+        """
+        actually does the find but using a help thread
+
+                do not interact with any widgets during
+                this unless you set up a signaling system
+
+        a_helper_thread   -- where we send progress
+        function_arg      -- additional argument as needed if you need several
+                                use a dict
+                            for this case we will call function_arg( file_name ) if we have a match
+
+        using db_dup_files
         work thru the files in a directory and see if already in db
+                input based on the directory widget
+                looks safe to run
+
+                move some rpt options to the call
+
+                refactor everyting, move out of this gui
 
         --- old
         #max_dir_depth 0 is unlimited
@@ -1466,68 +1559,155 @@ class PictureUtilTab( QWidget ):
         ?? enable delete but keep report
 
         """
-        indent      = "    "
-        file_out    = self.parent_window.open_file_out( "find_if_dups.txt" )
-        db          = AppGlobal.qsql_db_access.db
-        query       = QSqlQuery(db)
-        sql         =   ( "SELECT id,  sub_dir, file  FROM photo "
-                         " WHERE  file = :file_path_name " )
+        time.sleep( .5 ) # give the dialog some time
+        sleep_delta     = .01
+
+        verbose         = 50    # 0 to 100
+        indent          = "    "
+
+        a_db_dup_files  = db_dup_files.DbDupFiles()
+
+        file_out        = self.parent_window.open_file_out( "find_if_dups.txt" )
+
+        ix_not_dup      = 0
+        ix_dup          = 0
 
         # a_sub_dir   = full_dir.removeprefix( parameters.PARAMETERS.picture_db_root )
         starting_dir       = self.dir_widget.text()
         #msg    = f"Done find_if_dups {starting_dir = } {ix_file =}  "
 
-
         msg    = f"Start find_if_dups {starting_dir = }  "
+        logging.debug( msg )
         self.parent_window.output_to_file( msg )
-        self.parent_window.output_msg(  msg, clear = True )
 
-        ix_file            = -1 # in case no files
-        a_file_itterator   = FileIterator( starting_dir )
-        for ix_file, i_file_name in enumerate( a_file_itterator ):
+        ix_file            = -1 # in case no files  -- off by 1 from count of files
+
+        file_filter         = file_utils.all_true
+        dir_filter          = file_utils.all_true
+
+        fi_config           = file_utils.FileFilterConfig(
+                                    file_ok   = file_filter,
+                                    dir_ok    = dir_filter,
+                                    max_depth = -1  )
+
+        file_itterator    = file_utils.FileIterator( root_dir = starting_dir, config = fi_config   )
+
+         # a_file_itterator   = FileIterator( starting_dir )
+        for ix_file, i_file_name in enumerate( file_itterator ):
             file_path      = Path( i_file_name )
             full_file_name = str( file_path.resolve() )
             file_path_name = file_path.name
-            msg         = (f"checking {ix_file}  {full_file_name = }")
+
+            # msg         = (f"checking {ix_file}  {full_file_name = }")
+            # self.parent_window.output_to_file( msg )
+
+            # matching files are the one in the db
+            matching_files  =  a_db_dup_files.find_if_dups( file_path_name  )
+
+            len_mr          = len( matching_files )
+
+            if len_mr == 0:
+                msg   =   f"{ix_file}   {file_path_name} no_match"
+            else:
+                msg   =   f"{ix_file}   {file_path_name} {len_mr} matches"
+
+            a_helper_thread.update_signal.emit( msg )
+            msg      = f"\n{msg}"
+            logging.debug( msg )
             self.parent_window.output_to_file( msg )
 
-            if not query.prepare(sql):  # do we need to prep and bind ove and over
-                msg     = ( f"Prepare failed: {query.lastError().text()}" )
-                self.parent_window.output_to_file( msg )
-                return
+            # ---- look at matche if any
+            if len_mr == 0:
+                ix_not_dup   =+ 1
+                if verbose >20:
+                    msg         = (f"{indent} ++++ NOT FOUND {ix_file} {file_path_name = }")
+                    logging.debug( msg )
+                    self.parent_window.output_to_file( msg )
 
-            query.bindValue(":file_path_name", file_path_name )
+                time.sleep( sleep_delta )
 
-            if not query.exec_():
-                msg     = ("Error executing query:" + query.lastError().text())
-                self.parent_window.output_to_file( msg )
+            # ---- one or more match
+            else:
+                ix_dup      += len_mr
+                if verbose >10:
+                    msg         = (f"{indent} ---- found {ix_file} {full_file_name } has multiple matches {len_mr}")
+                    logging.debug( msg )
+                    self.parent_window.output_to_file( msg )
 
-            ix_record_count  = 0
-            while query.next():
-                ix_record_count     += 1
-                a_id                = query.value(0)
-                sub_dir             = query.value(1)
-                file                = query.value(2)
 
-                msg         = (f"{indent} ---- found {ix_file} id={a_id}, sub_dir={sub_dir}, file={file} {ix_record_count = }")
-                self.parent_window.output_to_file( msg )
-                self.parent_window.output_msg(  msg )
+                for ix, i_db_file_info in enumerate( matching_files ):
+                    #breakpoint( )
+                    sub_dir     = i_db_file_info.sub_dir
+                    file        = i_db_file_info.file_name
+                    a_id        = i_db_file_info.id
 
-            if ix_record_count == 0:
-                msg         = (f"{indent} ++++ NOT FOUND {ix_file} {file_path_name = }")
-                self.parent_window.output_to_file( msg )
-                self.parent_window.output_msg(  msg )
+                    # # this is not necess a dup
+                    # if verbose >20:
+                    #     msg         = (f"{indent} ---- found {ix_file} id={a_id}, sub_dir={sub_dir}, file={file} {ix_file = }")
+                    #     logging.debug( msg )
+                    #     print( "zz_fix")
+                    #     self.parent_window.output_to_file( msg )
+                    #     #self.parent_window.output_msg(  msg )
 
-        msg    = f"Done find_if_dups {starting_dir = } {ix_file =}  "
-        self.parent_window.output_msg(  msg, ) #clear = True )
+                    # now check other match criteria
+                    is_match, why_not  = i_db_file_info.is_match(  full_file_name   )
+                    if not is_match:
+
+                        # ---- this can happen if file is in db multiple times
+                        if verbose >20:
+                            msg         = (f"{indent} ---- failed is_match {full_file_name = }   {why_not = }")
+                            logging.debug( msg )
+                            self.parent_window.output_to_file( msg )
+
+
+                    else: # is_match
+                        if function_arg is not None:
+                            function_arg( full_file_name )
+                            if verbose >20:
+                                msg         = (f"{indent} ----  {full_file_name = } matched and deleted")
+                                logging.debug( msg )
+                                self.parent_window.output_to_file( msg )
+
+                        else:
+                            if verbose >20:
+                                msg         = (f"{indent} ----  {full_file_name = } matched")
+                                logging.debug( msg )
+                                self.parent_window.output_to_file( msg )
+
+                    time.sleep( sleep_delta )
+
+            # # query.bindValue(":file_path_name", file_path_name )
+            # if a_helper_thread.stop_flag:
+            #     msg     =  "got stop flag "
+            #     logging.debug( msg )
+            #     self.parent_window.output_msg(  msg, ) #clear = True )
+            #     self.parent_window.output_to_file( msg )
+            #     return msg
+
+
+        # footer stuff
+        msg    = f"Done find_if_dups {starting_dir = } files = {ix_file +1}"
+        # self.parent_window.output_msg(  msg, ) #clear = True )
         self.parent_window.output_to_file( msg )
 
+        # msg    = f"    Dups files   = {ix_dup}"
+        # self.parent_window.output_msg(  msg, ) #clear = True )
+        # self.parent_window.output_to_file( msg )
+
+        # msg    = f"    Non Dup files  = {ix_not_dup}"
+        # self.parent_window.output_msg(  msg, ) #clear = True )
+        # self.parent_window.output_to_file( msg )
+
         self.parent_window.close_file_out( )
-        self.parent_window.activate_output_tab()
-        msg    = f"Now opeining output file for you {file_out}"
-        self.parent_window.output_msg(  msg, ) #
+        # self.parent_window.activate_output_tab()
+        # msg    = f"Now opeining output file for you {file_out}"
+        # self.parent_window.output_msg(  msg, ) #
         #AppGlobal.os_popen_file( file_out )  # what
+
+
         AppGlobal.os_open_txt_file( file_out )
+        return "ran to end"
+
 
     # -------------------------
     def find_file_missing( self,   ):

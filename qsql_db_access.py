@@ -25,10 +25,8 @@ if __name__ == "__main__":
 
 import logging
 import sqlite3
-
+from   pathlib import Path
 import time
-
-
 
 
 from qt_compat import QApplication, QAction, exec_app, qt_version
@@ -90,12 +88,63 @@ class QsqlDbAccess(   ):
         self.connection         = None
         self.db                 = None   # use as interface
         self.connection_name    = connection_name
-        self.init_db()
+        db_type                 = AppGlobal.parameters.db_type
+
+        if   db_type == "QSQLITE":
+
+            self.init_db_qsqlite()
+
+        elif db_type == "POSTG":
+            self.init_db_postg()
 
         #rint( "")
 
+
     # --------------------------------
-    def init_db( self, ):
+    def init_db_postg( self, ):
+        """
+
+
+
+        """
+        debug_msg   = ( "QsqlDbAccess  init_db_postg()" )
+        logging.log( LOG_LEVEL,  debug_msg, )
+
+        parameters  = AppGlobal.parameters
+
+        self.db     = QSqlDatabase.addDatabase( "QPSQL", "my_best_db" )
+
+        self.db.setHostName(        parameters.db_host_name )
+        self.db.setPort(            parameters.db_port       )
+        self.db.setDatabaseName(    parameters.db_name       )
+        self.db.setUserName(        parameters.db_user       )
+        self.db.setPassword(        parameters.db_password  )
+
+        if not self.db.open():
+            print("Database connection failed:", self.db.lastError().text())
+        else:
+            print("Database connected successfully!")
+
+
+        # self.db         = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type, self.connection_name  )
+        #         # make this name unique -- from utils....
+        # self.db.setDatabaseName( db_file_name )
+
+        if not self.db.open():
+            msg    = f"Database Error: {self.db.lastError().databaseText()}  "
+            logging.error( msg, )
+            QMessageBox.critical(
+                None,
+                "databasenot open - Error!", msg
+                )
+
+        connection_name   = self.db.connectionName()
+        debug_msg         = ( f"{connection_name = }")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
+
+    # --------------------------------
+    def init_db_qsqlite( self, ):
         """
         why not just get_connection
 
@@ -111,10 +160,21 @@ class QsqlDbAccess(   ):
         russ is still confused try using AppGlobal.qsql_db_access.db   = a_qsql_db_access.db
         """
 
-        debug_msg   = ( "QsqlDbAccess  init_db()" )
+        debug_msg   = ( "QsqlDbAccess  init_db_qsqlite()" )
         logging.log( LOG_LEVEL,  debug_msg, )
 
-        db_file_name    = AppGlobal.parameters.db_file_name
+        db_file_name         = AppGlobal.parameters.db_file_name
+        db_lock_file_name    = AppGlobal.parameters.db_lock_file_name
+
+        if not self.write_lock_file( db_lock_file_name ):
+            # is it too early for this?
+            msg       = f"cannot write new lockfile {db_lock_file_name = }"
+            # too soon for next may have to use a signal for later
+           # QMessageBox.information( AppGlobal.main_window, "Error",  msg )
+            AppGlobal.fatal_error   = msg
+            # raise Exception( msg )
+
+
         self.db         = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type, self.connection_name  )
                 # make this name unique -- from utils....
         self.db.setDatabaseName( db_file_name )
@@ -127,8 +187,8 @@ class QsqlDbAccess(   ):
                 "databasenot open - Error!", msg
                 )
 
-        connection_name = self.db.connectionName()
-        debug_msg     = ( f"{connection_name = }")
+        connection_name   = self.db.connectionName()
+        debug_msg         = ( f"{connection_name = }")
         logging.log( LOG_LEVEL,  debug_msg, )
 
         # Use the sqlite3 module to connect to the same database
@@ -168,33 +228,7 @@ class QsqlDbAccess(   ):
         msg      = f"log_sql_callback {statement}"
         logging.log( LOG_LEVEL,  msg, )
 
-    # --------------------------------
-    def get_connectionxxx( self, ):
-        """
-        consider in an object of its own
-        is this how we connect it is unclear how this works, just a stab in dark
-        uncleare where this needs to be located ...
-        """
-        if  self.connection:
-            return self.connection
 
-        else:
-            # db_type    =  ..... ??
-            self.connection = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type  )
-            self.connection.setDatabaseName( AppGlobal.parameters.db_fn   )
-                # not the name the file_name
-
-        if not self.connection.open():
-            QMessageBox.critical(
-                None,
-                "Connection not open - Error!",
-                "Database Error: %s" % self.connection.lastError().databaseText(),
-            )
-
-        msg      = f"get_connection for { AppGlobal.parameters.db_fn}"
-        logging.debug( msg )
-
-        return self.connection
 
     # -------------------------------------------
     def query_exec_model(self, query, model,  msg = None ):
@@ -323,6 +357,76 @@ class QsqlDbAccess(   ):
         # finally:
         #     # Close the connection
         #     conn.close()
+
+
+    #---------------------------
+    def remove_lock_file( self,   ):
+        """
+        note this may not remove if based on conditions below
+
+        """
+        lock_file_name  = AppGlobal.parameters.db_lock_file_name
+        if lock_file_name is None:
+            return
+
+        if AppGlobal.fatal_error:
+
+            msg     = (f"Fatal error so lock file not delted")
+            print( msg )
+            return
+
+        file_path       = Path( lock_file_name )
+        try:
+            file_path.unlink()
+            msg     = (f"Successfully deleted: {file_path}")
+            print( msg )
+
+        except FileNotFoundError:
+            msg     = (f"File not found: {file_path}")
+            print( msg )
+
+        except PermissionError:
+            msg     = (f"Permission denied: {file_path}")
+            print( msg )
+
+        except Exception as e:
+            msg     = (f"Error deleting {file_path}: {e}")
+            print( msg )
+
+
+    # ---------------------------
+    def write_lock_file( self, lock_file_name ):
+        """
+        this is to stop 2 apps from using same db
+        note that test to make sure there is a lock file name
+        only if it does not yet exist
+        need to delete when we exit
+
+        """
+        lock_ok     = True
+
+        if lock_file_name is None:
+            return lock_ok
+
+        path        = Path( lock_file_name )
+        if path.exists():
+            print( f"Locfile exists {path}")
+            return False
+        else:
+            print("Lockfile does not exist")
+            # try to create
+
+        try:
+            text = ( "this is to lock the db against multiple access" )
+
+            with open( lock_file_name, 'w' ) as a_file:
+                a_file.write( text )
+                print( "all done" )
+
+        except Exception as error:
+            lock_ok    = False
+
+        return lock_ok
 
 
 # ---- eof

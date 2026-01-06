@@ -1,0 +1,2 @@
+rsync: [sender] change_dir "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/source" failed: No such file or directory (2)
+rsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1338) [sender=3.2.7]

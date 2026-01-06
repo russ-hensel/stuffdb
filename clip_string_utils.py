@@ -189,20 +189,75 @@ def clean_string( a_string ):
     return b_string
 
 # ----------------------------------------
-def clean_string_to_list( in_text,
+def clean_string_to_string( in_text, *,
                           delete_tailing_spaces  = True,
                           delete_comments        = False,
                           delete_blank_lines     = False,   ):
-    #def clean_string( a_string ):
     """
-    ( new_lines, ix_deleted )  = clean_string_to_list( in_text,
+    new_string  = clip_string_utils. clean_string_to_list( in_text,
                           delete_tailing_spaces  = True,
                           delete_comments        = False,
                           delete_blank_lines     = False,   )
+    """
 
+    new_list      = clean_string_to_list( in_text,
+                              delete_tailing_spaces  = True,
+                              delete_comments        = False,
+                              delete_blank_lines     = False,   )
 
+    return "\n".join ( new_list )
 
-    !! needs better description
+# ----------------------------------------
+def list_to_list_max_2_blank( lines,     ):
+    """
+     make new list with a max of 2 blank line,
+     trim trailing always
+
+    """
+    new_lines             = []
+    consecutive_blanks    = 0
+    for i_line in lines:
+        i_line  = i_line.rstrip()
+        if i_line == "":
+            consecutive_blanks  += 1
+        else:
+            consecutive_blanks  = 0
+
+        if consecutive_blanks < 3:
+            new_lines.append( i_line )
+
+    return new_lines
+
+# ----------------------------------------
+def list_to_list_remove_dirt( lines, *, screen_dirt    ):
+    """
+     dirt_list is a list of dictts as in parameters.screen_dirt
+     trim trailing always
+     for i_key, i_value in a_dict.items():
+    """
+    new_lines             = []
+
+    for i_line in lines:
+        i_line  = i_line.rstrip()
+        for i_key, i_value in screen_dirt.items():
+            i_line   = i_line.replace( i_key, i_value )
+
+        new_lines.append( i_line )
+
+    return new_lines
+
+# ----------------------------------------
+def clean_string_list_to_list( lines,  *,
+                          delete_tailing_spaces  = True,
+                          delete_comments        = False,
+                          delete_blank_lines     = False,   ):
+
+    """
+    new_lines  = clip_string_utils.def clean_string_list_to_list(
+                           lines,
+                          delete_tailing_spaces  = True,
+                          delete_comments        = False,
+                          delete_blank_lines     = False,   )
 
 
 
@@ -216,7 +271,62 @@ def clean_string_to_list( in_text,
                                may leave blank line if delete blanks not true
     delete_tailing_spaces    = what it says
 
-    return  ... beware a tuple of ( a_list, a_int ) int is count of stuff deleted ?? refactor out
+    return  ...  a_list
+    """
+    ix_deleted  = 0
+    new_lines   = []
+
+    for i_line in lines:
+        # clean_line        = i_line.strip( "\r" ) no longer needed
+        if delete_comments:
+            ix            = i_line.find( "#")
+            if ix != -1:
+                i_line            = i_line[  : ix ]
+                clean_line_strip  = i_line.rstrip(  )
+
+                if clean_line_strip == "":
+                    ix_deleted   += 1
+                    continue
+
+        clean_line_strip  = i_line.rstrip(  )
+
+        if( clean_line_strip == "" ) and ( delete_blank_lines ):
+            ix_deleted   += 1
+        else:
+            if delete_tailing_spaces:
+                new_lines.append( clean_line_strip )
+            else:
+                new_lines.append( i_line )
+
+    return  new_lines
+
+
+
+# ----------------------------------------
+def clean_string_to_list( in_text,
+                          delete_tailing_spaces  = True,
+                          delete_comments        = False,
+                          delete_blank_lines     = False,   ):
+
+    """
+    new_lines  = clip_string_utils. clean_string_to_list( in_text,
+                          delete_tailing_spaces  = True,
+                          delete_comments        = False,
+                          delete_blank_lines     = False,   )
+
+
+
+    split string to a list, get rid of any remaining /r  and self.LINE_JOIN
+    might make a comprehension if i computed a couple of functions
+    speed is not so much an issue here, think about it ??
+    args:
+    a_string                 = a_string of lines
+    delete_blank_lines       = what it says  -- all spaces count as blank "  " functionally = ""
+    delete_comments          = what it says  -- comment, # strip off from #,
+                               may leave blank line if delete blanks not true
+    delete_tailing_spaces    = what it says
+
+    return  ...  a_list
     """
     ix_deleted  = 0
     new_lines   = []
@@ -244,7 +354,7 @@ def clean_string_to_list( in_text,
             else:
                 new_lines.append( i_line )
 
-    return ( new_lines, ix_deleted )
+    return  new_lines
 
 
 # ------------------------------------------

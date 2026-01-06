@@ -245,11 +245,11 @@ class PictureViewer( QGraphicsView ):
         """
         self.fitInView( self.scene.sceneRect(), Qt.KeepAspectRatio)
         #rint("Fit in View")
-
+    # ------------------------------------
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self.fit_in_view()
-
+    # ------------------------------------
     def get_file_name(self, event):
         """ """
         debug_msg    = ( "PictureViewer finish get_file_name {self.file_name = }" )

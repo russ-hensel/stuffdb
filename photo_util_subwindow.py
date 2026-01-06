@@ -414,7 +414,6 @@ class PhotoUtilSubWindow( QMdiSubWindow ):
         self.set_size_pos()
 
 
-
     # --------------------------------
     def get_topic( self ):
         """

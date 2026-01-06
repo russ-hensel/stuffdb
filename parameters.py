@@ -7,6 +7,7 @@
         parameters.PARAMETERS.
 
 """
+
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
@@ -15,6 +16,7 @@ if __name__ == "__main__":
 
 from   pathlib import Path
 import textwrap
+import datetime
 
 # ---- local imports
 global PARAMETERS   # just a reminder ??
@@ -27,7 +29,7 @@ import sys
 
 import running_on
 import string_util
-from app_global import AppGlobal
+from   app_global import AppGlobal
 import startup_functions
 
 VERBOSE   = False
@@ -61,10 +63,20 @@ class Parameters( ):
         if you set the mode from the command line you will not
         get here"""
 
+        # self.mode_data_sync()
+        # self.mode_data_sync_b()
+        self.mode_picture_test()
+        self.mode_github()
+        #self.mode_postgres()
+
+
         # ----mode_mh_2025_hd
         # self.mode_mh_2025_hd()
-        self.mode_theprof()
-        self.mode_king_homer()
+        # self.mode_theprof()
+        # self.mode_king_homer()
+        #self.mode_server_king_homer()
+        #self.mode_sync_king_homer()
+
         #self.mode_russ_2025_ram()
         #self.mode_build_new_ram()
         #self.mode_helpdb_from_scratch()
@@ -83,6 +95,21 @@ class Parameters( ):
         self.db_type            = "QSQLITE"
             # the type of database, so far we only support SQLite
         self.db_file_name       = "./data/python_ex.db"
+
+    # -------
+    def mode_from_computer_id( self ):
+        """
+        this is an idea that is not yet worked out -- may not work
+        or just be default + running on
+        """
+        self.mode               = "mode_from_computer_id"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support SQLite
+        self.db_file_name       = "./data/python_ex.db"
+
+
 
     # -------
     def mode_build_new_ram( self ):
@@ -114,28 +141,7 @@ class Parameters( ):
 
         self.logging_level      = logging.DEBUG   # ERROR
 
-       # self.icon               =  "./misc/db_red_on_yellow.png"
-       # self.icon               =  "./misc/db_green_on_black.png"
-       # self.icon               =  "./misc/db_red_on_black.png"
 
-
-
-    # -------
-    def mode_russ_2025_ram( self ):
-        """
-
-        """
-        self.mode               = "mode_russ_2025_ram"
-
-        # ---- type and location of the db file
-        self.db_type            = "QSQLITE"
-        self.db_file_name       = "/tmp/ramdisk/russ2025/stuffdb.db"
-
-        self.logging_level      = logging.DEBUG   # ERROR
-
-       # self.icon               =  "./misc/db_red_on_yellow.png"
-        self.icon               =  "./misc/db_green_on_black.png"
-       # self.icon               =  "./misc/db_red_on_black.png"
 
     # -------
     def mode_theprof( self ):
@@ -145,19 +151,95 @@ class Parameters( ):
         self.mode               = "mode_theprof"
 
     # -------
+    def mode_picture_test( self ):
+        """
+        moved code to running+on_tweaks
+        """
+        self.mode               = "mode_picture_test"
+        self.db_file_name       = "/mnt/8ball1/first6_root/temp_picture_test/stuffdb.db"
+        self.db_file_name       = "./data_test/stuffdb.db"
+        #self.db_file_name       = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_test/stuffdb.db"
+
+        self.db_lock_file_name  = None
+        self.db_lock_file_name  = "./data_test/lock_db.txt"     # if present then db is locked else none
+
+        self.picture_db_root    = "/mnt/8ball1/first6_root/temp_picture_test/picture_db"
+            # all pictures once in the db should be under this directory
+
+        self.picture_db_sub         = "/99"
+                  #
+            # subdir for above used when adding new pictures
+
+        self.picture_browse     = "/mnt/8ball1/first6_root/temp_picture_test/temp_picture_src"
+
+        self.icon               =  "./misc/db_green_on_black.png"
+        self.icon               =  "./misc/db_red_on_black.png"
+        self.icon               =  "./misc/red_tube.png"
+
+    # -------
+    def mode_sync_king_homer( self ):
+        """
+        moved code to running+on_tweaks
+        """
+        self.mode               = "mode_sync_king_homer"
+        self.db_file_name       = "./data_sync/stuffdb.db"      #  = "sample.db"   =  ":memory:"
+        self.db_lock_file_name  = "./data_sync/lock_db.txt"     # if present then db is locked else none
+
+
+        self.icon               =  "./misc/db_green_on_black.png"
+
+    # -------
+    def mode_data_sync( self ):
+        """
+        moved code to running+on_tweaks
+        """
+        self.mode               = "mode_sync_king_homer"
+        self.db_file_name      = "./data_sync/stuffdb.db"      #  = "sample.db"   =  ":memory:"
+        self.db_lock_file_name = "./data_sync/lock_db.txt"     # if present then db is locked else none
+
+        #self.db_lock_file_name = None
+        # /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db
+        #  /mnt/k_wd_pp_silver/backup_on_k/russ/0000/python00/python3/_projects/stuffdb/data/king_homer
+
+        # /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db
+        self.icon               =  "./misc/db_green_on_black.png"
+
+    # -------
+    def mode_data_sync_b( self ):
+        """
+        moved code to running+on_tweaks
+        """
+        self.mode              = "mode_data_sync_b"
+        self.db_file_name      = "./data_sync_b/stuffdb.db"      #  = "sample.db"   =  ":memory:"
+        self.db_lock_file_name = "./data_sync_b/lock_db.txt"     # if present then db is locked else none
+
+        self.icon              = "./misc/db_green_on_black.png"
+
+    # -------
+    def mode_postgres( self ):
+        """
+        moved code to running+on_tweaks
+        """
+        self.mode              = "mode_postgres"
+
+        self.db_type            = "POSTG"
+
+        self.db_host_name       = "localhost"
+        self.db_port            = 5432
+        self.db_name            = "postgres"
+        self.db_user            = "russ"
+        self.db_password        = "nopassword"
+
+
+        self.icon              = "./misc/db_green_on_black.png"
+
+
+    # -------
     def mode_king_homer( self ):
         """
         moved code to running+on_tweaks
         """
         self.mode               = "mode_king_homer"
-
-
-    # -------
-    def mode_mh_2025_hd( self ):
-        """
-
-        """
-        self.mode               = "mode_mh_2025_hd"
 
 
     # -------
@@ -178,8 +260,9 @@ class Parameters( ):
         # self.db_type            = "QSQLITE"
         #     # the type of database, so far we only support SQLite
 
-        # self.db_file_name       = "./data/python_ex.db"
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/theprof/stuffdb.db"
+        self.db_file_name       = "./data/helpdb_from_scratch.db"
+
         # self.logging_level      = logging.DEBUG   # ERROR
 
         self.icon               =  "./misc/db_red_on_black.png"
@@ -214,7 +297,6 @@ class Parameters( ):
             self.picture_db_root    = "/mnt/8ball1/first6_root/PhotoDB/"
             self.picture_db_sub     = "/25"
 
-
         # ---- bulldog
         elif computer_id == "bulldog":
             self.ex_editor          =  "xed"
@@ -232,7 +314,6 @@ class Parameters( ):
             self.db_file_name       = "./data/russ2025/russ2025.db"
             self.db_file_name       = "./data/millhouse/millhouse.db"
             self.db_file_name       = "./data/millhouse/stuffdb.db"
-
 
             self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
             self.picture_db_root    = "/home/russ/sync_with_fattony/PhotoDB"
@@ -258,14 +339,6 @@ class Parameters( ):
 
             pass
 
-        # ---- txxxxx2
-        elif computer_id == "russ-xxxxxxxxxxxxxxxxxx-p72":
-            self.use_add_where      = True    # on criteria have add_where field
-            self.use_geo_photo      = True   # True use the photo geo parts of app
-            self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
-            self.db_file_name       =  "./data/theprof/stuffdb.db"
-
-
         # ---- fattony
         elif computer_id == "fattony":
             self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
@@ -276,6 +349,16 @@ class Parameters( ):
             self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
             self.db_file_name       = "./data/russ2025/russ2025.db"
             self.db_file_name       = "./data/fattony/stuffdb.db"
+
+
+            self.db_file_name      = "./data_sync_b/stuffdb.db"      #  = "sample.db"   =  ":memory:"
+            self.db_lock_file_name = "./data_sync_b/lock_db.txt"     # if present then db is locked else none
+
+            self.icon              = "./misc/db_green_on_black.png"
+
+
+
+
 
             self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
             ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
@@ -291,8 +374,8 @@ class Parameters( ):
             self.logging_level      = logging.DEBUG   # ERROR
             self.logging_level      = logging.INFO
 
-            self.icon               =  "./misc/db_red_on_yellow.png"
-            self.icon               =  "./misc/db_green_on_black.png"
+            # self.icon               =  "./misc/db_red_on_yellow.png"
+            # self.icon               =  "./misc/db_green_on_black.png"
                                          #/misc/db_green_on_black.png
             # /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/misc/db_green_on_black.png
             #self.icon               =  "./misc/db_red_on_black.png"
@@ -347,9 +430,6 @@ class Parameters( ):
             self.icon               =  "./misc/db_green_on_black.png"
             #self.icon               =  "./misc/db_red_on_black.png"
 
-
-
-
         elif computer_id == "bulldog-mint-russ":
             self.ex_editor          =  r"xed"
 
@@ -362,7 +442,7 @@ class Parameters( ):
             else:
                 self.ex_editor          =  r"leafpad"    # Linux raspberry pi maybe
 
-    # ------->> default mode, always call
+    # ---- ------->> default mode, always call
     def mode_default( self ):
         """
         sets up pretty much all settings
@@ -409,9 +489,10 @@ class Parameters( ):
 
         self.platform           = self.our_os           #  redundant
 
-        # ---- appearance -- including sizes -- note only
+        # ---- appearance -- including sizes, notes_only
 
-        self.notes_only         = False   # only the notes part of the app
+        self.notes_only         = False
+            # only the notes part of the app
             # will be available
 
         # control initial size and position with:
@@ -445,7 +526,7 @@ class Parameters( ):
         self.text_edit_font     = ("Arial", 12)
 
         # ---- logging
-        self.pylogging_fn       = "./logs/app.py_log"
+        self.pylogging_fn       = "./output/app.py_log"
             # file name for the python logging
 
         # next two seem redundant
@@ -478,24 +559,32 @@ class Parameters( ):
 
         self.output_dir             = "./output"
             # ISSUES WITH ./ SO USE FULL PATH FOR HOW -- RESOLVE IT LATER
-        self.output_dir             = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/output"
-
-
-
             # the directory used for most output
 
         self.picture_editor         = "gimp-2.10"
             # the editor that will be envoked when you edit a picture
 
-        # ---- .... db type and location of the db file
-        self.db_type                = "QSQLITE"
+        # ---- .... db type POSTG and ...
+
+        self.db_type            = "POSTG"
+
+        self.db_host_name       = "localhost"
+        self.db_port            = 5432
+        self.db_name            = "russdb"
+        self.db_user            = "russ"
+        self.db_password        = "nopassword"
+
+        # ---- .... db type QSQLITE and location of the db file
+        self.db_type           = "QSQLITE"
             # the type of database, so far we only support SQLite
 
         # think for qt4_by_example not stuff
         self.db_file_name      = ":memory:"
         self.db_file_name      = "sample.db"   #  = "sample.db"   =  ":memory:"
         self.db_file_name      = "default.db"     #  = "sample.db"   =  ":memory:"
+        self.db_lock_file_name = "./data/lock_db.txt"    # if present then db is locked
         #self.db_file_name        = "/tmp/ramdisk/qt_sql.db"
+
 
         # this is the name of a program: its executable with path info.
         # to be used in opening an external editor
@@ -523,6 +612,18 @@ class Parameters( ):
         # default for the list
         self.add_where_defaults = [ "",
                                     "", ]
+
+        # ---- file match tolerance
+        self.dt_tolerance       = datetime.timedelta(  days=7, hours= 0,   )
+
+        self.size_tolerance     = 1_000   # bytes
+
+        # ---- screen dirt  -- tuples would do as well but would need code change
+        self.screen_dirt   =    { "`":        "",
+                                  "### ":     "",
+                                  "###":      "",
+                                  ">>>":      "",   }
+
 
 
         # ---- note_default_text
@@ -567,10 +668,11 @@ class Parameters( ):
         print( f"a_python_template { 0 = }" )
 
         >>end --------
+
         """ )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
-        # ---- Bash template
+        # ----.... Bash template
         template_name          = "Bash"
         template_text          = (
         """
@@ -598,7 +700,7 @@ class Parameters( ):
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
-        # ---- text template
+        # ---- ....text template
         template_name          = "Text"
         template_text          = (
         """
@@ -606,15 +708,23 @@ class Parameters( ):
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
-        # ---- url template
+        # ---- ....text template
+        self.note_default_text
+        template_name          = "Default Text"
+        template_text          = self.note_default_text
+        self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
+
+
+        # ---- .... url template
         template_name          = "Url"
         template_text          = (
         """
         >>url  https://www.youtube.com/feed/subscriptions#on&off&types=uploads
+
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
-        # ---- idle_template
+        # ---- .... idle_template
         template_name          = "Idle"
         template_text          = (
         """
@@ -622,10 +732,11 @@ class Parameters( ):
         print( "high_their_sailor")
         print( "done")
         >>end --------
+
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
-        # ---- idle_file_template
+        # ---- ....idle_file_template
         template_name          = "Idle_file"
         template_text          = (
         """
@@ -633,7 +744,7 @@ class Parameters( ):
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
-        # ---- .... shell template
+        # ---- .... "Note Header"
         template_name          = "Note Header"
         template_text          = (
         """
@@ -654,6 +765,7 @@ class Parameters( ):
         template_text          = (
         """
         >>Shell  /mnt/WIN_D/PhotoDB/00/00july_06.jpg
+
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
         a_dict     = self.text_snippets
@@ -690,7 +802,7 @@ class Parameters( ):
 
         # ---- add a sort for the systems
 
-    # ------->> default mode, always call
+    #--------------------------
     def mode_from_command_line( self ):
         """
         checks to see if command line wants to set the mode
@@ -785,17 +897,37 @@ class Parameters( ):
         """
         sometimes it is hard to see where values have come out this may help if printed.
         not complete, add as needed -- compare across applications and code above
+        print( str(AppGlobal.parameters))
+
         """
         # new_indented    = "\n    "   # but it nice to have some whitespace to see ...
         a_str = "\n "
         a_str   = f"{a_str}>>>>>>>>>>* Parameters (some) *<<<<<<<<<<<<"
         a_str   = string_util.to_columns( a_str, ["mode",       f"{self.mode}" ] )
         a_str   = string_util.to_columns( a_str, ["computer_id", f"{self.running_on.computer_id}" ] )
-        a_str   = string_util.to_columns( a_str, ["db_file_name",
-                                           f"{self.db_file_name}" ] )
+
+
 
         a_str   = string_util.to_columns( a_str, ["db_type",
                                            f"{self.db_type}" ] )
+
+
+        a_str   = string_util.to_columns( a_str, ["db_file_name",
+                                           f"{self.db_file_name}" ] )
+
+        a_str   = string_util.to_columns( a_str, ["db_lock_file_name",
+                                           f"{self.db_lock_file_name}" ] )
+
+
+        a_str   = string_util.to_columns( a_str, ["db_host_name",
+                                           f"{self.db_host_name}" ] )
+
+
+        a_str   = string_util.to_columns( a_str, ["db_port",
+                                           f"{self.db_port}" ] )
+
+        a_str   = string_util.to_columns( a_str, ["db_name",
+                                           f"{self.db_name}" ] )
 
         a_str   = string_util.to_columns( a_str, ["logger_id", f"{self.logger_id}" ] )
         a_str   = string_util.to_columns( a_str, ["logging_level", f"{self.logging_level}" ] )

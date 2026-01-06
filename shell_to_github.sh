@@ -43,8 +43,14 @@ rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshl
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/app_services/*.*     /mnt/WIN_D/for_github/stuffdb/libs
 
 
+# next needed update
+# rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/string_util.py     /mnt/WIN_D/for_github/stuffdb/libs
 
-rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/string_util.py     /mnt/WIN_D/for_github/stuffdb/libs
+rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/utils/string_list_utils.py    /mnt/WIN_D/for_github/stuffdb/libs
+rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/utils/string_utils.py         /mnt/WIN_D/for_github/stuffdb/libs
+rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/utils/file_utils.py           /mnt/WIN_D/for_github/stuffdb/libs
+
+
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/os_call.py         /mnt/WIN_D/for_github/stuffdb/libs
 rsync -u -t -progress       /mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/photo_ext.py       /mnt/WIN_D/for_github/stuffdb/libs
 

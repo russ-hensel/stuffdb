@@ -262,6 +262,57 @@ def rpt_display_order_with_columns( table_name ):
 
     print( a_str )
 
+
+
+
+# -------------------------------------------
+def rpt_list_columns_sql_order( table_name ):
+    """
+
+
+    """
+    print()
+    msg         = f"rpt_list_columns_sql_order for {table_name}"
+    print( msg )
+
+    a_table     = data_dict.DATA_DICT.get_table( table_name )
+    data        = a_table.get_list_columns_sql_order()
+    print( data )
+
+
+
+
+# -------------------------------------------
+def rpt_list_column_names_sql_order( table_name ):
+    """
+
+
+    """
+    print()
+    msg         = f"rpt_list_columns_sql_order for {table_name}"
+    print( msg )
+
+    a_table     = data_dict.DATA_DICT.get_table( table_name )
+    data        = a_table.get_list_column_names_sql_order()
+    print( data )
+
+
+
+# -------------------------------------------
+def rpt_list_column_varcar_limits( table_name ):
+    """
+
+
+    """
+    print()
+    msg         = f"rpt_list_columns_sql_order for {table_name}"
+    print( msg )
+
+    a_table     = data_dict.DATA_DICT.get_table( table_name )
+    data        = a_table.get_list_column_varcar_limits()
+    print( data )
+
+
 # -------------------------------------------
 def rpt_list_order( table_name ):
     """
@@ -306,6 +357,22 @@ def rpt_sql( table_name ):
     sql        = a_table.to_sql_create()
     msg    = f"{sql} "
     print( msg )
+
+
+# ------------------------------
+def rpt_sql_pg( table_name ):
+    """
+    Print sql create for a table
+
+    """
+    a_table    = data_dict.DATA_DICT.get_table( table_name )
+
+    sql        = a_table.to_sql_create_pg()
+    msg    = f"{sql} "
+    print( msg )
+
+
+
 
 # -----------------------------
 def rpt_tables(   ):

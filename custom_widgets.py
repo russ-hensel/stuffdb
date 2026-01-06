@@ -133,9 +133,10 @@ else:
 # ---- imports local -- then constants
 import string_util
 import wat_inspector
-from app_global import AppGlobal
+from   app_global     import AppGlobal
 import exec_qt
-
+import clip_string_utils
+import string_list_utils
 
 #import convert_db_display
 import mdi_management
@@ -502,6 +503,8 @@ class ShellExe( object ):
     this may need refactoring
     based on cmd_assist perhaps should go back there
     should be a singleton for now built by TextEditExt
+
+            used by text editExtMixin
     """
     #----------- init -----------
     def __init__(self,   ):
@@ -509,12 +512,36 @@ class ShellExe( object ):
 
     #---------------------------
     def run_code_lines( self, code_lines, ):
-        """ """
+        """
+        we may be rsripping multimple times like in caller
+        """
 
         code_lines_new     = [i_code_line.strip()
                                for i_code_line in code_lines
                                    if i_code_line.strip() != "" ]
 
+        # works but ugly
+        # now combine across \
+        code_lines_newer   = []
+        got_bs             = False
+        for ix, i_code_line in enumerate( code_lines_new ):
+            if got_bs:
+                len_newer  = len( code_lines_newer )
+                code_lines_newer[ len_newer -1 ] += i_code_line
+            else:
+                code_lines_newer.append( i_code_line )
+
+            # remove trailing \
+
+            last_line   = len(code_lines_newer) - 1
+            if code_lines_newer[ last_line ].endswith( "\\" ):
+                got_bs             = True
+                code_lines_newer[ last_line ] = code_lines_newer[ last_line ].removesuffix( "\\" )
+            else:
+                got_bs             = False
+
+
+        code_lines_new   = code_lines_newer
         #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}")
         # line one == 0 is a comment add echo in front and quote
         code_lines_new[ 0 ]    = f"echo '{code_lines_new[ 0 ]}'   "
@@ -692,15 +719,7 @@ class TextEditExtMixin(  ):
         self.ext_logger             = stuffdb.app_global.logger
         #self.stuff_text_ext         = self.stuffdb.get_stuff_text_edit_ext( self )
 
-
-    def paste_cache_xxxxx( self ):
-        """
-        save contents of the text in one level deep buffer
-        """
-        pass
-        self.insert_text_at_cursor( self.prior_text )
-        pass # debug
-
+     #-----------------------------------------
     def log( self, *, level = LOG_LEVEL, msg ):
         """
         self.log( msg = msg )
@@ -871,8 +890,8 @@ class TextEditExtMixin(  ):
         undo_action = menu.addAction("Undo")
         undo_action.triggered.connect(widget.undo)
         undo_action.setEnabled(can_undo)
-        menu.addSeparator()
 
+        menu.addSeparator()
 
         cut_action = menu.addAction("Cut")
         cut_action.triggered.connect(widget.cut)
@@ -891,6 +910,7 @@ class TextEditExtMixin(  ):
         foo_action = menu.addAction("Smart Paste")
         foo_action.triggered.connect(self.smart_paste_clipboard )
         foo_action.setEnabled(can_paste)
+
         menu.addSeparator()
 
         # ---- "Smarten"
@@ -903,6 +923,56 @@ class TextEditExtMixin(  ):
         foo_action = menu.addAction("Copy All")
         foo_action.triggered.connect(self.copy_all )
         menu.addSeparator()
+
+        # ---- "0_sreen_dirt"
+        foo_action = menu.addAction("0_sreen_dirt")
+        processing_function     = partial( clip_string_utils.list_to_list_remove_dirt, screen_dirt = AppGlobal.parameters.screen_dirt )
+        foo                     = partial( self.process_selected,  processing_function = processing_function )
+        foo_action.triggered.connect( foo )
+        foo_action.setEnabled( has_selection )
+
+        menu.addSeparator()
+
+        # ---- submenu
+        submenu                 = menu.addMenu("Max Lines ...")
+
+        # Add actions to the submenu -- but for now these might not connet to anything
+        # pdf_action              = submenu.addAction("Export to PDF")
+        # csv_action              = submenu.addAction("Export to CSV")
+        # json_action             = submenu.addAction("Export to JSON")
+
+
+
+        # ---- "Max 0 Blank Lines"
+        foo_action              = submenu.addAction( "Max 0 Blank Lines" )
+        processing_function     = partial( string_list_utils.list_to_list_max_n_blank,  max_blank = 0 )
+        foo                     = partial( self.process_selected,  processing_function = processing_function )
+        foo_action.triggered.connect( foo )
+        foo_action.setEnabled(has_selection)
+
+        # ----  "Max 1 Blank Lines"
+        foo_action              = submenu.addAction( "Max 1 Blank Lines" )
+        processing_function     = partial( string_list_utils.list_to_list_max_n_blank,  max_blank = 1 )
+        foo                     = partial( self.process_selected,  processing_function = processing_function )
+        foo_action.triggered.connect( foo )
+        foo_action.setEnabled(has_selection)
+
+        # ---- "max_2_blank_lines"
+        foo_action              = submenu.addAction("Max 2 Blank Lines")
+        processing_function     = partial( string_list_utils.list_to_list_max_n_blank,  max_blank = 2 )
+        foo                     = partial( self.process_selected,  processing_function = processing_function )
+        foo_action.triggered.connect( foo )
+        foo_action.setEnabled( has_selection )
+
+        menu.addSeparator()
+
+        # ---- "Sort/Del Dups for Line Pairs"
+        foo_action              = menu.addAction( "Sort/Del Dups for Line Pairs" )
+        processing_function     = partial( string_list_utils.alt_line_sort,  which_line = 0, del_dups = True   )
+        foo                     = partial( self.process_selected,  processing_function = processing_function )
+        foo_action.triggered.connect( foo )
+        foo_action.setEnabled( has_selection )
+
 
         # ---- "Strip Trail in Sel"
         foo_action = menu.addAction("Strip Trail in Sel")
@@ -938,19 +1008,17 @@ class TextEditExtMixin(  ):
         menu_action.triggered.connect( self.cmd_exec )
         menu.addSeparator()
 
-        # Show the context menu
-
-
+        # Show it
         if qt_version == 6:  # 5 6 compat
             menu.exec(widget.mapToGlobal(pos))
         else:
             menu.exec_(widget.mapToGlobal(pos))
 
-
-
-
+    # ----------------------------------
     def capture_selected_text( self ):
-        """Capture the currently highlighted (selected) text
+        """
+
+        Capture the currently highlighted (selected) text
         is this worth a function
         selected_text    = self.capture_selected_text()
         """
@@ -1281,7 +1349,7 @@ class TextEditExtMixin(  ):
 # MARKER = ">"
 
 
-
+    #----------------------------------
     def get_snippet_lines_6(self, do_undent=True):
         """
         qt6 version I hope
@@ -1386,11 +1454,11 @@ class TextEditExtMixin(  ):
 
         return lines
 
-
     #------------------------------------
     def update_markup(self, ):
         """
         update from old stuff markup to new markup
+        !! change to use process_selected
         """
         text_edit       = self
         # Get the selected text
@@ -1455,13 +1523,120 @@ class TextEditExtMixin(  ):
 
         return new_lines
 
+    #-----------------------------------
+    def process_selected( self, processing_function  ):
+        """
+        generallized routine for extracting selected text, processing and return it
+        processing_function   = a function takes a list returns a list
+            may want to use partial
+        """
+        # Get the current cursor and selection
+
+        text_edit   = self
+        cursor      = text_edit.textCursor()
+        if not cursor.hasSelection():
+            return
+
+        # Get selected text
+        selected_text = cursor.selectedText()
+
+        # Split into lines
+        lines = selected_text.split('\u2029')  # QTextEdit uses Unicode paragraph separator
+
+        processed_lines     = processing_function( lines )
+        processed_text      = "\n".join( processed_lines )
+
+        # Store selection positions
+        selection_start = cursor.selectionStart()
+        selection_end   = cursor.selectionEnd()
+
+        # Replace selected text
+        cursor.insertText( processed_text )
+
+        # Restore selection
+        cursor.setPosition(selection_start)
+        cursor.setPosition(selection_end, cursor.KeepAnchor)
+        text_edit.setTextCursor(cursor)
+
+
+    #-----------------------------------
+    def remove_blank_linexxxxxs( self,   ):
+        """
+        because of call from menu no options could use partial there
+        """
+
+
+        processing_function     = partial( clip_string_utils.clean_string_list_to_list,
+                                          delete_tailing_spaces  = True,
+                                          delete_blank_lines     = True,   )
+
+        self.process_selected( processing_function = processing_function )
+
+        # new_lines  = clip_string_utils. clean_string_to_list( in_text,
+        #                       delete_tailing_spaces  = True,
+        #                       delete_comments        = False,
+        #                       delete_blank_lines     = False,   )
+        # # Get the current cursor and selection
+
+        # # text_edit   = self
+        # # cursor      = text_edit.textCursor()
+        # if not cursor.hasSelection():
+        #     return
+
+        # # Get selected text
+        # selected_text = cursor.selectedText()
+
+        # # Split into lines and remove trailing spaces
+        # lines = selected_text.split('\u2029')  # QTextEdit uses Unicode paragraph separator
+
+        # if keep_leading:
+        #     trimmed_lines = [line.rstrip() for line in lines]
+        # else:
+        #     trimmed_lines = [line.strip() for line in lines]
+
+        # trimmed_text = '\n'.join(trimmed_lines)
+
+        # # Store selection positions
+        # selection_start = cursor.selectionStart()
+        # selection_end   = cursor.selectionEnd()
+
+        # # Replace selected text
+        # cursor.insertText(trimmed_text)
+
+        # # Restore selection
+        # cursor.setPosition(selection_start)
+        # cursor.setPosition(selection_end, cursor.KeepAnchor)
+        # text_edit.setTextCursor(cursor)
+
+
+
+
+    # ------------------------
+    def remove_blank_lines_zz( self, lines ):
+        """
+        static
+        ?? perhaps a util
+        delete leading spaces ( as per code )
+        then return as a multiline string  that is a list of strings
+            lines   is a list of lines
+
+        """
+        pass
+        # new_lines  = clip_string_utils. clean_string_to_list( in_text,
+        #                       delete_tailing_spaces  = True,
+        #                       delete_comments        = False,
+        #                       delete_blank_lines     = False,   )
+
+
     #-----------------------------
     def shell_file( self, file_name ):
         """ """
         if platform.system() == 'Windows':
             os.startfile(file_name)
+
         elif platform.system() == 'Darwin':  # macOS
             subprocess.call(('open', file_name))
+
         else:  # Linux
             subprocess.call(('xdg-open', file_name ) )
 
@@ -1680,7 +1855,10 @@ class TextEditExtMixin(  ):
             self.setTextCursor(cursor)
 
     def unindent_selected_text(self):
-        """Remove indentation (Shift+Tab functionality)."""
+        """
+        !! think this can use process_selectde instad
+        Remove indentation (Shift+Tab functionality).
+        """
         cursor = self.textCursor()
 
         if not cursor.hasSelection():
@@ -1737,8 +1915,11 @@ class TextEditExtMixin(  ):
             cursor.endEditBlock()
             self.setTextCursor(cursor)
 
+    #-----------------------------------
     def _indent_at_cursor(self, cursor):
-        """Handle tab when there's no selection - insert spaces to next tab stop."""
+        """Handle tab when there's no selection - insert spaces to next tab stop.
+
+        """
         try:
             # Get current line and cursor position within the line
             current_block = cursor.block()
@@ -1839,6 +2020,9 @@ class CQEditBase(   ):
 
         # self.is_field_valid         =  not set makes all ok
         self.debug_format           = "not_set"
+
+        self.cnv_str_to_str_strip   = None    # replacable function for stripping
+
 
         # next noet here as only appropriate for some edits
         # self.returnPressed.connect( self.on_return_pressed )
@@ -2196,7 +2380,25 @@ class CQEditBase(   ):
         """
         perhaps the easiest conversion
         """
+        if self.cnv_str_to_str_strip:
+            data    = self.cnv_str_to_str_strip( data )
+
+
         return data
+
+    #----------------------------
+    def cnv_str_to_str_strip_eol( self, data ):
+        """
+        for now from a multiline edit later expand
+        """
+        processed_lines = [line.rstrip() for line in data.splitlines()]
+
+        final_text      = "\n".join( processed_lines )
+
+
+        return final_text
+
+
 
     #----------------------------
     def cnv_str_to_int( self, data ):
@@ -3342,13 +3544,15 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         self.null_surogate  = ""
         self.tab_width      = 4                         # also for interface
 
-        # in out conversion
+        # ---- in out conversion
         # in out conversion
         self.rec_to_edit_cnv    = self.cnv_str_to_str
         self.edit_to_rec_cnv    = self.cnv_str_to_str
 
         self.dict_to_edit_cnv   = self.cnv_str_to_str
         self.edit_to_dict_cnv   = self.cnv_str_to_str
+
+        self.cnv_str_to_str_strip   = self.cnv_str_to_str_strip_eol
 
         self.text_edit_ext_obj  = None # may be set externally
 

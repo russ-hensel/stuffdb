@@ -71,16 +71,46 @@ from PyQt.QtWidgets import (
 # ---- local imports
 from app_global import AppGlobal
 
+#import app_globals
+
+# breakpoint()
+
 # ---- end imports
 #global APP_LOGGING
 APP_LOGGING     = None
 
 #-------------------------------
 
-PARAMETERS      = parameters.PARAMETERS
+# this is a mess as code is in flux
 
-if not PARAMETERS:
-    1/0    # set up parameters first
+PARAMETERS      = None
+if PARAMETERS is None:
+    try:
+        import app_globals
+
+        PARAMETERS      = app_globals.PARAMETERS
+
+    except:
+        pass
+
+
+if PARAMETERS is None:
+    try:
+        from app_global import AppGlobal
+
+        PARAMETERS      = AppGlobal.parameters
+
+    except:
+        pass
+
+
+
+
+
+
+
+# if not PARAMETERS:
+#     1/0    # set up parameters first
 
 # ---- ----------------
 class DialogAddToLog( QDialog ):
@@ -160,11 +190,16 @@ class AppLogging( ):
         """ """
         self.config_logger( )
 
+    # def init():
+    #     """for stuffdb? """
 
+    # ------------------------------
     def config_logger(self):
         """
         Configure the Python logger to allow logging from other modules.
         """
+        # PARAMETERS      = app_globals.PARAMETERS
+
         log_file_name   = PARAMETERS.pylogging_fn  # File to log messages
         log_mode        = PARAMETERS.log_mode
         log_level       = PARAMETERS.logging_level
@@ -265,10 +300,16 @@ def add_to_log(   ):
     #     print( msg )
 
 
+# def  init( ):
+#     global APP_LOGGING
+#     if not APP_LOGGING:
+#         APP_LOGGING = AppLogging( )
+
 def  init( ):
     global APP_LOGGING
     if not APP_LOGGING:
         APP_LOGGING = AppLogging( )
+
 
 
 # ---- eof

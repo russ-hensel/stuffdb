@@ -14,7 +14,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver .084: 2025-12-04.01"
+__version__   = "Ver .085: 2025-12-24.01"
 
 # ---- imports
 import datetime
@@ -101,22 +101,20 @@ def delete_file( file_name ):
     will delete any file, but intended for db file
     """
     exists    = str( os.path.isfile( file_name ) )
-    # print( f"{file_name} exists {exists}" )
 
     if exists:
         try:
             os.remove( file_name )   # error if file not found
-            print(f"delete_file removed {file_name} "  )
+            debug_msg  = (f"delete_file removed {file_name} "  )
+            logging.debug( debug_msg )
 
         except OSError as error:
-            print( error )
-            print( f"delete_file os.remove threw error on file {file_name} file probably does not exist this should be ok?")
+            debug_msg  = ( f"delete_file os.remove threw error on file {file_name} file probably does not exist this should be ok? {error}")
+            logging.debug( debug_msg )
 
-    # else:
-    #     print( f"file already gone  {file_name}
 
 # -----------------------
-class StuffApplication(QtWidgets.QApplication):
+class StuffApplication( QtWidgets.QApplication ):
     """
     from gok then modified
     to let me manage the uncaught exeeptions
@@ -174,6 +172,7 @@ class App( ):
 
         AppGlobal.q_app         = self.q_app
         self.app_global         = AppGlobal
+        AppGlobal.fatal_error   = None
         #stuff_db_app_global.logger( )
 
         self.assign_icon( )
@@ -183,6 +182,7 @@ class App( ):
 
         app_logging.init()
 
+        # ---- DB CONNECT
         a_qsql_db_access        = qsql_db_access.QsqlDbAccess( STUFFDB_CONNECTION_NAME )
 
         AppGlobal.qsql_db_access  = a_qsql_db_access
@@ -209,7 +209,7 @@ class App( ):
 
         self.prog_info()
 
-        a_wat_inspector  = wat_inspector.WatInspector( self.q_app )
+        a_wat_inspector         = wat_inspector.WatInspector( self.q_app )
 
         QTimer.singleShot(0, self.parameters.startup_function  )
         #self.q_app.exec_()   # perhaps move to run method
@@ -305,6 +305,20 @@ class App( ):
         msg      = ( "{Hello")
         QMessageBox.information( AppGlobal.main_window,
                                      "welcome msg ", msg )
+
+    def cleanup( self ):
+        """
+        Perform cleanup operations
+        this is for closing down, signaled perhaps by main_window
+        """
+        # Stop any running threads
+        # Close database connections
+        # Save application state
+        # Clean up temporary files
+        # etc.
+        AppGlobal.qsql_db_access.remove_lock_file(   )
+
+
 
 def main():
     app         = App(   )

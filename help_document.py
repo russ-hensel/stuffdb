@@ -358,8 +358,8 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         #grid_layout.new_row()  # because seems to be missing
         grid_layout.addWidget( widget )
 
-        widget  = QLabel( "<<<Direction" )
-        grid_layout.addWidget( widget )
+        # widget  = QLabel( "<<<Direction" )
+        # grid_layout.addWidget( widget )
 
         # ---- "add where"
         if parameters.PARAMETERS.use_add_where:
@@ -501,7 +501,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         criteria_key_words              = a_key_word_processor.string_to_key_words( criteria_key_words )
         key_word_count                  = len( criteria_key_words )
 
-        criteria_key_words              = ", ".join( [ f'"{i_word}"' for i_word in criteria_key_words ] )
+        criteria_key_words              = ", ".join( [ f"'{i_word}'" for i_word in criteria_key_words ] )
         criteria_key_words              = f'( {criteria_key_words} ) '    # ( "one", "two" )
 
         if key_word_count > 0:
@@ -662,7 +662,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
         self.tab_name               = "HelpDetailTab"
         self.key_word_table_name    = "help_key_word"
-        self.snippet_manager        = None   # make right after edit
+        # self.snippet_manager        = None   # make right after edit
 
         # ---- post init
         self.post_init()
@@ -968,14 +968,11 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         button_layout   = QVBoxLayout()
         tab_layout.addLayout( button_layout )
 
-        # ---- text layout lets favor it for space
         text_layout     = QVBoxLayout()
         tab_layout.addLayout( text_layout, stretch=2 )
             # 2 started exp
             # 3 did not seem to make a difference
             # 6 did not change much
-
-        data_manager    = self.text_data_manager
 
         # ---- TextEdit   needs to be defined at beginning with exte4nsion object
         edit_field          = cw.CQTextEdit(
@@ -983,90 +980,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
                                     field_name     = "text_data",
                                                   )
         text_edit_widget    = edit_field
-        font                = QFont( * parameters.PARAMETERS.text_edit_font ) # ("Arial", 12)
-        edit_field.setFont(font)
-        edit_field.is_prior_text_enabled  = True
-        self.text_data_field = edit_field    # may be used for editing
-        edit_field.setPlaceholderText( "Some Long \n   text on a new line " )
-        data_manager.add_field( edit_field, )
-        text_layout.addWidget( edit_field, )  # what order row column
-
-        self.snippet_manager        = base_document_tabs.SnippetManager( edit_field )
-        text_edit_widget.set_stuffdb( AppGlobal.controller )
-
-        # ---- id really fro debug hide --- no data manager needs this
-        widget          =  cw.CQLineEdit(
-                                     parent         = None,
-                                     field_name     = "id",    )
-        self.id_field   = widget
-        widget.setReadOnly( True )
-
-        data_manager.add_field( widget, )
-        button_layout.addWidget( widget, )
-
-        # ---- snippets
-        groupbox   = QGroupBox( "Snippets" )
-        groupbox.setMaximumHeight( 80 )
-        groupbox.setMaximumWidth( 120 )  # by experiment
-        groupbox.setStyleSheet("""
-            QGroupBox {
-                border: 2px solid blue;
-                border-radius: 10px;
-                margin-top: 15px;
-            }
-
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                subcontrol-position: top center;
-                padding: 0 3px;
-                background-color: white;
-            }
-        """)
-
-        # layout the groupbox and make
-        # another layout inside it
-
-        button_layout.addWidget( groupbox )
-        layout_g     = QVBoxLayout( groupbox  )
-        # layout in the groubpox
-
-        # widget = QPushButton("do_nothing\n")
-        # #widget.clicked.connect(  self.show_values  )
-        # layout_g.addWidget( widget )
-
-
-        ddl_widget, ddl_button_widget  = self.snippet_manager.make_widgets()
-        # ddl_widget.setMaximumWidth( 20 )   # see also groupbox
-        # ddl_widget.view().setMinimumWidth( 30 )   # did not fix my issue
-        ddl_widget.setFixedWidth( 100 )   # see also groupbox
-        ddl_widget.view().setFixedWidth( 100 )   # did not fix my issue
-        ddl_widget.setStyleSheet("QComboBox { width: 20px; }")  # did not work
-        ddl_button_widget.setText( "Paste")
-        layout_g.addWidget( ddl_widget  )
-        layout_g.addWidget( ddl_button_widget  )
-
-
-        # ---- Paste Prior
-        label           = "Paste Prior"
-        widget          = QPushButton( label )
-        widget.clicked.connect( text_edit_widget.paste_cache_text )
-        button_layout.addWidget( widget, )
-
-        # # ---- !!To_Smart
-        # label           = "Cnv Hyper...tbd"
-        # widget          = QPushButton( label )
-        # # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
-        # # widget.clicked.connect( connect_to )
-        # #widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
-        # button_layout.addWidget( widget, )
-
-        # # ---- Remove Lead/Trail"
-        # label           = "Remove Lead/Trail"
-        # widget          = QPushButton( label )
-        # # connect_to  =  functools.partial( self.run_python_idle, text_entry_widget )
-        # # widget.clicked.connect( connect_to )
-        # #widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
-        # button_layout.addWidget( widget, )
 
         # ---- search text
         search_layout       = QHBoxLayout()
@@ -1086,13 +999,269 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         search_layout.addWidget( dn_button )
         search_layout.addWidget( up_button )
 
-        # ---- >>
+        # text_layout     = QVBoxLayout()
+        # tab_layout.addLayout( text_layout, stretch=2 )
+        #     # 2 started exp
+        #     # 3 did not seem to make a difference
+        #     # 6 did not change much
+
+        data_manager    = self.text_data_manager
+
+        # moved higher
+        # # ---- TextEdit   needs to be defined at beginning with exte4nsion object
+        # edit_field          = cw.CQTextEdit(
+        #                             parent         = None,
+        #                             field_name     = "text_data",
+        #                                           )
+        # text_edit_widget    = edit_field
+        font                = QFont( * parameters.PARAMETERS.text_edit_font ) # ("Arial", 12)
+        edit_field.setFont(font)
+        edit_field.is_prior_text_enabled  = True
+        self.text_data_field = edit_field    # may be used for editing
+        edit_field.setPlaceholderText( "Some Long \n   text on a new line " )
+        data_manager.add_field( edit_field, )
+        text_layout.addWidget( edit_field, )  # what order row column
+
+        # move, then delete and comment
+        #self.snippet_manager        = base_document_tabs.SnippetManager( edit_field )
+        text_edit_widget.set_stuffdb( AppGlobal.controller )
+
+        # ---- id really fro debug hide --- no data manager needs this
+
+        widget          =  cw.CQLineEdit(
+                                     parent         = None,
+                                     field_name     = "id",    )
+        self.id_field   = widget
+        widget.setReadOnly( True )
+
+        data_manager.add_field( widget, )
+
+        # button_layout.addWidget( widget, )
+        self.stop_garbage_collect = widget
+
+        # ---- >> Go
         label       = ">> Go ..."
         widget      = QPushButton( label )
         #connect_to  = functools.partial( text_edit_ext_obj.cmd_exec, text_entry_widget )
         connect_to  = text_edit_widget.cmd_exec
         widget.clicked.connect( connect_to )
-        text_layout.addWidget ( widget, )
+        button_layout.addWidget ( widget, )
+
+        # snippet_manager may need reference here
+
+        self.snippet_managers = []
+        for ix in range( 0, 3 ):
+            a_snippet_manager    = base_document_tabs.SnippetManager( edit_field )
+            self.snippet_managers.append( a_snippet_manager )
+            self.build_snippet_gui( a_snippet_manager, button_layout, ix)
+
+        # for ix in range( 0, 3 ):
+        #     self.build_snippet_gui( edit_field, button_layout, ix)
+
+        # # ---- snippets 1
+        # self.snippet_manager        = base_document_tabs.SnippetManager( edit_field )
+        # groupbox   = QGroupBox( "Snippets 1" )
+        # groupbox.setMaximumHeight( 80 )
+        # groupbox.setMaximumWidth( 120 )  # by experiment
+        # groupbox.setStyleSheet("""
+        #     QGroupBox {
+        #         border: 2px solid blue;
+        #         border-radius: 10px;
+        #         margin-top: 15px;
+        #     }
+
+        #     QGroupBox::title {
+        #         subcontrol-origin: margin;
+        #         subcontrol-position: top center;
+        #         padding: 0 3px;
+        #         background-color: white;
+        #     }
+        # """)
+
+
+        # button_layout.addWidget( groupbox )
+        # layout_g     = QVBoxLayout( groupbox  )
+        # # layout in the groubpox
+
+
+        # ddl_widget, ddl_button_widget  = self.snippet_manager.make_widgets()
+        # # ddl_widget.setMaximumWidth( 20 )   # see also groupbox
+        # # ddl_widget.view().setMinimumWidth( 30 )   # did not fix my issue
+        # ddl_widget.setFixedWidth( 100 )   # see also groupbox
+        # ddl_widget.view().setFixedWidth( 100 )   # did not fix my issue
+        # ddl_widget.setStyleSheet("QComboBox { width: 20px; }")  # did not work
+        # ddl_button_widget.setText( "Paste")
+        # layout_g.addWidget( ddl_widget  )
+        # layout_g.addWidget( ddl_button_widget  )
+
+
+        # # ---- snippets 2
+        # groupbox   = QGroupBox( "Snippets 2" )
+        # groupbox.setMaximumHeight( 80 )
+        # groupbox.setMaximumWidth( 120 )  # by experiment
+        # groupbox.setStyleSheet("""
+        #     QGroupBox {
+        #         border: 2px solid blue;
+        #         border-radius: 10px;
+        #         margin-top: 15px;
+        #     }
+
+        #     QGroupBox::title {
+        #         subcontrol-origin: margin;
+        #         subcontrol-position: top center;
+        #         padding: 0 3px;
+        #         background-color: white;
+        #     }
+        # """)
+
+
+        # button_layout.addWidget( groupbox )
+        # layout_g     = QVBoxLayout( groupbox  )
+        # # layout in the groubpox
+
+
+        # ddl_widget, ddl_button_widget  = self.snippet_manager.make_widgets()
+        # # ddl_widget.setMaximumWidth( 20 )   # see also groupbox
+        # # ddl_widget.view().setMinimumWidth( 30 )   # did not fix my issue
+        # ddl_widget.setFixedWidth( 100 )   # see also groupbox
+        # ddl_widget.view().setFixedWidth( 100 )   # did not fix my issue
+        # ddl_widget.setStyleSheet("QComboBox { width: 20px; }")  # did not work
+        # ddl_button_widget.setText( "Paste")
+        # layout_g.addWidget( ddl_widget  )
+        # layout_g.addWidget( ddl_button_widget  )
+
+        # # ---- snippets 3
+        # groupbox   = QGroupBox( "Snippets 3" )
+        # groupbox.setMaximumHeight( 80 )
+        # groupbox.setMaximumWidth( 120 )  # by experiment
+        # groupbox.setStyleSheet("""
+        #     QGroupBox {
+        #         border: 2px solid blue;
+        #         border-radius: 10px;
+        #         margin-top: 15px;
+        #     }
+
+        #     QGroupBox::title {
+        #         subcontrol-origin: margin;
+        #         subcontrol-position: top center;
+        #         padding: 0 3px;
+        #         background-color: white;
+        #     }
+        # """)
+
+
+        # button_layout.addWidget( groupbox )
+        # layout_g     = QVBoxLayout( groupbox  )
+        # # layout in the groubpox
+
+
+        # ddl_widget, ddl_button_widget  = self.snippet_manager.make_widgets()
+        # # ddl_widget.setMaximumWidth( 20 )   # see also groupbox
+        # # ddl_widget.view().setMinimumWidth( 30 )   # did not fix my issue
+        # ddl_widget.setFixedWidth( 100 )   # see also groupbox
+        # ddl_widget.view().setFixedWidth( 100 )   # did not fix my issue
+        # ddl_widget.setStyleSheet("QComboBox { width: 20px; }")  # did not work
+        # ddl_button_widget.setText( "Paste")
+        # layout_g.addWidget( ddl_widget  )
+        # layout_g.addWidget( ddl_button_widget  )
+
+
+        # ---- Paste Prior
+        label           = "Paste Prior"
+        widget          = QPushButton( label )
+        widget.clicked.connect( text_edit_widget.paste_cache_text )
+        button_layout.addWidget( widget, )
+
+        # # ---- search text
+        # search_layout       = QHBoxLayout()
+        # text_layout.addLayout( search_layout )
+
+        # search_text_widget,  up_button,  dn_button  =  text_edit_widget.make_search_widgets(  )
+
+        # widget = QPushButton( "Top")
+        # widget.clicked.connect(  text_edit_widget.scroll_to_top   )
+        # search_layout.addWidget( widget )
+
+        # widget = QPushButton( "Bottom")
+        # widget.clicked.connect(  text_edit_widget.scroll_to_bottom   )
+        # search_layout.addWidget( widget )
+
+        # search_layout.addWidget( search_text_widget )
+        # search_layout.addWidget( dn_button )
+        # search_layout.addWidget( up_button )
+
+
+
+        # ---- pin 1
+        history_tab     = self.parent_window.history_tab
+        # timing is off for this -- so do at run time
+
+
+        label           = "Pin Current Row as 1"
+        widget          = QPushButton( label )
+        connect_to  =  partial( self.current_record_to_pinned, 0 )
+        widget.clicked.connect( connect_to )
+        button_layout.addWidget( widget )
+
+        # ---- pin 2
+        label           = "Pin Current Row as 2"
+        widget          = QPushButton( label )
+        connect_to  =  partial( self.current_record_to_pinned, 1 )
+        widget.clicked.connect( connect_to )
+        button_layout.addWidget( widget )
+
+
+ #-------------------------------------
+    def build_snippet_gui( self, snippet_manager, layout, ix ):
+        """
+
+        """
+
+        # ---- snippets n
+        # snippet_manager        = base_document_tabs.SnippetManager( edit_field )
+        groupbox   = QGroupBox( f"Snippets {ix}" )
+        groupbox.setMaximumHeight( 80 )
+        groupbox.setMaximumWidth( 120 )  # by experiment
+        groupbox.setStyleSheet("""
+            QGroupBox {
+                border: 2px solid blue;
+                border-radius: 10px;
+                margin-top: 15px;
+            }
+
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top center;
+                padding: 0 3px;
+                background-color: white;
+            }
+        """)
+
+
+        layout.addWidget( groupbox )
+        layout_g     = QVBoxLayout( groupbox  )
+        # layout in the groubpox
+
+
+        ddl_widget, ddl_button_widget  = snippet_manager.make_widgets()
+        # ddl_widget.setMaximumWidth( 20 )   # see also groupbox
+        # ddl_widget.view().setMinimumWidth( 30 )   # did not fix my issue
+        ddl_widget.setFixedWidth( 100 )   # see also groupbox
+        ddl_widget.view().setFixedWidth( 100 )   # did not fix my issue
+        ddl_widget.setStyleSheet("QComboBox { width: 20px; }")  # did not work
+        ddl_button_widget.setText( "Paste")
+        layout_g.addWidget( ddl_widget  )
+        layout_g.addWidget( ddl_button_widget  )
+
+
+ #-------------------------------------
+    def current_record_to_pinned( self, ix_row ):
+        """
+        get detail record and put in pinned table at position
+        ix_row
+        """
+        history_tab     = self.parent_window.history_tab
+        history_tab.current_record_to_pinned( ix_row )
 
     # ----------------------------
     def fetch_detail_rowpromoted( self,  a_id = None ):

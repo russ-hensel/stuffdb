@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Jul 29 15:53:02 2024
+
+@author: russ
+"""
+Python Reflection and Introspection | by Jamie Bullock | Better Programming
+https://betterprogramming.pub/python-reflection-and-introspection-97b348be54d8
+
+Codeium · Free AI Code Completion & Chat
+https://codeium.com/
+
+Microcontroller Programming (1) - DEV Community
+https://dev.to/jstivic/microcontroller-programming-1-41i0
+
+Signals & Slots | Qt Core 5.15.17
+https://doc.qt.io/qt-5/signalsandslots.html
+
+Using the SQL Model Classes | Qt SQL 6.7.2
+https://doc.qt.io/qt-6/sql-model.html
+
+Getting started - CodeWhisperer
+https://docs.aws.amazon.com/codewhisperer/latest/userguide/getting-started.html
+
+Textual
+https://textual.textualize.io/
+
+flaudanum’s gists
+https://gist.github.com/flaudanum
+
+faif/python-patterns: A collection of design patterns/idioms in Python
+https://github.com/faif/python-patterns?tab=readme-ov-file
+
+JesseTG/awesome-qt: A curated list of awesome tools, libraries, and resources for the Qt framework.
+https://github.com/JesseTG/awesome-qt?tab=readme-ov-file#official-resources
+
+Intermediate to Advanced resources - Python Resources for Everybody
+https://learnbyexample.github.io/py_resources/intermediate.html
+
+2025 Horseneck - Google Photos
+https://photos.google.com/share/AF1QipPU48lN2dcmqQgQjqF06OanCa2LfKUd2t7aMZMzg1r8iomDgmR0LSYz9-QxBLKTbw?pli=1&key=WFV0QXBkWE82S19WNnBpZ3VpQ0VyZk9wMFU5Q1NB
+
+Getting started — Version 0.26.2
+https://pyodide.org/en/stable/usage/quickstart.html
+
+objbrowser · PyPI
+https://pypi.org/project/objbrowser/
+
+Python Design Patterns
+https://python-patterns.guide/
+
+python - Retrieving the contents of a QtTableWidget cell from PyQT5 - Stack Overflow
+https://stackoverflow.com/questions/54594819/retrieving-the-contents-of-a-qttablewidget-cell-from-pyqt5
+
+Textual
+https://textual.textualize.io/
+
+Practices of the Python Pro
+https://www.manning.com/books/practices-of-the-python-pro
+
+Display tables in PyQt5, QTableView with conditional formatting, numpy and pandas
+https://www.pythonguis.com/tutorials/qtableview-modelviews-numpy-pandas/
+
+Python Intermediate | Learn with Sololearn
+https://www.sololearn.com/en/learn/courses/python-intermediate
+
+How to Print a ChatGPT Conversation: 3 Simple Methods
+https://www.wikihow.com/Print-Chat-Gpt
+
+Python itertools - The key to mastering iteration - YouTube
+https://www.youtube.com/watch?v=1p7xa_BHYDs
+
+Ten Videos on Fizz Buzz - Episode 10: "Fizz Buzz in Tensorflow*" - YouTube
+https://www.youtube.com/watch?v=aqGRSj2cvXw
+
+lofi hip hop radio 📚 - beats to relax/study to - YouTube
+https://www.youtube.com/watch?v=jfKfPfyJRdk
+
+How to easily transfer miles from your credit cards to airlines and hotels - YouTube
+https://www.youtube.com/watch?v=NhW6n1RydKA
+
+7 Top Python GUI Libraries (2023) [Pricing, Pros, Cons, & 5 factors to help you choose] - YouTube
+https://www.youtube.com/watch?v=QPHtNqGNuX4
+
+What’s New in FreeCAD – TechDraw (Broken View) - YouTube
+https://www.youtube.com/watch?v=sUJ2cgJ0qAE
+
+PyQt5 QTableWidget tutorial: Load data, fill tables, format tables [Table Widget] - YouTube
+https://www.youtube.com/watch?v=xL2NdSubiNY
+
+James Battat | Wellesley College
+https://www1.wellesley.edu/physics/people/faculty/battat
+
+ZetCode all tutorials
+https://zetcode.com/all/#pyqt
+
+Infotainment
+moz-extension://886b0824-13db-47b8-ac52-50300b530296/dial.html
