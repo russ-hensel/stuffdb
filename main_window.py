@@ -236,10 +236,10 @@ class StuffdbMainWindow( QMainWindow ):
         toolbar = QToolBar("My Toolbar")
         self.addToolBar(toolbar)
 
-        # Create actions with icons
-        action1 = QAction( QIcon.fromTheme("document-new"), "Choice 1", self )
-        action1.triggered.connect( self.show_message1 )
-        toolbar.addAction(action1)
+        # # Create actions with icons
+        # action1 = QAction( QIcon.fromTheme("document-new"), "Choice 1", self )
+        # action1.triggered.connect( self.show_message1 )
+        # toolbar.addAction(action1)
 
         # Standard Icon Names
         # https://specifications.freedesktop.org/icon-naming-spec/latest/ar01s04.html

@@ -5,7 +5,9 @@
 """
 Created on Thu Jan  2 11:50:38 2025
 
-@author: russ
+aggerate across all modules was data_dict
+
+    big change is it does not build itself.
 
 access
 import data_dict
@@ -20,7 +22,7 @@ help for tab_custom_update_manager may be of assist
 import adjust_path
 import logging
 import string_util
-import custom_widgets
+#import custom_widgets
 
 # ---- end imports
 
@@ -82,7 +84,7 @@ COLUMN_ORDER  = 100
 # print( "    path now:" )
 # for i_path in sys.path:
 #     print( "        ", i_path )
-def create_some_data_dict_from_sql( sql ):
+def create_some_data_dict_from_sqlxxxx( sql ):
     """
 
     sql   --- like
@@ -175,7 +177,7 @@ table_name_her
         print( )
 
 # -------------------------------------------
-def make_name_to_ix_dict( table_name, verbose = False ):
+def make_name_to_ix_dictxxxx( table_name, verbose = False ):
     """
     Code gen or run-time for sub tab list columns
         for the secondary tables
@@ -198,7 +200,7 @@ def make_name_to_ix_dict( table_name, verbose = False ):
             ix      += 1
 
 # -------------------------------------------
-def rpt_sub_tab_columns_order( table_name, verbose = False ):
+def rpt_sub_tab_columns_orderxxxx( table_name, verbose = False ):
     """
     Code gen or runtime for sub tab list columns
         for the secondary tables
@@ -244,9 +246,8 @@ def rpt_sub_tab_columns_order( table_name, verbose = False ):
 
 
 # ----------------------------------------
-class DataDict(   ):
+class SchemaDict(   ):
     """
-
     think wrong
          for the stuff table....\
     db_schema_name   .... may be many instances of the schema
@@ -262,14 +263,17 @@ class DataDict(   ):
         """
         self.table_dicts[a_table.table_name ] = a_table
 
-    def get_table(self, a_table_name  ):
+    # --------------------------------
+    def get_table( self, a_table_name ):
         """
         what it says
+        return a TableDict instance or None
         """
-        i_table      = self.table_dicts.get( a_table_name  )
+        i_table      = self.table_dicts.get( a_table_name, None  )
         if i_table is None:
-            print( f"could not find table {a_table_name = } ")
-            print( str(self) )
+            error_msg      = f"get_table could not find table {a_table_name = }"
+            logging.error( error_msg )
+
         return i_table
 
     # ----------------------
@@ -280,17 +284,19 @@ class DataDict(   ):
         i_table      = self.table_dicts.get( a_table_name  )
         print( i_table )
 
+    #------------------------------------------------
     def get_table_name_list( self):
         """ """
         table_list   = [ i_table_name for i_table_name in self.table_dicts.keys(  ) ]
         return table_list
 
-
     #------------------------------------------------
     def get_list_columns_sql_order( self, a_table_name   ):
         """
-        deprocate use the TableDict
+        deprecated use the TableDict
         """
+        error_msg      = ( f"get_list_columns_sql_order deprecated use TableDict {a_table_name}" )
+        logging.error( error_msg )
         a_table      = self.table_dicts.get( a_table_name  )
         if a_table is None:
             error_msg      = f"get_list_columns_sql_order self.table_dicts.get failed for table {a_table_name}"
@@ -298,42 +304,45 @@ class DataDict(   ):
             raise ValueError( error_msg )
 
         column_list  = a_table.get_list_columns_sql_order()
-        #print( column_list )
         return column_list
-
 
     # ----------------------
     def get_list_columns(self, a_table_name  ):
         """
-        deprocate use the TableDict
+        deprecate use the TableDict
         simplify call to a given table
             columns for a history tab to move data from a record to a history table
             see history_tab record_to_table
         """
+        error_msg      = ( f"get_list_columns deprecated use TableDict {a_table_name}" )
+        logging.error( error_msg )
         a_table      = self.table_dicts.get( a_table_name  )
         if a_table is None:
-            error_msg      = f"self.table_dicts.get failed for table {a_table_name}"
+            error_msg      = ( "self.table_dicts.get_list_columns failed"
+                             f" for table {a_table_name}" )
             logging.error( error_msg )
             raise ValueError( error_msg )
 
         column_list  = a_table.get_list_columns()
-        print( column_list )
         return column_list
 
     #------------------------------------------------
     def make_name_to_ix_dict( self, a_table_name ):
         """
-        deprocate use the TableDict  i think
+        deprecated use the TableDict  i think
         get the columns name and corresponding
         index  make into a dict
         """
+        error_msg      = (   "make_name_to_ix_dict deprecated"
+                            f" use TableDict {a_table_name}" )
+        logging.error( error_msg )
         a_table      = self.table_dicts.get( a_table_name  )
         return   a_table.make_name_to_ix_dict()
 
     # ------------------------
     def __str__( self, ):
         """ """
-        a_str       = "==== DataDict ======"
+        a_str       = "==== SchemaDict ======"
         a_str       = f"{a_str}\n   {self.db_schema_name = }"
         a_str       = f"{a_str}\n   and our tables are:"
         for i_table_name, i_table_dict in self.table_dicts.items(  ):
@@ -347,15 +356,16 @@ class DataDict(   ):
 # ----------------------------------------
 class TableDict(  ):
     """
-    for the stuff table....
+    hold the schema, mostly a list of ColumnDicts for a table
     """
     def __init__(self, table_name ):
         """
         the usual
         """
         self.table_name    = table_name
-        self.columns        = []
+        self.columns       = []
 
+    #------------------------------------------------
     def add_column(self, a_column  ):
         """
         the usual
@@ -367,35 +377,22 @@ class TableDict(  ):
         """
         get the columns name and corresponding
         index  make into a dict
+        could change to a comp.
+        return  name_to_ix_dict
         """
         name_to_ix_dict   = {}
 
         for ix_column, i_column in enumerate( self.columns ):
-            i_type          = i_column.db_type
-            i_db_type       = i_column.db_type
-            i_edit_in_type  = i_column.edit_in_type
-            i_name          = i_column.column_name
-            i_my_type       = i_column.column_name       # work in progress or error
-            i_display_type  = i_column.display_type
-            i_form_edit     = i_column.form_edit
-            i_is_key_word   = i_column.is_key_word
-            i_placeholder   = i_column.placeholder_text
-            i_default_func  = i_column.default_func
-            i_is_topic      = i_column.is_topic
-           # i_in_history    = i_column.in_history   # do not include id ... number for order
-            i_detail_edit_class = i_column.detail_edit_class
-            # i_db_convert_type   = i_column.db_convert_type   # string for VARCHAR text....
-
-            name_to_ix_dict[ i_name ]  = ix_column
+            name_to_ix_dict[  i_column.column_name ]  = ix_column
 
         return name_to_ix_dict
 
     #------------------------------------------------
-    def get_topic_columns_dup(self,    ):
+    def get_topic_columns_dup( self, ):
         """
+        what does dup mean
         !! not optimized
         """
-
         column_list    = []
 
         for ix_column, i_column in enumerate( self.columns ):
@@ -420,9 +417,42 @@ class TableDict(  ):
         # breakpoint()
         return column_list
 
+    #------------------------------------------------
+    def get_key_word_columns( self, ):
+        """
+        get a list of the column objects for this table
+        needs test
+        returns
+            key_word_column_list
+        """
+        # key_word_column_list    = []
+
+        # for ix_column, i_column in enumerate( self.columns ):
+
+
+        #     i_name          = i_column.column_name
+        #     i_my_type       = i_column.column_name       # work in progress or error
+        #     i_display_type  = i_column.display_type
+        #     i_form_edit     = i_column.form_edit
+        #     i_is_key_word   = i_column.is_key_word
+        #     i_placeholder   = i_column.placeholder_text
+        #     i_default_func  = i_column.default_func
+        #     i_is_topic      = i_column.is_topic
+
+        #     i_detail_edit_class = i_column.detail_edit_class
+        #     # i_db_convert_type   = i_column.db_convert_type   # string for VARCHAR text....
+
+        #     if i_is_key_word is True:
+        #         key_word_column_list.append( i_name )
+
+        key_word_column_list     = [ i_column for i_column in self.columns if i_column.is_key_word  ]
+
+        #column_list.sort( key = lambda i_column: i_column.in_history )
+        # breakpoint()
+        return key_word_column_list
 
     #------------------------------------------------
-    def get_key_word_columns(self,    ):
+    def get_key_word_columns_old(self,    ):
         """
         !! not optimized
         """
@@ -456,24 +486,15 @@ class TableDict(  ):
         """
         get the columns ( not including id )
         for the detail tab, add field_label??
+        looks like translation is bad idea
         """
         column_list    = []
 
         for ix_column, i_column in enumerate( self.columns ):
-            i_type          = i_column.db_type
-            i_db_type       = i_column.db_type
-            i_edit_in_type  = i_column.edit_in_type
+
             i_name          = i_column.column_name
-            i_my_type       = i_column.column_name       # work in progress or error
-            i_display_type  = i_column.display_type
-            i_form_edit     = i_column.form_edit
-            i_is_key_word   = i_column.is_key_word
-            i_placeholder   = i_column.placeholder_text
-            i_default_func  = i_column.default_func
-            i_is_topic      = i_column.is_topic
-            # i_in_history    = i_column.in_history   # do not include id ... number for order
+
             i_detail_edit_class = i_column.detail_edit_class
-            # i_db_convert_type   = i_column.db_convert_type   # string for VARCHAR text....
 
             if i_name == "id": # skip the id column
                 continue
@@ -482,12 +503,11 @@ class TableDict(  ):
                 continue
 
             if i_detail_edit_class is None:
+                # looks like it set to cause an error -- track down where used
                 i_detail_edit_class          = "cw.CQLineEdit is this right in data dict"
                 i_column.detail_edit_class   = i_detail_edit_class
 
             column_list.append( i_column )
-
-        #column_list.sort( key = lambda i_column: i_column.in_history )
 
         return column_list
 
@@ -501,19 +521,7 @@ class TableDict(  ):
         column_list    = []
 
         for ix_column, i_column in enumerate( self.columns ):
-            i_type          = i_column.db_type
-            i_db_type       = i_column.db_type
-            i_name          = i_column.column_name
-            i_my_type       = i_column.column_name       # work in progress or error
-            i_display_type  = i_column.display_type
-            i_form_edit     = i_column.form_edit
-            i_is_key_word   = i_column.is_key_word
-            i_placeholder   = i_column.placeholder_text
-            i_default_func  = i_column.default_func
-            i_is_topic      = i_column.is_topic
 
-            i_col_head_order          = i_column.col_head_order
-            i_col_head_text      = i_column.col_head_text
             i_col_head_width     = i_column.col_head_width
 
             if   i_col_head_width < 0:
@@ -528,7 +536,6 @@ class TableDict(  ):
         return column_list
 
     #------------------------------------------------
-    #------------------------------------------------
     def get_list_columns_sql_order( self,    ):
         """
         this is all the columns, not the column names
@@ -536,40 +543,13 @@ class TableDict(  ):
             combine with  get_list_columns
             assume order in data_dict is the sql order
 
-        uses i_col_head_width >= 0 for selection
-
-        for the history tab, add column heading
-        column    = data_dict.DATA_DICT.get_history_columns( a_table_name )
-
-        lots of unneded code here
+        !! convert to a comp
 
         """
         column_list    = []
 
         for ix_column, i_column in enumerate( self.columns ):
-            i_type          = i_column.db_type
-            i_db_type       = i_column.db_type
-            i_name          = i_column.column_name
-            i_my_type       = i_column.column_name       # work in progress or error
-            i_display_type  = i_column.display_type
-            i_form_edit     = i_column.form_edit
-            i_is_key_word   = i_column.is_key_word
-            i_placeholder   = i_column.placeholder_text
-            i_default_func  = i_column.default_func
-            i_is_topic      = i_column.is_topic
-
-            i_col_head_order     = i_column.col_head_order
-            i_col_head_text      = i_column.col_head_text
-            i_col_head_width     = i_column.col_head_width
-
-            # if   i_col_head_width < 0:
-            #     continue
-
-            #rint( f"appending {i_column.column_name}"  )
-
             column_list.append( i_column )
-
-        # column_list.sort( key = lambda i_column: i_column.col_head_order )
 
         return column_list
 
@@ -595,7 +575,6 @@ class TableDict(  ):
                  'table_name': 40, 'column_name': 40, 'java_type': 20, 'java_name': 175,
                  'java_package': 150, 'title': 150, 'is_example': 1, 'can_execute': 1}
 
-
         """
         column_list    = self.get_list_columns_sql_order()
         # name_list      = [ i_column.column_name for i_column in column_list ]
@@ -604,13 +583,11 @@ class TableDict(  ):
         for i_column in column_list :
             db_type     = i_column.db_type
             if db_type.startswith( "VARCHAR" ):
-                db_len     = db_type[ 8: ]
-                db_len     = db_len[ : -1]
+                db_len     = db_type[ 8:  ]
+                db_len     = db_len[   :-1]
                 db_len     = int( db_len )
                 limit_dict[i_column.column_name ] = db_len
         return limit_dict
-
-
 
     #------------------------------------------------
     def get_topic_columns( self,    ):
@@ -618,39 +595,21 @@ class TableDict(  ):
         get the columns ( not including id ) in the correct order
         topic columns
         column    = data_dict.DATA_DICT.get_history_columns( a_table_name )
+        !! a comp for part of this
         """
         column_list    = []
 
         for ix_column, i_column in enumerate( self.columns ):
-            i_type          = i_column.db_type
-            i_db_type       = i_column.db_type
-            i_name          = i_column.column_name
-            i_my_type       = i_column.column_name       # work in progress or error
-            i_display_type  = i_column.display_type
-            i_form_edit     = i_column.form_edit
-            i_is_key_word   = i_column.is_key_word
-            i_placeholder   = i_column.placeholder_text
-            i_default_func  = i_column.default_func
-            i_is_topic      = i_column.is_topic
 
-            i_col_head_order          = i_column.col_head_order
-            i_col_head_text      = i_column.col_head_text
-            i_col_head_width     = i_column.col_head_width
-            topic_column_order   = i_column.topic_column_order
-
-            if   topic_column_order < 0:
+            if  i_column.topic_column_order < 0:
                 continue
-
-            #rint( f"appending {i_column.column_name}"  )
 
             column_list.append( i_column )
 
         column_list.sort( key = lambda i_column: i_column.topic_column_order )
 
-
         column_names    = [i_column.column_name for i_column in column_list ]
 
-        #return column_list
         return column_names
 
     #------------------------------------------------
@@ -658,6 +617,7 @@ class TableDict(  ):
         """
         for set_list_to_detail_ix
             use list of strings then  join
+            looks like code generation
         """
         line_list    = []
         #rint( name_list )
@@ -672,16 +632,9 @@ class TableDict(  ):
         #line_list.append(  f'    # ---- {self.table_name} ---------------------------------------------' )
 
         for ix_column, i_column in enumerate( self.columns ):
-            i_type          = i_column.db_type
-            i_db_type       = i_column.db_type
+
             i_name          = i_column.column_name
-            i_my_type       = i_column.column_name       # work in progress or error
-            i_display_type  = i_column.display_type
-            i_form_edit     = i_column.form_edit
-            i_is_key_word   = i_column.is_key_word
-            i_placeholder   = i_column.placeholder_text
-            i_default_func  = i_column.default_func
-            i_is_topic      = i_column.is_topic
+
             i_in_history    = i_column.in_history   # do not include id ... number for order
 
             #problem with db_type should perhaps be edit_input_type or similar for now tweak
@@ -700,7 +653,6 @@ class TableDict(  ):
             # ix_col          += 1
             # item             = QTableWidgetItem( str( record.value( "title" ) ) )
             # table.setItem( ix_row, ix_col, item   )
-
 
             line_list.append(  '' )
             #line_list.append( f'{indent_1}# ---- {i_name}' )
@@ -721,7 +673,9 @@ class TableDict(  ):
         use list and join
 
         _build_fields( self, layout ):
-
+            code gen
+        return
+            str of code
         """
         line_list       = []
         #rint( name_list )
@@ -739,16 +693,14 @@ class TableDict(  ):
         column_list.sort( key = lambda i_column: i_column.display_order   )
 
         for ix_column, i_column in enumerate( column_list ):
-            i_type          = i_column.db_type
-            i_db_type       = i_column.db_type
+
+
             field_name          = i_column.column_name
-            i_my_type       = i_column.column_name       # work in progress or error
-            i_display_type  = i_column.display_type
-            column_form_edit     = i_column.form_edit
-            i_is_key_word   = i_column.is_key_word
-            placeholder_text   = i_column.placeholder_text
-            i_default_func      = i_column.default_func
-            i_is_topic              = i_column.is_topic   # phasing out
+
+            column_form_edit    = i_column.form_edit
+            i_is_key_word       = i_column.is_key_word
+            placeholder_text    = i_column.placeholder_text
+
             topic_column_order      = i_column.topic_column_order
             form_col_span           = i_column.form_col_span
             is_keep_prior_enabled   = i_column.is_keep_prior_enabled
@@ -760,7 +712,7 @@ class TableDict(  ):
             edit_to_dict_cnv        = i_column.edit_to_dict_cnv
             form_make_ref           = i_column.form_make_ref
             set_editable            = i_column.set_editable
-            edit_tool_tip            = i_column.edit_tool_tip
+            edit_tool_tip           = i_column.edit_tool_tip
 
             if  True:
                 #line_list.append(  '' )
@@ -794,7 +746,6 @@ class TableDict(  ):
                 if value is not SKIP:
                     line_list.append( f'{indent_1}edit_field.set_editable        = edit_field.set_editable( {value} )' )
 
-
                 # ---- rec_to_edit_cnv
                 value     = get_value( field_name       = field_name,
                                        atribute         = "rec_to_edit_cnv" ,
@@ -823,7 +774,6 @@ class TableDict(  ):
                 if value is not SKIP:
                     line_list.append( f'{indent_1}edit_field.edit_to_dict_cnv       = edit_field.{value}' )
 
-
                 # ---- form read only
                 value     = get_value( field_name            = field_name,
                                       atribute          = "form_read_only" ,
@@ -844,8 +794,6 @@ class TableDict(  ):
 
                 line_list.append( f'{indent_1}edit_field.setPlaceholderText( "{placeholder_text}" ) ' )
 
-
-
                 # # ---- rec_to_edit rec
                 # if i_column.rec_to_edit:  # if not none the default
                 #     line_list.append( f'{indent_1}edit_field.rec_to_edit     = edit_field.{i_column.rec_to_edit}   ' )
@@ -864,11 +812,12 @@ class TableDict(  ):
 
                 line_list.append( f'{indent_1}layout.addWidget( edit_field, columnspan = {form_col_span} ) ' )
 
-       # edit_field.setReadOnly( True )
+               # edit_field.setReadOnly( True )
 
-                # self.form_read_only         = form_read_only
+               # self.form_read_only         = form_read_only
 
         a_str       = "\n".join( line_list )
+
         return a_str
     #------------------------------------------------
     def to_build_form_old( self,    ):
@@ -992,7 +941,6 @@ class TableDict(  ):
 
                 if i_column.form_read_only:  # perhaps None
                     line_list.append( f'{indent_1}edit_field.setReadOnly( True )' )
-
 
        # edit_field.setReadOnly( True )
 
@@ -1189,10 +1137,8 @@ class TableDict(  ):
             if  db_type == "TIMESTAMP":
                 db_type  = "BIGINT"
 
-
             line        = f"{line}\n     {i_column.column_name}  {db_type} {key_part}"
             sql         = f"{sql}{line}"
-
 
         # ---- second pass
         for ix_column, i_column in enumerate( self.columns ):
@@ -1206,14 +1152,14 @@ class TableDict(  ):
 
 
         sql             = f"{sql}\n    ); "
-        return sql
 
+        return sql
 
     #---------------------------
     def sql_to_insert_bind( self, debug = True ):
         """
         what it says, read
-
+        code gen for data import
         written to make it easy to comment out columns
         """
         what           = "sql_to_insert_bind ---- code gen"
@@ -1242,7 +1188,6 @@ class TableDict(  ):
                 ntc = " ) "
 
             line_list.append(  f'{indent_1}"{i_field_name}{ntc}"  ', )
-
 
         # ---- second pass
         line_list.append(  f"{indent_1}   " )
@@ -1293,7 +1238,6 @@ class TableDict(  ):
         line_list.append(  '' )
         line_list.append(  f'{indent_1}# ---- {what} ends  ' )
 
-
         a_str       = "\n".join( line_list )
         return a_str
 
@@ -1302,7 +1246,7 @@ class TableDict(  ):
         """
         what it says, read
         first written for stuff_events
-
+        code gen for imports
         """
         what           = "splits_to_bind ---- code gen "
         column_list    = []
@@ -1322,7 +1266,6 @@ class TableDict(  ):
 
         line_list.append(  '' )
         line_list.append(  f'{indent_1}# ---- {what} ends  ' )
-
 
         a_str       = "\n".join( line_list )
         return a_str
@@ -1356,13 +1299,13 @@ class ColumnDict(  ):
         is data editable           - always no
     """
     def __init__(self,  *,
-                 column_name        = None,
-                 db_type            = None,   # for sql
+                 column_name            = None,
+                 db_type                = None,   # for sql
                  # db_convert_type    = None,    # for record to field looks same as edit_in_type
-                 edit_in_type       = None,    # for missing sql types and edit input type
+                 edit_in_type           = None,    # for missing sql types and edit input type
                                                # some confusion with db_type
-                 form_edit          = None,    # edit to be used, pretty much auto for most fields plus Int but not dates
-                 display_type       = None,
+                 form_edit              = None,    # edit to be used, pretty much auto for most fields plus Int but not dates
+                 display_type           = None,
                  display_order          = COLUMN_ORDER,
                  max_len                = None,
                  default_func           = None,
@@ -1424,7 +1367,7 @@ class ColumnDict(  ):
         self.form_read_only         = form_read_only
 
         self.create_self            = create_self
-        self.set_editable            = set_editable
+        self.set_editable           = set_editable
         self.edit_to_rec            = edit_to_rec    # string name of function
         self.rec_to_edit            = rec_to_edit
         self.is_keep_prior_enabled  = is_keep_prior_enabled
@@ -1492,7 +1435,7 @@ class ColumnDict(  ):
     def __str__( self, ):
         """ """
         a_str   = ""
-        a_str   = ">>>>>>>>>>* ColumnDict *<<<<<<<<<<<<"
+        a_str   = f"\n\n>>>>>>>>>>* ColumnDict {self.column_name} *<<<<<<<<<<<<"
         a_str   = string_util.to_columns( a_str, ["col_head_order",
                                            f"{self.col_head_order}" ] )
         a_str   = string_util.to_columns( a_str, ["col_head_text",
@@ -1537,11 +1480,11 @@ class ColumnDict(  ):
 
 
 def test():
+    msg  = """
+    not sure this is worth much -- consider delete but better may be find_dict_modules.py
+    look for the test in  own .p
     """
-
-
-    """
-    a_data_dict   = DataDict(   "stuffdb" )
+    a_data_dict   = SchemaDict(   "stuffdb" )
     a_table_dict  = TableDict(  "help_text" )
 
     a_column_dict = ColumnDict(    column_name    = "id",
@@ -1570,110 +1513,15 @@ def test():
     a_table_dict.add_column( a_column_dict )
     a_data_dict.add_table( a_table_dict )
 
-    #print( a_table_dict.to_sql() )
+    print( msg )
 
-    #print( a_data_dict )
+# --------------------
+if __name__ == "__main__":
+    #----- run the full app
 
-    #print( a_table_dict.to_upgrade_self() )
+    test()
 
-
-# def for_import( ):
-#     print( "for_import")
-#     global DATA_DICT
-
-#     if DATA_DICT is None:
-#         DATA_DICT = DataDict( "stuffdb" )
-#     else:
-#         return
-
-#     import data_dict_stuff
-#     data_dict_stuff.build_dd
-
-def build_it_old( db_name ):
-    global DATA_DICT
-    if DATA_DICT is None:
-        DATA_DICT = DataDict( db_name )
-    print( DATA_DICT )
-
-
-def  build_it( db_schema_name = None ):
-    """build one time  """
-    # global DATA_DICT
-
-    if not db_schema_name:
-        db_name = "default, probably stuffdb"
-
-    global DATA_DICT
-    if  DATA_DICT:
-        return  DATA_DICT
-
-    build_it_old(  db_schema_name )
-
-
-    import data_dict_help
-    data_dict_help.build_it( DATA_DICT )
-    #return
-    # import data_dict_people
-    # data_dict_people.build_it( data_dict.DATA_DICT )
-
-    import data_dict_photo     # missing photo_subject
-    data_dict_photo.build_it(  DATA_DICT )
-
-    import data_dict_photo_new     # missing photo_subject
-    data_dict_photo_new.build_it(  DATA_DICT )
-
-    import data_dict_plant
-    data_dict_plant.build_it(  DATA_DICT )
-
-    import data_dict_planting
-    data_dict_planting.build_it(  DATA_DICT )
-
-    import data_dict_people
-    data_dict_people.build_it(  DATA_DICT )
-
-    import data_dict_stuff
-    data_dict_stuff.build_it(  DATA_DICT )
-
-    import data_dict_photoshow
-    data_dict_photoshow.build_it(  DATA_DICT )
-
-    import data_dict_key_gen
-    data_dict_key_gen.build_it(  DATA_DICT )
-
-    import data_dict_photoshow
-    data_dict_photoshow.build_it( DATA_DICT )
-
-    import data_dict_qt5_example
-    data_dict_qt5_example.build_it(  DATA_DICT )
-
-    import data_dict_test_table
-    data_dict_test_table.build_it(  DATA_DICT )
-
-    #rint( f"{data_dict.DATA_DICT}" )
-    print( "DATA_DICT created ")
-    return  DATA_DICT
-
-#build_it()
-
-    # data_dict.DATA_DICT.print_table( "photo" )
-
-
-    # a_table    = data_dict.DATA_DICT.get_table( "photo_key_word" )
-    # # sql         = a_table.to_sql_create ()
-    # # print( sql )
-
-    # print( f"{a_table}" )
-    # print( a_table.to_build_form() )
-
-# for_import()
-
-# # --------------------
-# if __name__ == "__main__":
-#     #----- run the full app
-
-#     build_it()
-
-# # --------------------
+# --------------------
 
 
 # ---- eof

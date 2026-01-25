@@ -150,6 +150,7 @@ ALL_TABLES  = [
                     "stuff_key_word",
                     "stuff_text",
                     "stuff_event",
+                    "test_table",
 
                             ]
 # dict   what is this
@@ -682,9 +683,9 @@ class BasicsTab( QWidget ):
         """
 
         """
-        vlayout              = QVBoxLayout( self )
+        vlayout             = QVBoxLayout( self )
 
-        layout              = QHBoxLayout( self )
+        layout              = QHBoxLayout(  )
         vlayout.addLayout( layout )
 
         # ---- table combobox
@@ -704,6 +705,12 @@ class BasicsTab( QWidget ):
         widget.clicked.connect(  connect_to   )
         layout.addWidget( widget )
 
+        widget              = QPushButton( "create sql pg" )
+        self.q_pbutton_1    = widget
+        connect_to          = self.create_sql_pg
+        widget.clicked.connect(  connect_to   )
+        layout.addWidget( widget )
+
         widget              = QPushButton( "record count" )
         connect_to          = self.record_count_rpt
         widget.clicked.connect( connect_to  )
@@ -715,7 +722,19 @@ class BasicsTab( QWidget ):
         widget.clicked.connect( connect_to  )
         layout.addWidget( widget )
 
-        # ---- max_id row
+        # ---- new max id:
+        widget              = QLabel( "new max id:" )
+        layout.addWidget( widget )
+
+        # ---- key_gen_widget
+        widget              = QLineEdit(  )
+        # connect_to          = self.max_id_rpt
+        # widget.clicked.connect( connect_to  )
+        self.key_gen_widget   = widget
+        layout.addWidget( widget )
+
+
+        # ---- set_key_max_id row
         widget              = QPushButton( "set_key_max_id" )
         connect_to          = self.set_key_max_id
         widget.clicked.connect( connect_to  )
@@ -764,28 +783,58 @@ class BasicsTab( QWidget ):
     def set_key_max_id( self,   ):
         """
         What it says, read
+        sets a new key value from user input with conditions
 
         """
-        # KeyGenerator( db)   # there is one hanging around   strange_vibes
-        # AppGlobal.key_gen       = a_key_gen
+        msg       = "set_key_max_id"
+        self.parent_window.output_msg( msg, clear = True )
+
         table_name      = self.table_widget.currentText()
         a_key_gen       = AppGlobal.key_gen
 
         max_id          = a_key_gen.get_max_for_table( table_name )
 
+        try:
+            new_max_id      = int( self.key_gen_widget.text() )
+
+        except Exception as exception:
+
+
+            msg_box_msg    = "could not convert your input to an integer, this is required, so no go"
+            msg_box        = QMessageBox()
+            msg_box.setIcon( QMessageBox.Information )
+            msg_box.setText(  msg_box_msg  )
+            msg_box.setWindowTitle( "Sorry that is a No Go " )
+            msg_box.setStandardButtons( QMessageBox.Ok )
+            msg_box.exec_()
+
+            self.parent_window.output_msg( msg_box_msg, )
+            self.parent_window.activate_output_tab()
+
+            return
+
         if max_id < 0:
             msg      = f"Table {table_name} {max_id = } so this did not work "
-            self.parent_window.output_msg( msg, clear = True )
+            self.parent_window.output_msg( msg, )
 
             self.parent_window.activate_output_tab()
 
             return
 
-        max_id   += 10
-        a_key_gen.update_key_for_table( table_name, max_id )
+        if new_max_id < max_id:
+            msg      = f"New Max Id for {table_name} is less than {max_id = } so this did not work "
+            self.parent_window.output_msg( msg, )
 
-        msg      = f"Table {table_name} {max_id = }"
-        self.parent_window.output_msg( msg, clear = True )
+            self.parent_window.activate_output_tab()
+
+            return
+
+
+        # max_id   += 10
+        a_key_gen.update_key_for_table( table_name, new_max_id )
+
+        msg      = f"Table {table_name} {new_max_id = }"
+        self.parent_window.output_msg( msg, )
 
         self.parent_window.activate_output_tab()
 
@@ -804,6 +853,8 @@ class BasicsTab( QWidget ):
 
         msg      = f"Table {table_name} {max_id = }"
         self.parent_window.output_msg( msg, clear = True )
+
+        # new_max_id       = self.key_gen_widget.text()  zz
 
         #self.parent_window.output_msg(  msg )
         self.parent_window.activate_output_tab()
@@ -875,6 +926,22 @@ class BasicsTab( QWidget ):
         a_table     = data_dict.DATA_DICT.get_table( table_name )
 
         sql         = a_table.to_sql_create()
+        msg         = f"{sql} "
+        self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+    #-------------------------
+    def create_sql_pg( self,   ):
+        """
+        What it says, read  postgres version
+
+        """
+        table_name  = self.table_widget.currentText()
+        self.parent_window.output_msg(   f"for table {table_name = }", clear = True )
+
+        a_table     = data_dict.DATA_DICT.get_table( table_name )
+
+        sql         = a_table.to_sql_create_pg()
         msg         = f"{sql} "
         self.parent_window.output_msg(  msg )
         self.parent_window.activate_output_tab()
@@ -1256,7 +1323,7 @@ class PictureUtilTab( QWidget ):
 
 
         """
-        layout     = QHBoxLayout( groupbox )
+        layout              = QHBoxLayout( groupbox )
 
         widget              = QLineEdit( )
         self.dir_widget     = widget

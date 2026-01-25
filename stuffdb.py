@@ -3,7 +3,7 @@
 
 # ---- tof
 """
-the true main for the stuffdb, but launch from main
+the "true" main for the stuffdb, but launch from main
 
 """
 # --------------------
@@ -14,7 +14,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver .085: 2025-12-24.01"
+__version__   = "Ver .085: 2025-12-25.01"
 
 # ---- imports
 import datetime
@@ -74,8 +74,8 @@ from PyQt.QtWidgets import (
                              QVBoxLayout,
                              QWidget)
 
-from app_global import AppGlobal
-import app_logging
+from   app_global import AppGlobal
+# import app_logging
 import data_dict
 #import   stuffdb_def
 #import dict_main
@@ -180,7 +180,10 @@ class App( ):
         self.parameters         = parameters.Parameters( )
         AppGlobal.parameters    = self.parameters
 
-        app_logging.init()
+        # after parameters are set up
+        import app_logging
+        an_applogging    = app_logging.AppLogging( )
+        # app_logging.init()
 
         # ---- DB CONNECT
         a_qsql_db_access        = qsql_db_access.QsqlDbAccess( STUFFDB_CONNECTION_NAME )
@@ -194,6 +197,8 @@ class App( ):
         AppGlobal.key_gen       = a_key_gen
 
         data_dict.build_it( "stuffdb" )    # access as data_dict.DATA_DICT
+
+
 
         table_name_list  = data_dict.DATA_DICT.get_table_name_list()
         if len( table_name_list ) < 10:

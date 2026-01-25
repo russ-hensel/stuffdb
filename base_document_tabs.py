@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# sssspylint: disable=E221,E201,E202,C0325,E0611,W0201,W0612
-# pylint: disable=E202,C0325,E0611,W0201,W0612,
+# sssspylint: disable=E221,E201,C0325,E0611,W0201,W0612,E0401
+# pylint: disable=E202,C0325,E0611,W0201,W0612,E0401
 """
 
 """
@@ -19,9 +19,9 @@ import inspect
 import logging
 import pprint
 import subprocess
-from pathlib import Path
+from   pathlib    import Path
 import traceback
-from   functools import partial
+from   functools  import partial
 
 
 
@@ -324,7 +324,7 @@ class SnippetManager:
         self.parameters         = parameters.PARAMETERS
 
     #-----------------------------
-    def make_widgets(self):
+    def make_widgets( self ):
         """
         what it says
             perhaps we should change to create
@@ -1736,7 +1736,9 @@ class CriteriaTabBase( QWidget ):
         """
         grid_layout.new_row()
         button_layout    = QHBoxLayout()
-        grid_layout.addLayout( button_layout, grid_layout.ix_col, grid_layout.ix_row, 1, 5  )
+        grid_layout.addLayout( button_layout,
+                               grid_layout.ix_col, grid_layout.ix_row,
+                               columnspan = 1,     rowspan = 1  )
         #row: int, column: int, rowSpan: int, columnSpan:
             # int, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = Qt.Alignment()):
         grid_layout.new_row()
@@ -1777,7 +1779,8 @@ class CriteriaTabBase( QWidget ):
         placer.new_row()
         button_layout    = QHBoxLayout()
         placer.layout.addLayout( button_layout, placer.ix_col, placer.ix_row, 0, 5  )
-        #row: int, column: int, rowSpan: int, columnSpan: int, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = Qt.Alignment()):
+        #row: int, column: int, rowSpan: int, columnSpan:
+            # int, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = Qt.Alignment()):
         placer.new_row()
         # ---- buttons
         a_widget        = QPushButton( "Clear" )
@@ -1861,7 +1864,7 @@ class CriteriaTabBase( QWidget ):
             self.criteria_select()
         else:
             pass
-            # debug_msg  = ( "criteria_select_if no select !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            # debug_msg  = ( "criteria_select_if no select !!")
             # logging.debug( debug_msg )
         # put in criteria_select  !! self.criteria_is_changed = False
         self.critera_is_changed = False
@@ -2162,6 +2165,7 @@ class SubTabWithEditBase( QWidget ):
         what it says, read
         """
         1/0 # implement in desceanat
+        return None
 
     # ---------------------------------------
     def select_by_id( self, a_id ):
@@ -2301,15 +2305,15 @@ class SubTabWithEditBase( QWidget ):
         if model.removeRow( row_number ):
              # Submit changes to the database
              if model.submitAll():
-                 pass
-                 #print(f"Row {row_number} deleted successfully.")
+                pass
+                #print(f"Row {row_number} deleted successfully.")
              else:
-                 msg = (model.lastError().text())
-                 logging.error( msg )
+                msg = (model.lastError().text())
+                logging.error( msg )
 
-                 msg  = ("Failed to submit changes to the database.")
-                 logging.error( msg )
-                 QMessageBox.warning( self, "Error", msg)
+                msg  = ("Failed to submit changes to the database.")
+                logging.error( msg )
+                QMessageBox.warning( self, "Error", msg)
 
         else:
             msg = ("delete_record Failed to remove row from the model.")
@@ -2475,6 +2479,7 @@ class SubTabBaseOld( QWidget ):
         what it says, read
         """
         1/0 # implement in desceanat
+        return None
 
     # ---------------------------------------
     def select_by_id( self, a_id ):
@@ -2721,8 +2726,9 @@ class HistoryTabBase( QWidget ):
 
         #
         action  = menu.addAction("Pin as #1")
-        connect_to      = partial( self.history_to_pinned, ix_src_row = ix_src_row, ix_dest_row = 0 )
-            # note off by one adjust
+        connect_to      = partial( self.history_to_pinned,
+                                   ix_src_row = ix_src_row, ix_dest_row = 0 )
+            # note off by one adjust or not
         action.triggered.connect( connect_to   )
         action.setEnabled( True )
 
@@ -3654,6 +3660,7 @@ class StuffdbPictureTab_not_photo( QWidget ):
         print("Zoomed Out")
 
     def reset_zoom(self):
+        """ """
         self.viewer.reset_zoom()
         #rint("Zoom Reset")
 

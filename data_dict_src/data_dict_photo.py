@@ -6,25 +6,28 @@
 photo
 photo_text
 photo_key_words
+
+DB_NAME:        stuffdb
+
 """
 
 #import adjust_path
-import data_dict
+import data_dict_all
 
 
 # ---- build it
-def build_it( a_data_dict ):
+def build_it( a_data_dict_all ):
     """
     actual build of the data dict
 
     """
 
     # ---- photo ---------------------------------------------
-    a_table_dict   = data_dict.TableDict( "photo" )
-    a_data_dict.add_table ( a_table_dict )
+    a_table_dict   = data_dict_all.TableDict( "photo" )
+    a_data_dict_all.add_table ( a_table_dict )
 
     # ---- id
-    a_column_dict = data_dict.ColumnDict(    column_name    = "id",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",
                                              db_type        = "INTEGER",
                                              form_read_only       = True,
                                              rec_to_edit_cnv      = "cnv_int_to_str",
@@ -43,7 +46,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- id_old
-    a_column_dict = data_dict.ColumnDict(    column_name    = "id_old",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "id_old",
                                              db_type        = "VARCHAR(15)",
                                              form_read_only = True,
                                              display_type   = "string",
@@ -54,7 +57,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- name
-    a_column_dict = data_dict.ColumnDict(    column_name    = "name",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "name",
                                              db_type        = "VARCHAR(150)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -71,7 +74,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- add_kw
-    a_column_dict = data_dict.ColumnDict(    column_name    = "add_kw",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "add_kw",
                                              db_type        = "VARCHAR(50)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -87,7 +90,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- descr
-    a_column_dict = data_dict.ColumnDict(    column_name    = "descr",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "descr",
                                              db_type        = "VARCHAR(240)",
                                              display_type   = "string",
                                              max_len            = None,
@@ -103,7 +106,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- type
-    a_column_dict = data_dict.ColumnDict(    column_name    = "type",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "type",
                                              db_type        = "VARCHAR(15)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -111,7 +114,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- series
-    a_column_dict = data_dict.ColumnDict(    column_name    = "series",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "series",
                                              db_type        = "VARCHAR(15)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -119,7 +122,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- author
-    a_column_dict = data_dict.ColumnDict(    column_name    = "author",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "author",
                                              db_type        = "VARCHAR(35)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -128,7 +131,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- dt_enter
-    a_column_dict = data_dict.ColumnDict(    column_name    = "dt_enter",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "dt_enter",
                                              db_type        = "INTEGER",
                                              detail_edit_class    = "cw.CQDateEdit",
                                              form_edit            = "cw.CQDateEdit",
@@ -148,7 +151,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- format
-    a_column_dict = data_dict.ColumnDict(    column_name    = "format",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "format",
                                              db_type        = "VARCHAR(20)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -156,7 +159,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- inv_id
-    a_column_dict = data_dict.ColumnDict(    column_name    = "inv_id",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "inv_id",
                                              db_type        = "VARCHAR(15)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -164,7 +167,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- cmnt
-    a_column_dict = data_dict.ColumnDict(    column_name    = "cmnt",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "cmnt",
                                              db_type        = "VARCHAR(250)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -176,7 +179,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- status
-    a_column_dict = data_dict.ColumnDict(    column_name    = "status",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "status",
                                              db_type        = "VARCHAR(15)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -184,7 +187,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- dt_item
-    a_column_dict = data_dict.ColumnDict(    column_name    = "dt_item",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "dt_item",
                                               db_type        = "INTEGER",
                                               display_type   = "timestamp",
                                               form_col_span      = 1,
@@ -204,7 +207,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- c_name
-    a_column_dict = data_dict.ColumnDict(    column_name    = "c_name",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "c_name",
                                              db_type        = "VARCHAR(40)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -212,7 +215,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- title
-    a_column_dict = data_dict.ColumnDict(    column_name    = "title",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "title",
                                              db_type        = "VARCHAR(35)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -228,7 +231,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- tag
-    a_column_dict = data_dict.ColumnDict(    column_name    = "tag",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "tag",
                                              db_type        = "DECIMAL(50)",
                                              display_type   = "skip",
                                              max_len        = None,
@@ -236,7 +239,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- old_inv_id
-    a_column_dict = data_dict.ColumnDict(    column_name    = "old_inv_id",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "old_inv_id",
                                              db_type        = "VARCHAR(15)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -244,7 +247,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- file
-    a_column_dict = data_dict.ColumnDict(    column_name    = "file",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "file",
                                              db_type        = "VARCHAR(100)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -255,7 +258,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- sub_dir
-    a_column_dict = data_dict.ColumnDict(    column_name    = "sub_dir",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "sub_dir",
                                              db_type        = "VARCHAR(25)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -267,7 +270,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- photo_url
-    a_column_dict = data_dict.ColumnDict(    column_name    = "photo_url",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "photo_url",
                                              db_type        = "VARCHAR(75)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -275,7 +278,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- camera
-    a_column_dict = data_dict.ColumnDict(    column_name    = "camera",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "camera",
                                              db_type        = "VARCHAR(20)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -286,7 +289,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- lens
-    a_column_dict = data_dict.ColumnDict(    column_name    = "lens",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "lens",
                                              db_type        = "VARCHAR(20)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -297,7 +300,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- f_stop
-    a_column_dict = data_dict.ColumnDict(    column_name    = "f_stop",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "f_stop",
                                              db_type        = "DECIMAL(52)",
                                              display_type   = "skip",
                                              max_len        = None,
@@ -308,7 +311,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- shutter
-    a_column_dict = data_dict.ColumnDict(    column_name    = "shutter",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "shutter",
                                              db_type        = "INTEGER",
                                              display_type   = "string",
                                              max_len        = None,
@@ -319,7 +322,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- copyright
-    a_column_dict = data_dict.ColumnDict(    column_name    = "copyright",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "copyright",
                                              db_type        = "VARCHAR(50)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -329,10 +332,10 @@ def build_it( a_data_dict ):
     #print( a_table_dict )
 
     # ---- photo_text not in earlier stuff  ---------------------
-    a_table_dict   = data_dict.TableDict(  "photo_text" )
-    a_data_dict.add_table ( a_table_dict )
+    a_table_dict   = data_dict_all.TableDict(  "photo_text" )
+    a_data_dict_all.add_table ( a_table_dict )
 
-    a_column_dict = data_dict.ColumnDict(    column_name    = "id",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",
                                    db_type        = "INTEGER",
 
                                     form_read_only       = True,
@@ -347,7 +350,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
 
-    a_column_dict = data_dict.ColumnDict(    column_name    = "id_old_is_none",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "id_old_is_none",
                                    db_type        = "VARCHAR(15)",
                                    display_type   = "string",
                                    max_len        = None,
@@ -356,7 +359,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- text_data -
-    a_column_dict = data_dict.ColumnDict(    column_name    = "text_data",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "text_data",
                                   db_type        = "TEXT",
                                   display_type   = "string",
                                   max_len        = None,
@@ -371,11 +374,11 @@ def build_it( a_data_dict ):
 
 
     # ---- photo_key_word ---------------------------------------------
-    a_table_dict   = data_dict.TableDict( "photo_key_word" )
-    a_data_dict.add_table ( a_table_dict )
+    a_table_dict   = data_dict_all.TableDict( "photo_key_word" )
+    a_data_dict_all.add_table ( a_table_dict )
 
     # ---- id
-    a_column_dict = data_dict.ColumnDict(    column_name    = "id",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",
                                              db_type        = "INTEGER",
                                              display_type   = "string",
                                              max_len        = None,
@@ -383,7 +386,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- key_word
-    a_column_dict = data_dict.ColumnDict(    column_name    = "key_word",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "key_word",
                                              db_type        = "TEXT",
                                              display_type   = "string",
                                              max_len        = None,
@@ -393,45 +396,45 @@ def build_it( a_data_dict ):
     # ---- table_code_end
 
     # ---- photo_subject  ---------------------
-    a_table_dict   = data_dict.TableDict(  "photo_subject" )
-    a_data_dict.add_table ( a_table_dict )
+    a_table_dict   = data_dict_all.TableDict(  "photo_subject" )
+    a_data_dict_all.add_table ( a_table_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "id",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "id",
                                           db_type      = "INTEGER",
                                           display_type = "integer",
                                           max_len        = None,
                                           default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "photo_id_old",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "photo_id_old",
                                           db_type      = "VARCHAR(15)",
                                           display_type = "error",
                                           max_len        = None,
                                           default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "table_id_old",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "table_id_old",
                                           db_type      = "VARCHAR(15)",
                                           display_type = "error",
                                           max_len        = None,
                                           default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "table_joined",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "table_joined",
                                           db_type      = "VARCHAR(30)",
                                           display_type = "error",
                                           max_len        = None,
                                           default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "photo_id",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "photo_id",
                                           db_type      = "INTEGER",
                                           display_type = "integer",
                                           max_len        = None,
                                           default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "table_id",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "table_id",
                                           db_type      = "INTEGER",
                                           display_type = "integer",
                                           max_len        = None,
@@ -439,59 +442,59 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- photo_in_show   ---------------------
-    a_table_dict   = data_dict.TableDict(  "photo_in_show" )
-    a_data_dict.add_table ( a_table_dict )
+    a_table_dict   = data_dict_all.TableDict(  "photo_in_show" )
+    a_data_dict_all.add_table ( a_table_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "id",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "id",
                                           db_type      = "INTEGER",
                                           display_type = "integer",
                                           max_len        = None,
                                           default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "photo_id_old",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "photo_id_old",
                                           db_type      = "VARCHAR(15)",
                                           display_type = "error",
                                           max_len        = None,
                                           default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "photo_show_id_old",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "photo_show_id_old",
                                           db_type      = "VARCHAR(15)",
                                           display_type = "error",
                                           max_len        = None,
                                           default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "sequence",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "sequence",
                                           db_type      = "INTEGER",
                                           display_type = "integer",
                                           max_len        = None,
                                           default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "photo_in_show_id_old",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "photo_in_show_id_old",
                                           db_type      = "VARCHAR(15)",
                                           display_type = "error",
                                           max_len        = None,
                                           default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "photo_id",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "photo_id",
                                           db_type      = "INTEGER",
                                           display_type = "integer",
                                           max_len        = None,
                                           default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "photo_show_id",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "photo_show_id",
                                           db_type      = "INTEGER",
                                           display_type = "integer",
                                           max_len        = None,
                                           default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    a_column_dict = data_dict.ColumnDict( column_name  = "photo_in_show_id",
+    a_column_dict = data_dict_all.ColumnDict( column_name  = "photo_in_show_id",
                                           db_type      = "INTEGER",
                                           display_type = "integer",
                                           max_len        = None,

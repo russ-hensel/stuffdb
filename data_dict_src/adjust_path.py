@@ -10,7 +10,6 @@ import adjust.path
 """
 # ---- imports
 
-# ---- imports
 
 import os
 import socket
@@ -24,8 +23,6 @@ me                    = __file__
 adjust_path_file      = __file__
 
 
-
-
 PROJECT   = "not ready yet "
 VERBOSE   = 50
 
@@ -35,7 +32,6 @@ if VERBOSE > 20:
     print( f"in {adjust_path_file   = }")
     print( f"{cwd                   = }")
     print( f"{hostname              = }")
-
 
 
 """
@@ -123,6 +119,7 @@ sys.path.insert( 1, f"{src_root}/rshlib/utils" )
 sys.path.insert( 1, f"{src_root}/stuffdb" )
 sys.path.insert( 1, f"{src_root}/stuffdb/libs" )
 sys.path.insert( 1, f"{src_root}/stuffdb/data_dict_src" )
+#sys.path.insert( 1, f"{src_root}/stuffdb/py_helpers" )
 sys.path.insert( 1, f"{src_root}/stuffdb/sql" )
 sys.path.insert( 1, f"{src_root}/stuffdb/geo_photo" )
 sys.path.insert( 1, f"{src_root}/stuffdb/sql" )

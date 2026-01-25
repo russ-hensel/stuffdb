@@ -63,12 +63,11 @@ class Parameters( ):
         if you set the mode from the command line you will not
         get here"""
 
-        # self.mode_data_sync()
+        self.mode_data_sync()
         # self.mode_data_sync_b()
-        self.mode_picture_test()
-        self.mode_github()
+        # self.mode_picture_test()
+        #self.mode_github()
         #self.mode_postgres()
-
 
         # ----mode_mh_2025_hd
         # self.mode_mh_2025_hd()
@@ -357,9 +356,6 @@ class Parameters( ):
             self.icon              = "./misc/db_green_on_black.png"
 
 
-
-
-
             self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
             ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
             self.picture_db_root    = "//media/russ/m_toshiba_silver/sync_on_fattony/PhotoDB"
@@ -630,12 +626,11 @@ class Parameters( ):
         # do not want to couple custom widgets to parametes, but maybe I should
         # or a try except to app globals ??
         self.note_default_text  = (
-                                    ">>Search   ...\n"
-                                    ">>Search   ...\n"
-                                    "\n\n\n\n"
-                                    ">>find_dn ...\n"
-                                    ">>find_dn ..."
-                                    "\n\n\n\n"
+                                    ">>Search   .........\n"
+                                    ">>Search   .........\n"
+                                    "\n\n\n"
+                                    ">>find_dn  .........\n"
+                                    ">>find_dn  .........\n\n"
                                     )
 
         #self.note_default_text = textwrap.dedent( self.note_default_text ).strip()
@@ -657,7 +652,10 @@ class Parameters( ):
 
         self.auto_run           = True  # run code examples -- !! what but needed
 
-        # ---- templates  a bit odd to control left margin --
+        # ---- templates snippets a bit odd to control left margin --
+        self.num_help_snippets  = 4
+
+
         # ---- Python template
         self.text_snippets      = {}
         template_name           = "Python"
@@ -713,7 +711,6 @@ class Parameters( ):
         template_name          = "Default Text"
         template_text          = self.note_default_text
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
-
 
         # ---- .... url template
         template_name          = "Url"

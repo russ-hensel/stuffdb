@@ -138,6 +138,7 @@ class FileFilterConfig:
     # Pathing and Constraints
     initial_dir:  Optional[Path]     = None
     initial_dest: Optional[Path]     = None   #or in more args?
+
     max_depth:    Optional[int]      = None
 
 # may want a class or data class like thing as the thing that come back from next
@@ -145,7 +146,7 @@ class FileFilterConfig:
 
 # ------------------------------
 class FileIterator:
-    def __init__(self, *, config: FileFilterConfig):
+    def __init__(self, *, config: FileFilterConfig ):
         """
         This itterates down a directory tree with some selection ( which is really very complete )
         set
@@ -185,8 +186,6 @@ class FileIterator:
             print( f"{ix} {i_file}" )
 
 
-
-
         """
         self.root_dir   = Path( config.initial_dir )
         self.config     = config
@@ -212,14 +211,17 @@ class FileIterator:
             current_iter, current_depth = self.stack[-1]
 
             try:
-                entry = next(current_iter)
+                entry = next(current_iter) # what is it  -- a path
 
                 if entry.is_dir():
                     # Use config to check if we should enter this directory
                     if ( ( self.config.max_depth <0 or current_depth < self.config.max_depth ) and
                             ( self.config.dir_ok(entry) ) ):
                         self.stack.append([entry.iterdir(), current_depth + 1])
-                    continue
+                        return entry   # we may need to deal with them as well
+                        print( "do we get here =============================================")
+                    else:
+                        continue
 
                 # Use config to check if we should return this file
                 if entry.is_file() and self.config.file_ok(entry):
@@ -268,8 +270,14 @@ def test_file_itterator_2():
 
 
     """
+    root_dir    = "./"
+    root_dir    = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib"
+
+    print( f"test_file_itterator_2  {root_dir}")
+
     # Define your filter logic functions
     my_file_filter        = partial( file_name_has_extension,  ext_list = [ "py"] )
+          #  .py only
     # my_file_filter        = all_true
 
     my_dir_filter         = partial( path_name_starts_with, prefix_list = [ "old" ], invert_logic = True )
@@ -278,17 +286,19 @@ def test_file_itterator_2():
 
     # 2. Package it into a config object
     config = FileFilterConfig(
-        file_ok   = my_file_filter,
-        dir_ok    = my_dir_filter,
-        max_depth = -1
+        file_ok     = my_file_filter,
+        dir_ok      = my_dir_filter,
+        initial_dir = root_dir,
+        max_depth   = -1,
                        )
-    file_itterator    = FileIterator( root_dir = "./", config = config   )
-    for ix, i_file in enumerate( file_itterator):
-        print( f"{ix} {i_file}" )
+    file_itterator    = FileIterator( config = config   )
+    for ix, i_file in enumerate( file_itterator ):
+        print( f"    {ix} {i_file}   {i_file.is_dir()}" )
 
 
     print( "test_file_itterator_2 done")
 
+#----------------------
 def test_file_itterator_for_all():
 
     """
@@ -296,14 +306,16 @@ def test_file_itterator_for_all():
 
 
     """
+    root_dir    = "./"
+    root_dir    = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib"
 
-    file_itterator    = file_itterator_for_all(  root_dir = "./"    )
+    print( f"test_file_itterator_for_all  {root_dir}")
+    file_itterator    = file_itterator_for_all(  root_dir = root_dir   )
 
     for ix, i_file in enumerate( file_itterator):
-        print( f"{ix} {i_file}" )
+        print( f"    {ix} {i_file}  {i_file.is_dir()}" )
 
-
-    print( "test_file_itterator_2 done")
+    print( "test_file_itterator_for_all done")
 
 
 
@@ -380,9 +392,9 @@ if __name__ == "__main__":
 
     #test_file_itterator()
 
-    #test_file_itterator_2()
+    test_file_itterator_2()
 
-    test_file_itterator_for_all()
+    # test_file_itterator_for_all()
 
     print( "all done")
 

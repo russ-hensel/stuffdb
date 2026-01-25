@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Jan 11 10:01:04 2026
+
+
+"""
+# ---- tof
+# ---- imports
+from   pathlib import Path
+import importlib
+
+
+import adjust_path
+import data_dict_all
+
+import find_dict_modules
+
+
+
+#--------------------------------------
+def test_get_key_word_columns( table_name ):
+
+    print( "\n\ntest_get_key_word_columns:\n")
+    a_schema_dict  = test_get_schema_dict( verbose =  0  )
+    a_table_dict   = a_schema_dict.get_table( table_name )
+    key_word_column_list        = a_table_dict.get_key_word_columns()
+
+    for ix, i_value in enumerate( key_word_column_list ):
+        print( "    ", ix, i_value.column_name )
+
+
+
+#--------------------------------------
+def test_make_name_to_ix_dict( table_name ):
+
+    print( "\n\ntest_make_name_to_ix_dict:\n")
+    a_schema_dict  = test_get_schema_dict( verbose =  0  )
+    a_table_dict   = a_schema_dict.get_table( table_name )
+    ix_dict        = a_table_dict.make_name_to_ix_dict()
+
+    for i_key, i_value in ix_dict.items():
+        print( "    ", i_key, i_value )
+
+#--------------------------------------
+def test_get_schema_dict( verbose  ):
+    """
+    work towards getting a SchemaDict for a schema_name
+    """
+    schema_name     = "stuffdb"
+    dir_list        = [ "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_dict_src" ]
+    a_schema_dict   = find_dict_modules.build_schema_dict( schema_name, dir_list )
+
+    # for i_module in module_list:
+    #      print( i_module )
+
+    #      a_module = importlib.import_module( i_module  )
+    #      print( a_module )
+
+    # for i_module in module_list:
+    #      print( i_module )
+
+    #      a_module = importlib.import_module( i_module  )
+    #      a_module.build_it( a_schema_dict )
+    if   verbose >20:
+        print( a_schema_dict )
+        a_table_dict     = a_schema_dict.get_table( "stuff" )
+        print( a_table_dict )
+
+    return a_schema_dict
+
+# --------------------
+if __name__ == "__main__":
+    #----- run the full app
+
+    #test_get_schema_dict( verbose = 30  )
+
+    table_name     = "stuff"
+
+    # test_make_name_to_ix_dict( table_name )
+
+    test_get_key_word_columns( table_name )
+
+# --------------------

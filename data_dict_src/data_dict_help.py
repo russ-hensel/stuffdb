@@ -4,18 +4,23 @@
 Created on Thu Jan  2 11:50:38 2025
 
 @author: russ
+
+
+DB_NAME:        stuffdb
+
+
 """
+# ---- tof
+import data_dict_all
 
-import data_dict
-
-#print( data_dict.DATA_DICT )
+#print( data_dict_all.data_dict_all )
 
 
-def build_it( a_data_dict ):
+def build_it( a_data_dict_all ):
     """
 
     """
-    #a_data_dict    = data_dict.DATA_DICT
+    #a_data_dict_all    = data_dict_all.data_dict_all
     #rint( a_table_dict.to_sql() )
     sql = """
 
@@ -37,11 +42,11 @@ def build_it( a_data_dict ):
     )
 """
     # ---- help_info -------------------------------
-    a_table_dict   = data_dict.TableDict(  "help_info" )
-    a_data_dict.add_table ( a_table_dict )
+    a_table_dict   = data_dict_all.TableDict(  "help_info" )
+    a_data_dict_all.add_table ( a_table_dict )
 
     # ---- id
-    a_column_dict = data_dict.ColumnDict(    column_name    = "id",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",
                                    db_type              = "INTEGER",
                                              form_read_only       = True,
                                              rec_to_edit_cnv      = "cnv_int_to_str",
@@ -64,7 +69,7 @@ def build_it( a_data_dict ):
 
 
     # ----id_old
-    a_column_dict = data_dict.ColumnDict(    column_name    = "id_old",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "id_old",
                                              db_type        = "VARCHAR(15)",
 
                                              form_read_only       = True,
@@ -82,7 +87,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- type
-    a_column_dict = data_dict.ColumnDict(    column_name    = "type",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "type",
                                              db_type        = "VARCHAR(15)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -91,7 +96,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- sub_system expand to 20
-    a_column_dict = data_dict.ColumnDict(    column_name    = "sub_system",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "sub_system",
                                              db_type        = "VARCHAR(20)",
                                              display_type   = "string",
                                              detail_edit_class  = "custom_widgets.CQComboBox",
@@ -110,7 +115,7 @@ def build_it( a_data_dict ):
 
 
     # ---- system expand to 20
-    a_column_dict = data_dict.ColumnDict(    column_name    = "system",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "system",
                                              db_type        = "VARCHAR(20)",
                                              display_type   = "string",
                                              detail_edit_class  = "custom_widgets.CQComboBox",
@@ -128,7 +133,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ----key_words    xpanded from old db  to 120
-    a_column_dict = data_dict.ColumnDict(    column_name        = "key_words",
+    a_column_dict = data_dict_all.ColumnDict(    column_name        = "key_words",
                                              db_type            = "VARCHAR( 120)",
                                              display_type       = "string",
                                              max_len            = None,
@@ -143,7 +148,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- add_ts   --- may not exist ?? -- was missing fixed
-    a_column_dict = data_dict.ColumnDict(    column_name    = "add_ts",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "add_ts",
                                              db_type        = "TIMESTAMP",  # my type converted later
                                              display_type   = "timestamp",
                                              max_len        = None,
@@ -156,7 +161,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- edit_ts
-    a_column_dict = data_dict.ColumnDict(    column_name    = "edit_ts",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "edit_ts",
                                              db_type        = "TIMESTAMP",  # my type converted later
                                              display_type   = "timestamp",
                                              max_len        = None,
@@ -170,7 +175,7 @@ def build_it( a_data_dict ):
 
 
     # ---- table_name
-    a_column_dict = data_dict.ColumnDict(    column_name    = "table_name",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "table_name",
                                              db_type        = "VARCHAR(40)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -181,7 +186,7 @@ def build_it( a_data_dict ):
 
 
     # ---- column_name
-    a_column_dict = data_dict.ColumnDict(    column_name    = "column_name",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "column_name",
                                              db_type        = "VARCHAR(40)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -190,7 +195,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- java_type
-    a_column_dict = data_dict.ColumnDict(    column_name    = "java_type",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "java_type",
                                              db_type        = "VARCHAR(20)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -199,7 +204,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- java_name
-    a_column_dict = data_dict.ColumnDict(    column_name    = "java_name",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "java_name",
                                              db_type        = "VARCHAR(175)",
                                              display_type   = "string",
                                              is_keep_prior_enabled = True,
@@ -209,7 +214,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- java_package
-    a_column_dict = data_dict.ColumnDict(    column_name    = "java_package",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "java_package",
                                              db_type        = "VARCHAR(150)",
                                              display_type   = "string",
                                              is_keep_prior_enabled = True,
@@ -220,7 +225,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- title
-    a_column_dict = data_dict.ColumnDict(    column_name    = "title",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "title",
                                              db_type        = "VARCHAR(150)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -236,7 +241,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- is_example
-    a_column_dict = data_dict.ColumnDict(    column_name    = "is_example",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "is_example",
                                              db_type        = "VARCHAR(1)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -244,7 +249,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- can_execute
-    a_column_dict = data_dict.ColumnDict(    column_name    = "can_execute",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "can_execute",
                                              db_type        = "VARCHAR(1)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -252,8 +257,8 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- help_text ---------------------
-    a_table_dict   = data_dict.TableDict(  "help_text" )
-    a_data_dict.add_table ( a_table_dict )
+    a_table_dict   = data_dict_all.TableDict(  "help_text" )
+    a_data_dict_all.add_table ( a_table_dict )
 
     fk_info        =  (  "CONSTRAINT fk_help_text_help_info "
                          "\n       FOREIGN KEY (id)  "
@@ -261,7 +266,7 @@ def build_it( a_data_dict ):
                          "\n       ON DELETE CASCADE "
                         )
 
-    a_column_dict = data_dict.ColumnDict(    column_name    = "id",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",
                                    db_type              = "INTEGER",
                                              form_read_only       = True,
                                              rec_to_edit_cnv      = "cnv_int_to_str",
@@ -279,7 +284,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
 
-    a_column_dict = data_dict.ColumnDict(    column_name    = "id_old",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "id_old",
                                    db_type        = "VARCHAR(15)",
                                              form_read_only       = True,
 
@@ -291,7 +296,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- text_data
-    a_column_dict = data_dict.ColumnDict(    column_name    = "text_data",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "text_data",
                                    db_type        = "TEXT",
                                    display_type   = "string",
                                    max_len        = None,
@@ -307,11 +312,11 @@ def build_it( a_data_dict ):
     #rint( a_table_dict.to_sql() )
 
     # ---- help_key_word -------------------------------
-    a_table_dict   = data_dict.TableDict(  "help_key_word" )
-    a_data_dict.add_table ( a_table_dict )
+    a_table_dict   = data_dict_all.TableDict(  "help_key_word" )
+    a_data_dict_all.add_table ( a_table_dict )
 
     # ---- id
-    a_column_dict = data_dict.ColumnDict(    column_name    = "id",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",
                                              db_type        = "INTEGER",
                                              display_type   = "integer",
                                              max_len        = None,
@@ -322,7 +327,7 @@ def build_it( a_data_dict ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- key_word
-    a_column_dict = data_dict.ColumnDict(    column_name    = "key_word",
+    a_column_dict = data_dict_all.ColumnDict(    column_name    = "key_word",
                                              db_type        = "TEXT",
                                              display_type   = "string",
                                              max_len        = None,

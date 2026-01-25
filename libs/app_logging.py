@@ -22,7 +22,6 @@ import logging
 import sys
 import traceback
 
-import parameters
 
 
 from qt_compat import QApplication, QAction, exec_app, qt_version
@@ -84,33 +83,7 @@ APP_LOGGING     = None
 # this is a mess as code is in flux
 
 PARAMETERS      = None
-if PARAMETERS is None:
-    try:
-        import app_globals
 
-        PARAMETERS      = app_globals.PARAMETERS
-
-    except:
-        pass
-
-
-if PARAMETERS is None:
-    try:
-        from app_global import AppGlobal
-
-        PARAMETERS      = AppGlobal.parameters
-
-    except:
-        pass
-
-
-
-
-
-
-
-# if not PARAMETERS:
-#     1/0    # set up parameters first
 
 # ---- ----------------
 class DialogAddToLog( QDialog ):
@@ -188,6 +161,34 @@ class AppLogging( ):
 
     def __init__(self ):
         """ """
+        global PARAMETERS
+        if PARAMETERS is None:
+            try:
+
+                PARAMETERS      = AppGlobal.parameters
+
+            except:
+                pass
+
+
+        if PARAMETERS is None:
+            try:
+                from app_globals import PARAMETERS
+
+                PARAMETERS
+
+            except:
+                pass
+
+
+        if not PARAMETERS:
+            1/0    # set up parameters first
+
+
+        global APP_LOGGING
+
+        APP_LOGGING = self
+
         self.config_logger( )
 
     # def init():
@@ -305,10 +306,10 @@ def add_to_log(   ):
 #     if not APP_LOGGING:
 #         APP_LOGGING = AppLogging( )
 
-def  init( ):
-    global APP_LOGGING
-    if not APP_LOGGING:
-        APP_LOGGING = AppLogging( )
+# def  init( ):
+#     global APP_LOGGING
+#     if not APP_LOGGING:
+#         APP_LOGGING = AppLogging( )
 
 
 

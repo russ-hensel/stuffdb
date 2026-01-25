@@ -150,7 +150,7 @@ def about(  controller  ):
         __, mem_msg   = cls.show_process_memory( )
         msg  = f"{cls.controller.app_name}  version:{cls.controller.version} \n  by Russ Hensel\n  Memory in use {mem_msg} \n  Check <Help> or \n     {url} \n     for more info."
         messagebox.showinfo( "About", msg,  )   #   tried ng: width=20  icon = "spark_plug_white.ico"
-
+    gui_qt_ext.about( controller )
     """
     message_box = QMessageBox( controller.gui )
     message_box.setWindowTitle( "About this Application" )
@@ -560,14 +560,30 @@ class MessageArea( QGroupBox  ):
 
         self.auto_scroll = state
 
-    #  --------
+    #-------------
+    def get_plain_text(self,  ):
+        """
+        returns
+            text in the text_edit
+        """
+        text_edit     = self.text_edit
+        selected_text = text_edit.toPlainText()
+        return selected_text
+        #print(  f" copy_text -> {selected_text }" )
+
+    #-------------
     def copy_text(self,  ):
+        """
+        returns
+            mutates clpboard all text in the text_widget into the clipboard
+            None
+        """
         text_edit     = self.text_edit
         selected_text = text_edit.toPlainText()
         QApplication.clipboard().setText(selected_text)
         print(  f" copy_text -> {selected_text }" )
 
-
+    #-------------------
     def delete_text(self,  ):
         self.text_edit.clear()
 
@@ -593,7 +609,9 @@ class MessageArea( QGroupBox  ):
         cursor = self.text_edit.textCursor()
         cursor.insertText(text)
 
+    # --------------------------------
     def copy_selected_text(self,  ):
+        """ """
         selected_text = self.text_edit.textCursor().selectedText()
         QApplication.clipboard().setText(selected_text)
         print(  f" copy_selected_text -> {selected_text }" )
@@ -652,8 +670,7 @@ class CQGridLayout( QGridLayout ) :
     def addWidget( self,
                widget,
                ix_row       = None,
-               ix_col       = None,
-               *,
+               ix_col       = None, *,
                columnspan   = 1,   # implemented
                rowspan      = 1,
                #stretch      = None,
@@ -665,7 +682,6 @@ class CQGridLayout( QGridLayout ) :
 
         rowspan will be passed on but is not accounted for by
         self.ix_row
-
 
         """
         if ix_row is None:
@@ -703,24 +719,84 @@ class CQGridLayout( QGridLayout ) :
         # else:  # for debug
         #     pass
         #     print( self )
-        # -----------------------------------
-        def place( self,
-                   a_widget,
-                   columnspan   = None,
-                   rowspan      = None,
-                   sticky       = None
-                   ):
-            """
-            for compat with PlaceInGrid so we can phase it out
-               widget,
+
+
+    # -----------------------------------
+    def addLayout( self,
+               layout,
                ix_row       = None,
                ix_col       = None,
                *,
-               columnspan   = 1,
+               columnspan   = 1,   # implemented
                rowspan      = 1,
                #stretch      = None,
-            """
-            self.addWidget( a_widget, columnspan = columnspan, rowspan = rowspan )
+               ):
+        """
+        to work like QLayouts but do ix_row, ix_col automatically
+        this is preliminary
+        layout.addWidget( widget, ix_row, ix_col, row_span, col_span )
+
+        rowspan will be passed on but is not accounted for by
+        self.ix_row
+
+
+        """
+        if ix_row is None:
+            ix_row  = self.ix_row
+
+        if ix_col is None:
+            ix_col = self.ix_col
+
+        # check if it fits
+
+        if self.col_max and ( self.ix_col + columnspan  > self.col_max ):
+            self.new_row()
+
+        self.last_ix_row     = ix_row
+        self.last_ix_col     = ix_col
+        self.last_columnspan = columnspan
+
+        # later check for nones and delta
+        super().addLayout( layout, self.ix_row, self.ix_col, ) # rowspan, columnspan )
+
+        # if columnspan is None: not sure what is devault
+        #     # make default
+        #     columnspan = 1
+
+        # this computes the next -- do we need now we have precheck ?
+        self.ix_col    += columnspan
+        if self.col_max and ( self.ix_col  >= self.col_max ):
+            self.new_row()
+            # is self.new_row better here?
+            # self.ix_row    += 1
+            # self.ix_col    = 0
+
+            debug_msg       = f"addLayoutt__increment row {self}  "
+            logging.log( LOG_LEVEL,  debug_msg, )
+        # else:  # for debug
+        #     pass
+        #     print( self )
+
+
+
+    # ------------------------think bad indent-----------
+    def place( self,
+               a_widget,
+               columnspan   = None,
+               rowspan      = None,
+               sticky       = None
+               ):
+        """
+        for compat with PlaceInGrid so we can phase it out
+           widget,
+           ix_row       = None,
+           ix_col       = None,
+           *,
+           columnspan   = 1,
+           rowspan      = 1,
+           #stretch      = None,
+        """
+        self.addWidget( a_widget, columnspan = columnspan, rowspan = rowspan )
 
     # ----------------------
     def get_add_parm_str( self, ):

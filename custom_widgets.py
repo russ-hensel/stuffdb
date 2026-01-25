@@ -915,7 +915,7 @@ class TextEditExtMixin(  ):
 
         # ---- "Smarten"
         foo_action = menu.addAction("Smarten")
-        foo_action.triggered.connect(self.smarten )
+        foo_action.triggered.connect( self.smarten  )
         foo_action.setEnabled(has_selection)
         menu.addSeparator()
 
@@ -1734,10 +1734,10 @@ class TextEditExtMixin(  ):
             ii_line      = i_line
 
             if string_util.begins_with_url( i_line ):
-                ii_line  = f">>url {i_line}"
+                ii_line  = f">>url   {i_line}"
 
             elif string_util.begins_with_file_name( i_line ):
-                ii_line  = f">>shell {i_line}"
+                ii_line  = f">>shell   {i_line}\n>copy     {i_line}"
 
             new_lines.append( ii_line )
 

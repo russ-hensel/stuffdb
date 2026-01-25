@@ -68,6 +68,30 @@ from PyQt.QtWidgets import (
                              QVBoxLayout,
                              QWidget)
 
+# -------------------------
+try:
+    # Qt6
+    from PyQt6.QtWidgets import QSizePolicy
+    from PyQt6.QtCore import Qt
+
+    AlignLeft = Qt.AlignmentFlag.AlignLeft
+    Expanding = QSizePolicy.Policy.Expanding
+    Fixed     = QSizePolicy.Policy.Fixed
+    Minimum   = QSizePolicy.Policy.Minimum
+
+except ImportError:
+    # Qt5
+    from PyQt5.QtWidgets import QSizePolicy
+    from PyQt5.QtCore import Qt
+
+    AlignLeft = Qt.AlignLeft
+    Expanding = QSizePolicy.Expanding
+    Fixed     = QSizePolicy.Fixed
+    Minimum   = QSizePolicy.Minimum
+
+# -------------------------zz
+
+
 # ---- imports local
 
 import data_dict
@@ -227,6 +251,292 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
     # ------------------------------------------
     def _build_tab( self,   ):
+        """
+        what it says, read
+        put page into the notebook
+        for system
+                widget.setEditable(True)
+        """
+        page            = self
+        page_layout     = QVBoxLayout( page )
+
+        top_layout      = gui_qt_ext.CQGridLayout( col_max = 3 )
+            # cannot add layouts change this
+        page_layout.addLayout( top_layout )
+
+        layout_0        = QVBoxLayout(   )
+        top_layout.addLayout( layout_0 )
+
+        layout_1        = QVBoxLayout(   )
+        top_layout.addLayout( layout_1 )
+
+        layout_2        = QVBoxLayout(   )
+        top_layout.addLayout( layout_2 )
+
+        # ---- groupbox for buttons
+        groupbox   = QGroupBox( "Actions" )   # version with title
+
+        groupbox.setStyleSheet("""
+            QGroupBox {
+                border: 2px solid blue;
+                border-radius: 10px;
+                margin-top: 15px;
+            }
+
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top center;
+                padding: 0 3px;
+                background-color: white;
+            }
+        """)
+        try:
+            AlignLeft = Qt.AlignmentFlag.AlignLeft   # Qt6
+        except AttributeError:
+            AlignLeft = Qt.AlignLeft                 # Qt5
+        layout_0.addWidget( groupbox, alignment = AlignLeft )
+        #groupbox.setMaximumWidth( 200 )
+        groupbox.setFixedWidth( 200 )
+        self.build_top_widgets_for_help( groupbox )
+
+        # ---- groupbox for criteria
+        groupbox   = QGroupBox( "Criteria" )   # version with title
+
+        groupbox.setStyleSheet("""
+            QGroupBox {
+                border: 2px solid blue;
+                border-radius: 10px;
+                margin-top: 15px;
+            }
+
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top center;
+                padding: 0 3px;
+                background-color: white;
+            }
+        """)
+        #groupbox.setMaximumWidth( 900 )
+        groupbox.setFixedWidth( 900 )
+        groupbox.setSizePolicy( Expanding, Fixed ) #H x V
+        layout_1.addWidget( groupbox, alignment = AlignLeft)
+        self.build_tab_criteria( groupbox )
+
+        widget   = QSpacerItem( 500, 10, Expanding, Minimum )
+        layout_2.addItem( widget,  )
+
+        layout_3        = QVBoxLayout(   )
+        top_layout.addLayout( layout_3 )
+
+        widget   = QSpacerItem( 500, 500, Expanding, Expanding )
+        layout_3.addItem( widget,  )  # row column
+
+    # ------------------------------------------
+    def build_tab_criteria( self,  groupbox ):
+        """
+        what it says, read
+
+
+        """
+        col_max = 12
+        grid_layout      = gui_qt_ext.CQGridLayout( col_max = col_max )
+        groupbox.setLayout( grid_layout )
+
+        # ---- "Key Words"
+        grid_layout.new_row()
+        widget  = QLabel( "Key Words" )
+        grid_layout.addWidget( widget )
+
+        widget                    = cw.CQHistoryComboBox(
+                                       field_name = "key_words" )
+
+        self.key_words_widget     = widget   # not this one at least not yet
+        # self.key_word_widget        = None      # set to value in gui if used
+        widget.setPlaceholderText( "key_words"  )
+        self.critera_widget_list.append( widget )
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget )
+
+        # ----id
+        widget                = QLabel( "ID" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit(
+                                             field_name = "table_id" )
+        self.id_field           = widget
+        self.critera_widget_list.append( widget )
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
+
+        # ----id_old
+        widget                = QLabel( "ID Old" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit(
+                                   field_name = "id_old" )
+        self.critera_widget_list.append( widget )
+        # widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        #try to fix jump with columnspan did not work
+        #grid_layout.addWidget( widget, columnspan = 11 )
+        grid_layout.addWidget( widget,   )
+        # ---- grid_layout.new_row()
+        grid_layout.new_row()
+
+        # ---- title likd
+        widget  = QLabel( "Title (like)" )
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit(
+                                                 field_name = "title" )
+        self.critera_widget_list.append( widget )
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, columnspan = 2 )
+
+        # ---- system
+        grid_layout.new_row()
+        widget          = QLabel( "System" )
+        grid_layout.addWidget( widget  )
+
+        # ---- !! TWEAK NEED TO ADD TO DATA DICT
+        widget                  = cw.CQHistoryComboBox( field_name = "system" )
+        self.critera_widget_list.append( widget )
+        widget.setMaxVisibleItems( 25 )
+        grid_layout.addWidget( widget )
+        widget.addItems( SYSTEM_LIST )
+        widget.addItem( "<none>" )
+        # widget.addItem( '' )
+
+        widget.setCurrentIndex( 0 )
+        widget.setEditable( True )
+
+        # ---- Order by
+        grid_layout.new_row()
+        widget  = QLabel( "Order by" )
+        grid_layout.addWidget( widget )
+
+        widget                 = cw.CQComboBox(
+                                     field_name = "order_by" )
+        self.critera_widget_list.append( widget )
+
+        widget.addItem('title - ignore case')
+        widget.addItem('descr')
+        widget.addItem('name')
+        widget.addItem('system')
+        widget.addItem("name - ignore case")
+        widget.addItem('id')
+        widget.addItem('id_old')
+
+        debug_msg  = ( f"{self.tab_name} build_tab build criteria change put in as marker ")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
+        #widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget )
+
+        # ---- Order by Direction
+        widget  = QLabel( "Direction" )
+        grid_layout.addWidget( widget )
+
+        widget                      = cw.CQComboBox(
+                                          field_name = "order_by_dir" )
+        #self.order_by_dir_widget    = widget
+        self.critera_widget_list.append( widget )
+        #widget.critera_name    = "order_by_dir"
+
+        widget.addItem('Ascending')
+        widget.addItem('Decending')
+
+        #widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
+        #grid_layout.new_row()  # because seems to be missing
+        grid_layout.addWidget( widget )
+
+        # widget  = QLabel( "<<<Direction" )
+        # grid_layout.addWidget( widget )
+
+        # ---- "add where"
+        if parameters.PARAMETERS.use_add_where:
+            """
+            allow comment ?
+            """
+            grid_layout.new_row()
+            widget  = QLabel( "additional where" )
+            grid_layout.addWidget( widget )
+
+            widget                    = cw.CQHistoryComboBox(
+                                           field_name = "add_where" )
+
+            self.add_where_widget     = widget   # not this one at least not yet
+            widget.addItem( 'id  > 9000 and id < 11000' )
+            widget.addItem( 'id  > 10000 and id < 12000' )
+
+            widget.addItem( 'id  > 44186   and  and id < 50007' )
+            widget.addItem( 'id_old is not Null or id_old != ""' )
+
+            # self.key_word_widget        = None      # set to value in gui if used
+            widget.setPlaceholderText( "add_where"  )
+            self.critera_widget_list.append( widget )
+            #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+            grid_layout.addWidget( widget )
+
+        # ---- criteria changed should be in parent
+        print( f"{self.tab_name} build_tab build criteria change put in as marker ")
+        grid_layout.new_row()
+        widget  = QLabel( "criteria_changed_widget" )
+        self.criteria_changed_widget  = widget
+        grid_layout.addWidget( widget )
+
+        # ---- function_on_return( self )
+        for i_widget in self.critera_widget_list:
+            # ---- new  only really changes some edits
+            i_widget.on_value_changed       = lambda: self.criteria_changed( True )
+            i_widget.on_return_pressed      = self.criteria_select
+
+            # ---- try to stop the jump
+            #i_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+                # try to stop the jump does not work
+            #i_widget.setMinimumWidth(120)
+                # also does not work
+
+        # TRY WOTH LAYOUT AND GRID layout  from chat but does ont work
+        # self.layout().activate()             # Force a full layout pass
+        # self.adjustSize()                    # Resize window to final layout size
+        # self.updateGeometry()                # Recompute geometry hints
+
+
+        #self.id_field.setFocus()  # seems not to work try
+        QTimer.singleShot( 0, self.key_words_widget.setFocus )
+
+    # ----------------------------------
+    def build_top_widgets_for_help( self, groupbox ):
+        """ """
+
+        col_max            = 1
+        button_layout      = gui_qt_ext.CQGridLayout( col_max = col_max )
+
+        groupbox.setLayout( button_layout )
+
+        # button_layout   = QVBoxLayout( groupbox )
+
+        # ---- buttons
+        a_widget        = QPushButton( "Clear" )
+        a_widget.clicked.connect(  self.clear_criteria )
+        button_layout.addWidget( a_widget )
+
+        a_widget        = QPushButton( "Go -->" )
+        a_widget.clicked.connect(  self.parent_window.criteria_select )
+        button_layout.addWidget( a_widget )
+
+        a_widget        = QPushButton( "Paste/Go -->" )
+        a_widget.clicked.connect(  self.paste_go )
+        button_layout.addWidget( a_widget )
+
+        a_widget        = QPushButton( "Clear/Paste/Go -->" )
+        a_widget.clicked.connect(  self.clear_go )
+        button_layout.addWidget( a_widget )
+
+    # ------------------------------------------
+    def _build_tab_old( self,   ):
         """
         what it says, read
         put page into the notebook
@@ -416,6 +726,9 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         # QTimer.singleShot(0, self._stabilize_layout)
 
+
+
+    #---------------------------------------
     def _stabilize_layout(self):
         """another stablization attempt
         from chat, do not think it is used """
@@ -423,8 +736,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         self.layout().activate()
         self.adjustSize()
         self.updateGeometry()
-
-
 
     # -------------
     def criteria_select( self, ):
@@ -1050,7 +1361,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         # snippet_manager may need reference here
 
         self.snippet_managers = []
-        for ix in range( 0, 3 ):
+        for ix in range( 0, AppGlobal.parameters.num_help_snippets  ):
             a_snippet_manager    = base_document_tabs.SnippetManager( edit_field )
             self.snippet_managers.append( a_snippet_manager )
             self.build_snippet_gui( a_snippet_manager, button_layout, ix)
@@ -1216,7 +1527,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         """
 
         """
-
         # ---- snippets n
         # snippet_manager        = base_document_tabs.SnippetManager( edit_field )
         groupbox   = QGroupBox( f"Snippets {ix}" )
@@ -1237,11 +1547,9 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
             }
         """)
 
-
         layout.addWidget( groupbox )
         layout_g     = QVBoxLayout( groupbox  )
         # layout in the groubpox
-
 
         ddl_widget, ddl_button_widget  = snippet_manager.make_widgets()
         # ddl_widget.setMaximumWidth( 20 )   # see also groupbox
@@ -1249,6 +1557,8 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         ddl_widget.setFixedWidth( 100 )   # see also groupbox
         ddl_widget.view().setFixedWidth( 100 )   # did not fix my issue
         ddl_widget.setStyleSheet("QComboBox { width: 20px; }")  # did not work
+        ddl_widget.setCurrentIndex( ix ) # setCurrentIndex(self, index: QModelIndex)
+
         ddl_button_widget.setText( "Paste")
         layout_g.addWidget( ddl_widget  )
         layout_g.addWidget( ddl_button_widget  )

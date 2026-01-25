@@ -372,8 +372,6 @@ def rpt_sql_pg( table_name ):
     print( msg )
 
 
-
-
 # -----------------------------
 def rpt_tables(   ):
     """
