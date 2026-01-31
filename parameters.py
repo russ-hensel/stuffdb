@@ -63,8 +63,8 @@ class Parameters( ):
         if you set the mode from the command line you will not
         get here"""
 
-        self.mode_data_sync()
-        # self.mode_data_sync_b()
+        #self.mode_data_sync()
+        self.mode_data_sync_b()
         # self.mode_picture_test()
         #self.mode_github()
         #self.mode_postgres()
@@ -108,8 +108,6 @@ class Parameters( ):
             # the type of database, so far we only support SQLite
         self.db_file_name       = "./data/python_ex.db"
 
-
-
     # -------
     def mode_build_new_ram( self ):
         """
@@ -139,8 +137,6 @@ class Parameters( ):
         self.db_file_name       = "/tmp/ramdisk/helpdb_from_scratch.db"
 
         self.logging_level      = logging.DEBUG   # ERROR
-
-
 
     # -------
     def mode_theprof( self ):
@@ -183,7 +179,6 @@ class Parameters( ):
         self.mode               = "mode_sync_king_homer"
         self.db_file_name       = "./data_sync/stuffdb.db"      #  = "sample.db"   =  ":memory:"
         self.db_lock_file_name  = "./data_sync/lock_db.txt"     # if present then db is locked else none
-
 
         self.icon               =  "./misc/db_green_on_black.png"
 
@@ -229,9 +224,7 @@ class Parameters( ):
         self.db_user            = "russ"
         self.db_password        = "nopassword"
 
-
         self.icon              = "./misc/db_green_on_black.png"
-
 
     # -------
     def mode_king_homer( self ):
@@ -239,7 +232,6 @@ class Parameters( ):
         moved code to running+on_tweaks
         """
         self.mode               = "mode_king_homer"
-
 
     # -------
     def mode_fattony( self ):
@@ -322,7 +314,6 @@ class Parameters( ):
             self.picture_db_sub     = "/test_delete"
             self.picture_db_sub     = "/25"
 
-
             self.picture_browse     = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
             self.picture_browse     = "/mnt/WIN_D/PhotosRaw/2025"
 
@@ -354,7 +345,6 @@ class Parameters( ):
             self.db_lock_file_name = "./data_sync_b/lock_db.txt"     # if present then db is locked else none
 
             self.icon              = "./misc/db_green_on_black.png"
-
 
             self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
             ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
@@ -411,7 +401,6 @@ class Parameters( ):
 
             self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
             ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
-
 
             self.picture_db_sub     = "/99"
             self.picture_db_sub     = "/test_delete"
@@ -503,7 +492,7 @@ class Parameters( ):
         self.wat_qt_xpos        = 10
         self.wat_qt_ypos        = 10
 
-        # ---- doc is a mdi doc like help_document
+        # ---- doc is a mdi doc like a help_document
         self.doc_qt_width       = 900
         self.doc_qt_height      = 600
         self.doc_qt_xpos        = 20
@@ -514,7 +503,6 @@ class Parameters( ):
 
         # icon for running app
         self.icon               = r"./misc/icon_red.png"
-
         self.icon               =  "./misc/binocular.png"
         self.icon               =  "./misc/iconfinder_database_103466.png"
         self.icon               =  "./misc/db_red_on_yellow.png"
@@ -581,7 +569,6 @@ class Parameters( ):
         self.db_lock_file_name = "./data/lock_db.txt"    # if present then db is locked
         #self.db_file_name        = "/tmp/ramdisk/qt_sql.db"
 
-
         # this is the name of a program: its executable with path info.
         # to be used in opening an external editor
         self.ex_editor         =  r"D:\apps\Notepad++\notepad++.exe"    # russ win 10
@@ -620,8 +607,6 @@ class Parameters( ):
                                   "###":      "",
                                   ">>>":      "",   }
 
-
-
         # ---- note_default_text
         # do not want to couple custom widgets to parametes, but maybe I should
         # or a try except to app globals ??
@@ -655,7 +640,6 @@ class Parameters( ):
         # ---- templates snippets a bit odd to control left margin --
         self.num_help_snippets  = 4
 
-
         # ---- Python template
         self.text_snippets      = {}
         template_name           = "Python"
@@ -676,7 +660,10 @@ class Parameters( ):
         """
         >>Bash ------------ bash_template ------------
         ls -lah    /usr/bin/*.*
+        pwd
         cd ~
+        pwd
+        cd  ../
         ls *.py
 
         >>end ------------
@@ -684,7 +671,7 @@ class Parameters( ):
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
-        # -------- Bash  just dividers for text notes
+        # -------- Dividers  just dividers for text notes
         template_name          = "Dividers"
         template_text          = (
         """
@@ -706,7 +693,7 @@ class Parameters( ):
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
-        # ---- ....text template
+        # ---- ...."Default Text"
         self.note_default_text
         template_name          = "Default Text"
         template_text          = self.note_default_text
@@ -1030,3 +1017,6 @@ create_if_needed()
 
 # =================== eof ==============================
 # ---- eof
+
+
+

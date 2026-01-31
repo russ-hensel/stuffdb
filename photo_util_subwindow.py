@@ -32,9 +32,6 @@ from qt_compat import TextAlignmentRole
 
 
 
-
-
-
 from PyQt.QtCore   import QDate, QModelIndex, Qt, QTimer, pyqtSlot
 from PyQt.QtCore   import Qt, QDateTime
 from PyQt.QtWidgets import QStyledItemDelegate

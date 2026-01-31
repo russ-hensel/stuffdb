@@ -13,7 +13,6 @@ if __name__ == "__main__":
 
 # --------------------
 
-import functools
 import logging
 import time
 from functools import partial
@@ -89,7 +88,7 @@ except ImportError:
     Fixed     = QSizePolicy.Fixed
     Minimum   = QSizePolicy.Minimum
 
-# -------------------------zz
+# -------------------------
 
 
 # ---- imports local
@@ -319,7 +318,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         #groupbox.setMaximumWidth( 900 )
         groupbox.setFixedWidth( 900 )
         groupbox.setSizePolicy( Expanding, Fixed ) #H x V
-        layout_1.addWidget( groupbox, alignment = AlignLeft)
+        layout_0.addWidget( groupbox, alignment = AlignLeft)
         self.build_tab_criteria( groupbox )
 
         widget   = QSpacerItem( 500, 10, Expanding, Minimum )
@@ -338,7 +337,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
 
         """
-        col_max = 12
+        col_max          = 12
         grid_layout      = gui_qt_ext.CQGridLayout( col_max = col_max )
         groupbox.setLayout( grid_layout )
 

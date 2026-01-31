@@ -5,13 +5,9 @@
 # ---- tof
 """
 
-
-
 may expect AppGlobal.parameters and AppGlobal.logging ??
 
 @author: russ
-
-
 
 
 import string_list_utils
@@ -27,8 +23,6 @@ import os
 import string_util
 
 #from   app_global import AppGlobal
-
-
 
 
 # ----------------------------------------
@@ -235,8 +229,6 @@ def eval_f_string( a_fstring ):
 
     return ( no_exception, ret_string )
 
-
-
 # ------------------------------------------
 def string_to_py_list( a_string ):
     """
@@ -286,6 +278,6 @@ def string_to_py_list( a_string ):
 
     return a_string
 
-
-
 # ---- eof
+
+

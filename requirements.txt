@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Nov 12 17:00:54 2025
+
+@author: russ
+"""
+
+
+# ---- tof
+
+# ---- imports
+
+# ---- end imports
+
+
+#-------------------------------
+
+
+
+
+
+
+# ---- eof
+
+pytz
+    with anaconda
+
+folium
+
+    install with anaconda
+
+
+simplekml
+
+     pip install simplekml
+
+
+
+
+
+just in one line how do i install  geopy
+
+
+
+
+
+import exifread    - pip
+#import dis
+import geopy           anaconda
+import geopy.distance
+import gmplot             pip
+import haversine as hs    pip
+import PIL.ExifTags           pip install Pillow
+import PIL.Image
+
+
+
+
+what is the package associated with PIL and how do i install it
+
+
+--------------- uv
+
+uv pip install exifread
+uv pip install geopy
+
+gpxpy
+
+uv pip install gpxpy
+uv pip install wat-inspector
+
+
+uv pip install Pillow
+uv pip install gmplot
+
+
+
+
+

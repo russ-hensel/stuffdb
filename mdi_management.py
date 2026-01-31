@@ -121,11 +121,10 @@ SEARCH_CRITERIA_DICT    = defaultdict( lambda: None )
 SEARCH_CRITERIA_DICT["sys"]     =  "system"
 #SEARCH_CRITERIA_DICT["system"]  =    "system"
 SEARCH_CRITERIA_DICT["subsys"]  = "sub_system"
-#SEARCH_CRITERIA_DICT["name"]    =  "name"
 SEARCH_CRITERIA_DICT["id"]      =  "id",
 
 #SEARCH_CRITERIA_DICT["name"]    =  "name"
-SEARCH_CRITERIA_DICT["ob"]      =  "id",
+SEARCH_CRITERIA_DICT["ob"]      =  "id",   # what is ob !!
 
 
 #mdi_management
@@ -144,8 +143,6 @@ TopicData   = collections.namedtuple(   "TopicData", "table, id, topic" )
 NOT_FOR_SUBJECTS   = { picture_document.PictureDocument, album_document.AlbumDocument,  }
 # the above document should not be the subjects of pictures
 
-
-#TOPIC_DELETED      = "topic_del"
 
 # instead make document properties ??
 # class document_info():
@@ -830,19 +827,19 @@ class TextEditSearch( ):
 
         return criteria
 
-
     #------------------------------------
     def do_db_search(self, cmd, args, ):
         """
         perhaps throw some exceptions back here to end the search !!
         cmd has been .lowrer()
-            cmd     ex  [ "a", "b", /sys=python]
-            args    ex: search
+
+            cmd    ex: search
+            args   ex  [ "a", "b", /sys=python]
         """
         # strip off comment if any ?? save the comment ?
         #     # logging.debug( msg )
         mdi_area    = self.mdi_management.main_window.mdi_area
-        new_args    =  []  # drop after #
+        new_args    =  []  # drop after #  -- change to comp !!
         for i_arg in args:
             if i_arg.startswith( "#" ):
                 break
@@ -876,7 +873,7 @@ class TextEditSearch( ):
         # !! bring focus to window
         target_subwindow.search_me( criteria )
 
-
-
-
 # ---- eof
+
+
+

@@ -68,7 +68,7 @@ FIF       = info_about.INFO_ABOUT.find_info_for
 
 
 
-import wat
+#import wat
 
 from qt_compat import QApplication, QAction, QActionGroup, exec_app, qt_version
 from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox

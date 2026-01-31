@@ -36,8 +36,6 @@ import platform
 import subprocess
 
 
-
-
 # ---- Qt
 from qt_compat import QApplication, QAction, exec_app, qt_version
 from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
@@ -212,7 +210,7 @@ def validate_no_z( a_string   ):
     """
     msg      = None
     if "z" in a_string:
-        msg   = "validate_no_z no zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+        msg   = "validate_no_z no ====================================="
         logging.debug( msg )
     return msg
 
@@ -679,8 +677,6 @@ class IdleExe( ):
         # next is wrong because we need the environment set up
         #subprocess.run([ "idle", file_name ])
 
-
-
 # -------------------------------
 class TextEditExtMixin(  ):
     """
@@ -741,14 +737,15 @@ class TextEditExtMixin(  ):
         if event.key() == Key_Tab:
             self.indent_selected_text()
             return
+
         elif event.key() == Key_Backtab or (event.key() == Key_Tab and event.modifiers() & ShiftModifier):
             self.unindent_selected_text()
             return
 
         if event.modifiers() == ControlModifier and event.key() == Key_F:
-
             self.ctrl_f_search_down()
             return
+
         #super().keyPressEvent( event )
         self.keyPressEvent( event )
 
@@ -917,6 +914,12 @@ class TextEditExtMixin(  ):
         foo_action = menu.addAction("Smarten")
         foo_action.triggered.connect( self.smarten  )
         foo_action.setEnabled(has_selection)
+
+        # ---- "Search Selected"
+        foo_action = menu.addAction("Search Selected")
+        foo_action.triggered.connect( self.search_selected  )
+        foo_action.setEnabled(has_selection)
+
         menu.addSeparator()
 
         # ---- "coyp all "
@@ -1107,11 +1110,8 @@ class TextEditExtMixin(  ):
             #rint( "you need to implement >>idle")
             QApplication.clipboard().setText( " ".join( cmd_args )   )
 
-        # ---- snippet  !! missing from docs ??
+        # ---- snippet
         elif cmd == "snippet":
-            #rint( "you need to implement >>idle")
-            # QApplication.clipboard().setText( " ".join( cmd_args )   )
-            #breakpoint()
             code    = "\n".join( code_lines[ 1:] )  # title in line 0 !!
             msg     = " ".join( cmd_args )
 
@@ -1558,14 +1558,11 @@ class TextEditExtMixin(  ):
         cursor.setPosition(selection_end, cursor.KeepAnchor)
         text_edit.setTextCursor(cursor)
 
-
     #-----------------------------------
     def remove_blank_linexxxxxs( self,   ):
         """
         because of call from menu no options could use partial there
         """
-
-
         processing_function     = partial( clip_string_utils.clean_string_list_to_list,
                                           delete_tailing_spaces  = True,
                                           delete_blank_lines     = True,   )
@@ -1608,9 +1605,6 @@ class TextEditExtMixin(  ):
         # cursor.setPosition(selection_end, cursor.KeepAnchor)
         # text_edit.setTextCursor(cursor)
 
-
-
-
     # ------------------------
     def remove_blank_lines_zz( self, lines ):
         """
@@ -1626,7 +1620,6 @@ class TextEditExtMixin(  ):
         #                       delete_tailing_spaces  = True,
         #                       delete_comments        = False,
         #                       delete_blank_lines     = False,   )
-
 
     #-----------------------------
     def shell_file( self, file_name ):
@@ -1656,12 +1649,46 @@ class TextEditExtMixin(  ):
         QApplication.clipboard().setText(self.toPlainText())
 
     #-----------------------------------
+    def search_selected( self, keep_leading = True ):
+        """
+        default not working from menu ??
+        """
+        text_edit   = self
+        cursor      = text_edit.textCursor()
+        if not cursor.hasSelection():
+            return
+
+        # Get selected text
+        selected_text = cursor.selectedText()
+
+        # Split into lines and remove trailing spaces
+        lines = selected_text.split('\u2029')  # QTextEdit uses Unicode paragraph separator
+
+        if keep_leading:
+            trimmed_lines = [line.rstrip() for line in lines]
+        else:
+            trimmed_lines = [line.strip() for line in lines]
+
+        trimmed_text = '\n'.join(trimmed_lines)
+
+        # Store selection positions
+        selection_start = cursor.selectionStart()
+        selection_end   = cursor.selectionEnd()
+
+        # ---- search here
+        self.stuffdb_app_global.mdi_management.do_db_search( "search",  [ trimmed_text ] )
+
+        # Restore selection
+        cursor.setPosition(selection_start)
+        cursor.setPosition(selection_end, cursor.KeepAnchor)
+        text_edit.setTextCursor(cursor)
+
+    #-----------------------------------
     def strip_selected( self, keep_leading = True ):
         """
         default not working from menu ??
         """
         # Get the current cursor and selection
-
         text_edit   = self
         cursor      = text_edit.textCursor()
         if not cursor.hasSelection():
@@ -3937,12 +3964,11 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
     #----------------------------
     def edit_to_rec_now( self, record, format = None ):
         """
-        always return the current time
+        always return the current time !! are we used?
         """
         a_timestamp         = time.time( )  # zz
         set_rec_data( record, self.field_name, a_timestamp )
         return a_timestamp  # just debug or what
-
 
     # -------------------------------
     def __str__( self ):
