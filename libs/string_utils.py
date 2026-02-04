@@ -13,8 +13,6 @@ may expect AppGlobal.parameters and AppGlobal.logging ??
 import string_list_utils
 """
 
-
-
 # ---- Imports
 #import pprint
 import os
@@ -85,7 +83,6 @@ def extract_self( a_string ):
     # lets sort ... and return as a list
     instance_list = sorted( list( set_new ) )
     return instance_list
-
 
 # ----------------------------------------
 def clean_string( a_string ):
@@ -193,7 +190,7 @@ def eval_transform( a_string ):
     eval a string to special characters
     !! add exception processing
     may not be used .... delted
-    not sure about print( joe ) an error , deliberate
+    not sure about print( joe ) an error, deliberate
     """
     print( joe )
     b_string    = eval( a_string,  locals(),  globals() )

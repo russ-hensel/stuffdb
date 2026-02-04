@@ -14,9 +14,6 @@ may expect AppGlobal.parameters and AppGlobal.logging ??
 
 @author: russ
 
-
-
-
 import string_list_utils
 """
 
@@ -24,7 +21,8 @@ import string_list_utils
 
 # ---- Imports
 #import pprint
-import os
+#import os
+import string_util
 
 # import adjust_path
 
@@ -97,7 +95,36 @@ def list_remove_3_quotes_i_doubt_it( string_list ):
             keeps.append( i_split )
     return keeps
 
+# ----------------------------------------
+def clean_string_to_list( in_text,
+                          delete_tailing_spaces  = True,
+                          delete_comments        = False,
+                          delete_blank_lines     = False,   ):
 
+    """
+    from clip_string_utils in clipboard
+    ( new_lines,   )  = clean_string_to_list( in_text,
+                          delete_tailing_spaces  = True,
+                          delete_comments        = False,
+                          delete_blank_lines     = False,   )
+
+
+    args:
+    a_string                 = a_string of lines
+    delete_blank_lines       = what it says  -- all spaces count as blank "  " functionally = ""
+    delete_comments          = what it says  -- comment, # strip off from #,
+                               may leave blank line if delete blanks not true
+    delete_tailing_spaces    = what it says
+
+    return  list of lines
+    """
+
+    lines         = in_text.splitlines()
+    clean_list    = list_to_list_cleanup(  lines,
+                                           delete_tailing_spaces = delete_tailing_spaces,
+                                           delete_comments       = delete_comments,
+                                           delete_blank_lines    = delete_blank_lines )
+    return clean_list
 
 
 # # ----------------------------------------
@@ -118,6 +145,8 @@ def list_remove_3_quotes_i_doubt_it( string_list ):
 #                               delete_blank_lines     = False,   )
 
 #     return "\n".join ( new_list )
+
+
 
 
 # ----------------------------------------
@@ -322,8 +351,10 @@ def allign_eq_signs( a_string ):
     find_eq
 
     """
+    format_var    =  "{:<30}"  # !! needs to be examined
 
-    ( lines, ix_deleted )  = clean_string_to_list( a_string,
+
+    lines  = clean_string_to_list( a_string,
                           delete_tailing_spaces  = True,
                           delete_comments        = False,
                           delete_blank_lines     = False,   )
@@ -345,7 +376,7 @@ def allign_eq_signs( a_string ):
             continue
 
         var          = ( space_count * " " ) + splits[0].strip()
-        #format_var    =  '"{: <' 30}"
+
 
         assign_to    = "= " + splits[1].strip()
         i_new_line   = string_util.to_columns( "",
@@ -358,10 +389,10 @@ def allign_eq_signs( a_string ):
 
     return "\n".join( new_lines )
 
-
 # ------------------------------------------
-def allign_eq_signs_old( a_string ):
+def allign_eq_signs_old(   ):
     """
+    deleted look in backup if needed
     Purpose:
         alligns = signs, using first line as a template
         preserves comments
@@ -384,97 +415,6 @@ def allign_eq_signs_old( a_string ):
 
     returns a list, not a sting, join with list_to_string_lines( a_list ) if you want a string
     """
-    string_list, __    = clean_string_to_list( a_string )
-
-
-    ix_eq_0              = True
-    ret                  = []  # return as list or back to string
-    stop_allign          = False
-    left_hand_length     = None
-
-    for i_string in string_list:
-        #rint( i_string )
-
-        if stop_allign:  # look for another below
-            ret.append( i_string )
-            continue
-
-        i_leading_spaces     = count_leading_spaces( i_string )
-        ix_first_eq          = i_string.find( "=" )
-        ix_first_pound_sign  = i_string.find( "#" )
-
-        # see if all blank or all comment
-        test    = i_string.strip()
-        if test == "":
-            print( "blank line" )
-            ret.append( i_string )
-            continue
-
-
-
-        # else:
-        #     #rint( "non blank" )
-
-        if i_leading_spaces == ix_first_pound_sign:
-            print( "comment line" )
-            ret.append( i_string )
-            continue
-        # else:
-        #     #rint("not comment")
-        #     pass
-
-        if ix_eq_0: # first time through the loop
-            #leading_spaces   = i_leading_spaces
-            ix_eq_0          = False
-            #if leading_spaces
-
-        if ix_first_eq == -1:
-            stop_allign   = True
-
-        if ( ix_first_pound_sign > 0 ) and ( ix_first_pound_sign < ix_first_eq  ):
-            stop_allign   = True
-
-        if stop_allign: # only on first time thru
-            ret.append( i_string )
-            continue
-
-        left_side, right_side  = i_string.split( "=", 1 )   # this should always give len of 2
-
-        # now the first time thru we need to get the length of the
-        # part to the left of the =
-        if left_hand_length is None:
-            left_hand_length   = len( left_side )
-
-        else:  # not first time thru, pad out the
-            pass
-
-        # f_expression   = f"'{splits[0]}':<{left_hand_length}"
-        # f_expression   = f"'{splits[0]}':<{left_hand_length}"
-        # f_expression   = f"'{splits[0]}':<19"
-        #fm            = "<50"
-        #print( "fexpression", f_expression )
-        #new_str     = f"{f_expression} = {splits[1]}"
-        #new_str     = f"{splits[0]:<50} = {splits[1]}"
-        #breakpoint()
-        left_side   = left_side.rstrip( )
-        new_str     = left_side.ljust( left_hand_length , ' ' )
-        right_side  = right_side.strip()
-        new_str     = f"{new_str} = {right_side}"
-        #new_str     = f"{splits[0]:fm} = {splits[1]}"
-
-        ret.append( new_str )
-
-        # print( f"splits {splits} {len(splits)}")
-        # ret.append( "======>" + i_string )
-
-
-        if False: # debug
-            print( f"i_string =           {i_string}")
-            print( f"    leading_spaces       {i_leading_spaces}")
-            print( f"    first_eq             {ix_first_eq}")
-            print( f"    ix_first_pound_sign, {ix_first_pound_sign}")
-
-    return ret
 
 # ---- sort and delete dups  --- mostly from clipboard cmd_processor and...
 
@@ -534,7 +474,7 @@ def alt_line_sort( lines_in, which_line = 0, del_dups = False ):
             odd    = True
 
     if not odd:       # not odd = watiing foreven -- remove the extra odd
-           odd_at_end  = lines_odd.pop( len( lines_odd ) - 1 )
+        odd_at_end  = lines_odd.pop( len( lines_odd ) - 1 )
 
     zipped         = zip( lines_odd, lines_even ) # Output: Zip Object. <zip at 0x4c10a30>
     if which_line == -1:
@@ -560,14 +500,12 @@ def alt_line_sort( lines_in, which_line = 0, del_dups = False ):
                 else:
                     dup_check   = b
 
-
         out_list.append( a )
         out_list.append( b )
         out_list.append( ""  )       # put in a blank line for readability
 
     if odd_at_end:
         out_list.append(  odd_at_end  )
-
 
     return out_list
 

@@ -65,7 +65,7 @@ what is the package associated with PIL and how do i install it
 uv pip install exifread
 uv pip install geopy
 
-gpxpy
+
 
 uv pip install gpxpy
 uv pip install wat-inspector
@@ -73,6 +73,14 @@ uv pip install wat-inspector
 
 uv pip install Pillow
 uv pip install gmplot
+uv pip install psutil
+
+
+
+------------------
+WHAT about
+    import psutil
+ModuleNotFoundError: No module named 'psutil'
 
 
 

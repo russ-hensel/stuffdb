@@ -63,8 +63,9 @@ class Parameters( ):
         if you set the mode from the command line you will not
         get here"""
 
-        #self.mode_data_sync()
-        self.mode_data_sync_b()
+        self.mode_data_sync()
+        #self.mode_data_sync_b()
+        #self.mode_github()
         # self.mode_picture_test()
         #self.mode_github()
         #self.mode_postgres()
@@ -87,6 +88,7 @@ class Parameters( ):
         """
         a mode for the new user, pretty much empty,
         a new user may experiment here.
+        this !! should be revised to use demo_db.db  or similar
         """
         self.mode               = "mode_new_user"
 
@@ -187,8 +189,9 @@ class Parameters( ):
         """
         moved code to running+on_tweaks
         """
-        self.mode               = "mode_sync_king_homer"
+        self.mode               = "mode_data_sync"
         self.db_file_name      = "./data_sync/stuffdb.db"      #  = "sample.db"   =  ":memory:"
+
         self.db_lock_file_name = "./data_sync/lock_db.txt"     # if present then db is locked else none
 
         #self.db_lock_file_name = None
@@ -240,10 +243,12 @@ class Parameters( ):
         """
         self.mode               = "mode_fattony"
 
+
     # -------
     def mode_github( self ):
         """
         test if will run in github, will probably be a lot like new user
+        use production db -- primary
         """
         self.mode               = "mode_github"
 
@@ -253,7 +258,9 @@ class Parameters( ):
 
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/theprof/stuffdb.db"
         self.db_file_name       = "./data/helpdb_from_scratch.db"
-
+        self.db_file_name       = self.project_root  + "/data_sync/stuffdb.db"
+        self.db_lock_file_name  = self.project_root  + "/data_sync/lock_db.txt"
+              # if present then db is locked else none
         # self.logging_level      = logging.DEBUG   # ERROR
 
         self.icon               =  "./misc/db_red_on_black.png"
@@ -272,7 +279,8 @@ class Parameters( ):
         """
         self.os_tweaks()
 
-        computer_id    =   self.running_on.computer_id
+
+        computer_id         =  self.running_on.computer_id
             # same as hostname
 
         if computer_id == "smithers":
@@ -368,6 +376,8 @@ class Parameters( ):
 
         # ---- "russ-thinkpad-p72": === theprof mint
         elif computer_id == "russ-thinkpad-p72":
+
+            self.project_root       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb"
             # ---- ....appearance -- including sizes
 
             # control initial size and position with:
@@ -440,6 +450,8 @@ class Parameters( ):
         self.mode              = "mode_default"
             # name your config, it will show in app title
             # may be changed later in parameter init
+
+        self.project_root   = "./"  # might want to resolve
 
         #--------------- automatic settings -----------------
         #---- running_on gathers information about you computer environment
@@ -1007,8 +1019,8 @@ def create_if_needed( ):
     global PARAMETERS
     if not PARAMETERS:
 
-          print( "create_if_needed creating global parameters.PARAMETERS")
-          PARAMETERS    = Parameters()
+        print( "create_if_needed creating global parameters.PARAMETERS")
+        PARAMETERS    = Parameters()
 
 # --------------------
 
