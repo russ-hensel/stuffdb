@@ -127,6 +127,7 @@ ALL_TABLES  = [
                     "help_info",
                     "help_key_word",
                     "help_text",
+                    "key_gen",
                     "people",
                     "people_key_word",
                     "people_phone", ""

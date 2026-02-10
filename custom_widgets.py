@@ -873,6 +873,7 @@ class TextEditExtMixin(  ):
     # ---------------------------------------
     def show_context_menu( self, pos ):
         """
+        show here = build = make
         this is really just for the text edit
         so is !! wrong in some way
         refactor please !! just use action
@@ -931,19 +932,7 @@ class TextEditExtMixin(  ):
         foo_action.triggered.connect( self.search_selected  )
         foo_action.setEnabled(has_selection)
 
-        menu.addSeparator()
 
-        # ---- "coyp all "
-        foo_action = menu.addAction("Copy All")
-        foo_action.triggered.connect(self.copy_all )
-        menu.addSeparator()
-
-        # ---- "0_sreen_dirt"
-        foo_action = menu.addAction("0_sreen_dirt")
-        processing_function     = partial( clip_string_utils.list_to_list_remove_dirt, screen_dirt = AppGlobal.parameters.screen_dirt )
-        foo                     = partial( self.process_selected,  processing_function = processing_function )
-        foo_action.triggered.connect( foo )
-        foo_action.setEnabled( has_selection )
 
         menu.addSeparator()
 
@@ -978,14 +967,6 @@ class TextEditExtMixin(  ):
         foo_action.triggered.connect( foo )
         foo_action.setEnabled( has_selection )
 
-        menu.addSeparator()
-
-        # ---- "Sort/Del Dups for Line Pairs"
-        foo_action              = menu.addAction( "Sort/Del Dups for Line Pairs" )
-        processing_function     = partial( string_list_utils.alt_line_sort,  which_line = 0, del_dups = True   )
-        foo                     = partial( self.process_selected,  processing_function = processing_function )
-        foo_action.triggered.connect( foo )
-        foo_action.setEnabled( has_selection )
 
 
         # ---- "Strip Trail in Sel"
@@ -1000,7 +981,25 @@ class TextEditExtMixin(  ):
         foo_action.triggered.connect( foo )
         foo_action.setEnabled(has_selection)
         #foo_action.triggered.connect( self.strip_eol_lines_in_selection )
+
         #menu.addSeparator()
+
+
+        # ---- "0_sreen_dirt"
+        foo_action = menu.addAction("0_sreen_dirt")
+        processing_function     = partial( clip_string_utils.list_to_list_remove_dirt, screen_dirt = AppGlobal.parameters.screen_dirt )
+        foo                     = partial( self.process_selected,  processing_function = processing_function )
+        foo_action.triggered.connect( foo )
+        foo_action.setEnabled( has_selection )
+
+        menu.addSeparator()
+
+        # ---- "Sort/Del Dups for Line Pairs"
+        foo_action              = menu.addAction( "Sort/Del Dups for Line Pairs" )
+        processing_function     = partial( string_list_utils.alt_line_sort,  which_line = 0, del_dups = True   )
+        foo                     = partial( self.process_selected,  processing_function = processing_function )
+        foo_action.triggered.connect( foo )
+        foo_action.setEnabled( has_selection )
 
         # ---- ""Update Markup""
         foo_action = menu.addAction("Update Markup")
@@ -1016,6 +1015,11 @@ class TextEditExtMixin(  ):
 
         select_all_action = menu.addAction("Select All")
         select_all_action.triggered.connect(widget.selectAll)
+
+        # ---- "coyp all "
+        foo_action = menu.addAction("Copy All")
+        foo_action.triggered.connect(self.copy_all )
+        menu.addSeparator()
 
         # ---- >>   go
         menu_action = menu.addAction(">> Go ...")

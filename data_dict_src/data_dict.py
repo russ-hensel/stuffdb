@@ -1160,7 +1160,7 @@ class TableDict(  ):
 
             line        = f"{line}\n     {i_column.column_name}  {db_type} {key_part}"
             sql         = f"{sql}{line}"
-        sql             = f"{sql};\n    )"
+        sql             = f"{sql}\n    );"
 
         return sql
 

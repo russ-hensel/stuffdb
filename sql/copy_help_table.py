@@ -4,6 +4,13 @@
 Created on Fri Oct 24 15:36:04 2025
 
 @author: russ
+
+it can be helpful to use a ramdrive for the target
+speeds things up a lot
+
+
+
+
 """
 
 
@@ -447,7 +454,7 @@ def get_columns( table_name ):
     print( column_names )
     return column_names
 
-def do_copyxxx(table_name ):
+def do_copymaybeobsoleteornot(table_name ):
 
     a_parms_temp            = parms_temp.ParmsTemp()
 
@@ -469,14 +476,14 @@ where_clause_list       = [ "system = 'Linux' ",
                                 "system = 'Python' ",   ]
 
 
+#-----------------------------------------------------
 def test_copy_text():
     """
     table needs to exist
         /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/sql/create_help_db.py
 
-
+    setup in parms_temp for the destination, parameters for the source
     """
-
     a_parms_temp            = parms_temp.ParmsTemp()
     src_db_file_name        = parameters.PARAMETERS.db_file_name
     dest_db_file_name       = a_parms_temp.db_file_name
@@ -484,11 +491,11 @@ def test_copy_text():
     src_table_name          = "help_text"
     a_table_copier          = TableCopier( src_db_name= src_db_file_name, dest_db_name=dest_db_file_name )
 
-
     for i_where_clause in where_clause_list:
         a_table_copier.copy_data( ref_table_name = ref_table_name, src_table_name = src_table_name, where_clause = i_where_clause )
 
 
+#-----------------------------------------------------
 def test_copy_info_update_for_list():
     """
     table needs to exist
@@ -502,7 +509,6 @@ def test_copy_info_update_for_list():
     dest_db_file_name       = a_parms_temp.db_file_name
     ref_table_name          = "help_info"
     src_table_name          = "help_info"
-
 
 
     a_table_copier      = TableCopier( src_db_name= src_db_file_name, dest_db_name=dest_db_file_name )
@@ -535,6 +541,16 @@ def test_gen():
 # --------------------
 if __name__ == "__main__":
 
+    """
+    looks liek we need to run in steps but not sure which steps
+
+    befor running this run create_help_db
+
+
+    after running this rebuild the key words and
+    finally set the key gen
+    """
+
     # table_name     = "help_info"
     # do_copy( table_name )
 
@@ -544,7 +560,11 @@ if __name__ == "__main__":
     # table_name     = "help_info"
     #test_gen()
 
-    #test_copy_info()
+    # perhaps these are the ones that matter
+    # test_copy_info()
+
+
+    #test_copy_info_update_for_list()   # seemed ok feb 2026
     test_copy_text()
 # --------------------
 

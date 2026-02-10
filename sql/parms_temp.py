@@ -17,7 +17,7 @@ import os
 import sys
 
 import running_on
-import string_util
+import string_utils as string_util
 # from app_global import AppGlobal
 
 VERBOSE   = False
@@ -72,14 +72,14 @@ class ParmsTemp( ):
             if py_path != "":
                 os.chdir( py_path )
 
-        # so we know our os  could be "linux" or our_os == "linux2"  "darwin"....
-        self.our_os             = self.running_on.our_os
-        self.os_win             = self.running_on.os_win          # boolean True if some version of windows
-        self.computername       = self.running_on.computername    # a name of the computer if we can get it
-        # directory where app was opened, not where it resides
-        self.opening_dir        = self.running_on.opening_dir     # the opening dir before anyone changes it
+        # # so we know our os  could be "linux" or our_os == "linux2"  "darwin"....
+        # self.our_os             = self.running_on.our_os
+        # self.os_win             = self.running_on.os_win          # boolean True if some version of windows
+        # self.computername       = self.running_on.computername    # a name of the computer if we can get it
+        # # directory where app was opened, not where it resides
+        # self.opening_dir        = self.running_on.opening_dir     # the opening dir before anyone changes it
 
-        self.platform           = self.our_os           #  redundant
+        # self.platform           = self.our_os           #  redundant
 
 
 
@@ -134,7 +134,7 @@ class ParmsTemp( ):
         self.db_file_name      = "/tmp/ramdisk/russ2025/stuffdb.db"
         self.db_file_name      = "/tmp/ramdisk/helpdb_from_scratch.db"
         self.db_file_name      = "./data/helpdb_from_scratch.db"
-
+        self.db_file_name      = "./data/helpdb_feb_scratch.db"
 
         self.idle_venv          = "py_12_misc"   # idle will open in this python venv
             # path leading to all docs and help

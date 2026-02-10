@@ -121,6 +121,10 @@ class SQLError( Exception ):
         # Now for your custom code...
         self.errors = errors
 
+    def __str__( self ):
+
+        a_str    = f"SQLError {self.why}"
+        return   a_str
 
 
 class DisplaySQLError( QDialog ):
@@ -223,11 +227,13 @@ def query_exec_error_check( *, query, sql = None, raise_except = True ):
         loc             = "query_exec_error_check"
         debug_msg       = f"{loc} >>> error sql = { sql } \n lastError = {error_txt = }"
         logging.debug( debug_msg )
-        dialog          =  DisplaySQLError( parent = None, title = "SQL Error", msg = debug_msg )
-        if dialog.exec_() == QDialog.Accepted:
-            pass
+        # next is nice but if a qapplication is not running crashes out so comment out
+        print( "query_exec_error_check see this zz for an upgrade ")
+        # dialog          =  DisplaySQLError( parent = None, title = "SQL Error", msg = debug_msg )
+        # if dialog.exec_() == QDialog.Accepted:
+        #     pass
 
-        raise SQLError( "sqlerror", debug_msg )
+        raise SQLError(  debug_msg )
 
     else:
         pass

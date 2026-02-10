@@ -602,6 +602,8 @@ class StuffdbMainWindow( QMainWindow ):
     # ------------------------------------
     def build_menu_open_stuff( self, menu_open ):
         """
+        the menu we use when in the full stuffdb mode
+        see parameters
         what it says read:
 
         """
@@ -669,6 +671,8 @@ class StuffdbMainWindow( QMainWindow ):
     # ------------------------------------
     def build_menu_open_notes( self, menu_open ):
         """
+        the menu we use when in notes mode
+        see parameters
         what it says read:
 
         """
@@ -871,7 +875,7 @@ class StuffdbMainWindow( QMainWindow ):
         #     msg     = f"in finally  {1}"
         #     print( msg )
 
-
+    #-------------------------------------
     def closeEvent(self, event):
         """
         Handle the window close event for clean shutdown

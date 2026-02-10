@@ -18,21 +18,22 @@ import  data_dict
 
 # ---- setup
 su.create_connection( use_temp = True )
+        # if use_temp =True it will take the db parmaters from parms_temp
 data_dict.build_it()
 DB_CONNECTION  = su.DB_CONNECTION
 DB             = DB_CONNECTION
 
 table_name   = "help_info"
-table_name   = "help_key_word"
+#table_name   = "help_key_word"
 
-table_name   = "planting_text"
+#table_name   = "planting_text"
 #table_name   = "planting_event"
 #table_name   = "stuff_text"
 #table_name   = "stuff_event"
 #table_name   = "stuff"
 
 
-table_name   = "key_gen"
+#table_name   = "key_gen"
 
 # ------------ believe this works, will prompt for enter
 su.drop_table( DB, table_name )

@@ -63,7 +63,9 @@ class Parameters( ):
         if you set the mode from the command line you will not
         get here"""
 
-        self.mode_data_sync()
+        self.mode_new_user()
+        #self.mode_data_sync()
+        #self.mode_source_db_for_copy()
         #self.mode_data_sync_b()
         #self.mode_github()
         # self.mode_picture_test()
@@ -173,6 +175,18 @@ class Parameters( ):
         self.icon               =  "./misc/db_green_on_black.png"
         self.icon               =  "./misc/db_red_on_black.png"
         self.icon               =  "./misc/red_tube.png"
+
+    # -------
+    def mode_source_db_for_copy( self ):
+        """
+        use only when copying db this will be the source
+        generally use the full path
+        """
+        self.mode               = "mode_source_db_for_copy"
+        self.db_file_name       = "./data_sync/stuffdb.db"      #  = "sample.db"   =  ":memory:"
+        #self.db_lock_file_name  = "./data_sync/lock_db.txt"     # if present then db is locked else none
+        self.db_file_name       = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db"
+        self.icon               =  "./misc/db_green_on_black.png"
 
     # -------
     def mode_sync_king_homer( self ):
@@ -437,7 +451,7 @@ class Parameters( ):
             else:
                 self.ex_editor          =  r"leafpad"    # Linux raspberry pi maybe
 
-    # ---- ------->> default mode, always call
+    # ---- ------->> default mode, always should be called
     def mode_default( self ):
         """
         sets up pretty much all settings
@@ -578,7 +592,9 @@ class Parameters( ):
         self.db_file_name      = ":memory:"
         self.db_file_name      = "sample.db"   #  = "sample.db"   =  ":memory:"
         self.db_file_name      = "default.db"     #  = "sample.db"   =  ":memory:"
-        self.db_lock_file_name = "./data/lock_db.txt"    # if present then db is locked
+        self.db_lock_file_name = "./data/lock_db.txt"    # if present then db is locked else none
+        self.db_lock_file_name = None
+
         #self.db_file_name        = "/tmp/ramdisk/qt_sql.db"
 
         # this is the name of a program: its executable with path info.
