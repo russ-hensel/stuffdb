@@ -10,7 +10,7 @@ Most of the code for the Picture Document
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
-    import main
+    import main   # noqa  stops auto removal by pycln
 
 # --------------------
 

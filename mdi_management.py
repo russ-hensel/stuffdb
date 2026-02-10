@@ -96,7 +96,7 @@ import db_management_subwindow  # db_management_subwindow.DbManagementSubWindow(
 import topic_for_table
 
 
-import string_util
+#import string_utils
 
 from collections import defaultdict
 

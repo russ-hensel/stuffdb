@@ -65,7 +65,9 @@ import sys
 import os
 
 
-import string_util
+#import string_utils
+import string_utils as string_util
+import string_utils
 
 from   app_global import AppGlobal
 # for above to work need to have an AppGlobal in the dir
@@ -499,7 +501,7 @@ class MessageArea( QGroupBox  ):
         !! add parameter clear_msg = True or false
 
         """
-        print(  f"in display_string, with a_string = {a_string}")
+        #rint(  f"MessageArea.display_string, with a_string = {a_string}")
         # return
         #   try  !!!  QTextEdit.clear()
         cursor = self.text_edit.textCursor()

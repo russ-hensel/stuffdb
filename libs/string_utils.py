@@ -18,9 +18,11 @@ import string_list_utils
 import os
 
 # import adjust_path
-import string_util
+#import string_util
 
 #from   app_global import AppGlobal
+
+URL_VALID_PREFIXS     = [ "www.", "http://", "https://" ]
 
 
 # ----------------------------------------
@@ -116,6 +118,43 @@ def count_leading_spaces( a_string ):
     leading_spaces   = len( a_string ) - len( a_string.lstrip(' ') )
 
     return leading_spaces
+
+# ---- is functions -------------------------------
+def begins_with_url( a_string, ):
+    """
+    it_is  = string_util.begins_with_url( a_string )
+    """
+    parts       = a_string.split()
+    if len( parts ) == 0: # pretty much null string
+        return False
+    test_url    = parts[0]
+    #test_url   = (a_string.split() ).[0])  #.strip()     # parse off using whitespace  and strip
+
+    for i_prefix in URL_VALID_PREFIXS:
+        if test_url.find( i_prefix ) == 0:    # find str2 in str1 !! better bings with
+            return  True
+
+    return False
+
+
+# ---- is functions -------------------------------
+def begins_with_file_name( a_string, ):
+    """
+    it_is  = string_utils.begins_with_url( a_string )
+    """
+    parts       = a_string.split()
+    if len( parts ) == 0: # pretty much null string
+        return False
+    test_file_name    = parts[0]
+    #test_url   = (a_string.split() ).[0])  #.strip()     # parse off using whitespace  and strip
+
+    if test_file_name.startswith( "/") or test_file_name.startswith( "~/"):
+        if "." in test_file_name:
+            return  True
+
+    return False
+
+
 
 # ---- is functions -------------------------------
 def is_url( a_string,  ):
@@ -274,6 +313,261 @@ def string_to_py_list( a_string ):
 
 
     return a_string
+
+# ---------------------
+def to_columns( current_str, item_list, format_list = ( "{: <30}", "{:<30}" ), indent = "    "  ):
+    """
+    for __str__  probably always default format_list
+    see ColunmFormatter which is supposed to be more elaborate version
+    see its __str__
+    ex:
+        import string_util
+        a_str     = string_util.to_columns( a_str, ["column_data",    f"{self.column_data}"  ] )
+        a_str     = string_util.to_columns( a_str,
+                                            ["column_data",    f"{self.column_data}"  ],
+                                            format_list = ( "{: <30}", "{:<30}" )
+    """
+    #rint ( f"item_list {item_list}.............................................................. " )
+    line_out  = ""
+    for i_item, i_format in zip( item_list, format_list ):
+        a_col  = i_format.format( i_item )
+        line_out   = f"{indent}{line_out}{a_col}"
+    if current_str == "":
+        ret_str  = f"{line_out}"
+    else:
+        ret_str  = f"{current_str}\n{line_out}"
+    return ret_str
+
+
+
+# -----------------------------------------
+class ColumnFormater( ):
+
+    """
+    a_file_deleter    = FileDeleter( )
+    a_file_deleter.do_delete_empty( a_path )
+
+    what_deleted     = a_file_deleter.delete_list
+
+    ?? consider adding an output print function to display the progress
+
+    """
+    def __init__(self,   ):
+        """
+        what it says, read
+
+        """
+        ...
+        self.reset( None )
+
+    # ----------------------------------------
+    def reset( self, a_path ):
+        """
+        reset for reuse
+
+
+        """
+        self.column_data   = []  # fill with tuples of the column data
+        self.column_specs  = []  # list of dicts as below in column order
+
+        # a_spcec       =  { "width": 5,
+        #                    "allign": "r",   # "l"
+        #                     }
+
+    # ----------------------------------------
+    def get_default_spec(  self ):
+        a_default_spec  =  { "width": 5,
+                            "allign": "r",   # "l"
+                             }
+        return a_default_spec
+
+
+    # ----------------------------------------
+    def add_line( self, column_tuple  ):
+        """
+        what it says, read
+
+        """
+        pass
+        self.column_data.append( column_tuple )
+        # Could check length against column specs
+
+    # ----------------------------------------
+    def add_column( self, column_spec ):
+        """
+        what it says, read
+
+        """
+        self.column_specs.append( column_spec )
+
+
+    # ----------------------------------------
+    def get_str( self,  ):
+        """
+
+        """
+
+        a_str   = ""
+
+        for i_line in self.column_data:
+            a_str   = f"{a_str}\n"
+            for ix_col, i_col_data in enumerate( i_line ):
+                a_line  = ( i_col_data + "          " )[ 0: self.column_specs[ ix_col ]["width"] ]
+
+        a_str   = f"{a_str} {a_line}"
+
+            #for i_column_spec in self.column_specs
+        return a_str
+
+    #------------------
+    def __str__( self, ):
+        """
+        Purpose:
+           see title, what it says, read, for debug
+        Return:
+           a string of info about object
+        Raises:
+           none planned
+
+        """
+        newline  = "\n" + " " * 4
+        a_str    = ""
+        a_str    = f"{a_str}>>>>>>>>>>* ColumnFormatter (some values) *<<<<<<<<<<<<"
+        #a_str    = ( f"{a_str}\n{self.__class__.__name__}: name = {self.name}" )
+        # a_str    = f"super().__str__()"
+
+        a_str    = f"{a_str}{newline}column_specs                {self.column_specs}"
+        a_str    = f"{a_str}{newline}column_data                 {self.column_data}"
+
+        # convert to
+        a_str   = to_columns( a_str, ["column_specs",        f"{self.column_specs}" ] )
+        a_str   = to_columns( a_str, ["column_data",         f"{self.column_data}"  ] )
+
+
+
+        # a_str    = f"{a_str}{newline}computer_id         {self.running_on.computer_id}"
+        # a_str    = f"{a_str}{newline}logger_id           {self.logger_id}"
+
+        return a_str
+
+def num_to_string( an_int ):
+    """
+    string_util.num_to_string( an_int )
+    """
+    test_val   =  1_000_000_000
+    if an_int > test_val:
+        an_int = an_int/test_val
+        text   = f"{an_int:.3f} Giga"
+        return text
+
+    test_val   =  1_000_000
+    if an_int > test_val:
+        an_int = an_int/test_val
+        text   = f"{an_int:.3f} Mega"
+        return text
+
+    test_val   =  1_000
+    if an_int > test_val:
+        an_int = an_int/test_val
+        text   = f"{an_int:.3f} Kilo"
+        return text
+
+    test_val   =  1
+    if an_int > test_val:
+        an_int = an_int/test_val
+        text   = f"{an_int:.3f} "
+        return text
+
+    test_val   =  .001
+    if an_int > test_val:
+        an_int = an_int / test_val
+        text   = f"{an_int:.3f} mili"
+        return text
+
+    test_val   =  .000001
+    if an_int > test_val:
+        an_int = an_int/test_val
+        text   = f"{an_int:.3f} micro"
+        return text
+
+    text   = str( an_int )
+    return text
+
+#---------------------------
+def test_num_to_string():
+    """
+
+
+    """
+    an_int  = 36.53
+    print( f"{an_int} -> {num_to_string(an_int)}")
+
+    an_int  = an_int/10
+    print( f"{an_int} -> {num_to_string(an_int)}")
+
+    an_int  = an_int/10
+    print( f"{an_int} -> {num_to_string(an_int)}")
+
+    an_int  = an_int/10
+    print( f"{an_int} -> {num_to_string(an_int)}")
+
+    an_int  = an_int/10
+    print( f"{an_int} -> {num_to_string(an_int)}")
+
+    an_int  = an_int/10
+    print( f"{an_int} -> {num_to_string(an_int)}")
+
+    # print( "---------------------")
+    # an_int  = 3.53 *   1_000_000_000
+    # print( f"{num_to_string(an_int)}")
+
+    # an_int  = 36.53 *   1_000_000_000
+    # print( f"{num_to_string(an_int)}")
+
+    # an_int  = 36.53
+    # print( f"{num_to_string(an_int)}")
+
+    # an_int  = 36.53  *   1_000
+    # print( f"{num_to_string(an_int)}")
+
+    # an_int  = .3653
+    # print( f"{num_to_string(an_int)}")
+
+    # an_int  = 3.653/1_000
+    # print( f"{an_int} -> {num_to_string(an_int)}")
+
+def test_column_formatter():
+    """
+
+
+    """
+    a_column_formatter   = ColumnFormater()
+
+    column_spec          = a_column_formatter.get_default_spec()
+    a_column_formatter.add_column( column_spec )
+    a_column_formatter.add_column( column_spec )
+
+    a_line               = "name",   "john"
+    a_column_formatter.add_line( a_line )
+    a_line               = "name",   "sueellenjone"
+    a_column_formatter.add_line( a_line )
+    a_line               = "nm",   "johnthan"
+    a_column_formatter.add_line( a_line )
+
+    print( a_column_formatter )
+    print( a_column_formatter.get_str() )
+
+
+#test_column_formatter()
+# --------------------
+if __name__ == "__main__":
+   test_num_to_string()
+# --------------------
+
+
+
+
+# ---- eof
 
 # ---- eof
 

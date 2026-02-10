@@ -272,6 +272,7 @@ def test_file_itterator_2():
     """
     root_dir    = "./"
     root_dir    = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib"
+    root_dir    = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/autoexec"
 
     print( f"test_file_itterator_2  {root_dir}")
 
@@ -293,7 +294,7 @@ def test_file_itterator_2():
                        )
     file_itterator    = FileIterator( config = config   )
     for ix, i_file in enumerate( file_itterator ):
-        print( f"    {ix} {i_file}   {i_file.is_dir()}" )
+        print( f"    {ix} {i_file}   {i_file.is_dir() = }" )
 
 
     print( "test_file_itterator_2 done")
@@ -328,9 +329,6 @@ def test_file_itterator_for_all():
 #     #files = FileIterator('/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib', is_python_file, max_depth=2)
 #     for f in files:
 #         print(f)
-
-
-
 
 
 def test_has_entension( )    :

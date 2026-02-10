@@ -90,7 +90,7 @@ import logging
 
 import platform
 import subprocess
-import string_util
+import string_utils
 
 
 # ---- local imports
@@ -254,7 +254,7 @@ class TextEditExt( ):
 
         consider strip out tabs....
         detect line contentns and prefix with >> ...
-        string_util.begins_with_url( a_string )
+        string_utils.begins_with_url( a_string )
 
         may want to make more advanced, look at file extension
         .txt  .py????
@@ -275,10 +275,10 @@ class TextEditExt( ):
         for i_line in splits:
             ii_line      = i_line
 
-            if string_util.begins_with_url( i_line ):
+            if string_utils.begins_with_url( i_line ):
                 ii_line  = f">>url {i_line}"
 
-            elif string_util.begins_with_file_name( i_line ):
+            elif string_utils.begins_with_file_name( i_line ):
                 ii_line  = f">>shell {i_line}"
 
             new_lines.append( ii_line )
@@ -574,7 +574,7 @@ class TextEditExt( ):
         for i_line in stripped_lines:
             i_line.replace( ">>url", "") # what about caps -- do better
             i_line.strip( )
-            if string_util.begins_with_url( i_line ):
+            if string_utils.begins_with_url( i_line ):
                 splits = i_line.split( " " )
                 i_line = splits[0]
                 webbrowser.open( i_line, new = 0, autoraise = True )

@@ -16,10 +16,9 @@ coupling
 
 # --------------------
 if __name__ == "__main__":
-    import main
-
-
+    import main   # noqa  stops auto removal by pycln
 # --------------------
+
 # ---- imports
 #import functools
 import logging
@@ -29,12 +28,11 @@ import time
 import webbrowser
 import textwrap
 
-from datetime  import datetime
-from functools import partial
+from   datetime  import datetime
+from   functools import partial
 import os
 import platform
 import subprocess
-
 
 # ---- Qt
 from qt_compat import QApplication, QAction, exec_app, qt_version
@@ -129,12 +127,13 @@ else:
 
 
 # ---- imports local -- then constants
-import string_util
+import string_utils
 import wat_inspector
 from   app_global     import AppGlobal
 import exec_qt
 import clip_string_utils
 import string_list_utils
+import data
 
 #import convert_db_display
 import mdi_management
@@ -259,7 +258,6 @@ def set_rec_data( record, field_name, data   ):
         logging.error( msg )
         return
 
-
     if record.indexOf( field_name ) == -1:
         msg         = ( f"set_rec_data Field {field_name} "
                         f"does not exist in the record. Assume testing else ERROR ")
@@ -273,6 +271,16 @@ def set_rec_data( record, field_name, data   ):
         # logging.debug( msg )
     # still need None !!
     record.setValue( field_name, data )
+
+# -----------------------
+def get_sudo(  ):
+    """
+    for the easter egg
+    """
+    a_value    =  data.get_data( "simpsons" )
+    a_value    = a_value[ :9 ]
+
+    return a_value
 
 # -----------------------
 def model_dump(  model, msg = "model dump msg" ):
@@ -307,7 +315,6 @@ def model_dump(  model, msg = "model dump msg" ):
     a_str   = ( f"{a_str}\nmodel_dump end")
     logging.debug( a_str )
 
-
 # --------------------------------------
 class ModelIndexer(   ):
     """
@@ -334,15 +341,16 @@ class ModelIndexer(   ):
     def __str__(self):
         """
         the usual
+        but convert to universal str ??
         """
         a_str   = ">>>>>>>>>>* ModelIndex *<<<<<<<<<<<<"
-        a_str   = string_util.to_columns( a_str, ["index_dict",
+        a_str   = string_utils.to_columns( a_str, ["index_dict",
                                            f"{self.index_dict}" ] )
-        a_str   = string_util.to_columns( a_str, ["index_tuple",
+        a_str   = string_utils.to_columns( a_str, ["index_tuple",
                                             f"{self.index_tuple}" ] )
-        a_str   = string_util.to_columns( a_str, ["is_valid",
+        a_str   = string_utils.to_columns( a_str, ["is_valid",
                                            f"{self.is_valid}" ] )
-        a_str   = string_util.to_columns( a_str, ["model",
+        a_str   = string_utils.to_columns( a_str, ["model",
                                            f"{self.model}" ] )
         return a_str
 
@@ -406,6 +414,7 @@ class TableModel( QAbstractTableModel ):
         """
         model.indexer.index_tuple = ( 0, 1 )
         """
+
     #-------
     def add_indexer (self, index_tuple ):
         """
@@ -464,7 +473,7 @@ class TableModel( QAbstractTableModel ):
             elif orientation == Qt.Vertical:
                 return str(section + 1)
 
-    # Method to add a row
+    # ---------------------------
     def addRow(self, row_data):
         """
         read
@@ -475,7 +484,7 @@ class TableModel( QAbstractTableModel ):
         self._data.append(row_data)
         self.endInsertRows()
 
-    # Optional method to remove a row
+    # ---------------------------
     def removeRow(self, row_index):
         """
         what it says, read
@@ -494,7 +503,7 @@ class TableModel( QAbstractTableModel ):
         self.endResetModel()
 
 
-
+# ---------------------------
 class ShellExe( object ):
     """
     for executing shell commands that begin as a list
@@ -521,12 +530,15 @@ class ShellExe( object ):
         # works but ugly
         # now combine across \
         code_lines_newer   = []
-        got_bs             = False
+        got_bs             = False    # bs is back_slash line contuation
         for ix, i_code_line in enumerate( code_lines_new ):
+
             if got_bs:
                 len_newer  = len( code_lines_newer )
                 code_lines_newer[ len_newer -1 ] += i_code_line
             else:
+                if i_code_line.startswith( "#" ):
+                    i_code_line =  f"echo '{i_code_line}'"
                 code_lines_newer.append( i_code_line )
 
             # remove trailing \
@@ -537,7 +549,6 @@ class ShellExe( object ):
                 code_lines_newer[ last_line ] = code_lines_newer[ last_line ].removesuffix( "\\" )
             else:
                 got_bs             = False
-
 
         code_lines_new   = code_lines_newer
         #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}")
@@ -552,7 +563,7 @@ class ShellExe( object ):
         cmd_str     = ";".join( code_lines_new )
         cmd_str     = f"""gnome-terminal -- bash -c "{cmd_str}; echo 'exec bash' ;exec bash" """
 
-        debug_msg   = ( f"about to os.system {cmd_str = }" )
+        debug_msg   = ( f"run_code_lines about to os.system with {cmd_str = }" )
         logging.log( LOG_LEVEL,  debug_msg, )
 
         result = os.system( cmd_str  )
@@ -949,7 +960,7 @@ class TextEditExtMixin(  ):
         # ---- "Max 0 Blank Lines"
         foo_action              = submenu.addAction( "Max 0 Blank Lines" )
         processing_function     = partial( string_list_utils.list_to_list_max_n_blank,  max_blank = 0 )
-        foo                     = partial( self.process_selected,  processing_function = processing_function )
+        foo                     = partial( self.process_selected, processing_function = processing_function )
         foo_action.triggered.connect( foo )
         foo_action.setEnabled(has_selection)
 
@@ -1020,7 +1031,6 @@ class TextEditExtMixin(  ):
     # ----------------------------------
     def capture_selected_text( self ):
         """
-
         Capture the currently highlighted (selected) text
         is this worth a function
         selected_text    = self.capture_selected_text()
@@ -1144,6 +1154,18 @@ class TextEditExtMixin(  ):
             #rint( f"you need to implement >>shell {code_lines}")
             print(f"need to fix bash{code_lines} how comments " )
             code_lines   = [i_line.rstrip() for i_line in code_lines ]
+
+            # ---- have_sudo
+            have_sudo  = False
+            if AppGlobal.parameters.get_sudo:
+                for i_code_line in code_lines:
+                    if "sudo" in i_code_line:
+                        have_sudo  = True
+
+            if have_sudo:
+                get_sudo()
+                QApplication.clipboard().setText( get_sudo() )
+
             #code_lines   = code_lines.rstrip() ng it is a list
             if self.shell_exe:
                 self.shell_exe.run_code_lines( code_lines )
@@ -1558,69 +1580,6 @@ class TextEditExtMixin(  ):
         cursor.setPosition(selection_end, cursor.KeepAnchor)
         text_edit.setTextCursor(cursor)
 
-    #-----------------------------------
-    def remove_blank_linexxxxxs( self,   ):
-        """
-        because of call from menu no options could use partial there
-        """
-        processing_function     = partial( clip_string_utils.clean_string_list_to_list,
-                                          delete_tailing_spaces  = True,
-                                          delete_blank_lines     = True,   )
-
-        self.process_selected( processing_function = processing_function )
-
-        # new_lines  = clip_string_utils. clean_string_to_list( in_text,
-        #                       delete_tailing_spaces  = True,
-        #                       delete_comments        = False,
-        #                       delete_blank_lines     = False,   )
-        # # Get the current cursor and selection
-
-        # # text_edit   = self
-        # # cursor      = text_edit.textCursor()
-        # if not cursor.hasSelection():
-        #     return
-
-        # # Get selected text
-        # selected_text = cursor.selectedText()
-
-        # # Split into lines and remove trailing spaces
-        # lines = selected_text.split('\u2029')  # QTextEdit uses Unicode paragraph separator
-
-        # if keep_leading:
-        #     trimmed_lines = [line.rstrip() for line in lines]
-        # else:
-        #     trimmed_lines = [line.strip() for line in lines]
-
-        # trimmed_text = '\n'.join(trimmed_lines)
-
-        # # Store selection positions
-        # selection_start = cursor.selectionStart()
-        # selection_end   = cursor.selectionEnd()
-
-        # # Replace selected text
-        # cursor.insertText(trimmed_text)
-
-        # # Restore selection
-        # cursor.setPosition(selection_start)
-        # cursor.setPosition(selection_end, cursor.KeepAnchor)
-        # text_edit.setTextCursor(cursor)
-
-    # ------------------------
-    def remove_blank_lines_zz( self, lines ):
-        """
-        static
-        ?? perhaps a util
-        delete leading spaces ( as per code )
-        then return as a multiline string  that is a list of strings
-            lines   is a list of lines
-
-        """
-        pass
-        # new_lines  = clip_string_utils. clean_string_to_list( in_text,
-        #                       delete_tailing_spaces  = True,
-        #                       delete_comments        = False,
-        #                       delete_blank_lines     = False,   )
-
     #-----------------------------
     def shell_file( self, file_name ):
         """ """
@@ -1719,7 +1678,6 @@ class TextEditExtMixin(  ):
         cursor.setPosition(selection_end, cursor.KeepAnchor)
         text_edit.setTextCursor(cursor)
 
-
     #-----------------------------------
     def smarten( self, ):
         """
@@ -1744,7 +1702,7 @@ class TextEditExtMixin(  ):
 
             consider strip out tabs....
             detect line contentns and prefix with >> ...
-            string_util.begins_with_url( a_string )
+            string_utils.begins_with_url( a_string )
 
             may want to make more advanced, look at file extension
             .txt  .py????
@@ -1760,10 +1718,10 @@ class TextEditExtMixin(  ):
         for i_line in splits:
             ii_line      = i_line
 
-            if string_util.begins_with_url( i_line ):
+            if string_utils.begins_with_url( i_line ):
                 ii_line  = f">>url   {i_line}"
 
-            elif string_util.begins_with_file_name( i_line ):
+            elif string_utils.begins_with_file_name( i_line ):
                 ii_line  = f">>shell   {i_line}\n>copy     {i_line}"
 
             new_lines.append( ii_line )
@@ -1798,7 +1756,7 @@ class TextEditExtMixin(  ):
 
             # i_line.replace( ">>url", "") # what about caps -- do better
             i_line    = i_line.strip( )
-            if string_util.begins_with_url( i_line ):
+            if string_utils.begins_with_url( i_line ):
                 # msg    = f" webbrowser.open {i_line = }"
                 # print( msg )
                 splits = i_line.split( " " )
@@ -2594,17 +2552,17 @@ class CQEditBase(   ):
         a_str   = ""
         a_str   = ">>>>>>>>>>* CQEditBase *<<<<<<<<<<<<"
 
-        # a_str   = string_util.to_columns( a_str, ["clear_value",
+        # a_str   = string_utils.to_columns( a_str, ["clear_value",
         #                                    f"{self.clear_value}" ] )
-        a_str   = string_util.to_columns( a_str, ["context_menu",
+        a_str   = string_utils.to_columns( a_str, ["context_menu",
                                            f"{self.context_menu}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["field_name",
+        a_str   = string_utils.to_columns( a_str, ["field_name",
                                            f"{self.field_name}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["get_raw_data()",
+        a_str   = string_utils.to_columns( a_str, ["get_raw_data()",
                                            f"{str(self.get_raw_data()) } " ] )
 
         return a_str
@@ -2856,15 +2814,15 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         a_str   = f"{a_str}\n>>>>>>>>>>* CQLineEdit *<<<<<<<<<<<<"
 
 
-        # a_str   = string_util.to_columns( a_str, ["default_value",
+        # a_str   = string_utils.to_columns( a_str, ["default_value",
         #                                    f"{self.default_value}" ] )
-        # a_str   = string_util.to_columns( a_str, ["is_changed",
+        # a_str   = string_utils.to_columns( a_str, ["is_changed",
         #                                    f"{self.is_changed}" ] )
-        a_str   = string_util.to_columns( a_str, ["field_name",
+        a_str   = string_utils.to_columns( a_str, ["field_name",
                                            f"{self.field_name}" ] )
-        # a_str   = string_util.to_columns( a_str, ["prior_value",
+        # a_str   = string_utils.to_columns( a_str, ["prior_value",
         #                                    f"{self.prior_value}" ] )
-        a_str   = string_util.to_columns( a_str, ["get_raw_data()",
+        a_str   = string_utils.to_columns( a_str, ["get_raw_data()",
                                            f"{self.get_raw_data()}" ] )
 
         # more    = CQEditBase.__str__( self, )
@@ -3052,17 +3010,17 @@ class CQComboBox( QComboBox, CQEditBase ):
 
         a_str   = f"{a_str}\n>>>>>>>>>>* CQLineEdit *<<<<<<<<<<<<"
 
-        a_str   = string_util.to_columns( a_str, ["default_type",
+        a_str   = string_utils.to_columns( a_str, ["default_type",
                                            f"{self.default_type}" ] )
-        # a_str   = string_util.to_columns( a_str, ["default_value",
+        # a_str   = string_utils.to_columns( a_str, ["default_value",
         #                                    f"{self.default_value}" ] )
-        a_str   = string_util.to_columns( a_str, ["is_changed",
+        a_str   = string_utils.to_columns( a_str, ["is_changed",
                                            f"{self.is_changed}" ] )
-        a_str   = string_util.to_columns( a_str, ["field_name",
+        a_str   = string_utils.to_columns( a_str, ["field_name",
                                            f"{self.field_name}" ] )
-        a_str   = string_util.to_columns( a_str, ["prior_value",
+        a_str   = string_utils.to_columns( a_str, ["prior_value",
                                            f"{self.prior_value}" ] )
-        a_str   = string_util.to_columns( a_str, ["get_raw_data()",
+        a_str   = string_utils.to_columns( a_str, ["get_raw_data()",
                                            f"{self.get_raw_data()}" ] )
 
         # more    = CQEditBase.__str__( self, )
@@ -3726,13 +3684,13 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
 
         a_str   = ""
         a_str   = ">>>>>>>>>>* QTextEdit *<<<<<<<<<<<<"
-        # a_str   = string_util.to_columns( a_str, ["default_type",
+        # a_str   = string_utils.to_columns( a_str, ["default_type",
         #                                    f"{self.default_type}" ] )
-        # a_str   = string_util.to_columns( a_str, ["default_value",
+        # a_str   = string_utils.to_columns( a_str, ["default_value",
         #                                    f"{self.default_value}" ] )
-        # a_str   = string_util.to_columns( a_str, ["is_changed",
+        # a_str   = string_utils.to_columns( a_str, ["is_changed",
         #                                    f"{self.is_changed}" ] )
-        # a_str   = string_util.to_columns( a_str, ["prior_value",
+        # a_str   = string_utils.to_columns( a_str, ["prior_value",
         #                                    f"{self.prior_value}" ] )
         more    = CQEditBase.__str__( self, )
         a_str   = f"{a_str}\n{more}"
@@ -3979,11 +3937,11 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
 
         a_str   = f"{a_str}\n>>>>>>>>>>* CQDateEdit ( nothing so far ) *<<<<<<<<<<<<"
 
-        a_str   = string_util.to_columns( a_str, ["getDate",
+        a_str   = string_utils.to_columns( a_str, ["getDate",
                                             f"{str(self.date() )}" ] )
-        # # a_str   = string_util.to_columns( a_str, ["default_value",
+        # # a_str   = string_utils.to_columns( a_str, ["default_value",
         # #                                    f"{self.default_value}" ] )
-        # a_str   = string_util.to_columns( a_str, ["is_changed",
+        # a_str   = string_utils.to_columns( a_str, ["is_changed",
         #                                    f"{self.is_changed}" ] )
 
 

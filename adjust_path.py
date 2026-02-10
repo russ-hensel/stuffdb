@@ -29,7 +29,7 @@ adjust_path_dir_name  = str( adjust_path_dir_path )
 
 # ---- PLEASE SET/CHECK THESE
 APP_MODULE  = "/stuffdb"
-VERBOSE     = 10
+VERBOSE     = 100
 
 if VERBOSE > 20:
 
@@ -97,7 +97,7 @@ sys.path.insert( 1, f"{src_root}/stuffdb/data_dict_src" )
 sys.path.insert( 1, f"{src_root}/stuffdb/sql" )
 sys.path.insert( 1, f"{src_root}/stuffdb/geo_photo" )
 sys.path.insert( 1, f"{src_root}/stuffdb/sql" )
-
+sys.path.insert( 1, f"{src_root}/rsh" )
 
 
 #/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/backup_qt

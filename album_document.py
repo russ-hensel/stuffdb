@@ -26,7 +26,7 @@ import subprocess
 
 import data_dict
 import gui_qt_ext
-import string_util
+#import string_utils
 import wat_inspector
 from app_global import AppGlobal
 

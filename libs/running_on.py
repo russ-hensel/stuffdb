@@ -28,7 +28,7 @@ import sys
 from platform import python_version
 
 import psutil
-import string_util
+import string_utils
 
 
 # --------------------------------------
@@ -178,17 +178,17 @@ class RunningOn(  ):
 
         # hardware
 
-        a_str   = string_util.to_columns( a_str, ["---- hardware----",
+        a_str   = string_utils.to_columns( a_str, ["---- hardware----",
                                                  "----------" ] )
 
-        a_str   = string_util.to_columns( a_str, ["host_name",
+        a_str   = string_utils.to_columns( a_str, ["host_name",
                                           f" >{cls.host_name}<" ] )
-        a_str   = string_util.to_columns( a_str, ["host_tcpip",
+        a_str   = string_utils.to_columns( a_str, ["host_tcpip",
                                           f" >{cls.host_tcpip}<" ] )
 
-        a_str   = string_util.to_columns( a_str, ["computername",
+        a_str   = string_utils.to_columns( a_str, ["computername",
                                           f" >{cls.computername}<" ] )
-        a_str   = string_util.to_columns( a_str, ["computer_id",
+        a_str   = string_utils.to_columns( a_str, ["computer_id",
                                           f" >{cls.computer_id}<" ] )
 
         a_str       = f"{a_str}{line_begin}platform_machine   >{cls.platform_machine}<"

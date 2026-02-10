@@ -90,7 +90,7 @@ import data_dict
 #import  picture_viewer
 #import  tracked_qsql_relational_table_model  # dump for qt with logging
 import gui_qt_ext
-import string_util
+#import string_utils
 from   app_global import AppGlobal
 import base_document_tabs
 import custom_widgets  as cw

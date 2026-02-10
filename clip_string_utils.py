@@ -36,7 +36,7 @@ if __name__ == "__main__":
 import os
 
 # import adjust_path
-import string_util
+import string_utils
 
 #from   app_global import AppGlobal
 
@@ -518,7 +518,7 @@ def allign_eq_signs( a_string ):
     new_lines    = []
     for i_line in lines:
         if space_count is None:
-            space_count   = string_util.count_leading_spaces( i_line )
+            space_count   = string_utils.count_leading_spaces( i_line )
             find_eq       = i_line.find( "=",   )
             if find_eq == 0:
                 return a_string
@@ -535,7 +535,7 @@ def allign_eq_signs( a_string ):
         #format_var    =  '"{: <' 30}"
 
         assign_to    = "= " + splits[1].strip()
-        i_new_line   = string_util.to_columns( "",
+        i_new_line   = string_utils.to_columns( "",
                                             [var,    assign_to  ],
                                             format_list = [  format_var, "{:<50}" ],
                                             indent = "" )

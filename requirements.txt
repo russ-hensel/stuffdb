@@ -75,7 +75,17 @@ uv pip install Pillow
 uv pip install gmplot
 uv pip install psutil
 
+ No module named 'folium'
+ uv pip install folium
 
+ No module named 'pytz'
+ uv pip install  pytz
+
+ No module named 'simplekml'
+ uv pip install  simplekml
+
+
+No module named 'haversine'   -- comming soon
 
 ------------------
 WHAT about

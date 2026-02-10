@@ -19,7 +19,7 @@ import sqlite3
 import time
 
 import gui_qt_ext
-import string_util
+#import string_utils
 from app_global import AppGlobal
 
 from qt_compat import QApplication, QAction, exec_app, qt_version

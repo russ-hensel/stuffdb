@@ -49,7 +49,8 @@ from PyQt.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
-from PyQt.QtGui import ( QAction, QActionGroup, )   # role
+# next causing problems but not even used ?
+# from PyQt.QtGui import ( QAction, QActionGroup, )   # role
 
 from PyQt.QtWidgets import (
                              QFileDialog,
@@ -95,8 +96,8 @@ import check_fix
 #import gui_qt_ext
 import info_about
 #import key_words
-import string_util
-import text_edit_ext
+#import string_utils as string_util
+#import text_edit_ext
 #import table_model
 import wat_inspector
 from app_global     import AppGlobal
@@ -289,8 +290,6 @@ def open_directory_dialog( parent, default_dir  ):
 
     else:
         return []
-
-
 
 # --------------------------------------
 class ExploreArgs(   ):

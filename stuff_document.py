@@ -98,7 +98,10 @@ import combo_dict_ext
 import data_dict
 import gui_qt_ext
 import info_about
-import string_util
+import string_utils as string_util
+import string_utils
+
+
 from app_global import AppGlobal
 
 # ---- end imports

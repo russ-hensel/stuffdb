@@ -95,7 +95,8 @@ except ImportError:
 
 import data_dict
 import gui_qt_ext
-import string_util
+import string_utils as string_util
+import string_utils
 from   app_global import AppGlobal
 
 import base_document_tabs

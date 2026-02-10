@@ -22,7 +22,8 @@ import functools
 import sqlite3
 
 #import  gui_qt_ext
-import string_util
+import   string_utils as string_util
+import   string_utils
 from app_global import AppGlobal
 
 

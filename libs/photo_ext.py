@@ -87,7 +87,7 @@ import exifread
 import geopy
 import geopy.distance
 import gmplot
-import haversine as hs
+# import haversine as hs
 import PIL.ExifTags
 import PIL.Image
 # import datetime  -- this messes up above

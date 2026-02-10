@@ -790,9 +790,6 @@ class StuffdbMainWindow( QMainWindow ):
                      f"\n{repo}"
                      )
 
-
-
-
         QMessageBox.about(self, "About", msg )
 
     # -----------------------

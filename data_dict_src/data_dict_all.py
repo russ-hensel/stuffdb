@@ -21,7 +21,9 @@ help for tab_custom_update_manager may be of assist
 """
 import adjust_path
 import logging
-import string_util
+
+import string_utils as string_util
+import string_utils
 #import custom_widgets
 
 # ---- end imports

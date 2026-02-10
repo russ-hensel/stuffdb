@@ -113,7 +113,7 @@ import data_dict
 import gui_qt_ext
 import info_about
 
-import string_util
+import string_utils
 import text_edit_ext
 import custom_widgets as cw
 import data_manager
@@ -1168,22 +1168,22 @@ class DocumentBase( QMdiSubWindow ):
         a_str   = ""
         a_str   = "\n>>>>>>>>>>* DocumentBase  *<<<<<<<<<<<<"
 
-        a_str   = string_util.to_columns( a_str, ["criteria_tab",
+        a_str   = string_utils.to_columns( a_str, ["criteria_tab",
                                             f"{self.criteria_tab}" ] )
-        # a_str   = string_util.to_columns( a_str, ["criteria_tab_index",
+        # a_str   = string_utils.to_columns( a_str, ["criteria_tab_index",
         #                                    f"{self.criteria_tab_index}" ] )
-        # a_str   = string_util.to_columns( a_str, ["current_id",
+        # a_str   = string_utils.to_columns( a_str, ["current_id",
         #                                    f"{self.current_id}" ] )
-        # a_str   = string_util.to_columns( a_str, ["current_tab_index",
+        # a_str   = string_utils.to_columns( a_str, ["current_tab_index",
         #                                    f"{self.current_tab_index}" ] )
-        a_str   = string_util.to_columns( a_str, ["detail_tab",
+        a_str   = string_utils.to_columns( a_str, ["detail_tab",
                                             f"{self.detail_tab}" ] )
-        # a_str   = string_util.to_columns( a_str, ["detail_table_id",
+        # a_str   = string_utils.to_columns( a_str, ["detail_table_id",
         #                                    f"{self.detail_table_id}" ] )
 
-        # a_str   = string_util.to_columns( a_str, ["tab_folder",
+        # a_str   = string_utils.to_columns( a_str, ["tab_folder",
         #                                    f"{self.tab_folder}" ] )
-        a_str   = string_util.to_columns( a_str, ["text_tab",
+        a_str   = string_utils.to_columns( a_str, ["text_tab",
                                             f"{self.text_tab}" ] )
 
 
@@ -1468,7 +1468,7 @@ class DetailTabBase( QWidget ):
         a_str   = ""
         a_str   = "\n>>>>>>>>>>* DetailTabBase *<<<<<<<<<<<<"
 
-        # a_str   = string_util.to_columns( a_str, ["add_ts",
+        # a_str   = string_utils.to_columns( a_str, ["add_ts",
         #                                    f"{self.add_ts}" ] )
         # a_str   = string_util.to_columns( a_str, ["current_id",
         #                                    f"{self.current_id}" ] )

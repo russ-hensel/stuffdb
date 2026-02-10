@@ -36,7 +36,8 @@ from PyQt.QtSql import (QSqlDatabase,
 
 
 import logging
-import string_util
+import string_utils as string_util
+import string_utils
 logger          = logging.getLogger( )
 
 # combo_dict_ext.STUFF_COMBO_DICT_EXT

@@ -31,7 +31,9 @@ import time
 from subprocess import Popen
 
 import app_global
-import string_util
+
+import string_utils as string_util
+import string_utils
 from app_global import AppGlobal
 
 # ------------ local

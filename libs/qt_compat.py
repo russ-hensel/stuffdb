@@ -18,8 +18,8 @@ try:
     qt_version = 6
 except ImportError:
     import PyQt5 as PyQt
-    from PyQt5 import QtCore, QtGui, QtWidgets, QtSql, QtPrintSupport
-    from PyQt5.QtWidgets import QApplication, QWidget
+    from   PyQt5 import QtCore, QtGui, QtWidgets, QtSql, QtPrintSupport
+    from   PyQt5.QtWidgets import QApplication, QWidget
     qt_version = 5
 
 # --- Inject PyQt namespaces for universal import ---

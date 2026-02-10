@@ -14,7 +14,7 @@ import re
 import time
 
 # ----   imports
-import string_util
+import string_utils
 from qt_compat import QApplication, QAction, exec_app, qt_version
 from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
@@ -398,27 +398,27 @@ class KeyWords(   ):
         a_str   = ""
         a_str   = ">>>>>>>>>>* KeyWords *<<<<<<<<<<<<"
 
-        a_str   = string_util.to_columns( a_str, ["add_key_words",
+        a_str   = string_utils.to_columns( a_str, ["add_key_words",
                                            f"{self.add_key_words}" ] )
-        a_str   = string_util.to_columns( a_str, ["db",
+        a_str   = string_utils.to_columns( a_str, ["db",
                                            f"{self.db}" ] )
-        a_str   = string_util.to_columns( a_str, ["delete_key_words",
+        a_str   = string_utils.to_columns( a_str, ["delete_key_words",
                                            f"{self.delete_key_words}" ] )
-        a_str   = string_util.to_columns( a_str, ["is_done",
+        a_str   = string_utils.to_columns( a_str, ["is_done",
                                            f"{self.is_done}" ] )
-        a_str   = string_util.to_columns( a_str, ["key_words_for_add",
+        a_str   = string_utils.to_columns( a_str, ["key_words_for_add",
                                            f"{self.key_words_for_add}" ] )
-        a_str   = string_util.to_columns( a_str, ["key_words_for_delete",
+        a_str   = string_utils.to_columns( a_str, ["key_words_for_delete",
                                            f"{self.key_words_for_delete}" ] )
-        a_str   = string_util.to_columns( a_str, ["new_key_words",
+        a_str   = string_utils.to_columns( a_str, ["new_key_words",
                                            f"{self.new_key_words}" ] )
-        a_str   = string_util.to_columns( a_str, ["new_string",
+        a_str   = string_utils.to_columns( a_str, ["new_string",
                                            f"{self.new_string}" ] )
-        a_str   = string_util.to_columns( a_str, ["old_key_words",
+        a_str   = string_utils.to_columns( a_str, ["old_key_words",
                                            f"{self.old_key_words}" ] )
-        a_str   = string_util.to_columns( a_str, ["old_string",
+        a_str   = string_utils.to_columns( a_str, ["old_string",
                                            f"{self.old_string}" ] )
-        a_str   = string_util.to_columns( a_str, ["table_name",
+        a_str   = string_utils.to_columns( a_str, ["table_name",
                                            f"{self.table_name}" ] )
         return a_str
 

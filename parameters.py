@@ -28,7 +28,7 @@ import os
 import sys
 
 import running_on
-import string_util
+import string_utils
 from   app_global import AppGlobal
 import startup_functions
 
@@ -91,6 +91,7 @@ class Parameters( ):
         this !! should be revised to use demo_db.db  or similar
         """
         self.mode               = "mode_new_user"
+        print( "------------------------------------ mode new user ")
 
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
@@ -278,7 +279,6 @@ class Parameters( ):
 
         """
         self.os_tweaks()
-
 
         computer_id         =  self.running_on.computer_id
             # same as hostname
@@ -683,6 +683,9 @@ class Parameters( ):
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
+        self.get_sudo      = True
+            # check code for use
+
         # -------- Dividers  just dividers for text notes
         template_name          = "Dividers"
         template_text          = (
@@ -899,113 +902,113 @@ class Parameters( ):
         # new_indented    = "\n    "   # but it nice to have some whitespace to see ...
         a_str = "\n "
         a_str   = f"{a_str}>>>>>>>>>>* Parameters (some) *<<<<<<<<<<<<"
-        a_str   = string_util.to_columns( a_str, ["mode",       f"{self.mode}" ] )
-        a_str   = string_util.to_columns( a_str, ["computer_id", f"{self.running_on.computer_id}" ] )
+        a_str   = string_utils.to_columns( a_str, ["mode",       f"{self.mode}" ] )
+        a_str   = string_utils.to_columns( a_str, ["computer_id", f"{self.running_on.computer_id}" ] )
 
 
 
-        a_str   = string_util.to_columns( a_str, ["db_type",
+        a_str   = string_utils.to_columns( a_str, ["db_type",
                                            f"{self.db_type}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["db_file_name",
+        a_str   = string_utils.to_columns( a_str, ["db_file_name",
                                            f"{self.db_file_name}" ] )
 
-        a_str   = string_util.to_columns( a_str, ["db_lock_file_name",
+        a_str   = string_utils.to_columns( a_str, ["db_lock_file_name",
                                            f"{self.db_lock_file_name}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["db_host_name",
+        a_str   = string_utils.to_columns( a_str, ["db_host_name",
                                            f"{self.db_host_name}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["db_port",
+        a_str   = string_utils.to_columns( a_str, ["db_port",
                                            f"{self.db_port}" ] )
 
-        a_str   = string_util.to_columns( a_str, ["db_name",
+        a_str   = string_utils.to_columns( a_str, ["db_name",
                                            f"{self.db_name}" ] )
 
-        a_str   = string_util.to_columns( a_str, ["logger_id", f"{self.logger_id}" ] )
-        a_str   = string_util.to_columns( a_str, ["logging_level", f"{self.logging_level}" ] )
-        a_str   = string_util.to_columns( a_str, ["pylogging_fn",    f"{self.pylogging_fn}" ] )
+        a_str   = string_utils.to_columns( a_str, ["logger_id", f"{self.logger_id}" ] )
+        a_str   = string_utils.to_columns( a_str, ["logging_level", f"{self.logging_level}" ] )
+        a_str   = string_utils.to_columns( a_str, ["pylogging_fn",    f"{self.pylogging_fn}" ] )
 
-        a_str   = string_util.to_columns( a_str, [ "log_mode",
+        a_str   = string_utils.to_columns( a_str, [ "log_mode",
                                                   f"{self.log_mode}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, [ "delete_log_on_start -- deprecate for log_mode",
+        a_str   = string_utils.to_columns( a_str, [ "delete_log_on_start -- deprecate for log_mode",
                                                   f"{self.delete_log_on_start}" ] )
 
-        a_str   = string_util.to_columns( a_str, [ "use_geo_photo",
+        a_str   = string_utils.to_columns( a_str, [ "use_geo_photo",
                                                   f"{self.use_geo_photo}" ] )
 
-        a_str   = string_util.to_columns( a_str, [ "use_add_where",
+        a_str   = string_utils.to_columns( a_str, [ "use_add_where",
                                                   f"{self.use_add_where}" ] )
         # a_str   = string_util.to_columns( a_str, ["gui_text_log_fn", f"{self.gui_text_log_fn}" ] )
 
-        a_str   = string_util.to_columns( a_str, ["readme_fn", f"{self.readme_fn}" ] )
-       # a_str   = string_util.to_columns( a_str, ["help_file",    f"{self.help_file}" ] )
+        a_str   = string_utils.to_columns( a_str, ["readme_fn", f"{self.readme_fn}" ] )
+       # a_str   = string_utils.to_columns( a_str, ["help_file",    f"{self.help_file}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["parameter_dir", f"{self.parameter_dir}" ] )
-        a_str   = string_util.to_columns( a_str, ["icon", f"{self.icon}" ] )
+        a_str   = string_utils.to_columns( a_str, ["parameter_dir", f"{self.parameter_dir}" ] )
+        a_str   = string_utils.to_columns( a_str, ["icon", f"{self.icon}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["computername", f"{self.computername}" ] )
-        a_str   = string_util.to_columns( a_str, ["our_os", f"{self.our_os}" ] )
-        a_str   = string_util.to_columns( a_str, ["py_path", f"{self.py_path}" ] )
-        a_str   = string_util.to_columns( a_str, ["set_default_path_here", f"{self.set_default_path_here}" ] )
-        a_str   = string_util.to_columns( a_str, ["poll_delta_t", f"{self.poll_delta_t}" ] )
+        a_str   = string_utils.to_columns( a_str, ["computername", f"{self.computername}" ] )
+        a_str   = string_utils.to_columns( a_str, ["our_os", f"{self.our_os}" ] )
+        a_str   = string_utils.to_columns( a_str, ["py_path", f"{self.py_path}" ] )
+        a_str   = string_utils.to_columns( a_str, ["set_default_path_here", f"{self.set_default_path_here}" ] )
+        a_str   = string_utils.to_columns( a_str, ["poll_delta_t", f"{self.poll_delta_t}" ] )
 
 
 
-        a_str   = string_util.to_columns( a_str, ["help_fn",
+        a_str   = string_utils.to_columns( a_str, ["help_fn",
                                            f"{self.help_fn}" ] )
-        a_str   = string_util.to_columns( a_str, ["help_path",
+        a_str   = string_utils.to_columns( a_str, ["help_path",
                                            f"{self.help_path}" ] )
 
-        # a_str   = string_util.to_columns( a_str, ["log_gui_text",
+        # a_str   = string_utils.to_columns( a_str, ["log_gui_text",
         #                                    f"{self.log_gui_text}" ] )
-        a_str   = string_util.to_columns( a_str, ["opening_dir",
+        a_str   = string_utils.to_columns( a_str, ["opening_dir",
                                            f"{self.opening_dir}" ] )
-        a_str   = string_util.to_columns( a_str, ["os_win",
+        a_str   = string_utils.to_columns( a_str, ["os_win",
                                            f"{self.os_win}" ] )
-        a_str   = string_util.to_columns( a_str, ["picture_browse",
+        a_str   = string_utils.to_columns( a_str, ["picture_browse",
                                            f"{self.picture_browse}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["picture_db_root",
+        a_str   = string_utils.to_columns( a_str, ["picture_db_root",
                                            f"{self.picture_db_root}" ] )
-        a_str   = string_util.to_columns( a_str, ["picture_db_sub",
+        a_str   = string_utils.to_columns( a_str, ["picture_db_sub",
                                            f"{self.picture_db_sub}" ] )
 
-        a_str   = string_util.to_columns( a_str, ["pic_nf_file_name",
+        a_str   = string_utils.to_columns( a_str, ["pic_nf_file_name",
                                            f"{self.pic_nf_file_name}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["platform",
+        a_str   = string_utils.to_columns( a_str, ["platform",
                                            f"{self.platform}" ] )
-        a_str   = string_util.to_columns( a_str, ["qt_height",
+        a_str   = string_utils.to_columns( a_str, ["qt_height",
                                            f"{self.qt_height}" ] )
-        a_str   = string_util.to_columns( a_str, ["qt_width",
+        a_str   = string_utils.to_columns( a_str, ["qt_width",
                                            f"{self.qt_width}" ] )
-        a_str   = string_util.to_columns( a_str, ["qt_xpos",
+        a_str   = string_utils.to_columns( a_str, ["qt_xpos",
                                            f"{self.qt_xpos}" ] )
-        a_str   = string_util.to_columns( a_str, ["qt_ypos",
+        a_str   = string_utils.to_columns( a_str, ["qt_ypos",
                                            f"{self.qt_ypos}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["wat_qt_height",
+        a_str   = string_utils.to_columns( a_str, ["wat_qt_height",
                                            f"{self.wat_qt_height}" ] )
-        a_str   = string_util.to_columns( a_str, ["wat_qt_width",
+        a_str   = string_utils.to_columns( a_str, ["wat_qt_width",
                                            f"{self.wat_qt_width}" ] )
-        a_str   = string_util.to_columns( a_str, ["wat_qt_xpos",
+        a_str   = string_utils.to_columns( a_str, ["wat_qt_xpos",
                                            f"{self.wat_qt_xpos}" ] )
-        a_str   = string_util.to_columns( a_str, ["wat_qt_ypos",
+        a_str   = string_utils.to_columns( a_str, ["wat_qt_ypos",
                                            f"{self.wat_qt_ypos}" ] )
 
 
-        a_str   = string_util.to_columns( a_str, ["running_on",
+        a_str   = string_utils.to_columns( a_str, ["running_on",
                                            f"{self.running_on}" ] )
 
         return a_str
