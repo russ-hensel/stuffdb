@@ -425,7 +425,7 @@ class TableDict(  ):
         get a list of the column objects for this table
         needs test
         returns
-            key_word_column_list
+            key_word_column_list of type columns = columnDict, not the names
         """
         # key_word_column_list    = []
 
@@ -1299,6 +1299,8 @@ class ColumnDict(  ):
         what is the column order ( in lists )
             col_order
         is data editable           - always no
+        key_word_column_list   = [ i_column.column_name for i_column in key_word_column_list]
+
     """
     def __init__(self,  *,
                  column_name            = None,

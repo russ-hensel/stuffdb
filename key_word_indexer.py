@@ -145,12 +145,13 @@ class KeyWordIndexer(   ):
         sql     = KEY_WORD_SQL[ table_name ]
         if sql is None:
              from data_dict import DATA_DICT
-             table_dict    = DATA_DICT.get_table( table_name  )
+             table_dict             = DATA_DICT.get_table( table_name  )
              key_word_column_list   = table_dict.get_key_word_columns()
+             key_word_column_list   = [ i_column.column_name for i_column in key_word_column_list]
              key_word_column_list.insert( 0, "id" )
                  # noe a key word but a needed part of the query
              columns                = ", ".join( key_word_column_list )
-             sql                    =  f"""SELECT {columns}  FROM    {table_name}  """
+             sql                    =  f"""SELECT {columns}  FROM  {table_name}  """
 
         return sql
 

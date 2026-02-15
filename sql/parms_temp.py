@@ -11,7 +11,6 @@
 from pathlib import Path
 
 
-
 import logging
 import os
 import sys
@@ -53,24 +52,24 @@ class ParmsTemp( ):
         self.running_on   = running_on.RunningOn
         self.running_on.gather_data()
 
-        # some of the next all?? should be moved over to RunningOn
-        self.running_on.log_me( logger = None, logger_level = 10, print_flag = False )
+        # # some of the next all?? should be moved over to RunningOn
+        # self.running_on.log_me( logger = None, logger_level = 10, print_flag = False )
 
-        # this is the path to the main.py program --
-        self.py_path                   = self.running_on.py_path
+        # # this is the path to the main.py program --
+        # self.py_path                   = self.running_on.py_path
 
-        self.set_default_path_here     = True
-            # to make app location the default path in the app, Think True may always be best.
-            # above may be tricky to reset, but we may have the original dir in running on
-        # no easy way to override this ??
-        if  self.set_default_path_here:     # Now change the directory to location of this file
+        # self.set_default_path_here     = True
+        #     # to make app location the default path in the app, Think True may always be best.
+        #     # above may be tricky to reset, but we may have the original dir in running on
+        # # no easy way to override this ??
+        # if  self.set_default_path_here:     # Now change the directory to location of this file
 
-            py_path     = self.running_on.py_path
+        #     py_path     = self.running_on.py_path
 
-            msg         = ( f"Parameters.py: Directory: (  >>{os.getcwd()}<< switch if not '' to >>{py_path}<<")
-            logging.debug( msg )
-            if py_path != "":
-                os.chdir( py_path )
+        #     msg         = ( f"Parameters.py: Directory: (  >>{os.getcwd()}<< switch if not '' to >>{py_path}<<")
+        #     logging.debug( msg )
+        #     if py_path != "":
+        #         os.chdir( py_path )
 
         # # so we know our os  could be "linux" or our_os == "linux2"  "darwin"....
         # self.our_os             = self.running_on.our_os
@@ -105,7 +104,7 @@ class ParmsTemp( ):
         self.logger_id              = "stuffdb"
             # id of app in logging file
 
-        # ---- file  and path names more
+        # ---- db - file  and path names more
         self.picture_browse         = "/mnt/WIN_D/PhotosRaw/2024/pixel4a/july4"
             # browsing starts from here see PictureDocument
 
@@ -135,6 +134,9 @@ class ParmsTemp( ):
         self.db_file_name      = "/tmp/ramdisk/helpdb_from_scratch.db"
         self.db_file_name      = "./data/helpdb_from_scratch.db"
         self.db_file_name      = "./data/helpdb_feb_scratch.db"
+        self.db_file_name      = "/tmp/ramdisk/target.db"
+
+
 
         self.idle_venv          = "py_12_misc"   # idle will open in this python venv
             # path leading to all docs and help

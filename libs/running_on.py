@@ -123,6 +123,27 @@ class RunningOn(  ):
         # in that case should we populate with the current dir !! probably yes
         cls.py_path            = os.path.dirname(  cls.program_py_fn  )
 
+
+        qt_version          = None
+        try:
+            import PyQt6
+            qt_version      = "python_qt6"
+        except:
+            try:
+                import PyQt5
+                qt_version  = "python_qt5"
+            except:
+                pass
+        cls.qt_version      = qt_version
+
+        qtpy_present        = False
+        try:
+            import qtpy
+            qtpy_present    = True
+        except:
+            pass
+        cls.qtpy_present    = qtpy_present
+
         #rint( f"running on for {cls.program_py_fn}  path is  {cls.py_path}" )
         # msg   = f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>running on gather info {cls}"
         #rint( msg )

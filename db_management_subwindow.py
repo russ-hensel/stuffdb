@@ -32,8 +32,6 @@ from qt_compat import TextAlignmentRole
 from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
 
 
-
-
 from PyQt.QtCore   import ( QDate, QModelIndex, Qt, QTimer, pyqtSlot,  QThread, pyqtSignal )
 
 
@@ -626,33 +624,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
         a_str   = "\n>>>>>>>>>>* DB Manatement   *<<<<<<<<<<<<"
 
 
-        # a_str   = string_util.to_columns( a_str, ["criteria_tab_index",
-        #                                    f"{self.criteria_tab_index}" ] )
-        # a_str   = string_util.to_columns( a_str, ["current_id",
-        #                                    f"{self.current_id}" ] )
-        # a_str   = string_util.to_columns( a_str, ["current_tab_index",
-        #                                    f"{self.current_tab_index}" ] )
-
-        # a_str   = string_util.to_columns( a_str, ["detail_table_id",
-        #                                    f"{self.detail_table_id}" ] )
-        # a_str   = string_util.to_columns( a_str, ["detail_table_name",
-        #                                    f"{self.detail_table_name}" ] )
-        # a_str   = string_util.to_columns( a_str, ["history_tab",
-        #                                    f"{self.history_tab}" ] )
-        # a_str   = string_util.to_columns( a_str, ["list_tab",
-        #                                    f"{self.list_tab}" ] )
-        # # a_str   = string_util.to_columns( a_str, ["mapper",
-        # #                                    f"{self.mapper}" ] )
-        # a_str   = string_util.to_columns( a_str, ["menu_action_id",
-        #                                    f"{self.menu_action_id}" ] )
-        # a_str   = string_util.to_columns( a_str, ["picture_tab",
-        #                                    f"{self.picture_tab}" ] )
-        # a_str   = string_util.to_columns( a_str, ["subwindow_name",
-        #                                    f"{self.subwindow_name}" ] )
-        # a_str   = string_util.to_columns( a_str, ["tab_folder",
-        #                                    f"{self.tab_folder}" ] )
-        # a_str   = string_util.to_columns( a_str, ["text_tab",
-        #                                     f"{self.text_tab}" ] )
 
         # b_str   = self.super().__str__( self )
         # a_str   = a_str + "\n" + b_str
@@ -1018,30 +989,33 @@ class KeyWordTab( QWidget ):
         # widget.clicked.connect( connect_to  )
         layout.addWidget( widget )
 
-
-    # -------------------------
     # -------------------------
     def rebuild_key_word( self,   ):
         """
         What it says, read
+            table name from gui
 
         """
+        ts_begin            = time.time()    # in seconds as decimal
+
         db                  = AppGlobal.qsql_db_access.db
 
-        IKW_TABLE_DICT
         kw_table_name       = self.table_widget.currentText()
         table_name          = IKW_TABLE_DICT[ kw_table_name ]
 
-
         check_fix.line_out  = self.parent_window.output_msg
-        db_check            = check_fix.DbCheck( db )
 
-        msg    = f"Rebuild {table_name = } for key words"
-        self.parent_window.output_msg(  msg, clear = True )
+        # ---- work done here
+        db_check            = check_fix.DbCheck( db )
 
         # does it run off data_dict  ??
         db_check.fix_key_word_index( base_table_name        = table_name,
                                      key_word_table_name    = kw_table_name )
+
+        delta_ts            = ( time.time() -   ts_begin )
+        msg                 = ( f"Rebuild {table_name = }"
+                                f" for key words elapsed time {delta_ts} sec" )
+        self.parent_window.output_msg(  msg, clear = True )
 
         #check_fix.check_key_words_for_dups( db, table_name )
 
@@ -1637,7 +1611,6 @@ class PictureUtilTab( QWidget ):
 
         file_out        = self.parent_window.open_file_out( "find_if_dups.txt" )
 
-        ix_not_dup      = 0
         ix_dup          = 0
 
         # a_sub_dir   = full_dir.removeprefix( parameters.PARAMETERS.picture_db_root )

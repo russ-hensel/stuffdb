@@ -136,7 +136,7 @@ import string_list_utils
 import data
 
 #import convert_db_display
-import mdi_management
+#import mdi_management
 
 EXEC_RUNNER         = None  # setup below -- do we really want to do this
 MARKER              = ">>"
@@ -2006,12 +2006,10 @@ class CQEditBase(   ):
         # prior value, prior_type -- likely already in edit
         self.prior_value            = None     # value last set from a record ot to record
                                                 # set to something valid for edit in its init
-
         # self.is_field_valid         =  not set makes all ok
         self.debug_format           = "not_set"
 
         self.cnv_str_to_str_strip   = None    # replacable function for stripping
-
 
         # next noet here as only appropriate for some edits
         # self.returnPressed.connect( self.on_return_pressed )
@@ -2372,7 +2370,6 @@ class CQEditBase(   ):
         if self.cnv_str_to_str_strip:
             data    = self.cnv_str_to_str_strip( data )
 
-
         return data
 
     #----------------------------
@@ -2384,10 +2381,7 @@ class CQEditBase(   ):
 
         final_text      = "\n".join( processed_lines )
 
-
         return final_text
-
-
 
     #----------------------------
     def cnv_str_to_int( self, data ):
@@ -2599,7 +2593,6 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         self.null_surogate          = None
             # find a value to use as null surrogate
             # can be used in interface, not sure if this should be "" or None
-
 
         # ---- set functions by default
         #a_partial           = partial( self.do_ct_value, "do_ct_value!!" )

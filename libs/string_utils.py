@@ -154,9 +154,7 @@ def begins_with_file_name( a_string, ):
 
     return False
 
-
-
-# ---- is functions -------------------------------
+# ---------------------------------
 def is_url( a_string,  ):
     """
     !! seee if moved to clip_utils
@@ -213,7 +211,7 @@ def is_filename( a_string,  ):
 
     return is_fn, test_fn
 
-
+# ------------ end is functions
 # ------------------------------
 def print_uni( a_string_ish ):
     """
@@ -222,6 +220,18 @@ def print_uni( a_string_ish ):
     """
     print(  a_string_ish.encode( 'ascii', 'ignore') )
 
+#------------------------------------
+def obj_to_str( an_object ):
+    """
+    based on object dict
+    could sort and justify into columns
+    """
+    print( f"---------for {an_object.__class__.__name__} -------------" )
+    lines       =   [ f"{key: <20} = {value!r: <50}"  for   key, value  in an_object.__dict__.items() ]
+    lines.sort( )
+    a_str       = " \n".join( lines )
+
+    return a_str
 
 # ------------------------------------------
 def eval_transform( a_string ):
@@ -337,7 +347,6 @@ def to_columns( current_str, item_list, format_list = ( "{: <30}", "{:<30}" ), i
     else:
         ret_str  = f"{current_str}\n{line_out}"
     return ret_str
-
 
 
 # -----------------------------------------
@@ -536,6 +545,7 @@ def test_num_to_string():
     # an_int  = 3.653/1_000
     # print( f"{an_int} -> {num_to_string(an_int)}")
 
+#---------------------------
 def test_column_formatter():
     """
 
@@ -557,17 +567,34 @@ def test_column_formatter():
     print( a_column_formatter )
     print( a_column_formatter.get_str() )
 
+class TestClass():
+    def __init__( self ):
+        self.aaaa = "all a's"
+        self.bbb  = "some Be gooe"
+    def __str__( self ):
+        return obj_to_str( self )
+
+def test_obj_to_str():
+    """
+
+
+    """
+    a_test_class   = TestClass( )
+    # lines       =   [ f"{key: <30} = {value!r: <30}"  for   key, value  in a_test_class.__dict__.items() ]
+
+    # lines.sort(    )
+    # a_str       = " \n".join( lines )
+    # print(a_str)
+    print( f"{str( a_test_class ) }"   )
 
 #test_column_formatter()
 # --------------------
 if __name__ == "__main__":
    test_num_to_string()
+   test_obj_to_str()
 # --------------------
 
 
-
-
-# ---- eof
 
 # ---- eof
 

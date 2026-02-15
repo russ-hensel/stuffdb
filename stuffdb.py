@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+
 # ---- tof
+# --- vs code that does not work see vs_code.py
+# SECxTION: Data Cleanup
+# TOxDO and
+# FxIXME. outline part
+# %x% percent percent
+
+
 """
 the "true" main for the stuffdb, but launch from main
 
@@ -13,7 +21,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver .085: 2026-02-10.01"
+__version__   = "Ver .086: 2026-02-14.01"
 
 # ---- imports
 import datetime
@@ -93,7 +101,8 @@ STUFFDB_CONNECTION_NAME    = "stuffdb_main_connection_name"
 
 # stuffdb.DB_CONNECTION_NAME
 # from stuffdb import DB_CONNECTION_NAME
-
+def nottof():
+    pass
 # -----------------------------
 def delete_file( file_name ):
     """

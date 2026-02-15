@@ -45,6 +45,7 @@ class Parameters( ):
     manages parameter values: use it like an ini file but it is code
     """
     # -------
+    # ---- this what you should set choose_mode ...
     def choose_mode( self ):
         """
         typically choose one mode
@@ -65,6 +66,8 @@ class Parameters( ):
 
         self.mode_new_user()
         #self.mode_data_sync()
+        #self.mode_data_sync_full_path()
+        #self.mode_ramdisk()
         #self.mode_source_db_for_copy()
         #self.mode_data_sync_b()
         #self.mode_github()
@@ -98,7 +101,22 @@ class Parameters( ):
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
             # the type of database, so far we only support SQLite
+        self.db_file_name       = "/tmp/ramdisk/target.db"
+        self.db_file_name       = "./data/new_user.db"
+
+    # -------
+    def mode_ramdisk( self ):
+        """
+
+        """
+        self.mode               = "mode_ramdisk"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+            # the type of database, so far we only support SQLite
         self.db_file_name       = "./data/python_ex.db"
+        self.db_file_name       = "/tmp/ramdisk/stuffdb.db"
+        self.db_file_name       = "/tmp/ramdisk/target.db"
 
     # -------
     def mode_from_computer_id( self ):
@@ -215,6 +233,18 @@ class Parameters( ):
 
         # /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db
         self.icon               =  "./misc/db_green_on_black.png"
+
+    # -------
+    def mode_data_sync_full_path( self ):
+        """
+        for running from othere than /stuffdb
+        """
+        self.mode               = "mode_data_sync_full_path"
+        # kinghenry
+        self.db_file_name      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db"
+
+        self.db_lock_file_name = None
+
 
     # -------
     def mode_data_sync_b( self ):
@@ -469,16 +499,21 @@ class Parameters( ):
 
         #--------------- automatic settings -----------------
         #---- running_on gathers information about you computer environment
-        self.running_on   = running_on.RunningOn
-        self.running_on.gather_data()
+        run_on   = running_on.RunningOn
+        run_on.gather_data()
 
         # some of the next all?? should be moved over to RunningOn
-        self.running_on.log_me( logger = None, logger_level = 10, print_flag = False )
+        run_on.log_me( logger = None, logger_level = 10, print_flag = False )
 
         # this is the path to the main.py program --
-        self.py_path                   = self.running_on.py_path
+        self.py_path                = run_on.py_path
 
-        self.set_default_path_here     = True
+        self.qt_version             = run_on.qt_version
+        self.qtpy_present           = run_on.qtpy_present
+
+        self.running_on             = run_on
+
+        self.set_default_path_here  = True
             # to make app location the default path in the app, Think True may always be best.
             # above may be tricky to reset, but we may have the original dir in running on
         # no easy way to override this ??
@@ -668,16 +703,18 @@ class Parameters( ):
         # ---- templates snippets a bit odd to control left margin --
         self.num_help_snippets  = 4
 
-        # ---- Python template
+        # ---- ....Python template
         self.text_snippets      = {}
         template_name           = "Python"
         template_text           = (
         """
-        >>Py -------- a_python_template --------
+        >>Py ======== a_python_template ========
 
-        print( f"a_python_template { 0 = }" )
 
-        >>end --------
+        print( f"{ 0000 = }" )
+        print( f"a_python_template { 0000 = }" )
+
+        >> ======== end ========
 
         """ )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
@@ -939,10 +976,20 @@ class Parameters( ):
 
 
         a_str   = string_utils.to_columns( a_str, ["db_port",
-                                           f"{self.db_port}" ] )
+                                            f"{self.db_port}" ] )
 
         a_str   = string_utils.to_columns( a_str, ["db_name",
-                                           f"{self.db_name}" ] )
+                                            f"{self.db_name}" ] )
+
+
+        a_str   = string_utils.to_columns( a_str, ["qt_version",
+                                            f"{self.qt_version}" ] )
+
+        a_str   = string_utils.to_columns( a_str, ["qtpy_present",
+                                            f"{self.qtpy_present}" ] )
+
+
+
 
         a_str   = string_utils.to_columns( a_str, ["logger_id", f"{self.logger_id}" ] )
         a_str   = string_utils.to_columns( a_str, ["logging_level", f"{self.logging_level}" ] )

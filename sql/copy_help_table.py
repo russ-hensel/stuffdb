@@ -17,8 +17,11 @@ speeds things up a lot
 # ---- tof
 import adjust_path
 # ---- imports
-import sqlite3
-import sys
+#import sqlite3
+#import sys
+import  time
+
+
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, QTextEdit, QLabel
 )
@@ -29,12 +32,12 @@ import traceback
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, QTextEdit, QLabel, QMessageBox
 )
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery
+#from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 
 import parameters
 import parms_temp
 import copy_help_table
-import  data_dict
+import data_dict
 
 
 # ---- end imports
@@ -496,7 +499,7 @@ def test_copy_text():
 
 
 #-----------------------------------------------------
-def test_copy_info_update_for_list():
+def test_copy_info_update_for_list( where_clause ):
     """
     table needs to exist
         /mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/sql/create_help_db.py
@@ -516,7 +519,7 @@ def test_copy_info_update_for_list():
     # where_clause            = "system = 'Linux' "
     # a_table_copier.copy_data( ref_table_name = ref_table_name, src_table_name = src_table_name, where_clause = where_clause )
 
-    where_clause            = "system = 'Python' "
+
     a_table_copier.copy_data( ref_table_name = ref_table_name, src_table_name = src_table_name, where_clause = where_clause )
 
 def test_gen():
@@ -537,12 +540,13 @@ def test_gen():
         ix_count += 1
     print( f"{ix_count = }" )
 
-# ---- if name
+# ---- if name tweak and run from here
 # --------------------
 if __name__ == "__main__":
 
     """
-    looks liek we need to run in steps but not sure which steps
+    set parameters for source
+    set pams_temp  for target
 
     befor running this run create_help_db
 
@@ -563,9 +567,45 @@ if __name__ == "__main__":
     # perhaps these are the ones that matter
     # test_copy_info()
 
+    # ----- this seems to be the real deal, 2 step + plus rebuild key words
+    #         do in order 1 then 2  may want to repeat with different selects
+    ts_begin      = time.time()
 
-    #test_copy_info_update_for_list()   # seemed ok feb 2026
-    test_copy_text()
+    # parameters may be  self.mode_data_sync_full_path()
+    # parms temp ...
+    # ---- step 1 in substeps
+
+    step_1  = True    #False
+    step_2  = True
+    if step_1:
+        system_list  = [ "Python", "Linux", "Esp32",  "HTML", "SQL", "Web",  ]
+        for i_system in system_list:
+            where_clause            = f"system = '{i_system}' "
+            test_copy_info_update_for_list( where_clause )
+
+    # if step_1:
+    #     where_clause            = "system = 'Python' "
+    #     test_copy_info_update_for_list( where_clause )   # seemed ok feb 2026
+
+    #     where_clause            = "system = 'Linux' "
+    #     test_copy_info_update_for_list( where_clause )
+
+    #     where_clause            = "system = 'Linux' "
+    #     test_copy_info_update_for_list( where_clause )
+
+    # ---- step 2
+    # no where clause for this?
+    if step_2:
+        test_copy_text()
+
+    # ---- step 3   connect app an reindex
+    #       BUT CHANGE DB FIRST
+    #           parameters may be
+    #       REMEMBER CHANGE DB CONNECT
+
+    delta_ts    = ( time.time() -   ts_begin )
+    print( f"elapsed time {delta_ts} sec")
+
 # --------------------
 
 

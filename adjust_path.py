@@ -32,7 +32,6 @@ APP_MODULE  = "/stuffdb"
 VERBOSE     = 100
 
 if VERBOSE > 20:
-
     print( "in adust_path")
     print( f"{adjust_path_file = }")
     print( f"{cwd              = }")
@@ -46,6 +45,7 @@ try:
 
     src_root   = adjust_path_dir_name[ : ix   ]
     print( f"in try {src_root = }" )
+
 except ValueError as error:
     # Access the first argument (the message)
     error_message = error.args[0]
@@ -59,12 +59,12 @@ ex_root             = f"{py3_root}/_examples"
 
 # print( f"{__file__}")
 
-adjust_path_path        = Path( adjust_path_file )
-app_dir_path            = adjust_path_path.parent
+adjust_path_path    = Path( adjust_path_file )
+app_dir_path        = adjust_path_path.parent
     # often same as ./
     # directory of the app startup like where main.py is
 
-project_dir_path        = app_dir_path.parent      # ..../_projects
+project_dir_path    = app_dir_path.parent      # ..../_projects
     # one level up where russ keeps all projects
     # probably unique to hei
 #rint( f"{hostname              = }")

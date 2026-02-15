@@ -60,50 +60,9 @@ import stuff_util_sql
 App              = None
 DB_CONNECTION    = None
 
-# #------------
-# def create_connection(   ):
-#     """
-#     Create a SQLite database connection.
-#     part of setup always use
-#     """
-#     global DB_CONNECTION
-#     if DB_CONNECTION is not None:
-#         DB_CONNECTION.close()
-#         DB_CONNECTION    = None  # or delete?
-
-#     db_file_name    = parameters.PARAMETERS.db_file_name
-#     print( f"create_connection for {db_file_name}")
-
-
-#     # if    db_file_name !=  ':memory:':
-#     #     # delete for a fresh start
-#     #     delete_db_file( db_file_name )
-
-#     # !! may need parameters particurlarry for the db type
-#     db              = QSqlDatabase.addDatabase( parameters.PARAMETERS.db_type, db_file_name )
-#     db.setDatabaseName( db_file_name )   # is this really the file name
-
-#     # next kills it ?  --- now seems ok may still be issues
-#     #self.db         = QSqlDatabase.database( "qt_example_db" )
-#     DB_CONNECTION         = db
-
-#     if not db.open():
-#         print(f"SampleDB Error: Unable to establish a database connection.{db_file_name}")
-#         print(f"may need to change to an absolute path for the db for connect to work {1}")
-#         1/0
-#         return None
-#     return db
-
-# def  end_connection_maybe(   ):
-#     global  DB_CONNECTION
-#     DB_CONNECTION.close( )
-#     DB_CONNECTION = None
-
-
 def line_out( line ):
     """ """
     print( line )
-
 
 # ------------
 def update_table_key_gen_think_in_sql_util( db, table_name, key_value   ):
@@ -139,30 +98,6 @@ def update_table_key_gen_think_in_sql_util( db, table_name, key_value   ):
     #ia_qt.q_sql_error( query.lastError() )
     db.commit()
     line_out( f"end {what}"  )
-
-#--------------
-def create_tablexxx(   db, table_name   ):
-    """
-    what it says
-    """
-    print( f"db_create create_table: {table_name}")
-
-    query       = QSqlQuery( db )
-
-    a_table     = data_dict.DATA_DICT.get_table( table_name )
-
-    sql         = a_table.to_sql_create()
-    msg         = f"{sql} "
-    print( msg )
-
-
-    query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
-
-    print( "table created, check it " )
-    db.commit()
-
-    print( "create_table done")
-
 
 
 
@@ -574,10 +509,8 @@ class DbCheck(   ):
         table_list   = [ ("stuff",      "stuff_text" ),
                          ( "people",    "people_text" ), ]
 
-
         for i_table_name_a, i_table_name_b in table_list:
              self.find_missing_ids_both_ways( i_table_name_a, i_table_name_b )
-
 
     # ------------------------
     def fix_key_word_index( self, *, base_table_name, key_word_table_name ):

@@ -42,7 +42,6 @@ gui_qt_ext.
 # ---- imports
 
 
-
 #import PyQt.QtWidgets as qtw    #  qt widgets avaoid so much import below
 
 from qt_compat import QApplication, QAction, exec_app, qt_version
@@ -52,8 +51,12 @@ from qt_compat import QCheckBox
 from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 
+
 from   PyQt.QtCore import Qt, QTimer
-from   PyQt import QtGui
+from   PyQt  import QtGui
+#from   QtGui import QCursor
+QCursor  =  QtGui.QCursor
+#from   qtpy.QtGui     import QCursor
 
 from PyQt.QtWidgets import QApplication,  QMainWindow
 from PyQt.QtWidgets import QGridLayout,   QVBoxLayout
@@ -74,7 +77,6 @@ from   app_global import AppGlobal
 # where app was started, or provide another in this dir
 # seems to work
 
-
 import logging
 
 logger          = logging.getLogger( )
@@ -89,8 +91,8 @@ LINE_EDIT_READ_ONLY = (
     "QLineEdit { "
      "   background-color: #ececec; "
      "   border: 1px solid #cccccc; "
-     "  border-radius: 4px; "
-     " padding: 4px; "
+     "   border-radius: 4px; "
+     "   padding: 4px; "
     " } "
       )
 
@@ -142,6 +144,19 @@ def maximize_gui( root_frame  ):
     #.showMinimized()
     #root_frame.update()
     #root_frame.deiconify()
+
+    #---------------------
+def move_under_mouse( widget ):
+    """
+    widget right now expected to be a window
+    perhaps this can be generalized
+    """
+    mouse_pos = QCursor.pos()
+
+    widget.move( mouse_pos )
+
+    widget.show()
+
 
 #---------------------
 def about(  controller  ):
