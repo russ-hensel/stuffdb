@@ -866,7 +866,7 @@ class StaticMap():
         #size:mid%7Ccolor:0x2e3a5c%7Clabel:1%7CAlbany%2C%20NY
 
         # my_request: https://maps.googleapis.com/maps/api/staticmap?
-        # &center=41.53993055555556, -71.00936388888888&zoom=15&key=AIzaSyAP6Vp7EvZFOf02PsnzQtR7oimSoTqtKJw&
+        # &center=41.53993055555556, -71.00936388888888&zoom=15&key=needkeyhere&
         #size=600x600
         # &marker=cornflowerblue
 
