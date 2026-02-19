@@ -21,7 +21,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver .086: 2026-02-14.01"
+__version__   = "Ver .086: 2026-02-19.02"
 
 # ---- imports
 import datetime
@@ -55,11 +55,10 @@ from PyQt.QtGui import (QIcon,
                          QKeySequence,
                          QPainter,
                          QPixmap)
+
 from PyQt.QtPrintSupport import QPrintDialog, QPrinter
 
 from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
-
-#from PyQt.QtGui import ( QAction, QActionGroup, )
 
 
 from PyQt.QtWidgets import (
@@ -119,7 +118,6 @@ def delete_file( file_name ):
         except OSError as error:
             debug_msg  = ( f"delete_file os.remove threw error on file {file_name} file probably does not exist this should be ok? {error}")
             logging.debug( debug_msg )
-
 
 # -----------------------
 class StuffApplication( QtWidgets.QApplication ):

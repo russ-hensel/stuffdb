@@ -129,6 +129,8 @@ class HelpDocument( base_document_tabs.DocumentBase ):
         self.help_filename      = "help_doc.txt"
         self.subwindow_name     = "Notes Window"
         self.add_history_to_data_manager = True
+        self.copy_record_field  = "title"       # in descendent name a field for the
+                                                # copy_record
         self._build_gui()
         self.__init_2__()
 
@@ -1120,6 +1122,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         self.title_field     = edit_field
         edit_field.is_keep_prior_enabled        = True
         edit_field.setPlaceholderText( "title" )
+        edit_field.set_custom_context_menu()
         # still validator / default func  None
         self.data_manager.add_field( edit_field, is_key_word = True )
         layout.addWidget( edit_field, columnspan = 4 )
@@ -1563,12 +1566,11 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         layout_g.addWidget( ddl_widget  )
         layout_g.addWidget( ddl_button_widget  )
 
-
  #-------------------------------------
     def current_record_to_pinned( self, ix_row ):
         """
         get detail record and put in pinned table at position
-        ix_row
+        ix_row --- looks like could be promoted
         """
         history_tab     = self.parent_window.history_tab
         history_tab.current_record_to_pinned( ix_row )
@@ -1592,7 +1594,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
     # -----------------------------
     def copy_prior_row( self, next_key ):
         """
-        !! may be dead
+        !! may be dead -- think not
         could use create default_new_row
         what it says
             this is for a new row on the window -- no save

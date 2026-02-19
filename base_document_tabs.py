@@ -24,7 +24,6 @@ import traceback
 from   functools  import partial
 
 
-
 from qt_compat import QApplication, QMainWindow, QToolBar, QAction, exec_app
 from qt_compat import DisplayRole, TextAlignmentRole, AlignCenter, WindowMaximized
 from qt_compat import NoInsert, OnManualSubmit, HeaderInteractive
@@ -46,7 +45,6 @@ from qt_compat import ItemIsSelectable, ItemIsEnabled
 
 
 from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-
 
 from PyQt import QtCore, QtWidgets
 
@@ -106,7 +104,6 @@ from PyQt.QtWidgets import (
                              QVBoxLayout,
                              QWidget)
 
-
 import wat_inspector
 from   app_global     import AppGlobal
 import data_dict
@@ -114,6 +111,7 @@ import gui_qt_ext
 import info_about
 
 import string_utils
+import string_utils   as string_util
 import text_edit_ext
 import custom_widgets as cw
 import data_manager
@@ -534,9 +532,11 @@ class DocumentBase( QMdiSubWindow ):
         self.tab_folder             = QTabWidget() # create for descendants
 
         self.add_history_to_data_manager = False   # klugey way for history
-                                                   # because of tyming need to watit
+                                                   # because of tyming need to wait
                                                    # to init_2__
 
+        self.copy_record_field      = None      # in descendent name a field for the
+                                                # copy_record
         # may want to keep at end of this init
         AppGlobal.mdi_management.register_document(  self )
         self.tab_folder.currentChanged.connect( self.on_tab_changed )
@@ -564,6 +564,7 @@ class DocumentBase( QMdiSubWindow ):
             # this is bad consider refactor
             pass
             self.detail_tab.data_manager.history_tab  = self.history_tab
+
     # --------------------------------
     def set_size_pos( self ):
         """
@@ -839,6 +840,7 @@ class DocumentBase( QMdiSubWindow ):
     # -----------------------------
     def add_copy( self,  ):
         """
+        not a full cop fro full copy see
         could use create default_new_row
         what it says
             this is for a new row on the window -- no save
@@ -862,8 +864,6 @@ class DocumentBase( QMdiSubWindow ):
         """
         self.new_record( option = "default" )
 
-
-
     #-------------------------------------
     def new_record( self, option = "default" ):
         """
@@ -873,11 +873,12 @@ class DocumentBase( QMdiSubWindow ):
         text tabs
 
         Changes state of detail and related tabs
-        see option in detail
+        see option in detail  self.detail_tab.new_record(
         args
             next_key
-            option      "default",
+            option      see "default",
                         "prior   use prior on edits
+                        "nop"
         """
         self.update_db()
         debug_msg   = ( "DocumentBase new_record first validate, then save, "
@@ -1019,7 +1020,28 @@ class DocumentBase( QMdiSubWindow ):
         self.select_record( a_id )
 
     # ---------------------------------------
-    def select_record( self, a_id ):
+    def copy_record( self, a_id,  ):
+        """
+        this is for a template copy from history, perhaps a better name later
+
+        base.copy_record( a_id )
+        """
+        self.select_record( a_id, )
+        # generate a new key -- this looks wrong
+        a_data_manager   = self.detail_tab.data_manager
+        a_data_manager.new_record( next_key = None, option = "nop" )
+        next_key    = self.detail_tab.data_manager.current_id # fetch from above
+
+
+        if  self.text_tab is not None:  # using next key from above
+            self.text_tab.new_record( next_key, option = "nop"  )
+
+        # change tab
+        self.tab_folder.setCurrentIndex( self.detail_tab_index )
+
+
+    # ---------------------------------------
+    def select_record( self, a_id,  ):
         """
         what it says, mostly focused on the detail tab
         should be promoted from other tabs
@@ -1407,6 +1429,7 @@ class DetailTabBase( QWidget ):
         logging.debug( msg )
 
         self.fetch_detail_row_by_id( a_id )
+
 
     # ------------------------
     def clear_fields( self, option ):
@@ -2376,14 +2399,12 @@ class SubTabBase( QWidget ):
         model.submitAll()
         self.db.commit()
 
-
-
 # ----------------------------------------
 class SubTabBaseOld( QWidget ):
     """
     shold probably delete fut still seems to be in use .080
     used for detail many sub tabs but some like text and picture may be special
-
+    look in album and plant
     """
     def __init__(self, parent_window ):
         """
@@ -2673,7 +2694,11 @@ class HistoryTabBase( QWidget ):
         self.set_table_height_for_rows( table, 2 )
         self.add_empty_rows_batch( table, 2 )
 
-        connect_to  =  partial( self.on_cell_clicked_new, table )
+        #self.history_table.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
+        table.setContextMenuPolicy( CustomContextMenu )  # 5 6 compat
+        table.customContextMenuRequested.connect( self.show_pinned_context_menu )
+
+        connect_to  =  partial( self.on_pinned_cell_clicked, table )
         table.cellClicked.connect( connect_to )
 
         layout.addWidget( table )
@@ -2702,16 +2727,21 @@ class HistoryTabBase( QWidget ):
         widget.clicked.connect( connect_to )
         row_layout.addWidget( widget )
 
-        # ---- history
+        # ----  history table
         table               = self.make_a_table( columns )
         self.history_table  = table
+
+        #self.history_table.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
+        table.setContextMenuPolicy( CustomContextMenu )  # 5 6 compat
+        table.customContextMenuRequested.connect( self.show_history_context_menu )
+
         table.cellClicked.connect( self.on_cell_clicked )
         layout.addWidget( table )
 
     # ---------------------------------------
-    def show_context_menu( self, pos ):
+    def show_history_context_menu( self, pos ):
         """
-         from a text edit
+        What is say, read
 
         """
         widget      = self.history_table
@@ -2721,29 +2751,63 @@ class HistoryTabBase( QWidget ):
         #     print(f"Selected row: {row}")
         # else:
         #     print("No row selected")
+        menu            = QMenu( widget )
 
-        menu        = QMenu( widget )
-
-        #
-        action  = menu.addAction("Pin as #1")
+        # ---- "Pin as #1"
+        action          = menu.addAction("Pin as #1")
         connect_to      = partial( self.history_to_pinned,
                                    ix_src_row = ix_src_row, ix_dest_row = 0 )
             # note off by one adjust or not
         action.triggered.connect( connect_to   )
         action.setEnabled( True )
 
-
-        action  = menu.addAction("Pin as #2")
+        action          = menu.addAction("Pin as #2")
         connect_to      = partial( self.history_to_pinned, ix_src_row = ix_src_row, ix_dest_row = 1 )
         action.triggered.connect( connect_to   )
         action.setEnabled( True )
         menu.addSeparator()
 
-        #  ---- clear
-        action  = menu.addAction("Clear History")
-        action.triggered.connect( self.clear   )
+        # ---- Copy as Template"
+        action          = menu.addAction("Copy as Template")
+        connect_to      = partial( self.on_cell_copy,
+                                   table    = self.history_table,
+                                   ix_row   = ix_src_row,
+                                   ix_col   = 0 )
+
+        # connect_to      = partial( self.history_to_pinned,
+        #                            ix_src_row = ix_src_row, ix_dest_row = 0 )
+            # note off by one adjust or not
+        action.triggered.connect( connect_to )
         action.setEnabled( True )
         menu.addSeparator()
+
+        # #  ---- clear
+        action          = menu.addAction("Clear History")
+        action.triggered.connect( self.clear   )
+        action.setEnabled( True )
+
+        menu.exec_(widget.mapToGlobal(pos))
+
+    # ---------------------------------------
+    def show_pinned_context_menu( self, pos ):
+        """
+        what it says, read
+
+        """
+        widget      = self.pinned_table
+
+        ix_src_row  = widget.currentRow()  # tested works
+
+        menu        = QMenu( widget )
+
+        action      = menu.addAction("Copy as Template")
+        connect_to  = partial( self.on_cell_copy,
+                                   table    = self.pinned_table,
+                                   ix_row   = ix_src_row,
+                                   ix_col   = 0 )
+
+        action.triggered.connect( connect_to )
+        action.setEnabled( True )
 
         menu.exec_(widget.mapToGlobal(pos))
 
@@ -2754,12 +2818,6 @@ class HistoryTabBase( QWidget ):
         """
         table               = QTableWidget(
                                        0, len( columns ), self )  # row column  parent
-        self.history_table  = table
-
-        #self.history_table.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
-        self.history_table.setContextMenuPolicy( CustomContextMenu )  # 5 6 compat
-
-        self.history_table.customContextMenuRequested.connect( self.show_context_menu )
 
         # ---- column header and width
         for ix_col, i_column in enumerate( columns):
@@ -2773,6 +2831,7 @@ class HistoryTabBase( QWidget ):
 
         return table
 
+    # ------------------------
     def set_table_height_for_rows(self, table, num_rows):
         """
         Set a QTableWidget's height to fit exactly the specified number of rows
@@ -2826,11 +2885,13 @@ class HistoryTabBase( QWidget ):
         return ix_found   # check the caller for -1
 
     # ----------------------------
-    def on_cell_clicked_new( self, table, ix_row, ix_col  ):
+    #def on_cell_clicked_new( self, table, ix_row, ix_col  ):
+    def on_pinned_cell_clicked( self, table, ix_row, ix_col  ):
         """
         what it says read
-        call to self.parent_window so the detail tab selects the id
-        does not use prior next but could
+            will open the item in the pinned cell in the detail tab
+            call to self.parent_window so the detail tab selects the id
+            does not use prior next but could
         """
         self.parent_window.update_db()
 
@@ -2850,6 +2911,69 @@ class HistoryTabBase( QWidget ):
         #    {self.ix_col_id}, Data: {a_id = }"
         # rint( msg )
         self.parent_window.select_record( a_id )
+
+    # ----------------------------
+    def on_cell_copy( self, table, ix_row, ix_col  ):
+        """
+        what it says read
+           why on  zz
+
+        why not any in history
+        """
+        self.parent_window.update_db()
+        item            = table.item( ix_row, self.ix_col_id  )
+        if item is None:
+            return
+
+        self.list_ix    = ix_row
+        a_id            = int( item.text() )
+
+        if a_id == "" or a_id is None:
+            return
+
+        self.parent_window.copy_record( a_id )
+        # here find the data manager and call it
+        # this is ugly zz
+        document =  self.parent_window
+        document.detail_tab.data_manager.mark_as_copy( document.copy_record_field  )
+
+
+    # ----------------------------
+    #def on_cell_clicked_new( self, table, ix_row, ix_col  ):
+    def on_pinned_cell_copy( self, ix_row, ix_col  ):
+        """
+        what it says read
+           why on  zz
+
+        why not any in history
+        """
+        self.parent_window.update_db()
+        table           = self.pinned_table
+        item            = table.item( ix_row, self.ix_col_id  )
+        if item is None:
+            # consider make it fill in current !!
+            # might do this on right click, if already populated
+            self.current_record_to_pinned( ix_row )
+            return
+
+        self.list_ix    = ix_row
+        a_id            = int( item.text() )
+
+        if a_id == "" or a_id is None:
+            return
+        # msg        = f"on_cell_clicked  Row {ix_row}, Column
+        #    {self.ix_col_id}, Data: {a_id = }"
+        # rint( msg )
+        # this is where the copy needs to happen, probably in the descendant
+        #1/0
+        #self.parent_window.select_record( a_id )
+
+        self.parent_window.copy_record( a_id )
+        # here find the data manager and call it
+        # this is ugly zz
+        document =  self.parent_window
+        document.detail_tab.data_manager.mark_as_copy( document.copy_record_field  )
+
 
     # ----------------------------
     def on_cell_clicked( self, ix_row, ix_col  ):
@@ -2966,7 +3090,7 @@ class HistoryTabBase( QWidget ):
             #ix_col          += 1
             #rint( f"base record_to_tablerecord-to_table {ix_col}, {i_col_name}" )
 
-         # ---- zz put back in
+         # ---- put back in
             pass
             item             = QTableWidgetItem( str( record.value( i_col_name ) ) )
             table.setItem( ix_row, ix_col, item   )
@@ -3073,6 +3197,32 @@ class HistoryTabBase( QWidget ):
 
         debug_msg  = (f"HistoryTabBase_delete_row_by_id No row found with id = {id_to_delete}")
         logging.log( LOG_LEVEL,  debug_msg, )
+
+
+    # --------------------------------
+    def coppie_pinnedxxx( self,   ):
+        """
+        looks like a plan never completed
+        """
+
+
+        zz
+        table_widget   = self.history_table
+
+        # Iterate through rows from bottom to top to avoid index shifting
+        for row in reversed(range(table_widget.rowCount())):
+            item = table_widget.item(row, 0)
+            if item and item.text() == str(id_to_delete):
+                debug_msg  = (f"HistoryTabBase_delete_row_by_id Deleting row {row} with id = {id_to_delete}")
+                logging.log( LOG_LEVEL,  debug_msg, )
+
+                table_widget.removeRow(row)
+                table_widget.viewport().update() # if just one row
+                return
+
+        debug_msg  = (f"HistoryTabBase_delete_row_by_id No row found with id = {id_to_delete}")
+        logging.log( LOG_LEVEL,  debug_msg, )
+
 
 # ==================================
 class TextTabBase( DetailTabBase  ):

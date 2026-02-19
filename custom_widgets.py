@@ -915,6 +915,11 @@ class TextEditExtMixin(  ):
         paste_action.setEnabled(can_paste)
         #menu.addSeparator()
 
+        # ---- date
+        paste_action = menu.addAction("Paste Date")
+        paste_action.triggered.connect( widget.paste_date )
+        paste_action.setEnabled(can_paste)
+
         # ---- "Smart Paste"
         foo_action = menu.addAction("Smart Paste")
         foo_action.triggered.connect(self.smart_paste_clipboard )
@@ -932,8 +937,6 @@ class TextEditExtMixin(  ):
         foo_action.triggered.connect( self.search_selected  )
         foo_action.setEnabled(has_selection)
 
-
-
         menu.addSeparator()
 
         # ---- submenu
@@ -943,8 +946,6 @@ class TextEditExtMixin(  ):
         # pdf_action              = submenu.addAction("Export to PDF")
         # csv_action              = submenu.addAction("Export to CSV")
         # json_action             = submenu.addAction("Export to JSON")
-
-
 
         # ---- "Max 0 Blank Lines"
         foo_action              = submenu.addAction( "Max 0 Blank Lines" )
@@ -966,8 +967,6 @@ class TextEditExtMixin(  ):
         foo                     = partial( self.process_selected,  processing_function = processing_function )
         foo_action.triggered.connect( foo )
         foo_action.setEnabled( has_selection )
-
-
 
         # ---- "Strip Trail in Sel"
         foo_action = menu.addAction("Strip Trail in Sel")
@@ -1588,7 +1587,7 @@ class TextEditExtMixin(  ):
     def shell_file( self, file_name ):
         """ """
         if platform.system() == 'Windows':
-            os.startfile(file_name)
+            os.startfile( file_name )
 
         elif platform.system() == 'Darwin':  # macOS
             subprocess.call(('open', file_name))
@@ -1603,6 +1602,16 @@ class TextEditExtMixin(  ):
         """
         text    = QApplication.clipboard().text( )
         self.insert_text_at_cursor( text )
+
+    #-----------------------------------
+    def paste_date( self, ):
+         """
+         what it says
+         inc extra spaces ??
+         """
+         dt_now     = datetime.now()
+         text       = dt_now.strftime("%Y-%m-%d") + " "
+         self.insert_text_at_cursor( text )
 
     #-----------------------------------
     def copy_all( self, ):
@@ -2544,8 +2553,6 @@ class CQEditBase(   ):
         # get_selected_key( raw_data )   --- good chance this is wrong
 
     # ---- debug ------------------------
-
-
     def __str__( self ):
         a_str   = ""
         a_str   = ">>>>>>>>>>* CQEditBase *<<<<<<<<<<<<"
@@ -2694,49 +2701,79 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         # self.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
         self.setContextMenuPolicy( CustomContextMenu)  # 5 6 compat
 
-
         self.customContextMenuRequested.connect( self.show_context_menu )
 
-    # ---------------------------------------
-    def show_context_menu( self, pos ):
-        """
-        from text edit mixin
 
-        """
+    #----------------------------
+    def show_context_menu(self, pos):
+        menu        = QMenu(self)
         widget      = self
-        menu        = QMenu( widget )
 
-        # Enable/disable actions based on context
-        #cursor = widget.textCursor()
-       # has_selection   = cursor.hasSelection()
-        #can_undo        = widget.document().isUndoAvailable()
-        #can_paste       = QApplication.clipboard().text() != ""
+        # Undo
+        undo_action = QAction("Undo", self)
+        undo_action.triggered.connect(self.undo)
+        undo_action.setEnabled(self.isUndoAvailable())
+        menu.addAction(undo_action)
 
+        # Redo
+        redo_action = QAction("Redo", self)
+        redo_action.triggered.connect(self.redo)
+        redo_action.setEnabled(self.isRedoAvailable())
+        menu.addAction(redo_action)
 
-        # cut_action.setEnabled(has_selection)
-        # copy_action.setEnabled(has_selection)
-        # paste_action.setEnabled(can_paste)
-        # foo_action.setEnabled(can_paste)
-
-        # Add standard actions
-        undo_action = menu.addAction("Undo_just_test")
-        #undo_action.triggered.connect(widget.undo)
-        undo_action.setEnabled( False )
         menu.addSeparator()
 
-    # ---------------------------------------
-    def show_context_menu_old_ng( self, pos ):
+        # Cut
+        cut_action = QAction("Cut", self)
+        cut_action.triggered.connect(self.cut)
+        cut_action.setEnabled(self.hasSelectedText() and not self.echoMode() == QLineEdit.Password)
+        menu.addAction(cut_action)
+
+        # Copy
+        copy_action = QAction("Copy", self)
+        copy_action.triggered.connect(self.copy)
+        copy_action.setEnabled(self.hasSelectedText() and not self.echoMode() == QLineEdit.Password)
+        menu.addAction(copy_action)
+
+        # Paste
+        paste_action = QAction("Paste", self)
+        paste_action.triggered.connect(self.paste)
+        paste_action.setEnabled(not self.isReadOnly() and bool(QApplication.clipboard().text()))
+        menu.addAction(paste_action)
+
+        # Delete
+        delete_action = QAction("Delete", self)
+        delete_action.triggered.connect(lambda: self.del_())
+        delete_action.setEnabled(self.hasSelectedText())
+        menu.addAction(delete_action)
+
+        menu.addSeparator()
+
+        # Select All
+        select_all_action = QAction("Select All", self)
+        select_all_action.triggered.connect(self.selectAll)
+        select_all_action.setEnabled(bool(self.text()))
+        menu.addAction(select_all_action)
+
+        # ---- date
+        paste_action = menu.addAction( "Paste Date" )
+        paste_action.triggered.connect( widget.insert_date )
+        # paste_action.setEnabled( can_paste )
+
+        # Show it
+        if qt_version == 6:  # 5 6 compat
+            menu.exec( widget.mapToGlobal(pos))
+        else:
+            menu.exec_( widget.mapToGlobal(pos))
+
+    #----------------------------
+    def insert_date( self, ):
+        """'
+        what it says
         """
-
-        chat thinks this is way to go
-        get code from text edit and model on it
-        """
-        widget      = self
-        # self.my_special_function(event) for context
-
-        # Call the base implementation (shows default context menu)
-        super( CQLineEdit, self).contextMenuEvent( event )
-
+        dt_now     = datetime.now()
+        text       = dt_now.strftime("%Y-%m-%d") + " "
+        self.insert( text  )
 
 
     # ---- crud cycle -------------------------------
@@ -3921,7 +3958,7 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         """
         always return the current time !! are we used?
         """
-        a_timestamp         = time.time( )  # zz
+        a_timestamp         = time.time( )
         set_rec_data( record, self.field_name, a_timestamp )
         return a_timestamp  # just debug or what
 

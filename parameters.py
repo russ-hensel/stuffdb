@@ -64,10 +64,10 @@ class Parameters( ):
         if you set the mode from the command line you will not
         get here"""
 
-        self.mode_new_user()
+        #self.mode_new_user()
         #self.mode_data_sync()
         #self.mode_data_sync_full_path()
-        #self.mode_ramdisk()
+        self.mode_ramdisk()
         #self.mode_source_db_for_copy()
         #self.mode_data_sync_b()
         #self.mode_github()
@@ -116,7 +116,7 @@ class Parameters( ):
             # the type of database, so far we only support SQLite
         self.db_file_name       = "./data/python_ex.db"
         self.db_file_name       = "/tmp/ramdisk/stuffdb.db"
-        self.db_file_name       = "/tmp/ramdisk/target.db"
+        self.db_file_name       = "/tmp/ramdisk/new_user.db"
 
     # -------
     def mode_from_computer_id( self ):
@@ -243,7 +243,7 @@ class Parameters( ):
         # kinghenry
         self.db_file_name      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db"
 
-        self.db_lock_file_name = None
+        self.db_lock_file_name =  "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/lock_db.txt"
 
 
     # -------
@@ -699,6 +699,9 @@ class Parameters( ):
             # think my computer works well as low as 10ms
 
         self.auto_run           = True  # run code examples -- !! what but needed
+
+
+        self.template_copy_marker = "___template_copy___"
 
         # ---- templates snippets a bit odd to control left margin --
         self.num_help_snippets  = 4

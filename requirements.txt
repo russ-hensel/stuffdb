@@ -7,42 +7,6 @@ Created on Wed Nov 12 17:00:54 2025
 """
 
 
-# ---- tof
-
-# ---- imports
-
-# ---- end imports
-
-
-#-------------------------------
-
-
-
-
-
-
-# ---- eof
-
-pytz
-    with anaconda
-
-folium
-
-    install with anaconda
-
-
-simplekml
-
-     pip install simplekml
-
-
-
-
-
-just in one line how do i install  geopy
-
-
-
 
 
 import exifread    - pip
@@ -56,16 +20,10 @@ import PIL.Image
 
 
 
-
-what is the package associated with PIL and how do i install it
-
-
 --------------- uv
 
 uv pip install exifread
 uv pip install geopy
-
-
 
 uv pip install gpxpy
 uv pip install wat-inspector

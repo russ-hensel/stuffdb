@@ -57,6 +57,12 @@ table_name   = "help_key_word"
 su.drop_table( DB, table_name )
 su.create_table(   DB, table_name   )
 
+# ---- table_name   = "help_key_word"
+table_name   = "key_gen"
+su.drop_table( DB, table_name )
+su.create_table(   DB, table_name   )
+
+
 
 # ---- clean up
 DB_CONNECTION.close()

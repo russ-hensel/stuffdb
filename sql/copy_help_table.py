@@ -53,7 +53,6 @@ class TableCopier:
         self.db_dest        = self.get_db_connection( dest_db_name, "dest_db_name" )
 
 
-
     def get_db_connection(self, db_name, connection_name):
         """
         Helper to establish a Qt SQLite connection.
@@ -578,7 +577,12 @@ if __name__ == "__main__":
     step_1  = True    #False
     step_2  = True
     if step_1:
-        system_list  = [ "Python", "Linux", "Esp32",  "HTML", "SQL", "Web",  ]
+        # untill fixed these nee to be properly cap
+        system_list  = [ "Python", "Linux", "Esp32",  "HTML",
+                         "Arduino",
+                         "SQL", "Web", "StuffDB",  ]
+
+
         for i_system in system_list:
             where_clause            = f"system = '{i_system}' "
             test_copy_info_update_for_list( where_clause )
@@ -604,7 +608,7 @@ if __name__ == "__main__":
     #       REMEMBER CHANGE DB CONNECT
 
     delta_ts    = ( time.time() -   ts_begin )
-    print( f"elapsed time {delta_ts} sec")
+    print( f"main elapsed time {delta_ts} sec")
 
 # --------------------
 

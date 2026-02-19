@@ -27,9 +27,10 @@ from PyQt.QtSql import QSqlRecord
 
 import custom_widgets
 import key_words
-import qsql_utils
+# import qsql_utils
 import info_about
 import string_utils
+from   app_global import AppGlobal
 
 logger              = logging.getLogger( )
 LOG_LEVEL           =  5 # level for more debug    higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
@@ -96,7 +97,8 @@ class DataManager(   ):
         self.model                  = model   # what kind of modeql QSqlTableModel
             # all set uup with db connect
 
-        self.next_key_function      = None   # should take table_name  self.next_key_function( self.table_name )
+        self.next_key_function      = None
+            # should take table_name  self.next_key_function( self.table_name )
             # note needed if key is generated externally
         self.table_name             = model.tableName()
 
@@ -122,6 +124,22 @@ class DataManager(   ):
 
             # check that childred do not also implement this  ?? should this be here?
         self.enable_send_topic_update    = False
+
+    # ------------------------
+    def mark_as_copy( self, field_name ):
+        """
+        should this be in data manager or back in detail_tab
+        """
+        if field_name is None:
+            print( "mark_as_copy field name is None ")
+            return
+        for i_field in self.field_list:
+            #rint( i_field.field_name )
+            if  i_field.field_name == field_name:
+                # assume for now is a line edit with insert or append method
+                break
+        marker      = AppGlobal.parameters.template_copy_marker
+        i_field.setText( f"{i_field.text()} {marker}")
 
     # -------------------------------------
     def debug_to_log( self,   ):
@@ -170,7 +188,7 @@ class DataManager(   ):
     # -------------------------------------
     def model_record_info( self,   ):
         """
-
+        a debug method
         """
         model       = self.model
         msg         = ( f"model_record_info {self.table_name = }" )
@@ -211,6 +229,8 @@ class DataManager(   ):
             next_key
             option       "default",  see clear_fields for options
                          "prior      use prior on edits
+                         nop         no clear, in effect prior on all
+        dm.new_record( next_key = None, option = "nop" )
 
         """
         msg      = ( f"DataManager new_record    {self.table_name}  should we create the record here ??")
@@ -395,12 +415,14 @@ class DataManager(   ):
                 now in Ver 63: I will delted them look in old versions if you
                 want that code
         """
-        debug_msg       = ( f"document_manager update_new_record_v3  {self.table_name  = } " )
+        debug_msg       = ( f"document_manager update_new_record_v3"
+                            f"  {self.table_name  = } " )
         logging.log( LOG_LEVEL,  debug_msg, )
 
         model   = self.model     # QSqlTableModel(
         if not self.record_state  == RECORD_NEW:
-            msg       = ( f"document_manager update_new_record_v3 bad state, return  {self.record_state  = } {self.table_name  = } ")
+            msg       = ( f"document_manager update_new_record_v3 bad state,"
+                          f" return  {self.record_state  = } {self.table_name  = } ")
             logging.error( msg )
             return
 
@@ -539,7 +561,7 @@ def delete_record_by_id(model, id_value):
             error_msg     = ( f"error text: {error.text()}")
             logging.error( error_msg )
 
-            msg         = ( f"model_submit_all error continued    " )
+            msg         = ( "model_submit_all error continued    " )
             log_msg     = info_about.INFO_ABOUT.find_info_for(
                                 model,
                                 msg         = msg,
@@ -737,12 +759,13 @@ def delete_record_by_id(model, id_value):
 
             elif option == "prior":
                 for i_field in self.field_list:
-                    pass   # debug
                     debug_msg = ( f"prior {i_field = }")
                     logging.log( LOG_LEVEL, debug_msg )
                     i_field.set_prior(  )
+            elif option == "nop":
+                 # do nothing
+                 pass
         except:
-            pass
             if option == "default":
                 for i_field in self.field_list:
                     # i_field.clear_data( to_prior = to_prior )
@@ -750,7 +773,6 @@ def delete_record_by_id(model, id_value):
 
             elif option == "prior":
                 for i_field in self.field_list:
-                    pass   # debug
                     debug_msg( f"{i_field = }")
                     logging.log( LOG_LEVEL, debug_msg )
                     i_field.set_prior(  )
@@ -807,3 +829,4 @@ def delete_record_by_id(model, id_value):
         return a_str
 
 # ---- eof
+
