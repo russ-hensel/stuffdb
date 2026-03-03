@@ -168,6 +168,7 @@ def build_it( a_data_dict_all ):
                                              col_head_text      = "Last Name",
                                              col_head_width     = 40,
                                              col_head_order     = 5,
+                                             is_topic           = True,
                                              topic_column_order = 2,
                                              form_col_span      = 4, )
 
@@ -184,6 +185,7 @@ def build_it( a_data_dict_all ):
                                              col_head_text      = "First Name",
                                              col_head_width     = 40,
                                              col_head_order     = 4,
+                                             is_topic           = True,
                                              topic_column_order = 1,
                                              form_col_span      = 4, )
 

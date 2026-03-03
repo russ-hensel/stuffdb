@@ -542,7 +542,7 @@ class StuffListTab( base_document_tabs.ListTabBase  ):
 # ----------------------------------------
 class StuffDetailTab( base_document_tabs.DetailTabBase  ):
     """
-    the document for the stuff and associated tables
+    for the stuff and associated tables
     """
     #--------------------------------------------
     def __init__(self, parent_window  ):

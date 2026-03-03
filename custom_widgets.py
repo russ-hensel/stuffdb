@@ -654,12 +654,43 @@ class IdleExe( ):
         with open( file_name, 'w' ) as a_file:    # wa will append so file should be deleted time to time w will overwrite
             a_file.writelines(f"{line}\n" if not line.endswith("\n") else line for line in sh_lines )
 
+    #--------
+    def get_venv_lines( self, venv ):
+        """
+        get the lines for the venv setup
+            this may move to module or other more central place
+        """
+        venv_setup_dict     = AppGlobal.parameters.venv_setup_dict
+        venv_lines          = venv_setup_dict.get( venv, None )
 
+        return venv_lines
+
+    #--------
     def idle_on_temp_file( self, code_lines ):
-        """ """
-        code_lines[0]   =  f"# -- {code_lines[0]}"
+        """
+        >>idle   may be setup
+        extract code lines to a file and us sh command
+        to run idle in a venv environment
+
+
         self.write_file_py( code_lines, )
         sh_lines        = [ f"conda activate {self.venv}", f"idle  {self.file_name_temp_py}" ]
+        self.write_file_sh( sh_lines )
+
+        """
+        code_lines_0        = code_lines[0]
+        code_lines[0]       = f"# -- {code_lines_0}"
+        self.write_file_py( code_lines, )
+            # py file done, need to do sh file
+
+        code_lines0_splits  = code_lines_0.split()
+        venv                = code_lines0_splits[1]
+        venv_lines          = self.get_venv_lines( venv )
+
+        # !! what to do if none
+
+        sh_lines            = venv_lines
+        sh_lines.append( f"idle {self.file_name_temp_py}")
         self.write_file_sh( sh_lines )
 
         #subprocess.run(  ["bash", self.file_name_temp_sh ] )
@@ -667,15 +698,16 @@ class IdleExe( ):
         subprocess.Popen(["bash", self.file_name_temp_sh] )
             # non blocking --- see help
 
-
-    def idle_file( self, file_name ):
+    #---------------------
+    def idle_file( self, venv, file_name ):
         """
-        open idle in a conda venv for file_name
+        open idle
 
-        think links to idle_file   filename
+        think links to  >>idle_file  venv  filename
         """
+        venv_lines      = self.get_venv_lines( venv )
 
-        sh_lines        = [ f"conda activate {self.venv}", f"idle  {file_name}" ]
+        sh_lines        = venv_lines  + [ f"idle  {file_name}" ]
         self.write_file_sh( sh_lines )
 
         # next seems to be blocking
@@ -983,7 +1015,6 @@ class TextEditExtMixin(  ):
 
         #menu.addSeparator()
 
-
         # ---- "0_sreen_dirt"
         foo_action = menu.addAction("0_sreen_dirt")
         processing_function     = partial( clip_string_utils.list_to_list_remove_dirt, screen_dirt = AppGlobal.parameters.screen_dirt )
@@ -1051,7 +1082,7 @@ class TextEditExtMixin(  ):
         return selected_text
 
     # ------------------------
-    def cmd_exec( self   ):
+    def cmd_exec( self ):
         """
         execute command parsed out of text
         probably should be refactored to use
@@ -1137,8 +1168,11 @@ class TextEditExtMixin(  ):
             self.idle_exe.idle_on_temp_file( code_lines )
 
         elif cmd == "idle_file":   # want a one line and may line
-            file_name     = cmd_args[0]
-            self.idle_exe.idle_file( file_name  )
+
+            #!! need error check here and in idle if list will be out of range
+            venv            = cmd_args[ 0 ]
+            file_name       = cmd_args[ 1 ]
+            self.idle_exe.idle_file( venv, file_name  )
             pass  # debug
 
         # ---- text
@@ -1186,7 +1220,6 @@ class TextEditExtMixin(  ):
             # logging.debug( msg )
             #breakpoint( )
 
-
             # reject if >>search not on line clicked -- will dake a bigger fix
             # if len( code_lines ) > 1:
             #     return
@@ -1199,7 +1232,7 @@ class TextEditExtMixin(  ):
                 return
 
             else:
-                self.stuffdb_app_global.mdi_management.do_db_search( cmd,  cmd_args )
+                self.stuffdb_app_global.mdi_management.do_db_search( cmd, cmd_args )
 
 
             #     # msg   = ( f"you need to implement >>search {STUFF_DB  = }  ")
@@ -2211,6 +2244,9 @@ class CQEditBase(   ):
 
         """
         # # for conditional debug
+        # if self.field_name == "dt_item":
+        #     breakpoint( )
+
         # if self.field_name == "sub_dir":
         #     breakpoint()
         #rint( "set_data_to_default_value {a_value = }" )
@@ -3752,11 +3788,17 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         out  -- out to the record
         """
         #super(   ).__init__(   )
+
+
+
         QDateEdit.__init__( self, parent  )     # mimic LineEdit try parent int there parent of None
         CQEditBase.__init__( self,
                         parent                  = parent,
                         field_name              = field_name,
-                        is_keep_prior_enabled   = False)
+                        is_keep_prior_enabled   = is_keep_prior_enabled )
+
+        # if self.field_name == "dt_item":
+        #     breakpoint( )
 
         # ---- set functions
         # a_partial           = partial( self.do_ct_value, "do_ct_value!!" )

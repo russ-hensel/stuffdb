@@ -21,17 +21,10 @@ Created on Thu Dec 25 09:21:26 2025
 # ---- tof
 
 
-# from   pathlib import Path
-# from   dataclasses import dataclass
-# from   typing import Callable
-from   functools import partial
-
-
-
+from functools import partial
 from dataclasses import dataclass
 from typing import Callable, Any, Dict, Optional
 from pathlib import Path
-
 
 
 
@@ -49,8 +42,6 @@ def file_name_has_extension( file_name, *, ext_list, invert_logic = False ):
     'extensions' should be a list/tuple of strings like ['.py', '.txt']
 
     foo    = partial( file_name_has_extension,  [".py"]  )
-
-
 
     """
     # Convert list to tuple because str.endswith() requires a tuple for multiple suffixes
@@ -102,7 +93,7 @@ def path_name_starts_with( path_name, *, prefix_list = [ "txt" ], invert_logic  
         is_true
 
 # ----------------------------
-def file_itterator_for_all( root_dir,   ):
+def file_iterator_for_all( root_dir,   ):
     """
     any file any depth
     could make variations on this with a file and or dir filter
@@ -117,9 +108,9 @@ def file_itterator_for_all( root_dir,   ):
                                 max_depth   = -1,
                                 initial_dir = root_dir )
 
-    file_itterator    = FileIterator(  config = fi_config   )
+    file_iterator    = FileIterator(  config = fi_config   )
 
-    return file_itterator
+    return file_iterator
 
 
 @dataclass
@@ -182,7 +173,7 @@ class FileIterator:
 
         file_utils.FileIterator( root_dir = "./", config = fi_config   )
 
-        for ix, i_file in enumerate( file_itterator):
+        for ix, i_file in enumerate( file_iterator):
             print( f"{ix} {i_file}" )
 
 
@@ -237,7 +228,7 @@ class FileIterator:
 
 # ---- tests
 
-def test_file_itterator():
+def test_file_iterator():
 
     """
     # --- How to use it now ---
@@ -258,11 +249,11 @@ def test_file_itterator():
         dir_ok    = my_dir_filter,
         max_depth = 2
                        )
-    file_itterator    = FileIterator( root_dir = "./", config = config   )
-    for i_file in file_itterator:
+    file_iterator    = FileIterator( root_dir = "./", config = config   )
+    for i_file in file_iterator:
         print( f"{i_file}" )
 
-def test_file_itterator_2():
+def test_file_iterator_2():
 
     """
     # --- How to use it now ---
@@ -274,7 +265,7 @@ def test_file_itterator_2():
     root_dir    = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib"
     root_dir    = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/autoexec"
 
-    print( f"test_file_itterator_2  {root_dir}")
+    print( f"test_file_iterator_2  {root_dir}")
 
     # Define your filter logic functions
     my_file_filter        = partial( file_name_has_extension,  ext_list = [ "py"] )
@@ -292,15 +283,15 @@ def test_file_itterator_2():
         initial_dir = root_dir,
         max_depth   = -1,
                        )
-    file_itterator    = FileIterator( config = config   )
-    for ix, i_file in enumerate( file_itterator ):
+    file_iterator    = FileIterator( config = config   )
+    for ix, i_file in enumerate( file_iterator ):
         print( f"    {ix} {i_file}   {i_file.is_dir() = }" )
 
 
-    print( "test_file_itterator_2 done")
+    print( "test_file_iterator_2 done")
 
 #----------------------
-def test_file_itterator_for_all():
+def test_file_iterator_for_all():
 
     """
     for all
@@ -310,15 +301,13 @@ def test_file_itterator_for_all():
     root_dir    = "./"
     root_dir    = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib"
 
-    print( f"test_file_itterator_for_all  {root_dir}")
-    file_itterator    = file_itterator_for_all(  root_dir = root_dir   )
+    print( f"test_file_iterator_for_all  {root_dir}")
+    file_iterator    = file_iterator_for_all(  root_dir = root_dir   )
 
-    for ix, i_file in enumerate( file_itterator):
+    for ix, i_file in enumerate( file_iterator):
         print( f"    {ix} {i_file}  {i_file.is_dir()}" )
 
-    print( "test_file_itterator_for_all done")
-
-
+    print( "test_file_iterator_for_all done")
 
 
 # def test():
@@ -330,7 +319,7 @@ def test_file_itterator_for_all():
 #     for f in files:
 #         print(f)
 
-
+#-------------------
 def test_has_entension( )    :
 
     ext_list    = [ "txt",  "py",  ]
@@ -383,16 +372,16 @@ if __name__ == "__main__":
     at some low level of testing thse things work
     """
     # ---- ........functions
-    #  test_has_entension()
+    test_has_entension()
     # test_file_name_starts_with()
 
-    # ---- .       itterator
+    # ---- .       iterator
 
-    #test_file_itterator()
+    #test_file_iterator()
 
-    test_file_itterator_2()
+    test_file_iterator_2()
 
-    # test_file_itterator_for_all()
+    # test_file_iterator_for_all()
 
     print( "all done")
 

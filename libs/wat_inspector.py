@@ -7,7 +7,8 @@ Purpose:
 
 
 Status:
-    draft but useful
+    in use for awhile
+    now in qtpy for compatibility
     also see help
     some todos
 
@@ -55,9 +56,10 @@ import pprint
 import subprocess
 import sys
 import traceback
-from functools import partial
-from pprint import pprint as pp
-from subprocess import PIPE, STDOUT, Popen, run
+from   functools import partial
+from   pprint import pprint as pp
+from   subprocess import PIPE, STDOUT, Popen, run
+import wat
 
 import info_about
 
@@ -67,24 +69,32 @@ import info_about
 FIF       = info_about.INFO_ABOUT.find_info_for
 
 
+#import wat   #   replace PyQt5 with qtpy
 
-#import wat
+# from qt_compat import QApplication, QAction, QActionGroup, exec_app, qt_version
 
-from qt_compat import QApplication, QAction, QActionGroup, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtWidgets import ( QApplication, QMainWindow,
+                             QPushButton, QLineEdit,
+                             QVBoxLayout,
+                             QHBoxLayout,
+                             QWidget,
+                             QAction,  QTextEdit, QMessageBox, QDialog  )
 
 
-from PyQt import QtGui
-from PyQt.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
-from PyQt.QtGui import QTextCursor, QTextDocument
+
+
+
+from qtpy import QtGui
+from qtpy.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
+from qtpy.QtGui import QTextCursor, QTextDocument
 
 # sql
-from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
 
-# from PyQt.QtGui import ( QAction, QActionGroup, )
+# from qtpy.QtGui import ( QAction, QActionGroup, )
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -474,7 +484,7 @@ widget.lineEdit().returnPressed.connect(your_function)
 
         if do_wat:
             main_text   = self.get_wat_str(  result )
-            title        = f"Eval -> {code}"
+            title       = f"Eval -> {code}"
 
         else:
             title       = f"Eval -> {code}"
@@ -728,7 +738,7 @@ widget.lineEdit().returnPressed.connect(your_function)
         new_text       = "\n".join( new_lines )
         self.display_text( f"Results filtered on {filter_text}", new_text )
 
-    #  --------
+    #----------------
     def copy_all_text( self, text_edit ):
         """
         what it says
@@ -898,8 +908,6 @@ class WatInspector(   ):
                               msg        = None ):
 
         """ """
-
-
         self.window    = WatWindow( self.app )  # is necessary ??
         # self.window.show( )
         self.window.setup_go(
@@ -907,7 +915,8 @@ class WatInspector(   ):
                                 a_globals  = a_globals,
                                 msg        = msg, )
 
-        self.app.exec_()
+        self.app.exec()    #  QApplication.exec   ()
+       # exec_app()
 
 # -----------------
 def run_display_wat():
@@ -928,7 +937,6 @@ def run_display_wat():
 
 
 
-
 # --------------------
 if __name__ == "__main__":
     #----- for running examples
@@ -936,15 +944,6 @@ if __name__ == "__main__":
 
 
 
-"""
-
-Scratch text:
-
-
--
-
-
-"""
 
 # ---- eof
 

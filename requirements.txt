@@ -7,7 +7,7 @@ Created on Wed Nov 12 17:00:54 2025
 """
 
 
-
+shifting to project_tomel, not done this is bad but butter
 
 import exifread    - pip
 #import dis
@@ -45,12 +45,40 @@ uv pip install psutil
 
 No module named 'haversine'   -- comming soon
 
+------- two steps for idle
+ uv pip install  idle
+Command 'idle' not found, but can be installed with:
+sudo apt install idle
+
+
 ------------------
 WHAT about
     import psutil
 ModuleNotFoundError: No module named 'psutil'
 
 
+#-------------------------------
 
 
 
+
+just in one line how do i install  geopy
+
+
+
+import exifread    - pip
+#import dis
+import geopy           anaconda
+import geopy.distance
+import gmplot             pip
+import haversine as hs    pip
+import PIL.ExifTags           pip install Pillow
+import PIL.Image
+
+
+
+
+what is the package associated with PIL and how do i install it
+
+
+-------------------------

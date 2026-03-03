@@ -779,54 +779,62 @@ def delete_record_by_id(model, id_value):
 
     # ------------------------------
     def __str__( self ):
-
-        a_str   = ""
-        a_str   = ">>>>>>>>>>* DataManager *<<<<<<<<<<<<"
-
-        a_str   = string_utils.to_columns( a_str, ["table_name",
-                                           f"{self.table_name}" ] )
+        """
+        lets try the universal one
 
 
-        a_str   = string_utils.to_columns( a_str, ["current_id",
-                                           f"{self.current_id}" ] )
-        a_str   = string_utils.to_columns( a_str, ["enable_send_topic_update",
-                                           f"{self.enable_send_topic_update}" ] )
-
-        # consider looping thru them
-        a_str   = string_utils.to_columns( a_str, ["field_list",
-                                           f"{self.field_list}" ] )
-
-        for i_field in self.field_list:
-            a_str   = string_utils.to_columns( a_str, ["    i_field",
-                                               f"{i_field}" ] )
-
-        a_str   = string_utils.to_columns( a_str, ["id_field",
-                                           f"{self.id_field}" ] )
-        a_str   = string_utils.to_columns( a_str, ["key_word_field_list",
-                                           f"{self.key_word_field_list}" ] )
-
-        a_str   = string_utils.to_columns( a_str, ["topic_field_list",
-                                           f"{self.topic_field_list}" ] )
+        """
+        return string_utils.obj_to_str( self )
 
 
-        a_str   = string_utils.to_columns( a_str, ["key_word_table_name",
-                                           f"{self.key_word_table_name}" ] )
-        a_str   = string_utils.to_columns( a_str, ["model",
-                                           f"{self.model}" ] )
-        a_str   = string_utils.to_columns( a_str, ["next_key_function",
-                                           f"{self.next_key_function}" ] )
-        a_str   = string_utils.to_columns( a_str, ["record_state",
-                                           f"{self.record_state}" ] )
+
+        # a_str   = ""
+        # a_str   = ">>>>>>>>>>* DataManager *<<<<<<<<<<<<"
 
         # a_str   = string_utils.to_columns( a_str, ["table_name",
         #                                    f"{self.table_name}" ] )
 
-        a_str   = string_utils.to_columns( a_str, ["current_record",
-                                           f"{self.current_record}" ] )
 
-        a_str   = string_utils.to_columns( a_str, ["key_word_obj",
-                                           f"{self.key_word_obj}" ] )
-        return a_str
+        # a_str   = string_utils.to_columns( a_str, ["current_id",
+        #                                    f"{self.current_id}" ] )
+        # a_str   = string_utils.to_columns( a_str, ["enable_send_topic_update",
+        #                                    f"{self.enable_send_topic_update}" ] )
+
+        # # consider looping thru them
+        # a_str   = string_utils.to_columns( a_str, ["field_list",
+        #                                    f"{self.field_list}" ] )
+
+        # for i_field in self.field_list:
+        #     a_str   = string_utils.to_columns( a_str, ["    i_field",
+        #                                        f"{i_field}" ] )
+
+        # a_str   = string_utils.to_columns( a_str, ["id_field",
+        #                                    f"{self.id_field}" ] )
+        # a_str   = string_utils.to_columns( a_str, ["key_word_field_list",
+        #                                    f"{self.key_word_field_list}" ] )
+
+        # a_str   = string_utils.to_columns( a_str, ["topic_field_list",
+        #                                    f"{self.topic_field_list}" ] )
+
+
+        # a_str   = string_utils.to_columns( a_str, ["key_word_table_name",
+        #                                    f"{self.key_word_table_name}" ] )
+        # a_str   = string_utils.to_columns( a_str, ["model",
+        #                                    f"{self.model}" ] )
+        # a_str   = string_utils.to_columns( a_str, ["next_key_function",
+        #                                    f"{self.next_key_function}" ] )
+        # a_str   = string_utils.to_columns( a_str, ["record_state",
+        #                                    f"{self.record_state}" ] )
+
+        # # a_str   = string_utils.to_columns( a_str, ["table_name",
+        # #                                    f"{self.table_name}" ] )
+
+        # a_str   = string_utils.to_columns( a_str, ["current_record",
+        #                                    f"{self.current_record}" ] )
+
+        # a_str   = string_utils.to_columns( a_str, ["key_word_obj",
+        #                                    f"{self.key_word_obj}" ] )
+        # return a_str
 
 # ---- eof
 

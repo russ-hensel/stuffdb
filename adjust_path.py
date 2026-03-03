@@ -29,7 +29,7 @@ adjust_path_dir_name  = str( adjust_path_dir_path )
 
 # ---- PLEASE SET/CHECK THESE
 APP_MODULE  = "/stuffdb"
-VERBOSE     = 100
+VERBOSE     = 1
 
 if VERBOSE > 20:
     print( "in adust_path")

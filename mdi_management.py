@@ -104,16 +104,23 @@ from collections import defaultdict
 counter = defaultdict(int)
 # ---- imports end
 
-logger          = logging.getLogger( )
+logger      = logging.getLogger( )
 #for custom logging level at module
-LOG_LEVEL  = 20   # higher is more
+LOG_LEVEL   = 20   # higher is more
 
 
-# ---- dict constants
-SEARCH_COMMAND_DICT                     = defaultdict( lambda: None )
-SEARCH_COMMAND_DICT["search_help"   ]   = help_document.HelpDocument
-SEARCH_COMMAND_DICT["search_stuff"  ]   = stuff_document.StuffDocument
-SEARCH_COMMAND_DICT["search_pics"   ]   = picture_document.PictureDocument
+# ---- dict constants make the search commands work
+SEARCH_COMMAND_DICT                       = defaultdict( lambda: None )
+SEARCH_COMMAND_DICT["search_help"     ]   = help_document.HelpDocument
+SEARCH_COMMAND_DICT["search_stuff"    ]   = stuff_document.StuffDocument
+SEARCH_COMMAND_DICT["search_pic"      ]   = picture_document.PictureDocument
+SEARCH_COMMAND_DICT["search_picture"  ]   = picture_document.PictureDocument
+SEARCH_COMMAND_DICT["search_album"    ]   = album_document.AlbumDocument
+SEARCH_COMMAND_DICT["search_people"   ]   = people_document.PeopleDocument
+SEARCH_COMMAND_DICT["search_plant"    ]   = plant_document.PlantDocument
+SEARCH_COMMAND_DICT["search_planting" ]   = planting_document.PlantingDocument
+
+
 
 # !! perhaps change to default
 SEARCH_CRITERIA_DICT    = defaultdict( lambda: None )

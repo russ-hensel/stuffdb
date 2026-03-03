@@ -136,6 +136,7 @@ class KeyWords(   ):
         # next not verry efficient
         if caps_split:
             a_string = a_string + " " + a_string.lower() # suppress cap split
+
         else:
             a_string = a_string.lower() # suppress cap split
 
@@ -201,8 +202,6 @@ class KeyWords(   ):
         else:
             ret  =  query.exec_()
 
-
-
         if not ret:
             error = query.lastError()
             msg   = (f"Error deleting id {table_id}: {error.text()}")
@@ -236,7 +235,7 @@ class KeyWords(   ):
         self.old_string                 = self.new_string
         self.old_key_words              = self.new_key_words
 
-        self.check_id_for_error( table_id )
+        #self.check_id_for_error( table_id )   # debug could be commented out ??
 
         self.db.commit()   # trying to get rid of wad fiel
 
@@ -302,7 +301,6 @@ class KeyWords(   ):
         for i_key_word in words:
             query.bindValue( ":id",        table_id )
             query.bindValue( ":key_word",  i_key_word )
-
 
             if qt_version == 6:  # 5 6 compat
                 ret  =  query.exec()

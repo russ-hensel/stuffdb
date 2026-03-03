@@ -129,9 +129,6 @@ CONTACT_FIELD_DICT        = None
 
 
 
-
-
-
 # def build_pccd( ):
 #     """
 #     put in some init do delay build = lazy
@@ -169,18 +166,21 @@ class PeopleDocument( base_document_tabs.DocumentBase ):
     # --------------------------------
     def get_topic( self ):
         """
-        of the detail record
-        !! make
+        of the detail record for subjects
         """
-        topic           = "people topic "
+        # fix 2026 feb
+        info   = self.detail_tab.data_manager.get_topic_string()
+        return info
 
-        record_state    = self.detail_tab.data_manager.record_state
+        # topic           = "people topic "
 
-        if record_state:
-            topic    = f"{topic} {record_state = }"
-        topic    = f"{topic} {self.detail_tab.l_name_field.text()}"
+        # record_state    = self.detail_tab.data_manager.record_state
 
-        return   topic
+        # if record_state:
+        #     topic    = f"{topic} {record_state = }"
+        # topic    = f"{topic} {self.detail_tab.l_name_field.text()}"
+
+        # return   topic
 
     # ------------------------------------------
     def _build_gui( self, ):
@@ -358,6 +358,8 @@ class PeopleCriteriaTab( base_document_tabs.CriteriaTabBase,  ):
 
         widget.addItem('l_name')
         widget.addItem('f_name')
+        widget.addItem('state')
+        widget.addItem('id')
         #widget.addItem('Title??')
 
         widget.currentIndexChanged.connect( lambda: self.criteria_changed( True ) )
@@ -380,7 +382,6 @@ class PeopleCriteriaTab( base_document_tabs.CriteriaTabBase,  ):
 
         widget.currentIndexChanged.connect( lambda: self.criteria_changed( True ) )
         grid_layout.addWidget( widget )
-
 
         debug_msg = ( "build_tab build criteria change put in as marker ")
         logging.log( LOG_LEVEL,  debug_msg, )
@@ -440,7 +441,6 @@ class PeopleCriteriaTab( base_document_tabs.CriteriaTabBase,  ):
         # column_list                     = [ "id", "id_old", "name", "descr",  "add_kw",         ]
         #column_list                     = [ "id", "id_old",   "add_kw", "f_name",  "l_name",     ]
 
-
         a_key_word_processor            = key_words.KeyWords( kw_table_name, AppGlobal.qsql_db_access.db )
         query_builder.table_name        = parent_document.detail_table_name
         query_builder.column_list       = column_list
@@ -473,12 +473,16 @@ class PeopleCriteriaTab( base_document_tabs.CriteriaTabBase,  ):
         # ---- order by
         order_by   = criteria_dict[ "order_by" ]
 
+        # or use a dict for this
+        # order_by_dict = {|"lname": "l_name DIR, f_name"}
+        # then replace DIR with slelectd direction
+
         if   order_by == "_lname":
             column_name = "_lname"
         elif order_by == "f_name":
             column_name = "f_name"
         else:   # !! might better handel this
-            column_name = "l_name"
+            column_name = order_by
 
         query_builder.add_to_order_by(    column_name, "ASC",   )
 
@@ -514,12 +518,13 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
     """
     def __init__(self, parent_window  ):
         """
-
+        the usual
         """
         super().__init__( parent_window )
 
-        self.tab_name            = "PeopleDetailTab"
-        self.key_word_table_name = "people_key_word"
+        self.tab_name                   = "PeopleDetailTab"
+        self.key_word_table_name        = "people_key_word"
+        self.enable_send_topic_update   = True
         self.post_init()
 
     # -------------------------------------
@@ -637,7 +642,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         self.f_name_field     = edit_field
         self.topic_edits.append( (edit_field, 1 ) )
         edit_field.setPlaceholderText( "f_name" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
+        self.data_manager.add_field( edit_field, is_key_word = True, is_topic = True )
         layout.addWidget( edit_field, columnspan = 4 )
 
         # ---- m_name
@@ -656,7 +661,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         self.l_name_field     = edit_field
         self.topic_edits.append( (edit_field, 2 ) )
         edit_field.setPlaceholderText( "l_name" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
+        self.data_manager.add_field( edit_field, is_key_word = True, is_topic = True )
         layout.addWidget( edit_field, columnspan = 4 )
 
         # ---- st_adr_1
@@ -689,10 +694,10 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         # ---- city
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
-                                                field_name     = "city", )
+                                                field_name     = "city"  )
         self.city_field     = edit_field
         edit_field.setPlaceholderText( "city" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
+        self.data_manager.add_field( edit_field, is_key_word = False, is_topic = True )
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- state

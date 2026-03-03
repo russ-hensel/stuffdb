@@ -405,7 +405,6 @@ class PictureDocument( base_document_tabs.DocumentBase ):
         """
         #self.detail_tab.db_update()
         if self.popup_delete_question():
-
             self.detail_tab.delete_record()
             self.text_tab.delete_record()
 
@@ -1203,6 +1202,22 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         edit_field.setPlaceholderText( "dt_enter" )
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- dt_enter started 2026 feb
+        edit_field                  = cw.CQDateEdit(
+                                                parent         = None,
+                                                field_name     = "dt_item",
+                                                is_keep_prior_enabled     = True, )
+        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_qdate
+        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_qdate
+        edit_field.edit_to_rec_cnv        = edit_field.cnv_qdate_to_int
+        edit_field.edit_to_dict_cnv       = edit_field.cnv_qdate_to_int
+        edit_field.setReadOnly( False )
+        edit_field.is_keep_prior_enabled        = True
+        edit_field.setPlaceholderText( "dt_enter" )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
 
     #---------------------------------
     def _build_fields_old( self, layout ):
@@ -2282,6 +2297,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         self.view_other       = view_other
         view_other.setSelectionBehavior(  SelectRows )
         view_other.doubleClicked.connect( self.on_row_other_dclicked )
+
         view_other.setModel( model_other)
 
         view_other.setColumnWidth(0, 100)  # Column,  pixels wide
@@ -2319,7 +2335,6 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         self.view_display       = view_display
         view_display.setSelectionBehavior( SelectRows )
 
-
         #select_view.clicked.connect( self.on_row_clicked )
         view_display.setModel(  model_display )
         # may need to be after model is set
@@ -2329,8 +2344,6 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         view_display.setColumnWidth(3, 500)
         # !! try this later
         #view_display.setColumnHidden( 0, True )
-
-
 
         right_layout.addWidget( view_display )
         info = """?? move to stuffdb
@@ -2398,7 +2411,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         self.model_ituple   = ( 3, 5 ) # to index table, table_id check with table
         model_indexer       = table_model.ModelIndexer( model, self.model_ituple  ) # to index table, table_id )
         self.model_indexer  = model_indexer
-        model.setEditStrategy(  OnManualSubmit )
+        model.setEditStrategy( OnManualSubmit )
         # model_write.setEditStrategy( QSqlTableModel.OnFieldChange )
         # model.setFilter( "stuff_id = 28 " )
         # print( "!!fix stuff_id = 28 ")
@@ -2547,7 +2560,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         # got row
         # get values
         # add
-        msg       = ( "add_selected_other -- may not do the right thin but does something ")
+        msg       = ( "add_selected_other -- may not do the right thing but does something ")
         logging.debug( msg )
 
         model_other         = self.model_other  # subject from other windows
@@ -2595,7 +2608,6 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         #      msg            = "from picture document add_selected_other_2",
         #      a_locals       = locals(),
         #      a_globals      = globals(), )
-
 
         self.select_by_id(   self.current_id  )
 
@@ -3311,7 +3323,6 @@ class PictureAlbumtSubTab(  QWidget  ):
 
         self.table_name      = "photoshow"
 
-        #self.tab_name            = "StuffEventSubTab  not needed this is a sub tab
         self.current_id      = None
 
         self._build_model()   # first so it can be used in gui

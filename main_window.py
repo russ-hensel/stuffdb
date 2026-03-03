@@ -38,7 +38,6 @@ from qt_compat import Qt, WindowMaximized
 
 
 
-
 from PyQt.QtCore import QCoreApplication
 from PyQt.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
 from PyQt.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
@@ -82,6 +81,7 @@ import parameters
 import stuffdb
 import combo_dict_ext
 import app_logging
+import gui_qt_ext
 
 # mover limited might be better !!
 from   help_document      import HelpDocument
@@ -267,16 +267,26 @@ class StuffdbMainWindow( QMainWindow ):
                                               "update_db"     )
         action.triggered.connect( connect_to )
         toolbar.addAction( action )
+        gui_qt_ext.color_toolbar_action( toolbar, action, bg_color = "green", text_color = "#FFFFFF" )
 
+        # ---- delete
         #action          = QAction( QIcon.fromTheme( "go-next" ), "Next", self )
         action          = QAction(  "Delete", self )
         connect_to      = functools.partial(  self.go_active_sub_window_func,
                                               "delete"     )
         action.triggered.connect( connect_to )
         toolbar.addAction( action )
+        gui_qt_ext.color_toolbar_action( toolbar, action, bg_color = "#FF5555", text_color = "#FFFFFF" )
 
         # ---- List nav
-        action          = QAction( QIcon.fromTheme( "go-next" ), "Next", self )
+
+        action          = QAction( QIcon.fromTheme( "go-previous" ), "⬅ Previous", self )
+        a_function      = functools.partial(  self.go_active_sub_window_func,
+                                              "prior_list_to_detail"     )
+        action.triggered.connect( a_function )
+        toolbar.addAction(action)
+
+        action          = QAction( QIcon.fromTheme( "go-next" ), "Next ➡", self )
         a_function      = functools.partial(  self.go_active_sub_window_func,
                                               "next_list_to_detail"     )
         action.triggered.connect( a_function )
@@ -289,29 +299,35 @@ class StuffdbMainWindow( QMainWindow ):
 
         # a_function      = functools.partial(  self.go_active_sub_window_func,
         #                                       help_sub_window.HelpSubWindow.class method_foo     )
-        action          = QAction( QIcon.fromTheme( "go-previous" ), "Previous", self )
+
+
+
+        # # ---- go-previous
+        # action          = QAction( QIcon.fromTheme( "go-previous" ), "⬅ Previous", self )
+        # a_function      = functools.partial(  self.go_active_sub_window_func,
+        #                                       "prior_history_to_detail"     )
+        # action.triggered.connect( a_function )
+        # toolbar.addAction(action)
+
+        action  = QAction( "<List | History >", self)
+        #action .triggered.connect( self.criteria_select )
+        toolbar.addAction( action )
+
+        # ---- history nav
+        # ---- go-previous
+        action          = QAction( QIcon.fromTheme( "go-previous" ), "⬅ Previous", self )
         a_function      = functools.partial(  self.go_active_sub_window_func,
-                                              "prior_list_to_detail"     )
+                                              "prior_history_to_detail"     )
         action.triggered.connect( a_function )
         toolbar.addAction(action)
 
-        # ---- history nav
-        action  = QAction( "<List | History >", self)
-        #action .triggered.connect( self.criteria_select )
-        toolbar.addAction(action )
-
-        action          = QAction( QIcon.fromTheme( "go-next" ), "Next", self )
+        action          = QAction( QIcon.fromTheme( "go-next" ), "Next ➡", self )
         a_function      = functools.partial(  self.go_active_sub_window_func,
                                               "next_history_to_detail"     )
         action.triggered.connect( a_function )
         toolbar.addAction(action)
 
-        # ---- go-previous
-        action          = QAction( QIcon.fromTheme( "go-previous" ), "Previous", self )
-        a_function      = functools.partial(  self.go_active_sub_window_func,
-                                              "prior_history_to_detail"     )
-        action.triggered.connect( a_function )
-        toolbar.addAction(action)
+
 
         # # ---- got_deail_updates
         # action          = QAction(  "have_updatable_edits", self )
@@ -842,6 +858,7 @@ class StuffdbMainWindow( QMainWindow ):
         this should go to the subwindow not the tab
         """
         active_window   = self.get_active_subwindow()
+
         if active_window is None:
             msg   = ( f"no active window for {a_function_name}")
             logging.error( msg )

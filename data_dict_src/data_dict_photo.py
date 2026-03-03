@@ -192,7 +192,6 @@ def build_it( a_data_dict_all ):
                                               display_type   = "timestamp",
                                               form_col_span      = 1,
 
-
                                              rec_to_edit_cnv      = "cnv_int_to_qdate",
                                              dict_to_edit_cnv     = "cnv_int_to_qdate",
                                              edit_to_rec_cnv      = "cnv_qdate_to_int",

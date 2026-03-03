@@ -48,15 +48,15 @@ class Parameters( ):
     # ---- this what you should set choose_mode ...
     def choose_mode( self ):
         """
-        typically choose one mode
+        typically choose one mode in the body of this method
             and if you wish add the plus_test_mode
             if you comment all out all modes you get the default mode which should
             run, perhaps not in the way you want
 
-                    self.db_file_name      = "/tmp/ramdisk/helpdb_from_scratch.db"
-
         """
         #breakpoint( )
+        # if you use the command line to set the mode, you will exit in the next
+        #     few lines.
         if self.mode_from_command_line():
             return
 
@@ -65,9 +65,9 @@ class Parameters( ):
         get here"""
 
         #self.mode_new_user()
-        #self.mode_data_sync()
+        self.mode_data_sync()
         #self.mode_data_sync_full_path()
-        self.mode_ramdisk()
+        #self.mode_ramdisk()
         #self.mode_source_db_for_copy()
         #self.mode_data_sync_b()
         #self.mode_github()
@@ -223,13 +223,11 @@ class Parameters( ):
         moved code to running+on_tweaks
         """
         self.mode               = "mode_data_sync"
-        self.db_file_name      = "./data_sync/stuffdb.db"      #  = "sample.db"   =  ":memory:"
+        self.db_file_name       = "./data_sync/stuffdb.db"      #  = "sample.db"   =  ":memory:"
 
-        self.db_lock_file_name = "./data_sync/lock_db.txt"     # if present then db is locked else none
+        self.db_lock_file_name  = "./data_sync/lock_db.txt"     # if present then db is locked else none
 
-        #self.db_lock_file_name = None
-        # /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db
-        #  /mnt/k_wd_pp_silver/backup_on_k/russ/0000/python00/python3/_projects/stuffdb/data/king_homer
+        self.picture_db_sub     = "/73"
 
         # /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db
         self.icon               =  "./misc/db_green_on_black.png"
@@ -245,7 +243,6 @@ class Parameters( ):
 
         self.db_lock_file_name =  "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/lock_db.txt"
 
-
     # -------
     def mode_data_sync_b( self ):
         """
@@ -256,11 +253,12 @@ class Parameters( ):
         self.db_lock_file_name = "./data_sync_b/lock_db.txt"     # if present then db is locked else none
 
         self.icon              = "./misc/db_green_on_black.png"
+        self.icon              = "./misc/db_red_on_black.png"
 
     # -------
     def mode_postgres( self ):
         """
-        moved code to running+on_tweaks
+        beginning to test postgres db here
         """
         self.mode              = "mode_postgres"
 
@@ -287,7 +285,6 @@ class Parameters( ):
         moved to running_on
         """
         self.mode               = "mode_fattony"
-
 
     # -------
     def mode_github( self ):
@@ -711,13 +708,13 @@ class Parameters( ):
         template_name           = "Python"
         template_text           = (
         """
-        >>Py ======== a_python_template ========
+        >>Py ======== a_python_template ======== <<
 
 
         print( f"{ 0000 = }" )
         print( f"a_python_template { 0000 = }" )
 
-        >> ======== end ========
+        >> ======== end ======== <<
 
         """ )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
@@ -726,7 +723,7 @@ class Parameters( ):
         template_name          = "Bash"
         template_text          = (
         """
-        >>Bash ------------ bash_template ------------
+        >>Bash ======== bash_template ======== <<
         ls -lah    /usr/bin/*.*
         pwd
         cd ~
@@ -734,7 +731,7 @@ class Parameters( ):
         cd  ../
         ls *.py
 
-        >>end ------------
+        > >======== end ======== <<
 
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
@@ -783,10 +780,10 @@ class Parameters( ):
         template_name          = "Idle"
         template_text          = (
         """
-        >>idle  -------- python_that_runs_this --------
+        >>idle  ======== python_that_runs_this ======== <<
         print( "high_their_sailor")
         print( "done")
-        >>end --------
+        >> ======== end ======== <<
 
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
@@ -798,6 +795,13 @@ class Parameters( ):
         >>idle_file   ./libs/example_file_in_libs.py
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
+
+        # ---- ..... venv setup --- shell lines to get into venv
+        self.venv_setup_dict                   = {}
+        # beware of a cd
+        self.venv_setup_dict[ "py_13_qt6" ]     =  [ "source           /home/russ/python_uv_venv/py_13_qt6/bin/activate",
+                                                     "which            python",
+                                                  ]
 
         # ---- .... "Note Header"
         template_name          = "Note Header"

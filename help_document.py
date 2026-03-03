@@ -1350,7 +1350,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
         data_manager.add_field( widget, )
 
-        # button_layout.addWidget( widget, )
+        button_layout.addWidget( widget, )
         self.stop_garbage_collect = widget
 
         # ---- >> Go
@@ -1485,6 +1485,14 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         widget          = QPushButton( label )
         widget.clicked.connect( text_edit_widget.paste_cache_text )
         button_layout.addWidget( widget, )
+
+        # ---- Copy as Template
+        label           = "Copy as\nTemplate"
+        widget          = QPushButton( label )
+        connect_to      = self.parent_window.copy_record_as_template
+        widget.clicked.connect( connect_to )
+        button_layout.addWidget( widget, )
+
 
         # # ---- search text
         # search_layout       = QHBoxLayout()

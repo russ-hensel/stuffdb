@@ -223,8 +223,18 @@ def print_uni( a_string_ish ):
 #------------------------------------
 def obj_to_str( an_object ):
     """
+    a universal   __str__()
     based on object dict
-    could sort and justify into columns
+        sort and justify into columns
+        return string_utils.obj_to_str( self )
+
+    to use
+    #--------------------------
+    # import  string_utils
+    def __str__( self ):
+        return string_utils.obj_to_str( self )
+
+
     """
     print( f"---------for {an_object.__class__.__name__} -------------" )
     lines       =   [ f"{key: <20} = {value!r: <50}"  for   key, value  in an_object.__dict__.items() ]

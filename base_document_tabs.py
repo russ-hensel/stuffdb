@@ -256,7 +256,7 @@ def fix_pic_filename( filename ):
     return filename
 
 #-----------------------------------
-def is_delete_ok(   ):
+def is_delete_ok( ):
     """
     Returns:
         is_ok
@@ -268,8 +268,41 @@ def is_delete_ok(   ):
     msg_box.setText("Delete ok?")
 
     # Adding buttons
-    choice_no  = msg_box.addButton( "No - keep data",    ActionRole )
-    choice_yes = msg_box.addButton( "Yes - delete data", ActionRole )
+    choice_no  = msg_box.addButton( "No \n keep data",    ActionRole )
+    choice_yes = msg_box.addButton( "Yes \n delete data", ActionRole )
+
+    choice_yes.setObjectName("choice_yes")  # need for ref
+    choice_no.setObjectName("choice_no")  # need for ref
+
+    msg_box.setStyleSheet("""
+        QPushButton#choice_no {
+            background-color: #28a745;    /* green */
+            color: white;
+            min-width: 80px;
+            padding: 6px;
+            border-radius: 4px;
+        }
+        QPushButton#choice_no:hover {
+            background-color: #218838;
+        }
+        QPushButton#choice_yes {
+            background-color: #dc3545;    /* red */
+            color: white;
+            min-width: 80px;
+            padding: 6px;
+            border-radius: 4px;
+        }
+        QPushButton#choice_yes:hover {
+            background-color: #c82333;
+        }
+        QPushButton#cancelButton {
+            background-color: #6c757d;    /* gray */
+            color: white;
+            min-width: 80px;
+            padding: 6px;
+            border-radius: 4px;
+        }
+    """)
 
     msg_box.setModal(True)
 
@@ -277,7 +310,6 @@ def is_delete_ok(   ):
         msg_box.exec()
     else:
         msg_box.exec_()
-
 
     is_ok           = False
     if   msg_box.clickedButton() == choice_no:
@@ -913,6 +945,7 @@ class DocumentBase( QMdiSubWindow ):
     def delete( self, ):
         """
         links to main menu bar save  ... might want to delete but look around
+        get active window function
 
         """
         if not is_delete_ok():
@@ -1004,8 +1037,8 @@ class DocumentBase( QMdiSubWindow ):
         if self.text_tab is not None:
             self.text_tab.validate()
 
-        msg     = f"Document Base   validate... done for {self.subwindow_name = }"
-        AppGlobal.logger.info( msg )
+        # msg     = f"Document Base   validate... done for {self.subwindow_name = }"
+        # AppGlobal.logger.info( msg )
         #rint( msg )
 
     # ---------------------------------------
@@ -1028,14 +1061,50 @@ class DocumentBase( QMdiSubWindow ):
         """
         self.select_record( a_id, )
         # generate a new key -- this looks wrong
-        a_data_manager   = self.detail_tab.data_manager
+        a_data_manager  = self.detail_tab.data_manager
         a_data_manager.new_record( next_key = None, option = "nop" )
-        next_key    = self.detail_tab.data_manager.current_id # fetch from above
+        next_key        = self.detail_tab.data_manager.current_id # fetch from above
 
+        # for help_document need to deal with pseodo_text_tab which is a data manager
+        pseodo_text_tab   = self.detail_tab.pseodo_text_tab
+        if pseodo_text_tab is not None:
+            text_tab_data_manager   = pseodo_text_tab  # just to make things clearer
+            text_tab_data_manager.new_record( next_key = next_key, option = "nop" )
 
+        # help_text does not have its own tab, or do we fake out
         if  self.text_tab is not None:  # using next key from above
-            self.text_tab.new_record( next_key, option = "nop"  )
+            self.text_tab.new_record( next_key = next_key, option = "nop"  )
 
+        # change tab
+        self.tab_folder.setCurrentIndex( self.detail_tab_index )
+
+
+    # ---------------------------------------
+    def copy_record_as_template( self,    ):
+        """
+        this is for a template copy from history, perhaps a better name later
+        may be able to get copy_record to do this with a_id as none
+        looks like same except for first line !!
+
+        base.copy_record( a_id )
+        """
+        # self.select_record( a_id, )   --- should be done
+        # generate a new key -- this looks wrong
+        a_data_manager  = self.detail_tab.data_manager
+        a_data_manager.new_record( next_key = None, option = "nop" )
+        next_key        = self.detail_tab.data_manager.current_id # fetch from above
+
+        # for help_document need to deal with pseodo_text_tab which is a data manager
+        pseodo_text_tab   = self.detail_tab.pseodo_text_tab
+        if pseodo_text_tab is not None:
+            text_tab_data_manager   = pseodo_text_tab  # just to make things clearer
+            text_tab_data_manager.new_record( next_key = next_key, option = "nop" )
+
+        # help_text does not have its own tab, or do we fake out
+        if  self.text_tab is not None:  # using next key from above
+            self.text_tab.new_record( next_key = next_key, option = "nop"  )
+
+        self.detail_tab.data_manager.mark_as_copy( self.copy_record_field  )  # might move to above fun and delete form other !!
         # change tab
         self.tab_folder.setCurrentIndex( self.detail_tab_index )
 
@@ -1375,7 +1444,8 @@ class DetailTabBase( QWidget ):
         self.data_manager.new_record( next_key, option = option )
 
         next_key     = self.data_manager.current_id
-        if self.pseodo_text_tab is not None:
+
+        if self.pseodo_text_tab is not None:  # believ this is just help_text table
             # self.pseodo_text_tab.clear_fields( option = "default" )
             self.pseodo_text_tab.new_record( next_key, option = option )
 
@@ -1457,7 +1527,7 @@ class DetailTabBase( QWidget ):
         called from select_record and perhaps other
         override, detail tab
         """
-        msg     = ( "send_topic_update needs fixing !! just re-enabled ")
+        msg     = ( "base_document.... send_topic_update needs fixing !! just re-enabled ")
         logging.error( msg )
         # return
         debug_msg   = ( f" DetailTabBase.send_topic_update  { self.tab_name = } "
@@ -2113,12 +2183,12 @@ class SubTabWithEditBase( QWidget ):
 
         self.model_subject  = model
         """
-        class_name  = type( self )
-        debug_msg   = ( "SubTabWithEditBase {class_name}.update_db  -- db commit here??  ")
-        logging.debug( debug_msg )
+        # class_name  = type( self )
+        # debug_msg   = ( "SubTabWithEditBase {class_name}.update_db  -- db commit here??  ")
+        # logging.debug( debug_msg )
 
-        debug_msg   = ( f"{self.current_id = } {type( self ) = }")
-        logging.debug( debug_msg )
+        # debug_msg   = ( f"base_dcoument.py update_db {self.current_id = } {type( self ) = }")
+        # logging.debug( debug_msg )
 
         model       = self.model  # QSqlTableModel
 
@@ -2762,14 +2832,15 @@ class HistoryTabBase( QWidget ):
         action.setEnabled( True )
 
         action          = menu.addAction("Pin as #2")
-        connect_to      = partial( self.history_to_pinned, ix_src_row = ix_src_row, ix_dest_row = 1 )
+        connect_to      = partial( self.history_to_pinned,
+                                   ix_src_row = ix_src_row, ix_dest_row = 1 )
         action.triggered.connect( connect_to   )
         action.setEnabled( True )
         menu.addSeparator()
 
         # ---- Copy as Template"
         action          = menu.addAction("Copy as Template")
-        connect_to      = partial( self.on_cell_copy,
+        connect_to      = partial( self.on_table_cell_copy,
                                    table    = self.history_table,
                                    ix_row   = ix_src_row,
                                    ix_col   = 0 )
@@ -2801,7 +2872,7 @@ class HistoryTabBase( QWidget ):
         menu        = QMenu( widget )
 
         action      = menu.addAction("Copy as Template")
-        connect_to  = partial( self.on_cell_copy,
+        connect_to  = partial( self.on_table_cell_copy,
                                    table    = self.pinned_table,
                                    ix_row   = ix_src_row,
                                    ix_col   = 0 )
@@ -2913,12 +2984,11 @@ class HistoryTabBase( QWidget ):
         self.parent_window.select_record( a_id )
 
     # ----------------------------
-    def on_cell_copy( self, table, ix_row, ix_col  ):
+    def on_table_cell_copy( self, table, ix_row, ix_col  ):
         """
         what it says read
            why on  zz
 
-        why not any in history
         """
         self.parent_window.update_db()
         item            = table.item( ix_row, self.ix_col_id  )
@@ -2935,44 +3005,44 @@ class HistoryTabBase( QWidget ):
         # here find the data manager and call it
         # this is ugly zz
         document =  self.parent_window
+        # perhaps should be in document not here
         document.detail_tab.data_manager.mark_as_copy( document.copy_record_field  )
 
 
-    # ----------------------------
-    #def on_cell_clicked_new( self, table, ix_row, ix_col  ):
-    def on_pinned_cell_copy( self, ix_row, ix_col  ):
-        """
-        what it says read
-           why on  zz
+    # # ----------------------------
+    # #def on_cell_clicked_new( self, table, ix_row, ix_col  ):
+    # def on_pinned_cell_copy( self, ix_row, ix_col  ):
+    #     """
+    #     what it says read
+    #        why on  zz
 
-        why not any in history
-        """
-        self.parent_window.update_db()
-        table           = self.pinned_table
-        item            = table.item( ix_row, self.ix_col_id  )
-        if item is None:
-            # consider make it fill in current !!
-            # might do this on right click, if already populated
-            self.current_record_to_pinned( ix_row )
-            return
+    #     """
+    #     self.parent_window.update_db()
+    #     table           = self.pinned_table
+    #     item            = table.item( ix_row, self.ix_col_id  )
+    #     if item is None:
+    #         # consider make it fill in current !!
+    #         # might do this on right click, if already populated
+    #         self.current_record_to_pinned( ix_row )
+    #         return
 
-        self.list_ix    = ix_row
-        a_id            = int( item.text() )
+    #     self.list_ix    = ix_row
+    #     a_id            = int( item.text() )
 
-        if a_id == "" or a_id is None:
-            return
-        # msg        = f"on_cell_clicked  Row {ix_row}, Column
-        #    {self.ix_col_id}, Data: {a_id = }"
-        # rint( msg )
-        # this is where the copy needs to happen, probably in the descendant
-        #1/0
-        #self.parent_window.select_record( a_id )
+    #     if a_id == "" or a_id is None:
+    #         return
+    #     # msg        = f"on_cell_clicked  Row {ix_row}, Column
+    #     #    {self.ix_col_id}, Data: {a_id = }"
+    #     # rint( msg )
+    #     # this is where the copy needs to happen, probably in the descendant
+    #     #1/0
+    #     #self.parent_window.select_record( a_id )
 
-        self.parent_window.copy_record( a_id )
-        # here find the data manager and call it
-        # this is ugly zz
-        document =  self.parent_window
-        document.detail_tab.data_manager.mark_as_copy( document.copy_record_field  )
+    #     self.parent_window.copy_record( a_id )
+    #     # here find the data manager and call it
+    #     # this is ugly zz
+    #     document =  self.parent_window
+    #     document.detail_tab.data_manager.mark_as_copy( document.copy_record_field  )
 
 
     # ----------------------------

@@ -136,8 +136,6 @@ class DisplayParameters( QDialog ):
 
 
 
-
-
         #  ---- buttons
         button_layout           = layout
 
