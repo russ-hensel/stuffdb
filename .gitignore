@@ -1,0 +1,19 @@
+# Spyder-specific files
+.spyproject/
+.spyderworkspace/
+
+# Python-specific files (Recursive)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment/Build files (Recommended)
+venv/
+.env/
+build/
+dist/
+*.egg-info/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
