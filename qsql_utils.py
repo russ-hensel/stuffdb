@@ -17,21 +17,21 @@ import logging
 
 # ---- QtCore
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+#from qt_compat import QApplication, QAction, exec_app, qt_version
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 
 
-from PyQt.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt.QtGui import QIntValidator, QStandardItem, QStandardItemModel
+from qtpy.QtCore import QDate, QModelIndex, Qt, QTimer, Slot
+from qtpy.QtGui import QIntValidator, QStandardItem, QStandardItemModel
 # ---- QtSql
-from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -102,7 +102,7 @@ from PyQt.QtWidgets import (
 #                              QVBoxLayout,
 #                              QWidget)
 
-
+#----------------------------------------
 class SQLError( Exception ):
     """
     raise SQLError( why, errors )
@@ -283,17 +283,6 @@ def execute_sql_may_delete_not_used( msg = None, db = None, sql = None  ):
     db.commit()
 
     print( "execute_sql done")
-
-
-# ---- tof
-
-# ---- imports
-
-# ---- end imports
-
-
-#-------------------------------
-
 
 
 

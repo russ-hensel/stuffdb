@@ -1,17 +1,23 @@
+
+
+# probably just an example or test code
+
+
+
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QMdiArea, QMdiSubWindow,
+from qtpy.QtWidgets import (QApplication, QMainWindow, QMdiArea, QMdiSubWindow,
                             QTextEdit, QVBoxLayout, QWidget, QPushButton, QHBoxLayout,
                             QLabel, QCheckBox, QSpinBox, QComboBox)
-from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QEvent
-from PyQt5.QtGui import QMouseEvent
+from qtpy.QtCore import Qt, QTimer, Signal, QEvent
+from qtpy.QtGui import QMouseEvent
 
 
 class CustomMdiSubWindow(QMdiSubWindow):
     """Custom QMdiSubWindow with enhanced title bar behavior control."""
 
     # Custom signals
-    titleDoubleClicked = pyqtSignal()
-    titleSingleClicked = pyqtSignal()
+    titleDoubleClicked = Signal()
+    titleSingleClicked = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)

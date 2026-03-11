@@ -3,18 +3,7 @@
 """
 Created on Sun Oct 27 14:23:51 2024
 
-@author: russ
-"""
-# -*- coding: utf-8 -*-
-#>>>>>python example for file read write -- and some file info
-# snipfile_ok>> python example file operations  ex_file.py
-
-"""
-What:
-
-Status:
-    draft,
-Refs:
+think used as part of import process so not part of current app
 
 """
 # ---- search --------------
@@ -38,15 +27,15 @@ from pathlib import Path
 import ex_helpers
 import ex_helpers as ex_h
 # ---- QtCore
-from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import QIntValidator, QStandardItem, QStandardItemModel
+from qtpy.QtCore import QDate, QModelIndex, Qt, QTimer, Slot
+from qtpy.QtGui import QIntValidator, QStandardItem, QStandardItemModel
 # ---- QtSql
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 # ----QtWidgets Boxs, Dialogs
 # ----QtWidgets layouts
 # ----QtWidgets big
 # ----QtWidgets
-from PyQt5.QtWidgets import (QAction,
+from qtpy.QtWidgets import (QAction,
                              QActionGroup,
                              QApplication,
                              QButtonGroup,
@@ -84,14 +73,6 @@ import db_create
 import import_utils
 
 # ---- begin pyqt from import_qt.py
-
-
-
-
-
-
-
-
 
 
 
@@ -149,7 +130,7 @@ no_found                = 0
 
 
 
-
+# --------------------------------------
 def do_update( table_id, new_id ):
     """
     this may be derived from id_old_to_new.py

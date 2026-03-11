@@ -24,23 +24,26 @@ import sqlite3
 #import  gui_qt_ext
 import   string_utils as string_util
 import   string_utils
-from app_global import AppGlobal
+from     app_global import AppGlobal
 
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import Horizontal, Vertical
+# from qt_compat import QApplication, QAction, exec_app, qt_version
 
+# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+# from qt_compat import Horizontal, Vertical
+
+
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 # ---- QtCore
-from PyQt.QtCore import (QAbstractTableModel,
+from qtpy.QtCore import (QAbstractTableModel,
                           QDate,
                           QModelIndex,
                           QRectF,
                           Qt,
                           QTimer,
-                          pyqtSlot)
-from PyQt.QtGui import (QIntValidator,
+                          Slot)
+
+from qtpy.QtGui import (QIntValidator,
                          QPainter,
                          QPixmap,
                          QStandardItem,
@@ -57,7 +60,7 @@ from PyQt.QtSql import (QSqlDatabase,
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -267,8 +270,8 @@ class TableModel( QAbstractTableModel ):
 # CheckStateRole = Qt.ItemDataRole.CheckStateRole if qt_version == 6 else Qt.CheckStateRole
 
 
-    def data(self, index, role= DisplayRole):
-        if role == DisplayRole:
+    def data(self, index, role= Qt.DisplayRole):
+        if role == Qt.DisplayRole:
             return self._data[index.row()][index.column()]
 
     # def data(self, index, role=Qt.DisplayRole):
@@ -282,7 +285,7 @@ class TableModel( QAbstractTableModel ):
     #     pass
 
 
-    def set_data_at_index(self, index, value, role= EditRole):
+    def set_data_at_index(self, index, value, role = Qt.EditRole):
         """
         index might be index = model.index(ix_row,  ix_col )  # Row 1, Column 1
 
@@ -295,18 +298,18 @@ class TableModel( QAbstractTableModel ):
             bool: DESCRIPTION.
 
         """
-        if role == EditRole:
+        if role == Qt.EditRole:
             self._data[index.row()][index.column()] = value  # Update the data
-            self.dataChanged.emit(index, index, [DisplayRole])
+            self.dataChanged.emit(index, index, [ Qt.DisplayRole ])
                 # Emit dataChanged signal for this index
             return True
         return False
 
-    def headerData(self, section, orientation, role= DisplayRole):
-        if role == DisplayRole:
-            if orientation == Horizontal:
+    def headerData(self, section, orientation, role = Qt.DisplayRole):
+        if role == Qt.DisplayRole:
+            if   orientation == Qt.Horizontal:
                 return self._headers[section]
-            elif orientation == Vertical:
+            elif orientation == Qt.Vertical:
                 return str(section + 1)
 
     # Method to add a row

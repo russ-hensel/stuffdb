@@ -26,25 +26,25 @@ import time
 from pathlib import Path
 
 from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
 from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
 from qt_compat import TextAlignmentRole
 from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
 
 
-from PyQt.QtCore   import ( QDate, QModelIndex, Qt, QTimer, pyqtSlot,  QThread, pyqtSignal )
+from qtpy.QtCore   import ( QDate, QModelIndex, Qt, QTimer, Slot,  QThread, Signal )
 
 
-
-from PyQt.QtCore   import Qt, QDateTime
-from PyQt.QtWidgets import QStyledItemDelegate
-from PyQt.QtGui import (QFont,
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtCore   import Qt, QDateTime
+from qtpy.QtWidgets import QStyledItemDelegate
+from qtpy.QtGui import ( QFont,
                          QIntValidator,
                          QStandardItem,
                          QStandardItemModel,
                          QTextCursor)
 
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
@@ -54,7 +54,7 @@ from PyQt.QtSql import (QSqlDatabase,
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QFileDialog,
                              QApplication,
                              QButtonGroup,
@@ -90,6 +90,7 @@ from PyQt.QtWidgets import (
                              QVBoxLayout,
                              QWidget)
 
+# ---- local imports
 import collections
 import parameters
 import data_dict
@@ -581,7 +582,7 @@ class DbManagementSubWindow( QMdiSubWindow ):
         event.accept()
 
     # --------------------------------
-    @pyqtSlot()
+    @Slot()
     def on_close( self ):
         """
         just debug for now
@@ -1104,7 +1105,6 @@ class KeyWordTab( QWidget ):
 
         self.parent_window.activate_output_tab()
 
-
 # ----------------------------------------
 class RecordMatchTab( QWidget ):
     """
@@ -1502,7 +1502,6 @@ class PictureUtilTab( QWidget ):
                 return False
 
         return True
-
 
     # -------------------------
     def find_if_dups( self, delete = False ):
@@ -2070,8 +2069,6 @@ class SystemSubSystemTab( QWidget ):
 
         self.build_gui()
 
-
-
     # -----------------------------
     def build_gui( self,   ):
         """
@@ -2184,7 +2181,6 @@ class SystemSubSystemTab( QWidget ):
         #connect_to          = self.get_file
         widget.clicked.connect( self.go_update_system_sub  )
         gb_layout.addWidget( widget )
-
 
     #----------------
     def go_update_system_sub( self,  ):
@@ -2465,7 +2461,6 @@ class SystemSubSystemTab( QWidget ):
         self.parent_window.activate_output_tab()
         self.parent_window.to_top_of_msg()
 
-
 # ----------------------------------------
 class OutputTab( QWidget ):
     """
@@ -2607,4 +2602,6 @@ def test_clean_path_part(   ):
 # if __name__ == "__main__":
 #     test_clean_path_part()
 
-# # ---- eof
+# ---- eof
+
+

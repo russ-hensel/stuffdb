@@ -20,17 +20,17 @@ if __name__ == "__main__":
 import logging
 import sys
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
-from qt_compat import CQDialogButtonBox
+# from qt_compat import QApplication, QAction, exec_app, qt_version
 
+# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+# from qt_compat import TextAlignmentRole
+# from qt_compat import CQDialogButtonBox
 
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 from app_global import AppGlobal
-from PyQt.QtCore import QDateTime, Qt
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtCore import QDateTime, Qt
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlDriver,
                          QSqlQuery,
                          QSqlRecord,
@@ -39,7 +39,7 @@ from PyQt.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
-from PyQt.QtWidgets import (QApplication,
+from qtpy.QtWidgets import (QApplication,
                              QComboBox,
                              QDateTimeEdit,
                              QDialog,

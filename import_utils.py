@@ -5,7 +5,7 @@
 """
 What:
 
-utilities that suppor the  imports
+utilities that support the  imports
 
 
 """
@@ -31,7 +31,6 @@ import traceback
 #import datetime
 from datetime import datetime
 from pathlib import Path
-
 
 
 

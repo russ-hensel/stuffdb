@@ -25,23 +25,23 @@ from pathlib import Path
 
 
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
+# from qt_compat import QApplication, QAction, exec_app, qt_version
+
+# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+# from qt_compat import TextAlignmentRole
 
 
-
-from PyQt.QtCore   import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt.QtCore   import Qt, QDateTime
-from PyQt.QtWidgets import QStyledItemDelegate
-from PyQt.QtGui import (QFont,
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtCore   import QDate, QModelIndex, Qt, QTimer, Slot
+from qtpy.QtCore   import Qt, QDateTime
+from qtpy.QtWidgets import QStyledItemDelegate
+from qtpy.QtGui import (QFont,
                          QIntValidator,
                          QStandardItem,
                          QStandardItemModel,
                          QTextCursor)
 
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
@@ -49,10 +49,8 @@ from PyQt.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
-# next causing problems but not even used ?
-# from PyQt.QtGui import ( QAction, QActionGroup, )   # role
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QFileDialog,
                              QApplication,
                              QButtonGroup,
@@ -107,7 +105,6 @@ import photo_ext
 #import ex_qt
 #import exec_qt
 #import mdi_management
-
 
 # ---- import end
 

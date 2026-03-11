@@ -25,33 +25,16 @@ import time
 
 from   pathlib import Path
 # from datetime import datetime
-import datetime 
+import datetime
 
 
 
 #from functools import partial
 from pathlib import Path
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
 
 
-# from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-# from qt_compat import TextAlignmentRole
-# from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
-
-
-
-# from PyQt.QtCore   import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-# from PyQt.QtCore   import Qt, QDateTime
-# from PyQt.QtWidgets import QStyledItemDelegate
-# from PyQt.QtGui import (QFont,
-#                          QIntValidator,
-#                          QStandardItem,
-#                          QStandardItemModel,
-#                          QTextCursor)
-
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
@@ -59,45 +42,8 @@ from PyQt.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
-# #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-# from PyQt.QtWidgets import (
-#                              QFileDialog,
-#                              QApplication,
-#                              QButtonGroup,
-#                              QCheckBox,
-#                              QComboBox,
-#                              QDialog,
-#                              QDateEdit,
-#                              QDockWidget,
-#                              QFileDialog,
-#                              QFrame,
-#                              QGroupBox,
-#                              QGridLayout,
-#                              QHBoxLayout,
-#                              QHeaderView,
-#                              QInputDialog,
-#                              QLabel,
-#                              QLineEdit,
-#                              QListWidget,
-#                              QMainWindow,
-#                              QMdiArea,
-#                              QMdiSubWindow,
-#                              QMenu,
-#                              QMessageBox,
-#                              QPushButton,
-#                              QSpacerItem,
-#                              QSpinBox,
-#                              QSizePolicy,
-#                              QTableView,
-#                              QTableWidget,
-#                              QTableWidgetItem,
-#                              QTabWidget,
-#                              QTextEdit,
-#                              QVBoxLayout,
-#                              QWidget)
 
- 
 
 logger          = logging.getLogger( )
 
@@ -127,8 +73,7 @@ from app_global     import AppGlobal
 
 # ---- import end
 
-  
- 
+
 
 def  clean_path_partxxx( path_part ):
     """
@@ -148,54 +93,50 @@ def  clean_path_partxxx( path_part ):
 
     return path_part
 
- 
-
-# 
 
 # ----------------------------------------
 class DbFileInfo(   ):
-    
+
     #---------------------
     def __init__( self, id, sub_dir, file_name ):
-        
-        """ 
+
+        """
         Pretty much a dict or dataclass, convert??
         could add exif data ??
         """
-        
+
         # int in db
-        self.id                 = id    
-        
-        # strings                 
+        self.id                 = id
+
+        # strings
         self.sub_dir            = sub_dir
         self.file_name          = file_name
-         
-        # ---- use @property 
+
+        # ---- use @property
         self._file_size         = None
-        self._file_datetime     = None   # see prop to see which kind 
+        self._file_datetime     = None   # see prop to see which kind
         self._file_path         = None
-        self._full_file_name    = None 
-        self._file_timestamp    = None 
+        self._full_file_name    = None
+        self._file_timestamp    = None
         self._file_exists       = None
-        
- 
+
         self.dt_tolerance       = AppGlobal.parameters.dt_tolerance
-  
+
         self.size_tolerance     = AppGlobal.parameters.size_tolerance
- 
-    #------------------------------  
-    @property   
+
+    #------------------------------
+    @property
     def full_file_name( self ):
-        
+
         """
         should we store ?
         we could be overclening ??
-        
+
         other places this may be used
-            picture something of other 
+            picture something of other
             # ------------------------
             picture detail tab: get_picture_file_name(self):
-             
+
                 full_file_name  = base_document_tabs.build_pic_filename( file_name = self.file_field.text(), sub_dir = self.sub_dir_field.text() )
                 --->
                 #-------------------------
@@ -203,214 +144,209 @@ class DbFileInfo(   ):
         """
         if self._full_file_name is not None:
             return self._full_file_name
-        
+
         if ( self.sub_dir is None ) or ( self.file_name is None ):
             return None
-        
+
         root            = AppGlobal.parameters.picture_db_root
-        
+
         file_name       = self.file_name.strip()
         if file_name == "":
             return None
-        
+
         sub_dir         = self.sub_dir.strip()
-    
+
         full_file_name  = f"{root}/{sub_dir}/{file_name}".replace( "\\", "/" )
         full_file_name  = full_file_name.replace( "///", "/" )
             # just in case we have dups !! this is crude
         full_file_name  = full_file_name.replace( "//", "/" )
             # just in case we have dups
-    
-        return full_file_name        
-    
+
+        return full_file_name
+
     #------------------------------
     def get_stats( self ):
-        
-        """  
+
+        """
         and path
-        """    
+        """
         full_file_name   = self.full_file_name
         if full_file_name is None:
             # no can do
             self._file_exists = False
             return None
-        
- 
+
+
         file_path           = Path( full_file_name )
         self._file_path     = file_path
 
         if not file_path.exists():
             self._file_exists = False
             return None
-        
+
         self._file_exists = True
         stats = file_path.stat()
             # could store and access ??
-     
-        size                = stats.st_size 
-        self._file_size          = size 
-   
+
+        size                = stats.st_size
+        self._file_size          = size
+
         file_timestamp        = stats.st_ctime
-        self._file_timestamp  = file_timestamp 
-        
-      
-        self._file_datetime   = datetime.datetime.fromtimestamp( file_timestamp ) 
-        
-        
-    #------------------------------  
-    @property      
+        self._file_timestamp  = file_timestamp
+
+        self._file_datetime   = datetime.datetime.fromtimestamp( file_timestamp )
+
+    #------------------------------
+    @property
     def file_size( self ):
-        
-        """    
+
+        """
         """
         if self._file_size is None:
             self.get_stats()
-            
-        return self._file_size       
-            
-    #------------------------------  
-    @property   
+
+        return self._file_size
+
+    #------------------------------
+    @property
     def file_timestamp( self ):
-        
-        """    
-        """        
+
+        """
+        """
         if self._file_timestamp is None:
             self.get_stats()
 
-        return self._file_timestamp     
+        return self._file_timestamp
 
-    #------------------------------  
-    @property   
+    #------------------------------
+    @property
     def file_datetime( self ):
-        
-        """    
-        """        
+
+        """
+        """
         if self._file_datetime is None:
             self.get_stats()
 
-        return self._file_datetime     
+        return self._file_datetime
 
-    #------------------------------  
-    @property   
+    #------------------------------
+    @property
     def file_exists( self ):
-        
-        """    
-        """        
+
+        """
+        """
         if self._file_exists is None:
             self.get_stats()
 
-        return self._file_exists  
+        return self._file_exists
 
-        
- 
     # -------------------------
     def is_match( self, file_name,    ):
-        """ 
+        """
         need tollarances from parameters
         return
             true False None
-            msg  -- informal 
-            
-            
+            msg  -- informal
+
+
             self.dt_tolerance       = datetime.timedelta(  days=7, hours= 0,   )
-     
-            self.size_tolerance     = 1_000   # bytes 
-            
+
+            self.size_tolerance     = 1_000   # bytes
+
         """
-        # these should be positive 
-        
-        db_file_info      = self 
- 
+        # these should be positive
+
+        db_file_info      = self
+
         if file_name is None:
             # no can do
             return None, "file name is none"
-        
- 
+
+
         file_path           = Path( file_name )
         self._file_path     = file_path
 
         if not file_path.exists():
             return None,  "file does not exist"
-       
+
         full_file_name = str( file_path.resolve() )
-        file_path_name = file_path.name 
-        
+        file_path_name = file_path.name
+
         if not file_path_name == db_file_info.file_name:
             return False, "failed name match"
-        
+
         stats = file_path.stat()
-           
-        size                    = stats.st_size 
-        self._file_size         = size 
-   
+
+        size                    = stats.st_size
+        self._file_size         = size
+
         file_timestamp          = stats.st_ctime
-        self._file_timestamp    = file_timestamp 
-        
-        
+        self._file_timestamp    = file_timestamp
+
+
         file_datetime           = datetime.datetime.fromtimestamp( file_timestamp )
-        self._file_datetime     = file_datetime     
-        
+        self._file_datetime     = file_datetime
+
         delta                    = db_file_info.file_size - size
         if delta < 0:
             delta = - delta
-            
+
         if delta > self.size_tolerance:
             return False, "size tollerance exceeded"
-        
+
         delta                    = db_file_info.file_datetime - file_datetime
         if delta < datetime.timedelta(0):
             delta = - delta
-            
+
         if delta > self.dt_tolerance:
             return False, "datetime tollerance exceeded"
-        
+
         return True, ""
-            
+
 # ----------------------------------------
 class DbDupFiles(   ):
     """
     deal with duplaicat file issues
-    be able to search db for a file name and 
+    be able to search db for a file name and
     compare to some other file
-    be able to be called again and again 
-        perhaps should be functions 
+    be able to be called again and again
+        perhaps should be functions
     """
     def __init__(self,   ):
         """
-        we need a db connection 
+        we need a db connection
         and parametes to find the actual files
         """
         self.db_con       = AppGlobal.qsql_db_access.db
         self.parameters   = AppGlobal.parameters
-  
-    
+
+
         # query       = QSqlQuery(db)
         #sql         =   ( "SELECT id,  sub_dir, file  FROM photo "
                          # " WHERE  file = :file_path_name " )
 
-  
     # -------------------------
     def find_if_dups( self, a_file_name  ):
         """
         return a list of all dups
-            what about size and date 
-            
-        return 
+            what about size and date
+
+        return
                 [] if fails
-                itterable of potential dups 
+                itterable of potential dups
         """
         # perhaps resolve the guy as a first step
-        
-      
+
+
         # db          = AppGlobal.qsql_db_access.db
         # query       = QSqlQuery(db)
         # sql         =   ( "SELECT id,  sub_dir, file  FROM photo "
         #                  " WHERE  file = :file_path_name " )
-       
+
         file_path      = Path( a_file_name )
         full_file_name = str( file_path.resolve() )
         file_path_name = file_path.name
- 
+
         query       = QSqlQuery( self.db_con )
         sql         =   ( "SELECT id,  sub_dir, file  FROM photo "
                          " WHERE  file = :file_path_name " )
@@ -436,7 +372,7 @@ class DbDupFiles(   ):
             a_db_file_info      = DbFileInfo( a_id, sub_dir, file)
             matching_files.append( a_db_file_info )
 
-     
+
         return matching_files
 
 
@@ -730,5 +666,8 @@ class DbDupFiles(   ):
             self.parent_window.output_to_file( msg )
         return
 
-   
+
 # ---- eof
+
+
+

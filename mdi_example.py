@@ -1,3 +1,7 @@
+
+
+
+
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QMdiArea, QMdiSubWindow,
                             QTextEdit, QVBoxLayout, QWidget, QPushButton, QHBoxLayout,

@@ -21,7 +21,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver .086: 2026-03-03.02"
+__version__   = "Ver .086: 2026-03-06.02"
 
 # ---- imports
 import datetime
@@ -33,22 +33,23 @@ import sys
 import time
 import traceback
 
-from qt_compat      import QApplication, QAction, QActionGroup, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from   qtpy.QtCore import ( QTimer, QDateTime,  Qt,   )
+
+from   qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 
-from PyQt import QtWidgets, uic
-from PyQt.QtCore import (PYQT_VERSION_STR,
-                          QT_VERSION_STR,
+from qtpy import QtWidgets, uic
+from qtpy.QtCore import ( PYQT_VERSION_STR,
+
                           QFile,
                           QFileInfo,
                           QSettings,
                           Qt,
                           QTimer,
                           QVariant)
-from PyQt.QtCore import pyqtSignal as Signal
-from PyQt.QtCore import pyqtSlot
-from PyQt.QtGui import (QIcon,
+#from qtpy.QtCore import pyqtSignal as Signal
+# from qtpy.QtCore import pyqtSlot
+from qtpy.QtGui import ( QIcon,
                          QImage,
                          QImageReader,
                          QImageWriter,
@@ -56,12 +57,12 @@ from PyQt.QtGui import (QIcon,
                          QPainter,
                          QPixmap)
 
-from PyQt.QtPrintSupport import QPrintDialog, QPrinter
+from qtpy.QtPrintSupport import QPrintDialog, QPrinter
 
-from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QApplication,
                              QDockWidget,
                              QFileDialog,
@@ -102,6 +103,7 @@ STUFFDB_CONNECTION_NAME    = "stuffdb_main_connection_name"
 # from stuffdb import DB_CONNECTION_NAME
 def nottof():
     pass
+
 # -----------------------------
 def delete_file( file_name ):
     """
@@ -224,7 +226,7 @@ class App( ):
 
         QTimer.singleShot(0, self.parameters.startup_function  )
         #self.q_app.exec_()   # perhaps move to run method
-        exec_app()
+        QApplication.exec()
 
     # -------------------------
     def assign_icon( self,  ):

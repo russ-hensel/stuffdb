@@ -38,15 +38,15 @@ import sqlite3
 import ex_helpers
 #import ia_qt
 # ---- QtCore
-from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import QIntValidator, QStandardItem, QStandardItemModel
+from qtpy.QtCore import QDate, QModelIndex, Qt, QTimer, Slot
+from qtpy.QtGui import QIntValidator, QStandardItem, QStandardItemModel
 # ---- QtSql
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 # ----QtWidgets Boxs, Dialogs
 # ----QtWidgets layouts
 # ----QtWidgets big
 # ----QtWidgets
-from PyQt5.QtWidgets import (QAction,
+from qtpy.QtWidgets import ( QAction,
                              QActionGroup,
                              QApplication,
                              QButtonGroup,
@@ -81,16 +81,6 @@ import adjust_path
 import code_gen
 import data_dict
 
-# ---- begin pyqt from import_qt.py
-
-
-
-
-
-
-
-
-
 
 
 
@@ -98,7 +88,6 @@ DB_CONNECTION    = None
 
 DB_FILE_NAME     = "./data/appdb.db"  # normally used for run manual
 DB_FILE_NAME     = "/tmp/ramdisk/sept_26.db"
-
 
 
 print( DB_FILE_NAME )
@@ -542,3 +531,4 @@ if __name__ == "__main__":
     print( "ran manually -------------------------------------------------")
 
 
+# ---- eof

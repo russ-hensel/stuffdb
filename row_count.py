@@ -21,7 +21,7 @@ Created on Sat Jul  5 08:28:17 2025
 
 
 
-# ---- eof
+
 
 
 
@@ -262,3 +262,7 @@ from pb
 23 	"f_stop"        		numeric(5,2) NULL,
 24 	"shutter"       		integer NULL,
 25 	"copyright"     		varchar(50) NULL,
+
+
+# ---- eof
+

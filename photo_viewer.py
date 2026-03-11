@@ -12,19 +12,20 @@ photo_viewer.PhotoViewer()
 # --------------------
 if __name__ == "__main__":
     import main
-    main.main()
 # --------------------
 
-import sys
-from PyQt5.QtWidgets import ( QApplication, QMainWindow,
- QGraphicsView, QGraphicsScene, QGraphicsPixmapItem,
- QVBoxLayout, QWidget, QPushButton, QDockWidget
- )
-from PyQt5.QtGui import QPixmap, QPainter
-from PyQt5.QtCore import Qt, QRectF
+#import sys
+from qtpy.QtWidgets import ( QApplication, QMainWindow,
+                                QGraphicsView, QGraphicsScene, QGraphicsPixmapItem,
+                                QVBoxLayout, QWidget, QPushButton, QDockWidget
+                                )
+
+from qtpy.QtGui import QPixmap, QPainter
+
+from qtpy.QtCore import Qt, QRectF
 
 # ----QtWidgets
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QWidget,
     QPushButton,
     QAction,
@@ -46,21 +47,21 @@ from PyQt5.QtWidgets import (
     QButtonGroup,
     )
 
-
-
+# ------------------------------------------------
 class PhotoViewer( QGraphicsView ):
+
+    #--------------------------
     def __init__(self, parent=None):
-        super(PhotoViewer, self).__init__(parent)
-        self.scene = QGraphicsScene(self)
+        super(PhotoViewer, self).__init__( parent )
+        self.scene              = QGraphicsScene(self)
         self.setScene(self.scene)
-        self.pixmap_item = QGraphicsPixmapItem()
+        self.pixmap_item        = QGraphicsPixmapItem()
         self.scene.addItem(self.pixmap_item)
 
-        self.setRenderHint(QPainter.Antialiasing)
-        self.setRenderHint(QPainter.SmoothPixmapTransform)
-        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-        self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
-
+        self.setRenderHint( QPainter.Antialiasing )
+        self.setRenderHint( QPainter.SmoothPixmapTransform )
+        self.setTransformationAnchor( QGraphicsView.AnchorUnderMouse )
+        self.setResizeAnchor( QGraphicsView.AnchorUnderMouse )
 
     # -----------------------------
     def display_file( self,  file_name ):
@@ -147,3 +148,9 @@ class PhotoViewer( QGraphicsView ):
             self.photo_1()
         elif action == photo_2_action:
             self.photo_2()
+
+
+
+# ---- eof
+
+

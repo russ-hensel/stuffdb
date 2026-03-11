@@ -4,8 +4,8 @@
 
 Index the key words for all of a table
 
-    deletes all the old entries
-    2026-03-07 convert to qtpy
+deletes all the old entries
+
 
 
 """
@@ -13,20 +13,22 @@ Index the key words for all of a table
 import logging
 
 
-from qtpy import QtGui
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+from qt_compat import TextAlignmentRole
 
 
 
-from qtpy        import QtGui
-
-from qtpy.QtCore import (QDate,
+from PyQt import QtGui
+from PyQt.QtCore import (QDate,
                           QModelIndex,
                           QSize,
                           QSortFilterProxyModel,
                           Qt,
                           QTimer)
-
-from qtpy.QtSql import (QSqlDatabase,
+# sql
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
@@ -36,8 +38,8 @@ from qtpy.QtSql import (QSqlDatabase,
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from qtpy.QtWidgets import ( QAbstractItemView,
-                             QAction,
+from PyQt.QtWidgets import (QAbstractItemView,
+
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -63,13 +65,12 @@ from qtpy.QtWidgets import ( QAbstractItemView,
                              QSpinBox,
                              QStyledItemDelegate,
                              QTableView,
-                             QToolBar,
                              QTableWidget,
                              QTableWidgetItem,
                              QTabWidget,
                              QTextEdit,
                              QVBoxLayout,
-                             QWidget )
+                             QWidget)
 
 from collections import defaultdict
 
@@ -243,6 +244,8 @@ class KeyWordIndexer(   ):
             key_words
             FROM    tabs """
 
+
+
         else:
             print( f"not set up for {table_name = }")
             1/0
@@ -328,5 +331,3 @@ if __name__ == "__main__":
     print( "running manually ---------- disconnect other stuff please  ---------")
 
 # ---- eof -----------------------------------------
-
-

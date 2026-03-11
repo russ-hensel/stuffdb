@@ -19,14 +19,9 @@ think should and do init in the main window
 import weakref
 
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
-
 
 # ---- QtSql
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
@@ -34,10 +29,12 @@ from PyQt.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 import logging
 import string_utils as string_util
 import string_utils
+
 logger          = logging.getLogger( )
 
 # combo_dict_ext.STUFF_COMBO_DICT_EXT
@@ -234,7 +231,7 @@ class  PlantComboDictExt( BaseComboDictExt ):
         Return
             mutates the dict and the widgets
         """
-        query       = QSqlQuery(  self.db )
+        query       = QSqlQuery( self.db )
         sql         = f"SELECT name, latin_name FROM plant where plant.id = {a_id}"
         query.prepare( sql )
         query.bindValue(":a_id", a_id )  # Bind the parameter

@@ -26,8 +26,6 @@ def function_0( x ):
     return tot
 
 
-
-
 #-------------------------------
 
 class TestClass(  ):

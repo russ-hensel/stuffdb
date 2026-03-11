@@ -9,19 +9,15 @@ this code is not part of the wat_inspector but belongs in stuffdb
 # --------------------
 if __name__ == "__main__":
     import main
-
-    #main.main()
 # --------------------
 
 
 # ---- imports
-
 import datetime
 import logging
-# import collections
 import sqlite3 as lite
 import time
-#from tkinter import messagebox
+
 
 # ------- local imports
 # from   app_global import AppGlobal
@@ -31,7 +27,7 @@ import time
 #import pseudo_column
 #import sql_writers
 import string_utils  as string_util
-from app_global import AppGlobal
+from   app_global import AppGlobal
 
 
 # ----------------------------------------

@@ -10,31 +10,30 @@ Created on Sat Jun 29 10:01:46 2024
 # --------------------
 if __name__ == "__main__":
     import main
-    main.main()
 # --------------------
 
 
 # ---- begin pyqt from import_qt.py
-from PyQt5.QtGui import (
+from qtpy.QtGui import (
     QIntValidator,
     )
 
-from PyQt5.QtGui import (
+from qtpy.QtGui import (
     QStandardItemModel,
     QStandardItem,
                         )
 # ---- QtCore
 # -------- xx
-from PyQt5.QtCore  import  (
+from qtpy.QtCore  import  (
     QDate,
     QModelIndex,
     QTimer,
     Qt,
-    pyqtSlot,
+    Slot,
                             )
 
 # ----QtWidgets
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QWidget,
     QPushButton,
     QAction,
@@ -47,9 +46,6 @@ from PyQt5.QtWidgets import (
     QApplication,
     QDockWidget,
     QTabWidget,
-
-
-
     QLabel,
     QListWidget,
     QMainWindow,
@@ -62,7 +58,7 @@ from PyQt5.QtWidgets import (
     )
 
 # ----QtWidgets big
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QAction,
     QMenu,
     QApplication,
@@ -78,14 +74,14 @@ from PyQt5.QtWidgets import (
     )
 
 # ----QtWidgets layouts
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QGridLayout,
     QVBoxLayout,
     QHBoxLayout,
     )
 
 # ----QtWidgets Boxs, Dialogs
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QAction,
     QActionGroup,
     QDockWidget,
@@ -105,7 +101,7 @@ from PyQt5.QtWidgets import (
     )
 
 # ---- QtSql
-from PyQt5.QtSql import (
+from qtpy.QtSql import (
     QSqlDatabase,
     QSqlTableModel,
     QSqlQuery
@@ -154,7 +150,7 @@ class StuffdbTabbedSubWindow( QMdiSubWindow ):
         event.accept()
 
     # --------------------------------
-    @pyqtSlot()
+    @Slot()
     def on_close( self ):
         print(f"{self.windowTitle()} has been closed")
 

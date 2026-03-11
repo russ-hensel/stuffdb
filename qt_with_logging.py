@@ -32,7 +32,9 @@ unclear on how well this works -- keep trying for awhile
 """
 # ---- imports
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
+# from qt_compat import QApplication, QAction, exec_app, qt_version
+
+
 from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 

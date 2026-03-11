@@ -19,8 +19,8 @@ import sys
 
 import ia_qt
 from app_global import AppGlobal
-from PyQt5.QtCore import Qt
-from PyQt5.QtSql import (QSqlDatabase,
+from qtpy.QtCore import Qt
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlDriver,
                          QSqlQuery,
                          QSqlRecord,
@@ -29,7 +29,7 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 # ----QtWidgets layouts
-from PyQt5.QtWidgets import (QApplication,
+from qtpy.QtWidgets import (QApplication,
                              QComboBox,
                              QDialog,
                              QFormLayout,
@@ -45,14 +45,12 @@ from PyQt5.QtWidgets import (QApplication,
                              QWidget)
 
 # ---- local imports
-# import  tracked_qsql_relational_table_model
-
 
 
 # ---- end imports
 
 
-
+#-----------------------------
 class DisplayParameters( QDialog ):
     """
 

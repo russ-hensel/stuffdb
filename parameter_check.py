@@ -22,15 +22,15 @@ check --- posibbly fix?
 from pathlib import Path
 
 
-from qt_compat import (
-    QApplication, QMainWindow, QToolBar, QAction, exec_app,
-    DisplayRole, TextAlignmentRole, AlignCenter, WindowMaximized,
-    NoInsert, OnManualSubmit
-)
+# from qt_compat import (
+#     QApplication, QMainWindow, QToolBar, QAction, exec_app,
+#     DisplayRole, TextAlignmentRole, AlignCenter, WindowMaximized,
+#     NoInsert, OnManualSubmit
+# )
 
 
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QInputDialog,
                              QLabel,
                              QLineEdit,

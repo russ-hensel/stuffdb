@@ -23,13 +23,13 @@ import sys
 
 import gui_qt_ext
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+# from qt_compat import QApplication, QAction, exec_app, qt_version
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 
 
-from PyQt.QtCore import Qt
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtCore import Qt
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlDriver,
                          QSqlQuery,
                          QSqlRecord,
@@ -38,7 +38,7 @@ from PyQt.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 # ----QtWidgets layouts
-from PyQt.QtWidgets import (QApplication,
+from qtpy.QtWidgets import (QApplication,
                              QComboBox,
                              QDialog,
                              QFormLayout,
@@ -66,18 +66,11 @@ class FileBrowse( QDialog ):
     what it says, read?
     see our test code in rshlib, not clear this adds anything ??/
 
-
-
-
     """
     # ------------------------------------------
     def __init__(self,   parent_window  = None,     ) :
         """
-        Args:
 
-
-        Returns:
-            None.
 
         """
         super().__init__( parent_window )
@@ -109,3 +102,5 @@ class FileBrowse( QDialog ):
         button_layout.addWidget( a_widget )
 
 # ---- eof
+
+

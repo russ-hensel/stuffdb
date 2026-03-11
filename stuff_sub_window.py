@@ -10,23 +10,16 @@ Created on Sat Jun 29 09:56:07 2024
 if __name__ == "__main__":
     #----- run the full app
     import main
-    main.main()
+
 # --------------------
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-my reference list of qt imports in qt_imports.py
 
 
-"""
-# ---- begin pyqt from import_qt.py
-
-from PyQt5.QtGui import (
+from qtpy.QtGui import (
     QStandardItemModel,
     QStandardItem,
                         )
 # ---- QtCore
-from PyQt5.QtCore  import  (
+from qtpy.QtCore  import  (
     QDate,
     QModelIndex,
     QTimer,
@@ -34,12 +27,12 @@ from PyQt5.QtCore  import  (
     pyqtSlot,
                             )
 
-from PyQt5.QtGui import (
+from qtpy.QtGui import (
     QIntValidator,
     )
 
 # ----QtWidgets
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QWidget,
     QPushButton,
     QAction,
@@ -64,7 +57,7 @@ from PyQt5.QtWidgets import (
     )
 
 # ----QtWidgets big
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QAction,
     QMenu,
     QApplication,
@@ -80,14 +73,14 @@ from PyQt5.QtWidgets import (
     )
 
 # ----QtWidgets layouts
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QGridLayout,
     QVBoxLayout,
     QHBoxLayout,
     )
 
 # ----QtWidgets Boxs, Dialogs
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QAction,
     QActionGroup,
     QDockWidget,
@@ -107,7 +100,7 @@ from PyQt5.QtWidgets import (
     )
 
 # ---- QtSql
-from PyQt5.QtSql import (
+from qtpy.QtSql import (
     QSqlDatabase,
     QSqlTableModel,
     QSqlQuery
@@ -125,7 +118,6 @@ import time
 
 
 # ---- imports local
-
 from    app_global import AppGlobal
 
 import  gui_qt_ext

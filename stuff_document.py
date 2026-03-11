@@ -20,24 +20,28 @@ import time
 from   datetime import datetime
 from   functools import partial
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
-from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
-from qt_compat import OnManualSubmit, NoEditTriggers,  SelectRows
-from qt_compat import  Horizontal   # 5 6 compat was   Horizontal  replace all
+# from qt_compat import QApplication, QAction, exec_app, qt_version
 
-from qt_compat import AlignCenter, AlignLeft, AlignRight, AlignTop, AlignBottom, AlignVCenter
+# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+# from qt_compat import TextAlignmentRole
+# from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
+# from qt_compat import OnManualSubmit, NoEditTriggers,  SelectRows
+# from qt_compat import  Horizontal   # 5 6 compat was   Horizontal  replace all
 
-from PyQt.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, pyqtSlot
-from PyQt.QtGui import (QIntValidator,
+# from qt_compat import AlignCenter, AlignLeft, AlignRight, AlignTop, AlignBottom, AlignVCenter
+
+
+
+
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, Slot
+from qtpy.QtGui import (QIntValidator,
                          QPainter,
                          QPixmap,
                          QStandardItem,
                          QStandardItemModel)
 
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
@@ -45,10 +49,8 @@ from PyQt.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
-# from PyQt.QtGui import ( QAction, QActionGroup, )
 
-
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -84,7 +86,7 @@ from PyQt.QtWidgets import (
                              QTextEdit,
                              QVBoxLayout,
                              QWidget)
-OnManualSubmit
+#OnManualSubmit
 # ---- imports local
 import base_document_tabs
 import custom_widgets as cw
@@ -645,8 +647,8 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         """
         width  = 50
         for ix in range( self.max_col ):  # try to tweak size to make it work
-            #widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
-            widget   = QSpacerItem( width, 10, QSizePolicy_Expanding, QSizePolicy_Minimum)  # 5 6 compat
+            widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
+            #widget   = QSpacerItem( width, 10, QSizePolicy_Expanding, QSizePolicy_Minimum)  # 5 6 compat
             layout.addItem( widget, 0, ix  )  # row column
 
         self.stuff_combo_dict_ext   = combo_dict_ext.STUFF_COMBO_DICT_EXT
@@ -1092,7 +1094,7 @@ class EventSqlTableModel( QSqlTableModel ):
         return flags
 
     # ----------------------------
-    def data(self, index: QModelIndex, role=DisplayRole):
+    def data(self, index: QModelIndex, role = Qt.DisplayRole ):
         """
         for special formatting
         and alignment
@@ -1108,9 +1110,9 @@ class EventSqlTableModel( QSqlTableModel ):
         if False:
             pass
         # Check role first
-        elif role == DisplayRole:
+        elif role == Qt.DisplayRole:
             if col == 4:  # match to code in veiw seems to be timestamp
-                value = super().data(index, EditRole)
+                value = super().data(index, Qt.EditRole )
                 if value =="":  # seems to sometimes happen
                     value = None
                 if value is not None:
@@ -1120,34 +1122,34 @@ class EventSqlTableModel( QSqlTableModel ):
                 return value  # Return raw value if None
 
             if col == 5:  # match to code in veiw seems to be amount
-                value = super().data(index, EditRole)
+                value = super().data(index, Qt.EditRole )
                 if value is not None:
                     return f"{value:.2f}"
                 return value  # Return raw value if None
 
-        elif role == EditRole:
+        elif role == Qt.EditRole:
             # Return raw value for editing/database sync
             if col == 2:
-                return super().data(index, EditRole)
+                return super().data(index, Qt.EditRole)
 
         # elif role == Qt.TextAlignmentRole:
-        elif role == TextAlignmentRole:   # 5 6 compat
+        elif role == Qt.TextAlignmentRole:   # 5 6 compat
             # Handle alignment for all columns
             # 5 6 compat changes, old cod like return Qt.AlignLeft | Qt.AlignVCenter
             if col == 0:  # id
-                return AlignLeft | AlignVCenter
+                return Qt.AlignLeft | Qt.AlignVCenter
             elif col == 1:  # stuff_id
-                return AlignCenter | AlignVCenter
+                return Qt.AlignCenter | Qt.AlignVCenter
             elif col == 2:  # event_dt
-                return AlignRight | AlignVCenter
+                return Qt.AlignRight | Qt.AlignVCenter
 
         # Default to base class for all other roles and columns
         return super().data(index, role)
 
 
-    def data_old(self, index: QModelIndex, role=DisplayRole):
+    def data_old(self, index: QModelIndex, role = Qt.DisplayRole ):
         # Handle text alignment for specific columns (optional)
-        if role == TextAlignmentRole:
+        if role == Qt.TextAlignmentRole:
             if index.column() == 0:  # Left-align column 0
                 return Qt.AlignLeft | Qt.AlignVCenter
             elif index.column() == 1:  # Center-align column 1
@@ -1199,52 +1201,52 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
         self.view            = view
         view.setModel( self.model )
 
-        # view.setEditTriggers(QTableView.NoEditTriggers)  # Disable all edit triggers make non-edit
-        view.setEditTriggers( NoEditTriggers )  # 5 6 compat
+        view.setEditTriggers(QTableView.NoEditTriggers)  # Disable all edit triggers make non-edit
+        # view.setEditTriggers( NoEditTriggers )  # 5 6 compat
 
 
            # now do not need stuff in EventSql.....
 
-        # view.setSelectionBehavior( QTableView.SelectRows )
-        view.setSelectionBehavior( SelectRows )   # 5 6 compat
+        view.setSelectionBehavior( QTableView.SelectRows )
+        #view.setSelectionBehavior( SelectRows )   # 5 6 compat
 
         ix_col = -1   # could make loop or even list comp
 
         ix_col = 0
-        model.setHeaderData( ix_col, Horizontal , "ID" )
+        model.setHeaderData( ix_col, Qt.Horizontal, "ID" )
         view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
         view.setColumnHidden( ix_col, True )  # view or model visible
 
         ix_col = 1
-        model.setHeaderData( ix_col, Horizontal , "ID_Old" )
+        model.setHeaderData( ix_col, Qt.Horizontal, "ID_Old" )
         view.setColumnWidth( ix_col, 100)
         view.setColumnHidden( ix_col, True )
         #view.setColumnHidden( 1, True )  # view or model
 
         ix_col  = 2
-        model.setHeaderData( ix_col, Horizontal , "Stuff_Id" )
+        model.setHeaderData( ix_col, Qt.Horizontal, "Stuff_Id" )
         view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
         # view.setColumnHidden( ix_col, True )  # view or model  # cmnt out for debug
 
         ix_col  = 3
-        model.setHeaderData( ix_col, Horizontal , "Stuff_Id_old" )
+        model.setHeaderData( ix_col, Qt.Horizontal, "Stuff_Id_old" )
         view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
         view.setColumnHidden( ix_col, True )  # view or model
 
         ix_col  = 4
-        model.setHeaderData( ix_col, Horizontal , "Event Date" )
+        model.setHeaderData( ix_col, Qt.Horizontal, "Event Date" )
         view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
 
         ix_col  = 5
-        model.setHeaderData( ix_col, Horizontal , "$ Amount" )
+        model.setHeaderData( ix_col, Qt.Horizontal, "$ Amount" )
         view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
 
         ix_col = 6
-        model.setHeaderData( ix_col, Horizontal , "Comment" )
+        model.setHeaderData( ix_col, Qt.Horizontal, "Comment" )
         view.setColumnWidth( ix_col, 300)  # Set  width in  pixels
 
         ix_col = 7
-        model.setHeaderData( ix_col, Horizontal , "Type" )
+        model.setHeaderData( ix_col, Qt.Horizontal, "Type" )
         view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
 
         #view.setColumnHidden( 1, True )  # view or model
@@ -1285,7 +1287,7 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
 
         model.setTable( self.list_table_name )
         # model.setEditStrategy( QSqlTableModel.OnManualSubmit ) # 5 6 compat
-        model.setEditStrategy( OnManualSubmit )
+        model.setEditStrategy(  QSqlTableModel.OnManualSubmit )
         #model.non_editable_columns = {0, 1, }  # really only work on custom model
 
     # ---------------------------------------

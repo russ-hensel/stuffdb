@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Jun 23 14:03:58 2024
-
-@author: russ
+why, am I dead or an experiment
 """
 # ---- tof
 """

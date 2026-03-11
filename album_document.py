@@ -30,30 +30,26 @@ import gui_qt_ext
 import wat_inspector
 from app_global import AppGlobal
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum, QSizePolicy_Fixed, QSizePolicy_Preferred
+# from qt_compat import QApplication, QAction, exec_app, qt_version
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+# from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum, QSizePolicy_Fixed, QSizePolicy_Preferred
 
 
-from qt_compat import RModel_OnManualSubmit, RModel_OnFieldChange, RModel_OnRowChange
-from qt_compat import SelectRows, SelectItems, ExtendedSelection
-from qt_compat import NoEditTriggers
-from qt_compat import Horizontal, Vertical
-from qt_compat import CustomContextMenu, PreventContextMenu, DefaultContextMenu
-from qt_compat import AscendingOrder, DescendingOrder
-from qt_compat import  Select, Rows # and there are more
+# from qt_compat import RModel_OnManualSubmit, RModel_OnFieldChange, RModel_OnRowChange
+# from qt_compat import SelectRows, SelectItems, ExtendedSelection
+# from qt_compat import NoEditTriggers
+# from qt_compat import Horizontal, Vertical
+# from qt_compat import CustomContextMenu, PreventContextMenu, DefaultContextMenu
+# from qt_compat import AscendingOrder, DescendingOrder
+# from qt_compat import  Select, Rows # and there are more
 
-from PyQt.QtWidgets import QTableView, QAbstractItemView
+from qtpy.QtWidgets import QTableView, QAbstractItemView
+from qtpy.QtCore import QItemSelectionModel
 
+from qtpy.QtGui import QAction
 
-
-
-
-
-
-
-from PyQt.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, pyqtSlot
-from PyQt.QtGui import (QIcon,
+from qtpy.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, Slot
+from qtpy.QtGui import (QIcon,
                          QIntValidator,
                          QPainter,
                          QPixmap,
@@ -61,7 +57,7 @@ from PyQt.QtGui import (QIcon,
                          QStandardItemModel)
 
 
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlDriver,
                          QSqlError,
                          QSqlField,
@@ -81,7 +77,7 @@ from PyQt.QtSql import (QSqlDatabase,
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -685,7 +681,7 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
         """
         width    = 10
         for ix in range( self.max_col ):  # try to tweak size to make it work
-            widget   = QSpacerItem( width, 10, QSizePolicy_Expanding, QSizePolicy_Minimum)
+            widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
             layout.addItem( widget, 0, ix  )  # row column
 
         # ---- code_gen: TableDict.to_build_form 2025_04_01 for photoshow -- begin table entries -----------------------
@@ -1064,7 +1060,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         model       = self.model
         view        = self.view
 
-        view.setEditTriggers( NoEditTriggers ) # no editing
+        view.setEditTriggers( QTableView.NoEditTriggers ) # no editing
 
         debug_col = True
         if debug_col:
@@ -1250,7 +1246,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         # Configure headers and load data
         # self.model.setEditStrategy(QSqlRelationalTableModel.OnFieldChange)
-        self.model.setEditStrategy( RModel_OnManualSubmit )
+        self.model.setEditStrategy( QSqlRelationalTableModel.OnManualSubmit )
         self.model.select()
 
         # ---- view -- see up in gui ??
@@ -1260,17 +1256,17 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         # 5 6 ompat -- keeping these local
 
-        if qt_version == 6:
-            DoubleClicked   = QAbstractItemView.EditTrigger.DoubleClicked
-            SelectedClicked = QAbstractItemView.EditTrigger.SelectedClicked
-        else:
-            DoubleClicked   = QAbstractItemView.DoubleClicked
-            SelectedClicked = QAbstractItemView.SelectedClicked
+        # if qt_version == 6:
+        #     DoubleClicked   = QAbstractItemView.EditTrigger.DoubleClicked
+        #     SelectedClicked = QAbstractItemView.EditTrigger.SelectedClicked
+        # else:
+        DoubleClicked   = QAbstractItemView.DoubleClicked
+        SelectedClicked = QAbstractItemView.SelectedClicked
 
-        view.setSelectionMode( ExtendedSelection )
-        view.setSelectionBehavior( SelectRows )
-        # view.setEditTriggers( QTableView.DoubleClicked | QTableView.SelectedClicked )
-        view.setEditTriggers( DoubleClicked | SelectedClicked )
+        view.setSelectionMode( QTableView.ExtendedSelection )
+        view.setSelectionBehavior( QTableView.SelectRows )
+        view.setEditTriggers( QTableView.DoubleClicked | QTableView.SelectedClicked )
+        #view.setEditTriggers( DoubleClicked | SelectedClicked )
 
     # --------------------
     def col_head_names( self ):
@@ -1282,7 +1278,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         model    = self.model
         view     = self.view
 
-        model.setHeaderData(  self.id_col_ix, Horizontal, "ID" )
+        model.setHeaderData(  self.id_col_ix,  Qt.Horizontal, "ID" )
         view.setColumnWidth(  self.id_col_ix, 50)  # Set ix_col  width in pixels
         # view.setColumnHidden( self.id_col_ix, True )
 
@@ -1294,38 +1290,20 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         # view.setColumnHidden( ix_col, True )
 
 
-        model.setHeaderData(  self.seq_col_ix, Horizontal, "Seq" )
+        model.setHeaderData(  self.seq_col_ix,  Qt.Horizontal, "Seq" )
         view.setColumnWidth(  self.seq_col_ix, 50)
 
         #print( f"{self.dt_item_col_ix = }")
         #delegate = base_document_tabs.DateFormatDelegate( view )
         delegate = base_document_tabs.DateTimeFormatDelegate( view )
         view.setItemDelegateForColumn( self.dt_item_col_ix, delegate)
-        model.setHeaderData(  self.dt_item_col_ix, Horizontal, "Dt Item" )
+        model.setHeaderData(  self.dt_item_col_ix,  Qt.Horizontal, "Dt Item" )
         view.setColumnWidth(  self.dt_item_col_ix, 100)
 
-        # # view.setColumnHidden( ix_col, True )
-        # ix_col      += 1
-        # view.setColumnHidden( ix_col, True )
+
 
         # ix_col      += 1
-        # model.setHeaderData(  ix_col, Qt.Horizontal, "Camera" )
-        # view.setColumnWidth(  ix_col, 80)
-
-        # ix_col      += 1
-        # model.setHeaderData(  ix_col, Qt.Horizontal, "File" )
-        # view.setColumnWidth(  ix_col, 180)
-
-        # ix_col      += 1    #  7 perhaps
-        # model.setHeaderData(  ix_col, Qt.Horizontal, "Photo ID" )
-        # view.setColumnWidth(  ix_col, 80)
-
-        # ix_col      += 1
-        # model.setHeaderData(  ix_col, Qt.Horizontal, "SubDir" )
-        # view.setColumnWidth(  ix_col, 80)
-
-        # ix_col      += 1
-        model.setHeaderData(  self.name_col_ix  , Horizontal, "Name" )
+        model.setHeaderData(  self.name_col_ix  ,  Qt.Horizontal, "Name" )
         view.setColumnWidth(  self.name_col_ix  , 120)
 
     # --------------------
@@ -1336,7 +1314,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         model    = self.model
         view     = self.view
         for ix_col in range( 7 ):
-            model.setHeaderData(  ix_col, Horizontal, str( ix_col ) )
+            model.setHeaderData(  ix_col,  Qt.Horizontal, str( ix_col ) )
             view.setColumnWidth(  ix_col, 80)  # Set column 0 width to  pixels
 
     # --------------------
@@ -1354,7 +1332,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         #deleteAction.triggered.connect(self.deleteRow)
         self.contextMenu.addAction(deleteAction)
 
-        self.view.setContextMenuPolicy( CustomContextMenu )
+        self.view.setContextMenuPolicy( Qt.CustomContextMenu )
         self.view.customContextMenuRequested.connect( self.show_context_menu )
 
     # --------------------
@@ -1415,7 +1393,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         # ---- setup
         model.setFilter( f"photo_show_id = {a_id} " )
-        model.setSort( self.seq_col_ix, AscendingOrder )
+        model.setSort( self.seq_col_ix, Qt.AscendingOrder )
         # self.table_model_write.select()
         # self.view_write.setModel( self.table_model_write )
         self.prior_next( 0, absolute = True  )
@@ -1495,7 +1473,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         selection_model     = self.view.selectionModel()
         selection_model.clearSelection()
         # Select the entire row
-        selection_model.select( index, Select | Rows )
+        selection_model.select( index, QItemSelectionModel.Select | QItemSelectionModel.Rows )
         self.view.scrollTo( index )
 
         # # debug explore model

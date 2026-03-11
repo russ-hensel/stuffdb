@@ -23,8 +23,8 @@ import logging
 import sys
 
 from app_global import AppGlobal
-from PyQt5.QtCore import QDateTime, Qt
-from PyQt5.QtSql import (QSqlDatabase,
+from qtpy.QtCore import QDateTime, Qt
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlDriver,
                          QSqlQuery,
                          QSqlRecord,
@@ -33,7 +33,7 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 # ----
-from PyQt5.QtWidgets import (QApplication,
+from qtpy.QtWidgets import (QApplication,
                              QComboBox,
                              QDateTimeEdit,
                              QDialog,
@@ -67,7 +67,7 @@ LOG_LEVEL  = 20   # higher is more
 # relation    = "one"    # one  two    # related columns
 # relation    = "two"    # one  two    # related columns
 
-
+#------------------------------
 class EditStuffEvents(QDialog):
     """Dialog for adding or editing a record in the stuff_event table.
     my first tweak befor custom edits

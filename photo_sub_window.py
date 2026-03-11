@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# ---- tof
 """
 Created on Sat Jun 29 09:56:07 2024
 
@@ -10,36 +11,32 @@ Created on Sat Jun 29 09:56:07 2024
 if __name__ == "__main__":
     #----- run the full app
     import main
-    main.main()
 # --------------------
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-my reference list of qt imports in qt_imports.py
 
 
-"""
 # ---- begin pyqt from import_qt.py
 
-from PyQt5.QtGui import (
+from qtpy.QtGui import (
     QStandardItemModel,
     QStandardItem,
                         )
 # ---- QtCore
-from PyQt5.QtCore  import  (
+from qtpy.QtCore  import  (
     QDate,
     QModelIndex,
     QTimer,
     Qt,
-    pyqtSlot,
+    Slot,
                             )
 
-from PyQt5.QtGui import (
+from qtpy.QtGui import (
     QIntValidator,
     )
 
 # ----QtWidgets
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QWidget,
     QPushButton,
     QAction,
@@ -64,7 +61,7 @@ from PyQt5.QtWidgets import (
     )
 
 # ----QtWidgets big
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QAction,
     QMenu,
     QApplication,
@@ -80,14 +77,14 @@ from PyQt5.QtWidgets import (
     )
 
 # ----QtWidgets layouts
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QGridLayout,
     QVBoxLayout,
     QHBoxLayout,
     )
 
 # ----QtWidgets Boxes, Dialogs
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QAction,
     QActionGroup,
     QDockWidget,
@@ -107,19 +104,19 @@ from PyQt5.QtWidgets import (
     )
 
 # ---- QtSql
-from PyQt5.QtSql import (
+from qtpy.QtSql import (
     QSqlDatabase,
     QSqlTableModel,
     QSqlQuery
     )
 
 # ---- not in standard imports
-from PyQt5.QtWidgets import ( QApplication, QMainWindow,
+from qtpy.QtWidgets import ( QApplication, QMainWindow,
  QGraphicsView, QGraphicsScene, QGraphicsPixmapItem,
  QVBoxLayout, QWidget, QPushButton, QDockWidget
  )
-from PyQt5.QtGui import QPixmap, QPainter
-from PyQt5.QtCore import Qt, QRectF
+from qtpy.QtGui import QPixmap, QPainter
+from qtpy.QtCore import Qt, QRectF
 
 
 import sqlite3
@@ -138,7 +135,7 @@ import time
 from    app_global import AppGlobal
 
 import  gui_qt_ext
-import  string_util
+import  string_utils   as string_util  # later change all
 import  qt_sql_query
 #import  document_maker
 import  stuffdb_tabbed_sub_window

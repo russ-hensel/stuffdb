@@ -16,34 +16,24 @@ I would like some code to do this:
 # --------------------
 if __name__ == "__main__":
     import main
-    main.main()
-import logging
-import os
 # --------------------
 # ---- import
 import sys
-
-from app_global import AppGlobal
-
-
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
-from qt_compat import ScrollBarAlwaysOn, ScrollBarAsNeeded
-from qt_compat import RenderHint_Antialiasing, RenderHint_SmoothPixmapTransform, AnchorUnderMouse
-
-from qt_compat import KeepAspectRatioByExpanding
+import logging
+import os
+from   app_global import AppGlobal
 
 
 
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
-from PyQt.QtCore import QRectF, Qt
-from PyQt.QtGui import QPainter, QPixmap
+from qtpy.QtCore import QRectF, Qt
+from qtpy.QtGui  import QPainter, QPixmap
 # ----QtWidgets
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QDateEdit,
@@ -90,11 +80,11 @@ class PictureViewer( QGraphicsView ):
         self.scene.addItem( self.pixmap_item )
 
         #self.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
-        self.setSizePolicy( QSizePolicy_Expanding, QSizePolicy_Expanding ) # 5 6 compat
+        self.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding ) # 5 6 compat
 
         #
-        #sb_policy           = Qt.ScrollBarAlwaysOn
-        sb_policy           = ScrollBarAlwaysOn   # 5  6 compat
+        sb_policy           = Qt.ScrollBarAlwaysOn
+        #sb_policy           = ScrollBarAlwaysOn   # 5  6 compat
 
 
             #  Qt.ScrollBarAsNeeded Qt.ScrollBarAlwaysOff  Qt.ScrollBarAlwaysOn
@@ -107,10 +97,10 @@ class PictureViewer( QGraphicsView ):
         # bunch of 5 6 changes
         #from qt_compat import RenderHint_Antialiasing, RenderHint_SmoothPixmapTransform, AnchorUnderMouse
 
-        self.setRenderHint( RenderHint_Antialiasing )
-        self.setRenderHint( RenderHint_SmoothPixmapTransform )
-        self.setTransformationAnchor( AnchorUnderMouse )
-        self.setResizeAnchor( AnchorUnderMouse )
+        self.setRenderHint( QPainter.Antialiasing )
+        self.setRenderHint( QPainter.SmoothPixmapTransform )
+        self.setTransformationAnchor( QGraphicsView.AnchorUnderMouse )
+        self.setResizeAnchor( QGraphicsView.AnchorUnderMouse )
         self.file_name              = None
         self.file_name_not_found    = None
 
@@ -205,11 +195,12 @@ class PictureViewer( QGraphicsView ):
         self.scale(0.75, 0.75)
         #rint("Zoomed Out")
 
+    # -----------------------------
     def reset_zoom(self):
         self.resetTransform()
         #rint("Zoom Reset")
 
-
+    # -----------------------------
     def fit_image(self):
             """From Grok
             Scale the image to fill the view while maintaining aspect ratio."""
@@ -219,15 +210,13 @@ class PictureViewer( QGraphicsView ):
                 # Get the pixmap's bounding rectangle
                 pixmap_rect = QRectF(self.pixmap_item.pixmap().rect())
                 # Fit the pixmap in the view
-                # self.fitInView( pixmap_rect, Qt.KeepAspectRatioByExpanding )
-                self.fitInView( pixmap_rect, KeepAspectRatioByExpanding ) # 5 6 comat
-
-
+                self.fitInView( pixmap_rect, Qt.KeepAspectRatioByExpanding )
+                #self.fitInView( pixmap_rect, KeepAspectRatioByExpanding ) # 5 6 comat
 
                 # Center the scene in the view
-                self.centerOn(self.pixmap_item)
+                self.centerOn( self.pixmap_item )
 
-
+    # -----------------------------
     def fit_in_view( self ):
         """
         what it says, read it
@@ -237,7 +226,7 @@ class PictureViewer( QGraphicsView ):
         #self.fitInView( self.scene.sceneRect(), Qt.KeepAspectRatio)
         #rint("Fit in View")
 
-
+    # -----------------------------
     def fit_in_view_1( self ):
         """
         what it says, read it
@@ -245,10 +234,12 @@ class PictureViewer( QGraphicsView ):
         """
         self.fitInView( self.scene.sceneRect(), Qt.KeepAspectRatio)
         #rint("Fit in View")
+
     # ------------------------------------
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self.fit_in_view()
+
     # ------------------------------------
     def get_file_name(self, event):
         """ """
@@ -461,3 +452,6 @@ class PictureViewerPlus( QWidget ):
         cursor.insertText( info )
 
 # ---- eof
+
+
+

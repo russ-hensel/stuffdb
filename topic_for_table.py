@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# ---- tof
+
 """
 Created on Tue Sep  2 07:34:28 2025
 
@@ -9,20 +11,21 @@ so this needs to be in a global place, lets put in midi management ??
 """
 
 
-# ---- tof
 
 # ---- imports
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
+#from qt_compat import QApplication, QAction, exec_app, qt_version
+# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+# from qt_compat import TextAlignmentRole
 
+#from qtpy.QtWidgets import   QToolBar, QMessageBox
 
-
-from    PyQt.QtSql import QSqlQuery, QSqlError
+from qtpy.QtSql import QSqlQuery
 
 from collections import defaultdict
+
+# ---- end imports
+
 # --------------------
 if __name__ == "__main__":   # for testing
     import adjust_path

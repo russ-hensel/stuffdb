@@ -35,8 +35,6 @@ look for links
         .logger
 gui_qt_ext.
 
-saved a compat version but convert this to qtpy
-
 """
 # ---- tof
 
@@ -44,47 +42,30 @@ saved a compat version but convert this to qtpy
 # ---- imports
 
 
-from   qtpy.QtCore import ( QTimer, QDateTime,  Qt,   )
-
-
 #import PyQt.QtWidgets as qtw    #  qt widgets avaoid so much import below
 
-from   qtpy.QtWidgets import ( QApplication, QMainWindow, QToolBar, QMessageBox,
-                               QGridLayout,   QVBoxLayout,  QHBoxLayout,
-                               QTextEdit,    QGroupBox,  QPushButton,
-                               QWidget,      QLabel,     QLineEdit,  QFileDialog,
-                               QAction,       QCheckBox, )
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from qt_compat import QTextCursor
+from qt_compat import QCheckBox
 
-
-from   qtpy.QtGui import QTextCursor
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 
 
-#from qt_compat import QCheckBox
-
-#from PyQt.QtWidgets import  , QToolBar, QMessageBox
-
-
-
-# from   PyQt.QtCore import Qt, QTimer
-
-
-# from   PyQt  import QtGui
-from   qtpy  import QtGui
-
-
+from   PyQt.QtCore import Qt, QTimer
+from   PyQt  import QtGui
 #from   QtGui import QCursor
 QCursor  =  QtGui.QCursor
 #from   qtpy.QtGui     import QCursor
 
-#from PyQt.QtWidgets import QApplication,  QMainWindow
-#from PyQt.QtWidgets import QGridLayout,   QVBoxLayout
-#from PyQt.QtWidgets import QLabel,        QTextEdit,    QGroupBox,  QPushButton
-#from PyQt.QtWidgets import QApplication,  QWidget,      QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox
+from PyQt.QtWidgets import QApplication,  QMainWindow
+from PyQt.QtWidgets import QGridLayout,   QVBoxLayout
+from PyQt.QtWidgets import QLabel,        QTextEdit,    QGroupBox,  QPushButton
+from PyQt.QtWidgets import QApplication,  QWidget,      QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox
 
 
-#import sys
-#import os
+import sys
+import os
 
 
 #import string_utils
@@ -353,7 +334,10 @@ def about(  controller  ):
     message_box.setText( msg )
 
     # message_box.setIcon(QMessageBox.Information)
-    box_exec  = message_box.exec( )
+    if qt_version == 6:
+        box_exec  = message_box.exec( )
+    else:
+        box_exec  = message_box.exec_( )
 
 
 # ---------------------------------
@@ -371,6 +355,7 @@ class FileBrowseWidget( QWidget ):
 
 
     """
+
     #-----------------------------
     def __init__(self, parent=None, entry_width=None):
         """

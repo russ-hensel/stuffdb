@@ -1,18 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sat Aug 17 08:39:04 2024
 
-@author: russ
-"""
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Aug 11 08:28:36 2024
 
 stuff_document_edit.EditStuffEvents( model, keygen, index = None, parent = None)
-
-
 
 """
 
@@ -22,16 +13,14 @@ if __name__ == "__main__":
     main.main()
 # --------------------
 
-
-
 # import ia_qt
 
 
 import sys
 
 from app_global import AppGlobal
-from PyQt5.QtCore import Qt
-from PyQt5.QtSql import (QSqlDatabase,
+from qtpy.QtCore import Qt
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlDriver,
                          QSqlQuery,
                          QSqlRecord,
@@ -40,7 +29,7 @@ from PyQt5.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 # ----QtWidgets layouts
-from PyQt5.QtWidgets import (QApplication,
+from qtpy.QtWidgets import (QApplication,
                              QComboBox,
                              QDialog,
                              QFormLayout,
@@ -59,10 +48,7 @@ from PyQt5.QtWidgets import (QApplication,
 # import  tracked_qsql_relational_table_model
 
 
-
 # ---- end imports
-
-
 
 style       = "photo"  # or seq >
 style       = "seq"  # or seq >
@@ -71,7 +57,6 @@ style       = "seq"  # or seq >
 relation    = "none"    # one  two    # related columns
 relation    = "one"    # one  two    # related columns
 relation    = "two"    # one  two    # related columns
-
 
 
 class MdiInfo( QDialog ):
@@ -229,6 +214,10 @@ class MdiInfo( QDialog ):
         self.no_comma_field.setText( str( data ) )
 
         # ---- code_gen: model_to_fields  -- end table entries
+
+
+
+# ---- eof
 
 
 

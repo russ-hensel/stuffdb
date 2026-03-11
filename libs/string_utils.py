@@ -26,6 +26,36 @@ URL_VALID_PREFIXS     = [ "www.", "http://", "https://" ]
 
 
 # ----------------------------------------
+def clean_string_to_list( a_string,
+                         delete_tailing_spaces  = True,
+                         delete_comments        = False,
+                         delete_blank_lines     = False,  ):
+    """
+    break a string on \n and put in list
+        clean
+           delete_tailing_spaces  = True,
+           delete_comments        = False,   here comment need to start on col 0
+           delete_blank_lines     = False,
+    see also the textwrap
+    """
+    a_list   = a_string.split( "\n" )
+
+    if delete_comments:
+        a_list   = [ i_line for i_line in a_list if not i_line.startswith( "#") ]
+
+    if delete_blank_lines:
+        a_list   = [ i_line for i_line in a_list if i_line.strip( ) != ""]
+
+    if delete_tailing_spaces:
+        # for i_line in a_list:
+        #     i_line = i_line.r_strip()
+        a_list   = [ i_line.rstrip() for i_line in a_list ]
+
+
+
+    return a_list
+
+# ----------------------------------------
 def extract_self( a_string ):
     """
     extract all the self.xxx = assignments
@@ -187,7 +217,7 @@ def is_url( a_string,  ):
 def is_filename( a_string,  ):
 #def is_filename( self, a_string,  ):   is_file    file_exists  ?? not sure
     """
-    !! check is moved to utils
+
     looks to see if file exists
     clean up a_string and see if it starts with a file name
     return flag, cleaned_up_filename
@@ -419,13 +449,11 @@ class ColumnFormater( ):
         """
         self.column_specs.append( column_spec )
 
-
     # ----------------------------------------
     def get_str( self,  ):
         """
 
         """
-
         a_str   = ""
 
         for i_line in self.column_data:
@@ -462,8 +490,6 @@ class ColumnFormater( ):
         a_str   = to_columns( a_str, ["column_specs",        f"{self.column_specs}" ] )
         a_str   = to_columns( a_str, ["column_data",         f"{self.column_data}"  ] )
 
-
-
         # a_str    = f"{a_str}{newline}computer_id         {self.running_on.computer_id}"
         # a_str    = f"{a_str}{newline}logger_id           {self.logger_id}"
 
@@ -472,6 +498,9 @@ class ColumnFormater( ):
 def num_to_string( an_int ):
     """
     string_util.num_to_string( an_int )
+
+        if dealing with ints in some ranges may not want the dp ??
+
     """
     test_val   =  1_000_000_000
     if an_int > test_val:
@@ -556,6 +585,61 @@ def test_num_to_string():
     # print( f"{an_int} -> {num_to_string(an_int)}")
 
 #---------------------------
+def get_test_string():
+    """
+
+
+    """
+    string_list     = ( "no lead or trail\n"
+                        "no lead but trail      \n"
+                        "                  \n"
+                        "      lead and trail      \n"
+                        "        \n"
+                        "#      comment      "  # \n here produces anothe line
+
+                     )
+
+
+
+    return string_list
+#---------------------------
+def test_clean_string_to_list():
+    """
+
+    """
+    a_string          = get_test_string()
+    a_list            = clean_string_to_list( a_string,
+                             delete_tailing_spaces  = True,
+                             delete_comments        = False,
+                             delete_blank_lines     = False,  )
+
+    #print( f"{a_list}")
+
+    print( "delete trailing")
+    for i_line in a_list:
+        print( f">{i_line}<" )
+
+    a_list            = clean_string_to_list( a_string,
+                             delete_tailing_spaces  = True,
+                             delete_comments        = True,
+                             delete_blank_lines     = False,  )
+
+    print( "\ndelete trailing and comments")
+    for i_line in a_list:
+        print( f">{i_line}<" )
+
+
+
+    a_list            = clean_string_to_list( a_string,
+                             delete_tailing_spaces  = True,
+                             delete_comments        = True,
+                             delete_blank_lines     = True,  )
+
+    print( "\ndelete trailing and comments and blank")
+    for i_line in a_list:
+        print( f">{i_line}<" )
+
+#---------------------------
 def test_column_formatter():
     """
 
@@ -597,11 +681,12 @@ def test_obj_to_str():
     # print(a_str)
     print( f"{str( a_test_class ) }"   )
 
-#test_column_formatter()
+# ---- test_column_formatter() and...
 # --------------------
 if __name__ == "__main__":
    test_num_to_string()
    test_obj_to_str()
+   test_clean_string_to_list()
 # --------------------
 
 

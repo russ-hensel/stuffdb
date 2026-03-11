@@ -25,28 +25,23 @@ import time
 #from functools import partial
 from pathlib import Path
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
-from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
+
+
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+from qtpy.QtCore   import ( QDate, QModelIndex, Qt, QTimer, Slot,  QThread, Signal )
 
 
 
-
-from PyQt.QtCore   import ( QDate, QModelIndex, Qt, QTimer, pyqtSlot,  QThread, pyqtSignal )
-
-
-
-from PyQt.QtCore   import Qt, QDateTime
-from PyQt.QtWidgets import QStyledItemDelegate
-from PyQt.QtGui import (QFont,
+from qtpy.QtCore   import Qt, QDateTime
+from qtpy.QtWidgets import QStyledItemDelegate
+from qtpy.QtGui import (QFont,
                          QIntValidator,
                          QStandardItem,
                          QStandardItemModel,
                          QTextCursor)
 
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
@@ -56,7 +51,7 @@ from PyQt.QtSql import (QSqlDatabase,
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QFileDialog,
                              QApplication,
                              QButtonGroup,
@@ -92,24 +87,13 @@ from PyQt.QtWidgets import (
                              QVBoxLayout,
                              QWidget)
 
-# import collections
-# import parameters
-# import data_dict
-# import check_fix
+
 
 # #import gui_qt_ext
 import info_about
 #import key_words
 #import string_util
-#import text_edit_ext
-#import table_model
-# import wat_inspector
-# from app_global     import AppGlobal
-# import qsql_utils
 
-#import ex_qt
-#import exec_qt
-#import mdi_management
 
 
 # ---- import end
@@ -117,8 +101,8 @@ import info_about
 
 #--------------------------------------
 class HelperThread( QThread ):
-    update_signal       = pyqtSignal(str)
-    finished_signal     = pyqtSignal()
+    update_signal       = Signal(str)
+    finished_signal     = Signal()
 
     #-------------------------
     def __init__(self, task_function, task_function_arg ):

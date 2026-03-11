@@ -24,25 +24,25 @@ my reference list of qt imports in qt_imports.py
 """
 # ---- begin pyqt from import_qt.py
 
-from PyQt5.QtGui import (
+from qtpy.QtGui import (
     QStandardItemModel,
     QStandardItem,
                         )
 # ---- QtCore
-from PyQt5.QtCore  import  (
+from qtpy.QtCore  import  (
     QDate,
     QModelIndex,
     QTimer,
     Qt,
-    pyqtSlot,
+    Slot,
                             )
 
-from PyQt5.QtGui import (
+from qtpy.QtGui import (
     QIntValidator,
     )
 
 # ----QtWidgets
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QWidget,
     QPushButton,
     QAction,
@@ -67,7 +67,7 @@ from PyQt5.QtWidgets import (
     )
 
 # ----QtWidgets big
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QAction,
     QMenu,
     QApplication,
@@ -90,7 +90,7 @@ from PyQt5.QtWidgets import (
     )
 
 # ----QtWidgets Boxs, Dialogs
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QAction,
     QActionGroup,
     QDockWidget,
@@ -110,15 +110,13 @@ from PyQt5.QtWidgets import (
     )
 
 # ---- QtSql
-from PyQt5.QtSql import (
+from qtpy.QtSql import (
     QSqlDatabase,
     QSqlTableModel,
     QSqlQuery
     )
 
 import sqlite3
-
-
 #from   functools import partial
 import collections
 import functools
@@ -1474,9 +1472,7 @@ class HelpTextTab( stuffdb_tabbed_sub_window.StuffdbTab  ):
         self.text_data_field.setText(  record.value( "text_data"     ))
 
 
-
-
-# ---- eof ------------------------------
+# ---- eof
 
 
 

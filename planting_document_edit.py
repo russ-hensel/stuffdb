@@ -18,15 +18,15 @@ import sys
 
 from app_global import AppGlobal
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
+#from qt_compat import QApplication, QAction, exec_app, qt_version
+
+# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+# from qt_compat import TextAlignmentRole
 
 
-
-from PyQt.QtCore import Qt
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtCore import Qt
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlDriver,
                          QSqlQuery,
                          QSqlRecord,
@@ -35,7 +35,7 @@ from PyQt.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
-from PyQt.QtWidgets import (QApplication,
+from qtpy.QtWidgets import (QApplication,
                              QComboBox,
                              QDialog,
                              QFormLayout,
@@ -60,7 +60,6 @@ import custom_widgets as cw
 
 ok_blow_on_error = False
 print( f"using: {ok_blow_on_error = } ")
-
 
 #----------------------
 def blow_on_error( ):

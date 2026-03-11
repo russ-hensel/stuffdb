@@ -19,11 +19,11 @@ import logging
 # --------------------
 # ---- import
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 
-from PyQt.QtSql import QSqlRecord
+from qtpy.QtSql import QSqlRecord
 
 import custom_widgets
 import key_words

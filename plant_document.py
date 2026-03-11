@@ -22,25 +22,26 @@ import gui_qt_ext
 #import string_utils
 from app_global import AppGlobal
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
-from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum, QSizePolicy_Fixed, QSizePolicy_Preferred
-from qt_compat import OnManualSubmit, OnRowChange, OnFieldChange
-from qt_compat import NoEditTriggers
-from qt_compat import SelectRows, SelectItems,ExtendedSelection
+# from qt_compat import QApplication, QAction, exec_app, qt_version
+
+# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+# from qt_compat import TextAlignmentRole
+# from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum, QSizePolicy_Fixed, QSizePolicy_Preferred
+# from qt_compat import OnManualSubmit, OnRowChange, OnFieldChange
+# from qt_compat import NoEditTriggers
+# from qt_compat import SelectRows, SelectItems,ExtendedSelection
 
 
-# ---- QtCore
-from PyQt.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, pyqtSlot
-from PyQt.QtGui import (QIntValidator,
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+from qtpy.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, Slot
+from qtpy.QtGui import (QIntValidator,
                          QPainter,
                          QPixmap,
                          QStandardItem,
                          QStandardItemModel)
 
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
@@ -48,10 +49,10 @@ from PyQt.QtSql import (QSqlDatabase,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
-#from PyQt.QtGui import ( QAction, QActionGroup, )
+#from qtpy.QtGui import ( QAction, QActionGroup, )
 
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -110,15 +111,14 @@ class PlantingtSqlTableModel( QSqlTableModel ):
         think chat had me do this to make non editable
         but just a QSqlQuery with the triggers off might
         be a better solution
-
         """
         super().__init__(parent, db)
         # Specify multiple columns to make non-editable (e.g., columns 1 and 2)
         self.non_editable_columns = {0, 1, }  # Columns ..doe it have to be in init or is synamic ..
 
+    #---------------------------
     def flags(self, index: QModelIndex):
         """ """
-
         # Get default flags from the base class
         flags = super().flags(index)
         # Remove editable flag for the specified columns
@@ -126,10 +126,11 @@ class PlantingtSqlTableModel( QSqlTableModel ):
             return flags & ~Qt.ItemIsEditable  # Make these columns non-editable
         return flags
 
-    def data(self, index: QModelIndex, role=DisplayRole):
+    #---------------------------
+    def data(self, index: QModelIndex, role = Qt.DisplayRole ):
         """ """
         # Handle text alignment for specific columns (optional)
-        if role == TextAlignmentRole:
+        if role == Qt.TextAlignmentRole:
             if index.column() == 0:  # Left-align column 0
                 return Qt.AlignLeft | Qt.AlignVCenter
             elif index.column() == 1:  # Center-align column 1
@@ -697,7 +698,7 @@ class PlantDetailTab( base_document_tabs.DetailTabBase  ):
         """
         width  = 50
         for ix in range( self.max_col ):  # try to tweak size to make it work
-            widget   = QSpacerItem( width, 10, QSizePolicy_Expanding, QSizePolicy_Minimum )
+            widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
             layout.addItem( widget, 0, ix  )  # row column
 
         self.plant_combo_dict_ext    = combo_dict_ext.PLANT_COMBO_DICT_EXT
@@ -1259,7 +1260,7 @@ class PlantEventSubTab( base_document_tabs.SubTabBaseOld  ):
         self.model         = model
 
         model.setTable( self.list_table_name )
-        model.setEditStrategy(  OnManualSubmit )
+        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
         # model_write.setEditStrategy( QSqlTableModel.OnFieldChange )
         model.setFilter( "-99" )   # just in case we get a select too soon
 
@@ -1267,7 +1268,6 @@ class PlantEventSubTab( base_document_tabs.SubTabBaseOld  ):
     def select_all_for_test( self, ):
         """
         what it says, read
-
         """
         query_ok   = self.model_write.select()
 
@@ -1428,8 +1428,8 @@ class PlantPlantingSubTab( base_document_tabs.SubTabBaseOld  ):
         self.view            = view
         view.setModel( self.model )
 
-        view.setEditTriggers( NoEditTriggers )  # Disable all edit triggers make non-edit
-        view.setSelectionBehavior( SelectRows )
+        view.setEditTriggers( QTableView.NoEditTriggers )  # Disable all edit triggers make non-edit
+        view.setSelectionBehavior( QTableView.SelectRows )
 
         ix_col = -1   # could make loop or even list comp
 
@@ -1490,12 +1490,12 @@ class PlantPlantingSubTab( base_document_tabs.SubTabBaseOld  ):
 
         """
         #model              = qt_with_logging.QSqlTableModelWithLogging(  self, self.db    )
-        model              = PlantingtSqlTableModel(  self, self.db    )
+        model              = PlantingtSqlTableModel( self, self.db )
         #model              = QSqlTableModel(  self, self.db    )
         self.model         = model
 
         model.setTable( self.list_table_name )
-        model.setEditStrategy(  OnManualSubmit )
+        model.setEditStrategy( QSqlRelationalTableModel.OnManualSubmit )
         #model.non_editable_columns = {0, 1, }  # really only work on custom model
 
     # ---------------------------------------

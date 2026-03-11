@@ -17,13 +17,6 @@ Created on Tue Jul 15 08:47:54 2025
 #-------------------------------
 
 
-
-
-
-
-# ---- eof
-
-
 Sql Create for table
 
 

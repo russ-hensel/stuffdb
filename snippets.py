@@ -31,3 +31,5 @@ LOG_LEVEL       = 20 # level form much debug    higher is more debugging    logg
         msg       = ( f"document_manager save_new_record bad state, return  {self.record_state  = } {self.table_name  = } ")
         logging.error( msg )
         logging.debug( debug_msg )
+
+

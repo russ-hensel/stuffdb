@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-# ---- what
+# ---- tof
 """
 view and update a single table, as a table layout
        QSqlTableModel -> QTableView()
@@ -11,9 +11,9 @@ ex_qt_table_model.py
 
 """
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTableView, QVBoxLayout, QWidget, QMessageBox, QPushButton, QHBoxLayout
-from PyQt5.QtSql import QSqlDatabase, QSqlQueryModel, QSqlTableModel, QSqlQuery
-from PyQt5.QtCore import Qt
+from qtpy.QtWidgets import QApplication, QMainWindow, QTableView, QVBoxLayout, QWidget, QMessageBox, QPushButton, QHBoxLayout
+from qtpy.QtSql import QSqlDatabase, QSqlQueryModel, QSqlTableModel, QSqlQuery
+from qtpy.QtCore import Qt
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -140,3 +140,4 @@ if __name__ == '__main__':
     sys.exit(app.exec_())
 
 
+# ----- eof

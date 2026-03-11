@@ -5,7 +5,7 @@ Created on Sun Aug 11 08:28:36 2024
 
 stuff_document_edit.EditStuffEvents( model, keygen, index = None, parent = None)
 
-
+update to qtpy
 
 """
 
@@ -20,18 +20,18 @@ if __name__ == "__main__":
 
 #import sys
 
+from   qtpy.QtCore import ( QTimer, QDateTime,  Qt,   )
 
+# from qt_compat import QApplication, QAction, exec_app, qt_version
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+# from qt_compat import TextAlignmentRole
+# from qt_compat import MoveStart, KeepAnchor
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
-from qt_compat import MoveStart, KeepAnchor
+from qtpy.QtGui import QTextCursor
 
-
-
-from PyQt.QtCore import Qt
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtCore import Qt
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlDriver,
                          QSqlQuery,
                          QSqlRecord,
@@ -39,9 +39,10 @@ from PyQt.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-from PyQt.QtGui import QFont
 
-from PyQt.QtWidgets import (QApplication,
+from qtpy.QtGui import QFont
+
+from qtpy.QtWidgets import ( QApplication,
                              QComboBox,
                              QDialog,
                              QFormLayout,
@@ -55,7 +56,7 @@ from PyQt.QtWidgets import (QApplication,
                              QTableView,
                              QTextEdit,
                              QVBoxLayout,
-                             QWidget)
+                             QWidget )
 
 # ---- local imports
 # import  tracked_qsql_relational_table_model
@@ -120,8 +121,8 @@ class DisplayParameters( QDialog ):
         cursor.insertText( parm_text )
 
         # cursor.movePosition(cursor.Start)
-        cursor.movePosition( MoveStart, KeepAnchor )  # 5 6 compat
-        text_edit.setTextCursor(cursor)
+        cursor.movePosition( QTextCursor.Start, QTextCursor.KeepAnchor )  # 5 6 compat
+        text_edit.setTextCursor( cursor )
         text_edit.ensureCursorVisible()
 
         # cursor = text_edit.textCursor()

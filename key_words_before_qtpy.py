@@ -16,17 +16,20 @@ import time
 # ----   imports
 import string_utils
 
-from qtpy        import QtGui
 
 
-from qtpy.QtCore import ( QDate,
+from qt_compat import QApplication, QAction, exec_app, qt_version
+from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+
+from PyQt import QtGui
+from PyQt.QtCore import (QDate,
                           QModelIndex,
                           QSize,
                           QSortFilterProxyModel,
                           Qt,
                           QTimer)
 # sql
-from qtpy.QtSql import (QSqlDatabase,
+from PyQt.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
@@ -36,8 +39,8 @@ from qtpy.QtSql import (QSqlDatabase,
 
 # from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from qtpy.QtWidgets import ( QAbstractItemView,
-                             QAction,
+from PyQt.QtWidgets import (QAbstractItemView,
+
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -63,13 +66,12 @@ from qtpy.QtWidgets import ( QAbstractItemView,
                              QSpinBox,
                              QStyledItemDelegate,
                              QTableView,
-                             QToolBar,
                              QTableWidget,
                              QTableWidgetItem,
                              QTabWidget,
                              QTextEdit,
                              QVBoxLayout,
-                             QWidget )
+                             QWidget)
 
 
 import qsql_utils
@@ -198,7 +200,7 @@ class KeyWords(   ):
         # this may be a repeat that we want to elimiante
         # Execute the DELETE statement
 
-        if True:  # 5 6 compat
+        if qt_version == 6:  # 5 6 compat
             ret  =  query.exec()
         else:
             ret  =  query.exec_()
@@ -263,7 +265,7 @@ class KeyWords(   ):
 
             # Execute the DELETE statement
 
-            if True:  # 5 6 compat
+            if qt_version == 6:  # 5 6 compat
                 ret  =  query.exec()
             else:
                 ret  =  query.exec_()
@@ -303,7 +305,7 @@ class KeyWords(   ):
             query.bindValue( ":id",        table_id )
             query.bindValue( ":key_word",  i_key_word )
 
-            if  True:  # 5 6 compat
+            if qt_version == 6:  # 5 6 compat
                 ret  =  query.exec()
             else:
                 ret  =  query.exec_()

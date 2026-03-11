@@ -21,12 +21,12 @@ import sys
 
 # ---- begin pyqt from import_qt.py
 
-from PyQt5.QtGui import (
+from qtpy.QtGui import (
     QStandardItemModel,
     QStandardItem,
                         )
 # ---- QtCore
-from PyQt5.QtCore  import  (
+from qtpy.QtCore  import  (
     QDate,
     QModelIndex,
     QTimer,
@@ -35,7 +35,7 @@ from PyQt5.QtCore  import  (
                             )
 
 # ----QtWidgets
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QWidget,
     QPushButton,
     QAction,
@@ -60,8 +60,8 @@ from PyQt5.QtWidgets import (
 
     )
 
-# ----QtWidgets big
-from PyQt5.QtWidgets import (
+
+from qtpy.QtWidgets import (
     QAction,
     QMenu,
     QApplication,
@@ -77,14 +77,14 @@ from PyQt5.QtWidgets import (
     )
 
 
-# ----QtWidgets layouts
-from PyQt5.QtWidgets import (
+
+from qtpy.QtWidgets import (
     QGridLayout,
     QVBoxLayout
     )
 
 # ----QtWidgets Boxs, Dialogs
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QAction,
     QActionGroup,
     QDockWidget,
@@ -104,7 +104,7 @@ from PyQt5.QtWidgets import (
     )
 
 # ---- QtSql
-from PyQt5.QtSql import (
+from qtpy.QtSql import (
     QSqlDatabase,
     QSqlTableModel,
     QSqlQuery
@@ -114,9 +114,9 @@ from PyQt5.QtSql import (
 # ---- imports more
 
 #import sqlite3
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit,
+from qtpy.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit,
                              QTabWidget, QLabel, QMessageBox)
-from PyQt5.QtSql import QSqlDatabase, QSqlTableModel, QSqlRecord
+from qtpy.QtSql import QSqlDatabase, QSqlTableModel, QSqlRecord
 #from PyQt5.QtGui import QIntValidator
 
 
@@ -154,10 +154,10 @@ class DocumentMaker(   ):
         self.counter   = 0
 
     # -------------------------
-    def add_subwindow( self,  window_type ):
+    def add_subwindow_is_it_used( self,  window_type ):
         """
         from chat_subwindow.py
-
+        full of errors is it used
         """
         msg              = f"add_subwindow for window_type {window_type }"
         # mdi_area       = self.main_window.mdi_area
@@ -200,3 +200,6 @@ class DocumentMaker(   ):
 
 
 # ---- eof
+
+
+

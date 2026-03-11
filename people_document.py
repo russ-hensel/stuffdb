@@ -23,21 +23,20 @@ import sqlite3
 import time
 from   datetime import datetime
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
+# from qt_compat import QApplication, QAction, exec_app, qt_version
+# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+# from qt_compat import TextAlignmentRole
 
 
-
-from PyQt.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, pyqtSlot
-from PyQt.QtGui import (QIntValidator,
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, Slot
+from qtpy.QtGui import (QIntValidator,
                          QPainter,
                          QPixmap,
                          QStandardItem,
                          QStandardItemModel)
 
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
                          QSqlRelation,
@@ -47,7 +46,7 @@ from PyQt.QtSql import (QSqlDatabase,
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -124,20 +123,6 @@ CONTACT_FIELD_DICT        = None
 # IX_EVENT_DLR            = 5
 # IX_EVENT_CMNT           = 6
 # IX_EVENT_TYPE           = 7
-
-
-
-
-
-# def build_pccd( ):
-#     """
-#     put in some init do delay build = lazy
-#     """
-#     global PEOPLE_CONTACT_COLUMN_DICT
-
-#     if PEOPLE_CONTACT_COLUMN_DICT is None:
-#         a_table    = data_dict.DATA_DICT.get_table( "people_phone" )
-#         PEOPLE_CONTACT_COLUMN_DICT   = a_table.make_name_to_ix_dict()
 
 
 
@@ -1563,31 +1548,30 @@ class ContactSqlTableModel(QSqlTableModel):
         return flags
 
     # -------------------------------
-    def data(self, index: QModelIndex, role= DisplayRole):
+    def data( self, index: QModelIndex, role = Qt.DisplayRole ):
         """
         for special formatting
         and alignment
         col = 222 is placholder does nothin
         this probably needs work
-
         """
         col = index.column()
 
         # Check role first
-        if role == DisplayRole:
+        if role == Qt.DisplayRole:
             # Handle display formatting for event_dt (column 2)
             if col == 222:
-                value = super().data(index, EditRole)
+                value = super().data(index, Qt.EditRole )
                 if value is not None:
                     return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
                 return value  # Return raw value if None
 
-        elif role == EditRole:
+        elif role == Qt.EditRole:
             # Return raw value for editing/database sync
             if col == 222:
-                return super().data(index, EditRole)
+                return super().data(index, Qt.EditRole )
 
-        elif role == TextAlignmentRole:
+        elif role == Qt.TextAlignmentRole:
             # Handle alignment for all columns
             if col == 0:  # id
                 return Qt.AlignLeft | Qt.AlignVCenter
@@ -1599,6 +1583,8 @@ class ContactSqlTableModel(QSqlTableModel):
         # Default to base class for all other roles and columns
         return super().data(index, role)
 
-
-
 # ---- eof ------------------------------
+
+
+
+

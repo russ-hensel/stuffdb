@@ -82,7 +82,7 @@ sys.path.insert( 1, f"{src_root}/rshlib/utils" )
 sys.path.insert( 1, f"{src_root}/rshlib/rshlib_qt" )
 sys.path.insert( 1, f"{src_root}/rshlib" )
 sys.path.insert( 1, f"{src_root}/rshlib/app_services" )
-
+sys.path.insert( 1, f"{src_root}/rshlib/rshlib/utils" )
 
 #sys.path.insert( 1, f"{src_root}/_examples" )
 # sys.path.insert( 1, f"{src_root}/backup_qt" )
@@ -91,6 +91,7 @@ sys.path.insert( 1, f"{src_root}/rshlib/app_services" )
 sys.path.insert( 1, f"{src_root}/stuffdb/libs" )
 
 sys.path.insert( 1, f"{src_root}/stuffdb" )
+sys.path.insert( 1, "./HTML" )
 
 sys.path.insert( 1, f"{src_root}/stuffdb/py_helpers" )
 sys.path.insert( 1, f"{src_root}/stuffdb/data_dict_src" )
@@ -110,3 +111,7 @@ if VERBOSE >= 20:
     print( "    path now:" )
     for i_path in sys.path:
         print( "        ", i_path )
+
+
+
+

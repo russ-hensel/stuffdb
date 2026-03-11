@@ -25,7 +25,6 @@ typically in AppGlobal as:
 if __name__ == "__main__":
     #----- run the full app
     import main
-
 # --------------------
 
 # ---- imports
@@ -38,26 +37,27 @@ import sys
 
 from app_global import AppGlobal
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from qt_compat import Window_SubWindow, Window_SystemMenuHint, Window_CloseButtonHint
+# from qt_compat import QApplication, QAction, exec_app, qt_version
+# from qt_compat import Window_SubWindow, Window_SystemMenuHint, Window_CloseButtonHint
+
+#from qtpy.QtCore    import Qt
+from qtpy.QtGui     import QAction
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 
-
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-
-
-
-from PyQt.QtCore import (QDate,
+from qtpy.QtCore import ( Qt,
+                          QDate,
                           QModelIndex,
                           QObject,
                           Qt,
                           QTimer,
-                          pyqtSignal,
-                          pyqtSlot)
+                           )
+
+from qtpy.QtCore import Signal, Slot
 
 # from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -174,11 +174,11 @@ class SendSignals( QObject ):
     also stuff containers
     """
     # these seem to be class level objects
-    topic_update_signal            = pyqtSignal(str, int, str )
+    topic_update_signal            = Signal(str, int, str )
         # whar are args who subscribes
         # looks like only picture document subscribes
 
-    stuff_container_update_signal  = pyqtSignal( str, int, dict )
+    stuff_container_update_signal  = Signal( str, int, dict )
 
     def send_topic_update(self, table, table_id, info):
         debug_msg   = ( "send_topic_update emit next")
@@ -696,10 +696,8 @@ class MdiManagement():
 
 
 
-
-
-        #sub_window.setWindowFlags(Qt.SubWindow | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint)
-        sub_window.setWindowFlags( Window_SubWindow | Window_SystemMenuHint | Window_CloseButtonHint ) # 5 6 compat
+        sub_window.setWindowFlags(Qt.SubWindow | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint)
+        #sub_window.setWindowFlags( Window_SubWindow | Window_SystemMenuHint | Window_CloseButtonHint ) # 5 6 compat
 
 
         if AppGlobal.parameters.set_doc_maximized:

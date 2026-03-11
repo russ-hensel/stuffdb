@@ -17,25 +17,17 @@ some local variables need to be promoted to instance for later reference
 if __name__ == "__main__":
     #----- run the full app
     import main
-    main.main()
 # --------------------
 
 # ---- imports
 
-
-"""
-my reference list of qt imports comes from import_qt.py
-
-"""
-# ---- begin pyqt from import_qt.py
-# ---- QtGui
-from PyQt5.QtGui import (
+from qtpy.QtGui import (
     QStandardItemModel,
     QStandardItem,
     QIcon,
            )
 # ---- QtCore
-from PyQt5.QtCore  import  (
+from qtpy.QtCore  import  (
     QDate,
     QModelIndex,
     QTimer,
@@ -44,7 +36,7 @@ from PyQt5.QtCore  import  (
     )
 
 # ----QtWidgets
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QWidget,
     QPushButton,
     QAction,
@@ -68,7 +60,7 @@ from PyQt5.QtWidgets import (
 
 
 # ----QtWidgets big
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QAction,
     QMenu,
     QApplication,
@@ -84,13 +76,13 @@ from PyQt5.QtWidgets import (
     )
 
 # ----QtWidgets layouts
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QGridLayout,
     QVBoxLayout
     )
 
 # ----QtWidgets Boxes, Dialogs
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QAction,
     QActionGroup,
     QDockWidget,
@@ -109,20 +101,18 @@ from PyQt5.QtWidgets import (
     QComboBox,
     )
 
-from PyQt5.QtGui import (
+from qtpy.QtGui import (
     QIntValidator,
     )
 
 # ---- QtSql
-from PyQt5.QtSql import (
+from qtpy.QtSql import (
     QSqlDatabase,
     QSqlTableModel,
     QSqlQuery
     )
 
-
 # ---- imports more
-
 #import random
 import collections
 import functools
@@ -137,6 +127,7 @@ import   db_create
 from     app_global import AppGlobal
 import   mdi_management
 
+# ---- end imports
 # ------------------------------------------
 class StuffdbMainWindow( QMainWindow ):
     """

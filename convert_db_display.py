@@ -13,15 +13,15 @@ convert_db_display.convert_from_to( )
 import traceback
 from datetime import datetime
 
-from PyQt5 import QtGui
-from PyQt5.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
-from PyQt5.QtGui import QTextCursor
+from qtpy import QtGui
+from qtpy.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
+from qtpy.QtGui import QTextCursor
 # sql
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 # widgets biger
 # widgets -- small
 # layouts
-from PyQt5.QtWidgets import (QAction,
+from qtpy.QtWidgets import ( QAction,
                              QApplication,
                              QButtonGroup,
                              QCheckBox,

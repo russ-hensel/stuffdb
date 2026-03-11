@@ -11,23 +11,16 @@ from grok works --- move to qt examples
 
 # ---- imports
 
-# ---- end imports
-
-
-#-------------------------------
 
 
 
 
 
-
-# ---- eof
-
-from PyQt5 import QtCore, QtWidgets, QtSql
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QTableWidget, QMenu
-from PyQt5.QtCore   import Qt
+from qtpy import QtCore, QtWidgets, QtSql
+from qtpy.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QTableWidget, QMenu
+from qtpy.QtCore   import Qt
 import sys
-
+# ---- end imports
 
 # -------------------------------
 def table_widget_no_edit( table_widget ):
@@ -44,11 +37,6 @@ def table_widget_no_edit( table_widget ):
             item = table.item(row, column)
             if item is not None:
                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-
-
-
-
-
 
 
 class DatabaseCopyApp(QWidget):

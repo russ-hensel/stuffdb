@@ -29,20 +29,22 @@ from   pathlib import Path
 import time
 
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
+# from qt_compat import QApplication, QAction, exec_app, qt_version
+
+
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+#from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+#from qt_compat import TextAlignmentRole
 
 
 
-from PyQt.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
-from PyQt.QtSql import QSqlDatabase, QSqlError, QSqlQuery, QSqlTableModel
+from qtpy.QtCore import QDate, QModelIndex, Qt, QTimer
+from qtpy.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
+from qtpy.QtSql import QSqlDatabase, QSqlError, QSqlQuery, QSqlTableModel
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -103,6 +105,7 @@ class QsqlDbAccess(   ):
     # --------------------------------
     def init_db_postg( self, ):
         """
+        different init for postgress close to working
 
 
 
@@ -122,9 +125,9 @@ class QsqlDbAccess(   ):
 
         if not self.db.open():
             print("Database connection failed:", self.db.lastError().text())
+
         else:
             print("Database connected successfully!")
-
 
         # self.db         = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type, self.connection_name  )
         #         # make this name unique -- from utils....
@@ -142,7 +145,6 @@ class QsqlDbAccess(   ):
         debug_msg         = ( f"{connection_name = }")
         logging.log( LOG_LEVEL,  debug_msg, )
 
-
     # --------------------------------
     def init_db_qsqlite( self, ):
         """
@@ -159,7 +161,6 @@ class QsqlDbAccess(   ):
         db appears to be the connection
         russ is still confused try using AppGlobal.qsql_db_access.db   = a_qsql_db_access.db
         """
-
         debug_msg   = ( "QsqlDbAccess  init_db_qsqlite()" )
         logging.log( LOG_LEVEL,  debug_msg, )
 
@@ -168,14 +169,19 @@ class QsqlDbAccess(   ):
 
         if not self.write_lock_file( db_lock_file_name ):
             # is it too early for this?
-            msg       = f"cannot write new lockfile {db_lock_file_name = }"
+            #msg       = f"cannot write new lockfile {db_lock_file_name = }"
+            with open( db_lock_file_name, "r" ) as a_file:
+                file_as_list = a_file.readlines()
+            msg       = "\n".join( file_as_list )
+            msg      =  (f"cannot write new lockfile {db_lock_file_name = }\n{msg} " )
+
             # too soon for next may have to use a signal for later
            # QMessageBox.information( AppGlobal.main_window, "Error",  msg )
             AppGlobal.fatal_error   = msg
             # raise Exception( msg )
 
-
-        self.db         = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type, self.connection_name  )
+        self.db         = QSqlDatabase.addDatabase(
+                                  AppGlobal.parameters.db_type, self.connection_name  )
                 # make this name unique -- from utils....
         self.db.setDatabaseName( db_file_name )
 
@@ -205,19 +211,19 @@ class QsqlDbAccess(   ):
         # Register the callback function with sqlite3_trace()
         sqlite_conn.set_trace_callback( self.log_sql_callback )
 
+        # """
+        # # Define a callback function to log SQL statements
+        # def log_sql_callback(statement):
+        #     print("Executing SQL statement:", statement)
 
-        """
-        # Define a callback function to log SQL statements
-        def log_sql_callback(statement):
-            print("Executing SQL statement:", statement)
+        # # Create a SQLite database connection
+        # conn = sqlite3.connect('example.db')
 
-        # Create a SQLite database connection
-        conn = sqlite3.connect('example.db')
+        # # Register the callback function with sqlite3_trace()
+        # conn.set_trace_callback(log_sql_callback)
 
-        # Register the callback function with sqlite3_trace()
-        conn.set_trace_callback(log_sql_callback)
+        # """
 
-        """
         self.optimize_1()
         # # ia_qt.q_sql_database( self.db,
         #                               msg           = "in init_db()",
@@ -227,8 +233,6 @@ class QsqlDbAccess(   ):
     def log_sql_callback( self, statement ):
         msg      = f"log_sql_callback {statement}"
         logging.log( LOG_LEVEL,  msg, )
-
-
 
     # -------------------------------------------
     def query_exec_model(self, query, model,  msg = None ):
@@ -261,7 +265,6 @@ class QsqlDbAccess(   ):
             return False
 
         return True
-
 
     # --------------------------------
     def optimize_1( self, ):
@@ -366,16 +369,17 @@ class QsqlDbAccess(   ):
 
         """
         lock_file_name  = AppGlobal.parameters.db_lock_file_name
+
         if lock_file_name is None:
             return
 
         if AppGlobal.fatal_error:
-
             msg     = (f"Fatal error so lock file not delted")
             print( msg )
             return
 
         file_path       = Path( lock_file_name )
+
         try:
             file_path.unlink()
             msg     = (f"Successfully deleted: {file_path}")
@@ -393,7 +397,6 @@ class QsqlDbAccess(   ):
             msg     = (f"Error deleting {file_path}: {e}")
             print( msg )
 
-
     # ---------------------------
     def write_lock_file( self, lock_file_name ):
         """
@@ -409,19 +412,24 @@ class QsqlDbAccess(   ):
             return lock_ok
 
         path        = Path( lock_file_name )
+
         if path.exists():
-            print( f"Locfile exists {path}")
+            #rint( f"Locfile exists {path}")
             return False
-        else:
-            print("Lockfile does not exist")
-            # try to create
+
+        # else:
+        #     print("Lockfile does not exist")
+        #     # go on to try to create
 
         try:
-            text = ( "this is to lock the db against multiple access" )
+            id      = AppGlobal.parameters.running_on.computer_id
+
+            text    = ( "this is to lock the db against multiple access"
+                        f"\n    from {id}" )
 
             with open( lock_file_name, 'w' ) as a_file:
                 a_file.write( text )
-                print( "all done" )
+                #rint( "all done" )
 
         except Exception as error:
             lock_ok    = False
@@ -430,3 +438,6 @@ class QsqlDbAccess(   ):
 
 
 # ---- eof
+
+
+

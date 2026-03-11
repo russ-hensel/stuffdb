@@ -10,31 +10,21 @@
 # --------------------
 if __name__ == "__main__":
     import main
-
 # --------------------
 
 import logging
 import time
-from functools import partial
+from   functools import partial
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
-from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
-from qt_compat import CustomContextMenu # and look at qt_compat there may be more
-
-
-
-from PyQt.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
+from qtpy.QtCore import QDate, QModelIndex, Qt, QTimer, Slot
 # ---- Qt
-from PyQt.QtGui import QFont, QIntValidator, QStandardItem, QStandardItemModel
+from qtpy.QtGui import QFont, QIntValidator, QStandardItem, QStandardItemModel
 
-from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
-#from PyQt.QtGui import ( QAction, QActionGroup, )
+from qtpy.QtWidgets import QSizePolicy
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -67,30 +57,6 @@ from PyQt.QtWidgets import (
                              QVBoxLayout,
                              QWidget)
 
-# -------------------------
-try:
-    # Qt6
-    from PyQt6.QtWidgets import QSizePolicy
-    from PyQt6.QtCore import Qt
-
-    AlignLeft = Qt.AlignmentFlag.AlignLeft
-    Expanding = QSizePolicy.Policy.Expanding
-    Fixed     = QSizePolicy.Policy.Fixed
-    Minimum   = QSizePolicy.Policy.Minimum
-
-except ImportError:
-    # Qt5
-    from PyQt5.QtWidgets import QSizePolicy
-    from PyQt5.QtCore import Qt
-
-    AlignLeft = Qt.AlignLeft
-    Expanding = QSizePolicy.Expanding
-    Fixed     = QSizePolicy.Fixed
-    Minimum   = QSizePolicy.Minimum
-
-# -------------------------
-
-
 # ---- imports local
 
 import data_dict
@@ -105,6 +71,7 @@ import data_manager
 import key_words
 import parameters
 import qt_sql_query
+import file_writers
 
 # ---- constants
 SYSTEM_LIST     = parameters.PARAMETERS.systems_list
@@ -278,7 +245,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         # ---- groupbox for buttons
         groupbox   = QGroupBox( "Actions" )   # version with title
 
-        groupbox.setStyleSheet("""
+        groupbox.setStyleSheet( """
             QGroupBox {
                 border: 2px solid blue;
                 border-radius: 10px;
@@ -291,7 +258,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
                 padding: 0 3px;
                 background-color: white;
             }
-        """)
+        """ )
         try:
             AlignLeft = Qt.AlignmentFlag.AlignLeft   # Qt6
         except AttributeError:
@@ -317,28 +284,26 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
                 padding: 0 3px;
                 background-color: white;
             }
-        """)
+        """ )
         #groupbox.setMaximumWidth( 900 )
         groupbox.setFixedWidth( 900 )
-        groupbox.setSizePolicy( Expanding, Fixed ) #H x V
+        groupbox.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Fixed ) #H x V
         layout_0.addWidget( groupbox, alignment = AlignLeft)
         self.build_tab_criteria( groupbox )
 
-        widget   = QSpacerItem( 500, 10, Expanding, Minimum )
+        widget   = QSpacerItem( 500, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
         layout_2.addItem( widget,  )
 
         layout_3        = QVBoxLayout(   )
         top_layout.addLayout( layout_3 )
 
-        widget   = QSpacerItem( 500, 500, Expanding, Expanding )
+        widget   = QSpacerItem( 500, 500, QSizePolicy.Expanding, QSizePolicy.Expanding )
         layout_3.addItem( widget,  )  # row column
 
     # ------------------------------------------
     def build_tab_criteria( self,  groupbox ):
         """
         what it says, read
-
-
         """
         col_max          = 12
         grid_layout      = gui_qt_ext.CQGridLayout( col_max = col_max )
@@ -353,7 +318,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
                                        field_name = "key_words" )
 
         self.key_words_widget     = widget   # not this one at least not yet
-        # self.key_word_widget        = None      # set to value in gui if used
         widget.setPlaceholderText( "key_words"  )
         self.critera_widget_list.append( widget )
         #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
@@ -511,8 +475,8 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
     # ----------------------------------
     def build_top_widgets_for_help( self, groupbox ):
-        """ """
-
+        """
+        """
         col_max            = 1
         button_layout      = gui_qt_ext.CQGridLayout( col_max = col_max )
 
@@ -760,7 +724,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         model.setFilter( "id = -99" )
         model.select()
 
-        #rint( "begin channel_select for the list")
         query                           = QSqlQuery( AppGlobal.qsql_db_access.db )
         query_builder                   = qt_sql_query.QueryBuilder( query, print_it = True  )
 
@@ -824,9 +787,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )
 
-
-        # add where
-
         # ---- add_where
         """
         where id > 5000
@@ -853,9 +813,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
             criteria_key_words              = f'( {criteria_key_words} ) '    # ( "one", "two" )
 
             if not add_where   == "":
-
                 query_builder.add_to_where( f"  {add_where} " , [] )
-
 
         #- ---- title like
         title                          = criteria_dict[ "title" ].strip().lower()
@@ -866,7 +824,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
             query_builder.add_to_where( add_where, [(  ":title",  f"%{title}%" ) ])
 
         # ---- order by
-
         order_by   = criteria_dict[ "order_by" ]
 
         if   order_by == "title - ignore case":
@@ -976,7 +933,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         self.tab_name               = "HelpDetailTab"
         self.key_word_table_name    = "help_key_word"
         # self.snippet_manager        = None   # make right after edit
-
+        self.file_writer            = None # may just be in test
         # ---- post init
         self.post_init()
 
@@ -1078,8 +1035,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
         """
         for ix in range( self.max_col ):
-            #widget   = QSpacerItem( 50, 10, QSizePolicy.Expanding, QSizePolicy.Minimum) from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
-            widget   = QSpacerItem( 50, 10,  QSizePolicy_Expanding, QSizePolicy_Minimum) # 5 6 compat
+            widget   = QSpacerItem( 50, 10,  QSizePolicy.Expanding, QSizePolicy.Minimum)
             layout.addItem( widget, 0, ix  )  # row column
 
         # ---- code_gen: TableDict.to_build_form 2025_02_01 for help_info -- begin table entries -----------------------
@@ -1513,24 +1469,33 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         # search_layout.addWidget( up_button )
 
 
-
-        # ---- pin 1
+        # ---- pins n
         history_tab     = self.parent_window.history_tab
         # timing is off for this -- so do at run time
 
+        pins                = AppGlobal.parameters.num_pinned
+        for ix in range( pins ):
+            ux_ix   = ix + 1  # for the ui gui
+            label           = f"Pin Current\nRow as {ux_ix}"
+            widget          = QPushButton( label )
+            connect_to  =  partial( self.current_record_to_pinned, ix )
+            widget.clicked.connect( connect_to )
+            button_layout.addWidget( widget )
 
-        label           = "Pin Current Row as 1"
+
+
+        label           = "Test\nDebug"
         widget          = QPushButton( label )
         connect_to  =  partial( self.current_record_to_pinned, 0 )
-        widget.clicked.connect( connect_to )
+        widget.clicked.connect( self.test_debug )
         button_layout.addWidget( widget )
 
-        # ---- pin 2
-        label           = "Pin Current Row as 2"
-        widget          = QPushButton( label )
-        connect_to  =  partial( self.current_record_to_pinned, 1 )
-        widget.clicked.connect( connect_to )
-        button_layout.addWidget( widget )
+        # # ---- pin 2
+        # label           = "Pin Current Row as 2"
+        # widget          = QPushButton( label )
+        # connect_to  =  partial( self.current_record_to_pinned, 1 )
+        # widget.clicked.connect( connect_to )
+        # button_layout.addWidget( widget )
 
 
  #-------------------------------------
@@ -1623,7 +1588,40 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         self.default_new_row( next_key )
 
     # -----------------------
+    def test_debug( self ):
+        """
+        a test may be working or not
+        self.field_list
+        """
+        pass
+        if self.file_writer  is None:
+            self.file_writer   = file_writers.TxtWriter( "./output/txt_writer.txt" )
+        file_writer    = self.file_writer
+        data_manager   = self.data_manager
+        field_list     = data_manager.field_list
+
+        file_writer.write_header( None )
+        file_writer.write_item_header( field_list )
+
+        # find the text data ( might want dm to have a dict ??)
+        # this needs the other dm
+        text_data_manager = self.text_data_manager
+        text_field_list   = text_data_manager.field_list
+
+        for i_field in text_field_list:
+
+            if i_field.field_name == "text_data":
+                text_field = i_field
+                break
+
+        file_writer.write_item_text( text_field )
+        file_writer.write_footer( None )
+
+    # -----------------------
     def __str__( self ):
+        """
+        the usual
+        """
 
         a_str   = ""
         a_str   = "\n>>>>>>>>>>* HelpDetailTab *<<<<<<<<<<<<"

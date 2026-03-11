@@ -20,25 +20,21 @@ import sqlite3
 from app_global import AppGlobal
 
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
 
 
-
-
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 # ---- QtSql
-from PyQt.QtSql import (QSqlDatabase,
+from qtpy.QtSql import (QSqlDatabase,
                          QSqlError,
                          QSqlField,
                          QSqlQuery,
                          QSqlRecord,
                          QSqlTableModel)
 # ----QtWidgets
-from PyQt.QtWidgets import QWidget
+from qtpy.QtWidgets import QWidget
 
+# ---- end imports
 
 class KeyGenerator:
     def __init__(self, db):
@@ -103,10 +99,12 @@ class KeyGenerator:
         sql   =  f"SELECT MAX(id) FROM  {table_name}"
 
 
-        if qt_version == 6:
-            query.exec( sql )
-        else:
-            query.exec_( sql )
+        # if qt_version == 6:
+        #     query.exec( sql )
+        # else:
+        #     query.exec_( sql )
+
+        query.exec( sql )
 
         if query.next():
             max_id     = query.value(0)
@@ -127,8 +125,6 @@ class KeyGeneratorWithModel( QWidget ):
     def __init__( self ):
         """
         the usual
-
-
         """
         super().__init__()
         self.key_dict = {}      # for what
@@ -166,7 +162,6 @@ class KeyGeneratorWithModel( QWidget ):
         ia_qt.q_sql_table_model( model,
                                 msg = "in get_next_key",
                                 include_dir= False )
-
 
         print( f"{record_0} = " )
         ia_qt.q_sql_record( record_0,
@@ -227,11 +222,6 @@ class KeyGeneratorWithModel( QWidget ):
         print( key )
         #connection.close()
 
-        #return result  # next_key
-
-        #row             = AppGlobal.sql_runner.select( sql, sql_data  )
-
-
         next_key        = key + 1
 
         sql             = f"""
@@ -278,14 +268,8 @@ class KeyGeneratorWithModel( QWidget ):
 
         AppGlobal.sql_runner.select( sql, {}  )
 
-        # """
-        # UPDATE key_gen
-        # SET key_value = 55
-        # WHERE  table_name = 'channel';
-
-        # """
-
         return next_key
 
-
 # ---- eof
+
+

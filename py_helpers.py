@@ -15,7 +15,7 @@ module of helpers for >>py to extend functionality beyond just stuffdb.py ...
 #-------------------------------
 
 
-from PyQt5.QtWidgets import (  QMessageBox, )
+from qtpy.QtWidgets import (  QMessageBox, )
 
 def confirm_continue( msg ):
 

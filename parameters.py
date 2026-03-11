@@ -66,6 +66,7 @@ class Parameters( ):
 
         #self.mode_new_user()
         self.mode_data_sync()
+        #self.mode_data_sync_b()
         #self.mode_data_sync_full_path()
         #self.mode_ramdisk()
         #self.mode_source_db_for_copy()
@@ -226,7 +227,7 @@ class Parameters( ):
         self.db_file_name       = "./data_sync/stuffdb.db"      #  = "sample.db"   =  ":memory:"
 
         self.db_lock_file_name  = "./data_sync/lock_db.txt"     # if present then db is locked else none
-
+        self.picture_db_root    = "/mnt/8ball1/first6_root/photos/photos_db"
         self.picture_db_sub     = "/73"
 
         # /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db
@@ -308,7 +309,7 @@ class Parameters( ):
         self.icon               =  "./misc/db_red_on_black.png"
 
     # -------
-    def running_on_tweaks(self,  ):
+    def running_on_tweaks( self,  ):
         """
         not a mode, a tweak to other modes , see documentation
         you need to customize this for your own computers, what you may
@@ -335,6 +336,7 @@ class Parameters( ):
             self.db_file_name       =  "./data/king_homer/stuffdb.db"
 
             self.picture_db_root    = "/mnt/8ball1/first6_root/PhotoDB/"
+            self.picture_db_root    = "/mnt/8ball1/first6_root/photos/photos_db"
             self.picture_db_sub     = "/25"
 
         # ---- bulldog
@@ -496,11 +498,9 @@ class Parameters( ):
 
         #--------------- automatic settings -----------------
         #---- running_on gathers information about you computer environment
-        run_on   = running_on.RunningOn
+        run_on               = running_on.RunningOn
+        self.running_on     = run_on
         run_on.gather_data()
-
-        # some of the next all?? should be moved over to RunningOn
-        run_on.log_me( logger = None, logger_level = 10, print_flag = False )
 
         # this is the path to the main.py program --
         self.py_path                = run_on.py_path
@@ -508,7 +508,10 @@ class Parameters( ):
         self.qt_version             = run_on.qt_version
         self.qtpy_present           = run_on.qtpy_present
 
-        self.running_on             = run_on
+        # some of the next all?? should be moved over to RunningOn
+        run_on.log_me( logger = None, logger_level = 10, print_flag = False )
+
+
 
         self.set_default_path_here  = True
             # to make app location the default path in the app, Think True may always be best.
@@ -592,6 +595,7 @@ class Parameters( ):
         self.pic_nf_file_name   = "./misc/404.png"
 
         self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
+        self.picture_db_root    = "/mnt/8ball1/first6_root/photos/photos_db"
             # all pictures once in the db should be under this directory
 
         self.picture_db_sub         = "test_delete for mode default"
@@ -697,6 +701,7 @@ class Parameters( ):
 
         self.auto_run           = True  # run code examples -- !! what but needed
 
+        self.num_pinned         = 3
 
         self.template_copy_marker = "___template_copy___"
 
@@ -710,11 +715,10 @@ class Parameters( ):
         """
         >>Py ======== a_python_template ======== <<
 
-
         print( f"{ 0000 = }" )
         print( f"a_python_template { 0000 = }" )
 
-        >> ======== end ======== <<
+        >> ------------ end ------------ <<
 
         """ )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
@@ -731,7 +735,7 @@ class Parameters( ):
         cd  ../
         ls *.py
 
-        > >======== end ======== <<
+        >> ------------ end ------------ <<
 
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
@@ -746,10 +750,10 @@ class Parameters( ):
         ============ note_about_what  ============
 
 
-        ------------------------
+        .................
 
 
-        ============ end ============
+        ------------ end ------------
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
@@ -783,7 +787,7 @@ class Parameters( ):
         >>idle  ======== python_that_runs_this ======== <<
         print( "high_their_sailor")
         print( "done")
-        >> ======== end ======== <<
+        >> ------------ end ------------ <<
 
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
@@ -817,7 +821,6 @@ class Parameters( ):
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
         a_dict     = self.text_snippets
-
 
         # ---- .... shell template
         template_name          = "Shell"

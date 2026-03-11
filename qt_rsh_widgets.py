@@ -4,14 +4,6 @@
 """"
 
 
-
-
-
-
-
-
-
-
 Put all work into the tabs of WidgetExample
     except perhaps for placer work in second example
     rest for code extraction and deletion
@@ -115,15 +107,15 @@ from functools import partial
 from subprocess import PIPE, STDOUT, Popen, run
 
 
-from PyQt5 import QtGui
-from PyQt5.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
-from PyQt5.QtGui import QTextCursor
+from qtpy import QtGui
+from qtpy.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
+from qtpy.QtGui import QTextCursor
 # sql
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 # widgets bigger
 # widgets -- small
 # layouts
-from PyQt5.QtWidgets import (QAction,
+from qtpy.QtWidgets import (QAction,
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -176,12 +168,7 @@ BEGIN_MARK_1  = uft.BEGIN_MARK_1
 BEGIN_MARK_2  = uft.BEGIN_MARK_2
 
 
-
-
 print_func_header  = uft.print_func_header
-
-
-
 
 # --------------------------------
 def set_groupbox_style( groupbox ):

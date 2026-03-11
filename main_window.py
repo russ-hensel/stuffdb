@@ -20,33 +20,23 @@ import os
 import traceback
 
 
-# ------- local
-#import gui_qt_ext
-import psutil
-import show_parameters
-#import    document_maker
-#import    help_sub_window
-# import   db_create
-from app_global import AppGlobal
-
-
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
-from qt_compat import Qt, WindowMaximized
 
 
 
-from PyQt.QtCore import QCoreApplication
-from PyQt.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
-from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
+
+from qtpy.QtCore import Qt
+
+from qtpy.QtCore import QCoreApplication
+from qtpy.QtCore import QDate, QModelIndex, Qt, QTimer
+from qtpy.QtGui  import QIcon, QIntValidator, QStandardItem, QStandardItemModel
+from qtpy.QtSql  import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtGui  import QAction
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from PyQt.QtWidgets import (
+from qtpy.QtWidgets import (
                              QApplication,
                              QButtonGroup,
                              QCheckBox,
@@ -76,6 +66,14 @@ from PyQt.QtWidgets import (
                              QWidget)
 
 # ---- local imports
+# ------- local
+#import gui_qt_ext
+import psutil
+import show_parameters
+#import    document_maker
+#import    help_sub_window
+# import   db_create
+from   app_global import AppGlobal
 import mdi_management
 import parameters
 import stuffdb
@@ -122,7 +120,7 @@ class StuffdbMainWindow( QMainWindow ):
         self.build_gui( )
         combo_dict_ext.build_it( AppGlobal.qsql_db_access.db )
         if AppGlobal.parameters.set_maximized:
-            self.setWindowState( WindowMaximized )
+            self.setWindowState( Qt.WindowMaximized )
 
         if not AppGlobal.fatal_error  is None:
             #     this is set up back in qsql_db_access where there is no gui app
@@ -138,16 +136,16 @@ class StuffdbMainWindow( QMainWindow ):
             # response = QMessageBox.question( None, "Confirmation", msg,
             #                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 
-            # ---- set up flags for different versions
-            if qt_version == 6:
-                qmb_flag_yes     = QMessageBox.StandardButton.Yes
-                qmb_flag_no      = QMessageBox.StandardButton.No
-                qmb_respons_yes  = QMessageBox.StandardButton.Yes
+            # # ---- set up flags for different versions
+            # if qt_version == 6:
+            #     qmb_flag_yes     = QMessageBox.StandardButton.Yes
+            #     qmb_flag_no      = QMessageBox.StandardButton.No
+            #     qmb_respons_yes  = QMessageBox.StandardButton.Yes
 
-            else: # qt5
-                qmb_flag_yes     = QMessageBox.Yes
-                qmb_flag_no      = QMessageBox.No
-                qmb_respons_yes  = QMessageBox.Yes
+            # else: # qt5
+            #     qmb_flag_yes     = QMessageBox.Yes
+            #     qmb_flag_no      = QMessageBox.No
+            #     qmb_respons_yes  = QMessageBox.Yes
 
             # response = QMessageBox.question( None, "Lock File Alert", msg,
             #                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No )
@@ -157,12 +155,12 @@ class StuffdbMainWindow( QMainWindow ):
                 None,
                 "Lock File Alert",
                 msg,
-                qmb_flag_yes | qmb_flag_no,
-                qmb_flag_no
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No
                     )
 
             # Check the response  -- really none
-            if response == qmb_respons_yes:
+            if response == QMessageBox.Yes:
                 #print("User clicked Yes")
                 from stuffdb import delete_file
                 delete_file( AppGlobal.parameters.db_lock_file_name )
@@ -256,6 +254,7 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         toolbar.addAction(action)
 
+        # ----
         action          = QAction(  "Add/Copy", self )
         connect_to      = functools.partial(  self.go_active_sub_window_func,
                                               "add_copy"    )    # "copy_prior_row"     )
@@ -279,7 +278,6 @@ class StuffdbMainWindow( QMainWindow ):
         gui_qt_ext.color_toolbar_action( toolbar, action, bg_color = "#FF5555", text_color = "#FFFFFF" )
 
         # ---- List nav
-
         action          = QAction( QIcon.fromTheme( "go-previous" ), "⬅ Previous", self )
         a_function      = functools.partial(  self.go_active_sub_window_func,
                                               "prior_list_to_detail"     )
@@ -820,12 +818,14 @@ class StuffdbMainWindow( QMainWindow ):
         dialog     = show_parameters.DisplayParameters( parent = self )
 
         # do we need the if and pass
-        if qt_version == 6:
-            if dialog.exec() == QDialog.DialogCode.Accepted:
-                pass
-        else:
-            if dialog.exec_() == QDialog.Accepted:
-                pass
+        # if qt_version == 6:
+        #     if dialog.exec() == QDialog.DialogCode.Accepted:
+        #         pass
+        # else:
+        #     if dialog.exec_() == QDialog.Accepted:
+        #         pass
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            pass
 
     # ---------------------------------------
     def add_subwindow( self, window_class, instance_ix = 0 ):
