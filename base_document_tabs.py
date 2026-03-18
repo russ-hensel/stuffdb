@@ -24,26 +24,6 @@ import traceback
 from   functools  import partial
 
 
-# from qt_compat import QApplication, QMainWindow, QToolBar, QAction, exec_app
-# from qt_compat import DisplayRole, TextAlignmentRole, AlignCenter, WindowMaximized
-# from qt_compat import NoInsert, OnManualSubmit, HeaderInteractive
-# from qt_compat import SelectRows, SelectColumns, SelectItems
-# from qt_compat import Horizontal, Vertical                             # 5 6 compat global Horizontal    Horizontal
-# from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
-# from qt_compat import CustomContextMenu # and look at qt_compat there may be more
-# from qt_compat import NoEditTriggers, KeepAspectRatioByExpanding
-# from qt_compat import Select, Rows
-# from qt_compat import ActionRole
-
-
-# from qt_compat import (
-#     QApplication, QMainWindow, QToolBar, QAction, exec_app,
-#     DisplayRole, TextAlignmentRole, AlignCenter, WindowMaximized,
-#     NoInsert, OnManualSubmit, qt_version
-# )
-# from qt_compat import ItemIsSelectable, ItemIsEnabled
-
-
 from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 from qtpy import QtCore, QtWidgets
@@ -80,6 +60,7 @@ from qtpy.QtWidgets import (
                              QDockWidget,
                              QFileDialog,
                              QFrame,
+                             QGroupBox,
                              QGridLayout,
                              QHBoxLayout,
                              QHeaderView,
@@ -145,7 +126,7 @@ RECORD_STATE_DICT   = { RECORD_NULL:    "RECORD_NULL",
 
 
 # ---- open in idle
-def open_python_file_in_idle( python_filename, ): # conda_env ):
+def open_python_file_in_idle_is_obsolete_maybe( python_filename, ): # conda_env ):
     """
     may have been replaced by some object IdleExe
     open_python_file_in_idle_may_need_move_broken
@@ -268,8 +249,8 @@ def is_delete_ok( ):
     msg_box.setText("Delete ok?")
 
     # Adding buttons
-    choice_no  = msg_box.addButton( "No \n keep data",    ActionRole )
-    choice_yes = msg_box.addButton( "Yes \n delete data", ActionRole )
+    choice_no  = msg_box.addButton( "No \n keep data",    QMessageBox.ActionRole )
+    choice_yes = msg_box.addButton( "Yes \n delete data", QMessageBox.ActionRole )
 
     choice_yes.setObjectName("choice_yes")  # need for ref
     choice_no.setObjectName("choice_no")  # need for ref
@@ -306,11 +287,12 @@ def is_delete_ok( ):
 
     msg_box.setModal(True)
 
-    if qt_version == 6:
-        msg_box.exec()
-    else:
-        msg_box.exec_()
+    # if qt_version == 6:
+    #     msg_box.exec()
+    # else:
+    #     msg_box.exec_()
 
+    msg_box.exec()
     is_ok           = False
     if   msg_box.clickedButton() == choice_no:
         is_ok      = False
@@ -2413,9 +2395,6 @@ class SubTabWithEditBase( QWidget ):
             logging.error( msg )
             QMessageBox.warning( self, "Error", msg)
 
-
-
-
     # -----------------------
     def __str__( self ):
 
@@ -2540,7 +2519,7 @@ class SubTabBaseOld( QWidget ):
         for i_column_name, col_dict in self.field_dict.items():
             ix_col    += 1
 
-            model.setHeaderData( ix_col, Horizontal, col_dict[ "col_head_text"  ] )
+            model.setHeaderData( ix_col, Qt.Horizontal, col_dict[ "col_head_text"  ] )
             width  =   col_dict[ "col_head_width" ]
             if width > 0:
                 view.setColumnWidth( ix_col, width )
@@ -3383,6 +3362,27 @@ class TextTabBase( DetailTabBase  ):
                                                   )
         text_edit_widget   = edit_field
 
+        # ---- search text
+        search_layout       = QHBoxLayout()
+        text_layout.addLayout( search_layout )
+
+        # ---- Top and Bottom
+        search_text_widget,  up_button,  dn_button  =  text_edit_widget.make_search_widgets(  )
+
+        widget = QPushButton( "Top")
+        widget.clicked.connect(  text_edit_widget.scroll_to_top   )
+        search_layout.addWidget( widget )
+
+        widget = QPushButton( "Bottom")
+        widget.clicked.connect(  text_edit_widget.scroll_to_bottom   )
+        search_layout.addWidget( widget )
+
+        search_layout.addWidget( search_text_widget )
+        search_layout.addWidget( dn_button )
+        search_layout.addWidget( up_button )
+
+
+
         font                = QFont( * parameters.PARAMETERS.text_edit_font ) # ("Arial", 12)
         edit_field.setFont(font)
         self.text_data_field = edit_field    # may be used for editing
@@ -3404,46 +3404,122 @@ class TextTabBase( DetailTabBase  ):
         data_manager.add_field( widget, )
         button_layout.addWidget( widget, )
 
-        ddl_widget, ddl_button_widget  = self.snippet_manager.make_widgets()
+        # ---- >> Go
+        label       = ">> Go ..."
+        widget      = QPushButton( label )
+        connect_to  = text_edit_widget.cmd_exec
+        widget.clicked.connect( connect_to )
+        button_layout.addWidget ( widget, )
 
-        button_layout.addWidget( ddl_widget  )
-        button_layout.addWidget( ddl_button_widget  )
+        self.snippet_managers = []
+        for ix in range( 0, AppGlobal.parameters.num_help_snippets  ):
+            a_snippet_manager    = SnippetManager( edit_field )
+            self.snippet_managers.append( a_snippet_manager )
+            self.build_snippet_gui( a_snippet_manager, button_layout, ix)
 
         # ---- Paste Prior
         label           = "Paste Prior"
         widget          = QPushButton( label )
-        # connect_to  =  partial( self.run_python_idle, text_entry_widget )
-        # widget.clicked.connect( connect_to )
-        print( "here need to fix paste_prior_paste_cache" )
-        #widget.clicked.connect( self.text_edit_ext_obj.paste_cache )
+        widget.clicked.connect( text_edit_widget.paste_cache_text )
         button_layout.addWidget( widget, )
 
-        # # ---- Paste Prior
-        # label           = "Remove Lead/Trail"
-        # widget          = QPushButton( label )
-        # # connect_to  =  partial( self.run_python_idle, text_entry_widget )
-        # # widget.clicked.connect( connect_to )
-        # widget.clicked.connect( self.text_edit_ext_obj.strip_lines_in_selection  )
-        # button_layout.addWidget( widget, )
-
-        # ---- search text
-        search_layout       = QHBoxLayout()
-        text_layout.addLayout( search_layout )
-
-        search_text_widget,  up_button,  dn_button  =  text_edit_widget.make_search_widgets(  )
-
-        search_layout.addWidget( search_text_widget )
-        search_layout.addWidget( dn_button )
-        search_layout.addWidget( up_button )
-
-        # ---- >>
-        label       = ">>"
-        widget      = QPushButton( label )
-        #connect_to  = partial( text_edit_ext_obj.cmd_exec, text_entry_widget )
-        #connect_to  =   text_edit_ext_obj.cmd_exec
-        connect_to  = text_edit_widget.cmd_exec
+        # ---- Copy as Template
+        label           = "Copy as\nTemplate"
+        widget          = QPushButton( label )
+        connect_to      = self.parent_window.copy_record_as_template
         widget.clicked.connect( connect_to )
-        text_layout.addWidget ( widget,     )
+        button_layout.addWidget( widget, )
+
+        # ---- pins n
+        history_tab     = self.parent_window.history_tab
+        # timing is off for this -- so do at run time
+
+        pins                = AppGlobal.parameters.num_pinned
+        for ix in range( pins ):
+            ux_ix   = ix + 1  # for the ui gui
+            label           = f"Pin Current\nRow as {ux_ix}"
+            widget          = QPushButton( label )
+            connect_to  =  partial( self.current_record_to_pinned, ix )
+            widget.clicked.connect( connect_to )
+            button_layout.addWidget( widget )
+
+        label           = "Test\nDebug"
+        widget          = QPushButton( label )
+        connect_to  =  partial( self.current_record_to_pinned, 0 )
+        widget.clicked.connect( self.test_debug )
+        button_layout.addWidget( widget )
+
+
+
+        # # ---- search text
+        # search_layout       = QHBoxLayout()
+        # text_layout.addLayout( search_layout )
+
+        # search_text_widget,  up_button,  dn_button  =  text_edit_widget.make_search_widgets(  )
+
+        # search_layout.addWidget( search_text_widget )
+        # search_layout.addWidget( dn_button )
+        # search_layout.addWidget( up_button )
+
+        # # ---- >>
+        # label       = ">>"
+        # widget      = QPushButton( label )
+        # #connect_to  = partial( text_edit_ext_obj.cmd_exec, text_entry_widget )
+        # #connect_to  =   text_edit_ext_obj.cmd_exec
+        # connect_to  = text_edit_widget.cmd_exec
+        # widget.clicked.connect( connect_to )
+        # text_layout.addWidget ( widget,     )
+
+ #-------------------------------------
+    def build_snippet_gui( self, snippet_manager, layout, ix ):
+        """
+
+        """
+        # ---- snippets n
+        # snippet_manager        = base_document_tabs.SnippetManager( edit_field )
+        groupbox   = QGroupBox( f"Snippets {ix}" )
+        groupbox.setMaximumHeight( 80 )
+        groupbox.setMaximumWidth( 120 )  # by experiment
+        groupbox.setStyleSheet("""
+            QGroupBox {
+                border: 2px solid blue;
+                border-radius: 10px;
+                margin-top: 15px;
+            }
+
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top center;
+                padding: 0 3px;
+                background-color: white;
+            }
+        """)
+
+        layout.addWidget( groupbox )
+        layout_g     = QVBoxLayout( groupbox  )
+        # layout in the groubpox
+
+        ddl_widget, ddl_button_widget  = snippet_manager.make_widgets()
+        # ddl_widget.setMaximumWidth( 20 )   # see also groupbox
+        # ddl_widget.view().setMinimumWidth( 30 )   # did not fix my issue
+        ddl_widget.setFixedWidth( 100 )   # see also groupbox
+        ddl_widget.view().setFixedWidth( 100 )   # did not fix my issue
+        ddl_widget.setStyleSheet("QComboBox { width: 20px; }")  # did not work
+        ddl_widget.setCurrentIndex( ix ) # setCurrentIndex(self, index: QModelIndex)
+
+        ddl_button_widget.setText( "Paste")
+        layout_g.addWidget( ddl_widget  )
+        layout_g.addWidget( ddl_button_widget )
+
+    #-------------------------------------
+    def current_record_to_pinned( self, ix_row ):
+        """
+        get detail record and put in pinned table at position
+        ix_row --- looks like could be promoted
+        check to see if can promote the version in help  !!
+        """
+        history_tab     = self.parent_window.history_tab
+        history_tab.current_record_to_pinned( ix_row )
 
     # -------------------------------------
     def _build_text_gui_old( self, a_layout ):
@@ -3580,7 +3656,7 @@ class TextTabBase( DetailTabBase  ):
         up_button.clicked.connect( connect_to )
 
     # ------------------------
-    def run_python_idle( self, text_edit ):
+    def run_python_idle_is_dead_maybe( self, text_edit ):
         """
         may now be in -------------------- IdleExe --------------------------
         !! move from base to text ext
@@ -3621,6 +3697,38 @@ breakpoint()
             a_file.writelines( code_lines   )
 
         open_python_file_in_idle( file_name )
+
+
+    # -----------------------
+    def test_debug( self ):
+        """
+        a test may be working or not
+        self.field_list
+        may be some in base as well, perhaps combine ??
+        """
+        pass
+        # if self.file_writer  is None:
+        #     self.file_writer   = file_writers.TxtWriter( "./output/txt_writer.txt" )
+        # file_writer    = self.file_writer
+        # data_manager   = self.data_manager
+        # field_list     = data_manager.field_list
+
+        # file_writer.write_header( None )
+        # file_writer.write_item_header( field_list )
+
+        # # find the text data ( might want dm to have a dict ??)
+        # # this needs the other dm
+        # text_data_manager = self.text_data_manager
+        # text_field_list   = text_data_manager.field_list
+
+        # for i_field in text_field_list:
+
+        #     if i_field.field_name == "text_data":
+        #         text_field = i_field
+        #         break
+
+        # file_writer.write_item_text( text_field )
+        # file_writer.write_footer( None )
 
     # ---- Text manipulation ------------------------------------------------------
     #----------------------
@@ -4071,7 +4179,6 @@ class PictureListSubTabBase( QWidget  ):
         what it says, read
         direction  + forward, -backward 0 at start
         -- perhaps let it use any number so as to jump around
-
 
         watch for off by one, assume zero indexing
         return file_name or None

@@ -23,14 +23,6 @@ import os
 from pathlib import Path
 
 
-
-
-# from qt_compat import QApplication, QAction, exec_app, qt_version
-
-# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-# from qt_compat import TextAlignmentRole
-
-
 from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 from qtpy.QtCore   import QDate, QModelIndex, Qt, QTimer, Slot
 from qtpy.QtCore   import Qt, QDateTime
@@ -94,11 +86,9 @@ import check_fix
 #import gui_qt_ext
 import info_about
 #import key_words
-#import string_utils as string_util
-#import text_edit_ext
-#import table_model
+
 import wat_inspector
-from app_global     import AppGlobal
+from   app_global     import AppGlobal
 import qsql_utils
 import geo_track
 import photo_ext
@@ -193,8 +183,6 @@ def open_file_dialog( parent, default_dir ):
     What it says
 
     """
-
-
     dialog = QFileDialog(parent, "Select Files")
 
     # --- dialog options ---
@@ -231,7 +219,7 @@ def open_file_dialog( parent, default_dir ):
     else:
         return []
 
-
+#-----------------------------
 class FileIterator:
     """expand later with dir depth and filters  """
     def __init__(self, directory):
@@ -250,8 +238,6 @@ class FileIterator:
             if os.path.isfile(full_path):
                 return full_path
         raise StopIteration
-
-
 
 # ------------------------------------
 def open_directory_dialog( parent, default_dir  ):
@@ -535,7 +521,7 @@ class PhotoUtilSubWindow( QMdiSubWindow ):
         event.accept()
 
     # --------------------------------
-    @pyqtSlot()
+    @Slot()
     def on_close( self ):
         """
         just debug for now

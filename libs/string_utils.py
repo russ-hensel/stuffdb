@@ -166,8 +166,7 @@ def begins_with_url( a_string, ):
 
     return False
 
-
-# ---- is functions -------------------------------
+#------------------------------
 def begins_with_file_name( a_string, ):
     """
     it_is  = string_utils.begins_with_url( a_string )
@@ -495,9 +494,9 @@ class ColumnFormater( ):
 
         return a_str
 
-def num_to_string( an_int ):
+def num_to_string( an_int, dp_places = "not implemented yet" ):
     """
-    string_util.num_to_string( an_int )
+    string_utils.num_to_string( an_int )
 
         if dealing with ints in some ranges may not want the dp ??
 
@@ -540,6 +539,99 @@ def num_to_string( an_int ):
 
     text   = str( an_int )
     return text
+
+#-------------------------------
+def delta_time_to_string( a_float ):
+    """
+    use a unit that makes sense
+        string_utils.delta_time_to_string( a_float )
+
+    """
+    minutes    = 60
+    hour       = 60 * minutes
+    day        = 24 * hour
+
+    test_val   = day
+    if a_float > test_val:
+        value  = a_float/test_val
+        text   = f"{value:.3f} Days"
+        return text
+
+    test_val   =  hour
+    if a_float > test_val:
+        a_float = a_float/test_val
+        text   = f"{a_float:.3f} Hours"
+        return text
+
+    test_val   =  minutes
+    if a_float > test_val:
+        a_float = a_float/test_val
+        text   = f"{a_float:.3f} Minutes"
+        return text
+
+    test_val   =  1
+    if a_float > test_val:
+        an_int = a_float/test_val
+        text   = f"{a_float:.3f} Seconds"
+        return text
+
+    test_val   =  .001
+    if a_float > test_val:
+        a_float = a_float / test_val
+        text   = f"{a_float:.3f} mili Seconds"
+        return text
+
+    test_val   =  .000001
+    if a_float > test_val:
+        a_float = a_float/test_val
+        text   = f"{a_float:.3f} micro Seconds"
+        return text
+
+    text   = str( an_int )
+    return text
+
+
+#---------------------------
+def test_delta_time_to_string():
+    """
+
+    delta_time_to_string( a_float )
+    """
+    a_float    = 24 * 60 * 60 * 22
+    print( f"{a_float} -> {delta_time_to_string(a_float)}")
+
+    a_float  = a_float/10
+    print( f"{a_float} -> {delta_time_to_string(a_float)}")
+
+    a_float  = a_float/10
+    print( f"{a_float} -> {delta_time_to_string(a_float)}")
+
+    a_float  = a_float/10
+    print( f"{a_float} -> {delta_time_to_string(a_float)}")
+
+    a_float  = a_float/10
+    print( f"{a_float} -> {delta_time_to_string(a_float)}")
+
+    a_float  = a_float/10
+    print( f"{a_float} -> {delta_time_to_string(a_float)}")
+
+    a_float  = a_float/10
+    print( f"{a_float} -> {delta_time_to_string(a_float)}")
+
+    a_float  = a_float/10
+    print( f"{a_float} -> {delta_time_to_string(a_float)}")
+
+    a_float  = a_float/10
+    print( f"{a_float} -> {delta_time_to_string(a_float)}")
+
+    a_float  = a_float/10
+    print( f"{a_float} -> {delta_time_to_string(a_float)}")
+
+    a_float  = a_float/10
+    print( f"{a_float} -> {delta_time_to_string(a_float)}")
+
+
+
 
 #---------------------------
 def test_num_to_string():
@@ -684,9 +776,11 @@ def test_obj_to_str():
 # ---- test_column_formatter() and...
 # --------------------
 if __name__ == "__main__":
+
    test_num_to_string()
    test_obj_to_str()
    test_clean_string_to_list()
+   test_delta_time_to_string()
 # --------------------
 
 

@@ -49,7 +49,9 @@ import string_utils
 # next debug
 #rint( parameters )
 #rint( AppGlobal.parameters )
-print( "clip_string_utils fix AppGlobal Ref" )
+
+#rint( "clip_string_utils fix AppGlobal Ref" )
+
 LINE_JOIN             = "\n"  # AppGlobal.parameters.line_join
     #  something like "\r\n"  use to join lines
 

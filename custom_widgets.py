@@ -804,6 +804,7 @@ class TextEditExtMixin(  ):
         print("Ctrl+F pressed!")
         self.append("foo() executed!")
 
+    #------------------------------
     def make_search_widgets( self, ):
         """
         search_text_widget,  up_button,  dn_button  =  text_edit.make_search_wigets(  )
@@ -841,6 +842,7 @@ class TextEditExtMixin(  ):
         """
         text_edit   = self
         search_text = self.search_text_widget.text()
+
         if search_text:
             cursor = text_edit.textCursor()
             cursor.setPosition( self.last_position )
@@ -851,7 +853,6 @@ class TextEditExtMixin(  ):
                 text_edit.ensureCursorVisible()  # Scroll to the found text
 
             else:
-                # grok code
                 self.last_position = 0
                 cursor.setPosition(self.last_position)
                 text_edit.setTextCursor(cursor)
@@ -874,12 +875,7 @@ class TextEditExtMixin(  ):
             cursor = text_edit.textCursor()
             cursor.setPosition( self.last_position )
 
-            # if qt_version == 6:
-            #     found = text_edit.find( search_text,  QTextDocument.FindFlag.FindBackward )
-            #         # ← Qt6 uses FindFlag, not FindBackward directly
-            # else:
-            found = text_edit.find( search_text,   QTextDocument.FindBackward )
-
+            found = text_edit.find( search_text, QTextDocument.FindBackward )
 
             if found:
                 self.last_position = text_edit.textCursor().position()
@@ -927,12 +923,6 @@ class TextEditExtMixin(  ):
         has_selection   = cursor.hasSelection()
         can_undo        = widget.document().isUndoAvailable()
         can_paste       = QApplication.clipboard().text() != ""
-
-
-        # cut_action.setEnabled(has_selection)
-        # copy_action.setEnabled(has_selection)
-        # paste_action.setEnabled(can_paste)
-        # foo_action.setEnabled(can_paste)
 
         # Add standard actions
         undo_action = menu.addAction("Undo")
@@ -1018,9 +1008,6 @@ class TextEditExtMixin(  ):
         foo        = partial( self.strip_selected,  keep_leading = False )
         foo_action.triggered.connect( foo )
         foo_action.setEnabled(has_selection)
-        #foo_action.triggered.connect( self.strip_eol_lines_in_selection )
-
-        #menu.addSeparator()
 
         # ---- "0_sreen_dirt"
         foo_action = menu.addAction("0_sreen_dirt")
@@ -1063,12 +1050,6 @@ class TextEditExtMixin(  ):
         menu_action.triggered.connect( self.cmd_exec )
         menu.addSeparator()
 
-        # Show it
-        # if qt_version == 6:  # 5 6 compat
-        #     menu.exec(widget.mapToGlobal(pos))
-        # else:
-        #     menu.exec_(widget.mapToGlobal(pos))
-
         menu.exec(widget.mapToGlobal(pos))
 
     # ----------------------------------
@@ -1081,12 +1062,12 @@ class TextEditExtMixin(  ):
         cursor        = self.textCursor()
         selected_text = cursor.selectedText()
 
-        if selected_text:
-            print(f"Captured highlighted text: '{selected_text}'")
-            # Call your function with the captured text
-            #self.foo(selected_text)
-        else:
-            print("No text is currently highlighted/selected")
+        # if selected_text:
+        #     print(f"Captured highlighted text: '{selected_text}'")
+        #     # Call your function with the captured text
+        #     #self.foo(selected_text)
+        # else:
+        #     print("No text is currently highlighted/selected")
 
         return selected_text
 
@@ -1113,13 +1094,11 @@ class TextEditExtMixin(  ):
         debug_msg        = ( f"code lines >>{code_lines}<<" )
         #self.logging( debug_msg )
         self.log(  msg = debug_msg  )
-        # logging.debug( debug_msg )
-        # self.app_global         = AppGlobal
-        #stuff_db_app_global.logger( )
 
         code_lines       = self.undent_lines(code_lines)
         splits           = code_lines[0].split()
         splits_1         = code_lines[0].split( " ", 1 )
+
         if len( splits_1 ) > 1:
             arg_1 = splits_1[1].strip()   # ?? follow by remove of nl
 
@@ -1149,6 +1128,7 @@ class TextEditExtMixin(  ):
             # !! fix me
             # #rint( code )
             global   EXEC_RUNNER
+
             if EXEC_RUNNER is None:
                 EXEC_RUNNER      = exec_qt.ExecRunner( AppGlobal.q_app  )
 
@@ -1176,13 +1156,12 @@ class TextEditExtMixin(  ):
             self.log( msg = msg, )
             self.idle_exe.idle_on_temp_file( code_lines )
 
-        elif cmd == "idle_file":   # want a one line and may line
-
+        elif cmd == "idle_file":   # want a one line and many line
             #!! need error check here and in idle if list will be out of range
             venv            = cmd_args[ 0 ]
             file_name       = cmd_args[ 1 ]
             self.idle_exe.idle_file( venv, file_name  )
-            pass  # debug
+            pass  # debug point
 
         # ---- text
         elif cmd == "text":
@@ -1277,22 +1256,17 @@ class TextEditExtMixin(  ):
 
         elif cmd == "xxx":
             pass
+
         else:
             msg   = ( f"{cmd = } \n {cmd_args = }" )
             print( msg )
-            #logging.error( msg )
-        # next case based on command cmd
+
     # ------------------------
     def get_snippet_lines( self, do_undent = True  ):
-        """ """
-        # if qt_version == 6:
-        #      lines  = self.get_snippet_lines_6( do_undent = do_undent )
-        # else:
-        #      lines  = self.get_snippet_lines_5( do_undent = do_undent )
-
+        """
+        """
         lines  = self.get_snippet_lines_5( do_undent = do_undent )
         return lines
-
 
     # ------------------------
     def get_snippet_lines_5( self, do_undent = True  ):
@@ -1334,12 +1308,11 @@ class TextEditExtMixin(  ):
 
         # ---- upward scan
         for ix in range( SCAN_LINES ):
-
             cursor.movePosition( QTextCursor.StartOfLine )
             cursor.movePosition(cursor.EndOfLine, cursor.KeepAnchor )
-            selected_text = cursor.selectedText()
-
+            selected_text   = cursor.selectedText()
             selected_text   = selected_text.rstrip()
+
             if   selected_text == "":
                 consective_blank_lines  += 1
 
@@ -1350,16 +1323,16 @@ class TextEditExtMixin(  ):
                 #rint( f"hit the top of marked text {ix =}")
                 break # leave curor at begin of marker line
 
-            # lines.append( selected_text  )
-
             cursor.movePosition( cursor.Up )
             cursor.movePosition( QTextCursor.StartOfLine )
             position       = cursor.position()
+
             if position == prior_start_of_line:
                 debug_msg = ( f"is error !! hit the top of all text {ix =}")
                 # self.logging.log( LOG_LEVEL,  debug_msg, )
                 self.log( msg = debug_msg, )
                 break
+
             else:
                 prior_start_of_line  = position
 
@@ -1411,14 +1384,8 @@ class TextEditExtMixin(  ):
 
         return lines
 
-
-
-# SCAN_LINES = 500
-# MARKER = ">"
-
-
     #----------------------------------
-    def get_snippet_lines_6(self, do_undent=True):
+    def get_snippet_lines_6_dead_delete(self, do_undent=True):
         """
         qt6 version I hope
         :param do_undent: DESCRIPTION, defaults to True
@@ -1475,9 +1442,7 @@ class TextEditExtMixin(  ):
             else:
                 prior_start = position
 
-        # -------------------------
         # DOWNWARD SCAN: collect lines
-        # -------------------------
         consecutive_blank = 0
         on_top_line = True
 
@@ -1492,6 +1457,7 @@ class TextEditExtMixin(  ):
 
             if selected == "":
                 consecutive_blank += 1
+
             else:
                 consecutive_blank = 0
 
@@ -1514,6 +1480,7 @@ class TextEditExtMixin(  ):
             # End of document
             if position == prior_start:
                 break
+
             else:
                 prior_start = position
 
@@ -1551,7 +1518,6 @@ class TextEditExtMixin(  ):
     # -----------------------------
     def do_line_replacements( self, line ):
         """
-
         may want to strip eol while at it ??
         may have tab or space, we do not want tabs at all in text
         so replace with 2 spaces
@@ -1565,7 +1531,6 @@ class TextEditExtMixin(  ):
         return line
 
     # ---- static functions
-
     # ------------------------
     def undent_lines( self, lines ):
         """
@@ -1681,6 +1646,7 @@ class TextEditExtMixin(  ):
 
         if keep_leading:
             trimmed_lines = [line.rstrip() for line in lines]
+
         else:
             trimmed_lines = [line.strip() for line in lines]
 
@@ -1691,7 +1657,7 @@ class TextEditExtMixin(  ):
         selection_end   = cursor.selectionEnd()
 
         # ---- search here
-        self.stuffdb_app_global.mdi_management.do_db_search( "search",  [ trimmed_text ] )
+        self.stuffdb_app_global.mdi_management.do_db_search( "search", [ trimmed_text ] )
 
         # Restore selection
         cursor.setPosition(selection_start)
@@ -1717,6 +1683,7 @@ class TextEditExtMixin(  ):
 
         if keep_leading:
             trimmed_lines = [line.rstrip() for line in lines]
+
         else:
             trimmed_lines = [line.strip() for line in lines]
 
@@ -1829,7 +1796,6 @@ class TextEditExtMixin(  ):
         cursor.insertText( text )
 
     # ---- new stuff for block indent from claude check and debug
-
     def indent_selected_text(self):
         """Indent selected text to the next tab stop."""
         cursor = self.textCursor()
@@ -1853,12 +1819,13 @@ class TextEditExtMixin(  ):
 
         # Calculate indentation needed
         indent_spaces = self._calculate_indent_spaces(start_block)
+
         if indent_spaces <= 0:
             return  # No indentation needed or error occurred
 
         # Store original selection for restoration
-        original_start = start_pos
-        original_end = end_pos
+        original_start  = start_pos
+        original_end    = end_pos
 
         # Begin editing operation
         cursor.beginEditBlock()
@@ -1895,6 +1862,7 @@ class TextEditExtMixin(  ):
             cursor.endEditBlock()
             self.setTextCursor(cursor)
 
+    #-----------------------------
     def unindent_selected_text(self):
         """
         !! think this can use process_selectde instad
@@ -1928,22 +1896,28 @@ class TextEditExtMixin(  ):
                 # Calculate how many spaces to remove (up to tab_width)
                 spaces_to_remove = 0
                 for char in line_text[:self.tab_width]:
+
                     if char == ' ':
                         spaces_to_remove += 1
+
                     else:
                         break
 
                 if spaces_to_remove > 0:
                     # Remove spaces from beginning of line
                     cursor.setPosition(current_block.position())
-                    cursor.setPosition(current_block.position() + spaces_to_remove, QTextCursor.KeepAnchor)
+                    cursor.setPosition( current_block.position() + spaces_to_remove,
+                                        QTextCursor.KeepAnchor )
                     cursor.removeSelectedText()
                     total_removed += spaces_to_remove
 
                 current_block = current_block.next()
 
             # Restore selection with adjusted positions
-            spaces_removed_from_start = min(self.tab_width, len(start_block.text()) - len(start_block.text().lstrip(' ')))
+            spaces_removed_from_start = min( self.tab_width,
+                                             len(start_block.text()) -
+                                             len(start_block.text().lstrip(' ')))
+
             new_start = max(start_pos - spaces_removed_from_start, start_block.position())
             new_end = end_pos - total_removed
 
@@ -1952,6 +1926,7 @@ class TextEditExtMixin(  ):
 
         except Exception as e:
             print(f"Error during unindentation: {e}")
+
         finally:
             cursor.endEditBlock()
             self.setTextCursor(cursor)
@@ -1975,6 +1950,7 @@ class TextEditExtMixin(  ):
         except Exception as e:
             print(f"Error during cursor indentation: {e}")
 
+    #-----------------------------------
     def _calculate_indent_spaces(self, start_block):
         """Calculate how many spaces to add based on the first non-blank line."""
         try:
@@ -2006,11 +1982,9 @@ class TextEditExtMixin(  ):
             return self.tab_width
 
         except Exception as e:
-            print(f"Error calculating indent spaces: {e}")
+            msg      = (f"Error calculating indent spaces: {e}")
+            logging.error( msg )
             return 0
-
-
-
 
 # ---- Edits are also for criteria
 # ---------------------------------
@@ -2023,7 +1997,6 @@ class CQEditBase(   ):
     get rid of is_changed ??
                 prior_data
                 events for above
-
     """
     def __init__( self,
                  parent                 = None        ,
@@ -2170,7 +2143,6 @@ class CQEditBase(   ):
         # msg   = ( f"CQEditBase {self.field_name} {self.get_raw_data()}")
         # logging.debug( msg )
         # make this ascii
-
         data                      = unidecode( self.get_raw_data() )
         a_dict[ self.field_name ] = data
 
@@ -2293,9 +2265,6 @@ class CQEditBase(   ):
         # raise NotImplementedError( msg )
         # return
 
-
-    #-----------------------------
-
     #-----------------------------
     def validate_is_int( self ):
         """
@@ -2346,6 +2315,7 @@ class CQEditBase(   ):
         # just throw for now
         self.validate_is_int()
         int_maybe   = int( data )
+
         if int_maybe > max_int:
             raise ValueError( "int too big ")
 
@@ -2380,7 +2350,6 @@ class CQEditBase(   ):
         """
         pass
         # print( f"{self.on_return_pressed = }")
-        # print( f"{self.on_return_pressed  = }")
 
     #-----------------------------
     def on_value_changed( self ):
@@ -2435,7 +2404,6 @@ class CQEditBase(   ):
         for now from a multiline edit later expand
         """
         processed_lines = [line.rstrip() for line in data.splitlines()]
-
         final_text      = "\n".join( processed_lines )
 
         return final_text
@@ -2808,11 +2776,13 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         paste_action.triggered.connect( widget.insert_date )
         # paste_action.setEnabled( can_paste )
 
-        # Show it
-        if qt_version == 6:  # 5 6 compat
-            menu.exec( widget.mapToGlobal(pos))
-        else:
-            menu.exec_( widget.mapToGlobal(pos))
+        # # Show it
+        # if qt_version == 6:  # 5 6 compat
+        #     menu.exec( widget.mapToGlobal( pos) )
+        # else:
+        #     menu.exec_( widget.mapToGlobal( pos) )
+
+        menu.exec( widget.mapToGlobal( pos) )
 
     #----------------------------
     def insert_date( self, ):
@@ -3876,14 +3846,14 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         today_action.triggered.connect(self.set_data_today)
         context_menu.addAction(today_action)
 
-        # Show the context menu
+        # Show it
 
 
-        if qt_version == 6:  # 5 6 compat
-            context_menu.exec(event.globalPos())
-        else:
-            context_menu.exec_(event.globalPos())
-
+        # if qt_version == 6:  # 5 6 compat
+        #     context_menu.exec(event.globalPos())
+        # else:
+        #     context_menu.exec_(event.globalPos())
+        context_menu.exec(event.globalPos())
 
     #----------------------------
     def set_data_today(self):

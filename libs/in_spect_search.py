@@ -50,11 +50,7 @@ class Search():
         """
         The usual
         """
-        # self.db    = None
-        # self.reset()
 
-        # global_vars.set_tab_db( self.db  )
-        # global_vars.set_tab_db_builder( self  )
 
         if  VERBOSE is True:
             print( "in_spect_search.earch find_ia_files now know as info_about, not yet updated ")

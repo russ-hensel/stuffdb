@@ -21,26 +21,19 @@ import PIL.Image
 
 
 --------------- uv
-
+uv pip install PyQt6    # and may need fixup in stuffdb 
+uv pip install qtpy
 uv pip install exifread
 uv pip install geopy
-
 uv pip install gpxpy
 uv pip install wat-inspector
-
-
 uv pip install Pillow
 uv pip install gmplot
 uv pip install psutil
-
- No module named 'folium'
- uv pip install folium
-
- No module named 'pytz'
- uv pip install  pytz
-
- No module named 'simplekml'
- uv pip install  simplekml
+uv pip install folium
+uv pip install pytz
+uv pip install simplekml
+uv pip install unidecode
 
 
 No module named 'haversine'   -- comming soon

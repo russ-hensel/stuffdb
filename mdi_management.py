@@ -37,9 +37,6 @@ import sys
 
 from app_global import AppGlobal
 
-# from qt_compat import QApplication, QAction, exec_app, qt_version
-# from qt_compat import Window_SubWindow, Window_SystemMenuHint, Window_CloseButtonHint
-
 #from qtpy.QtCore    import Qt
 from qtpy.QtGui     import QAction
 from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox

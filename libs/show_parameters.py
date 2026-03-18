@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
 #import sys
 
-from   qtpy.QtCore import ( QTimer, QDateTime,  Qt,   )
+from   qtpy.QtCore import ( QTimer, QDateTime,  Qt, )
 
 # from qt_compat import QApplication, QAction, exec_app, qt_version
 from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
@@ -121,7 +121,7 @@ class DisplayParameters( QDialog ):
         cursor.insertText( parm_text )
 
         # cursor.movePosition(cursor.Start)
-        cursor.movePosition( QTextCursor.Start, QTextCursor.KeepAnchor )  # 5 6 compat
+        cursor.movePosition( QTextCursor.Start, QTextCursor.KeepAnchor )
         text_edit.setTextCursor( cursor )
         text_edit.ensureCursorVisible()
 
@@ -131,11 +131,9 @@ class DisplayParameters( QDialog ):
         # --- ADD/REPLACE THESE LINES ---
         cursor.clearSelection()                  # removes the selection
        # cursor.movePosition(cursor.Start)        # move cursor to the very beginning
-        text_edit.setTextCursor(cursor)          # apply the new cursor (no selection)
+        text_edit.setTextCursor( cursor )          # apply the new cursor (no selection)
         text_edit.setReadOnly(True)               # write-protect the widget
         # --------------------------------
-
-
 
         #  ---- buttons
         button_layout           = layout

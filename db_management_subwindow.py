@@ -409,8 +409,8 @@ class DbManagementSubWindow( QMdiSubWindow ):
     def _build_gui( self, ):
         """
         what it says
+            main notebook and tabs
         """
-        # Main notebook with  tabs
         main_notebook           = self.tab_folder   # create in parent
         self.main_notebook      = main_notebook
 
@@ -418,30 +418,33 @@ class DbManagementSubWindow( QMdiSubWindow ):
         mdi_area                = AppGlobal.main_window.mdi_area
         # main_notebook.currentChanged.connect( self.on_tab_changed )
 
-        self.first_tab         = BasicsTab( self  )
-        main_notebook.addTab(       self.first_tab, "BasicsTab" )
+        a_tab       = BasicsTab( self  )
+        main_notebook.addTab( a_tab, "BasicsTab" )
 
-        self.first_tab         = KeyWordTab( self  )
-        main_notebook.addTab( self.first_tab, "Key Words" )
+        a_tab       = KeyWordTab( self  )
+        main_notebook.addTab( a_tab, "Key Words" )
 
-        tab         = RecordMatchTab( self  )
-        main_notebook.addTab( tab, "RecordMatchTab" )
+        a_tab       = RecordMatchTab( self  )
+        main_notebook.addTab( a_tab, "RecordMatchTab" )
 
-        self.first_tab         = PictureUtilTab( self  )
-        main_notebook.addTab( self.first_tab, "PictureUtilTab" )
+        a_tab       = PictureUtilTab( self  )
+        main_notebook.addTab( a_tab, "PictureUtilTab" )
 
-        self.first_tab         = SystemSubSystemTab( self  )
-        main_notebook.addTab( self.first_tab, "Systems and SubSystems" )
+        a_tab       = NoteSystemSubTab( self  )
+        main_notebook.addTab( a_tab, "Notes Systems and SubSystems" )
 
-        tab                 = OutputTab( self  )
-        self.output_tab     = tab
-        main_notebook.addTab( tab, "Output" )
+        a_tab       = StuffTypeSubTab( self  )
+        main_notebook.addTab( a_tab, "Stuff Types and SubTypes" )
 
-        self.output_edit    = tab.output_edit   # self.output_edit
+        a_tab               = OutputTab( self  )
+        self.output_tab     = a_tab
+        main_notebook.addTab( a_tab, "Output" )
+
+        self.output_edit    = a_tab.output_edit
 
         sub_window.setWidget( main_notebook )
         mdi_area.addSubWindow( sub_window )
-        #      # perhaps add to register_document in midi_management
+             # perhaps add to register_document in midi_management
 
         sub_window.show()
 
@@ -2041,7 +2044,7 @@ class PictureUtilTab( QWidget ):
 
 
 # ----------------------------------------
-class SystemSubSystemTab( QWidget ):
+class NoteSystemSubTab( QWidget ):
     """
     what it says
 
@@ -2120,15 +2123,10 @@ class SystemSubSystemTab( QWidget ):
         self.target_system_1     = widget
         gb_layout.addWidget( widget )
 
-        # ---- "spacer " not sure why first code is ng
+        # ---- "spacer
         width = 50
-
-        #spacer = QSpacerItem(width, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        spacer = QSpacerItem(width, 20, QSizePolicy_Expanding, QSizePolicy_Minimum)  # 5 6 compat
+        spacer = QSpacerItem( width, 20, QSizePolicy.Expanding, QSizePolicy.Minimum )
         gb_layout.addItem(spacer)
-
-        # spacer = QSpacerItem(width, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        # gb_layout.addItem(spacer)
 
         # ---- "Revised System"
         widget              = QLabel( "Revised System" )
@@ -2433,6 +2431,410 @@ class SystemSubSystemTab( QWidget ):
         query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
 
         # self.parent_window.output_msg( sql )
+        current_system      = None
+        i_subsystem_counts  = []
+        while query.next():
+            # a_id        = query.value(0)
+            # value_1        = query.value(1)
+            # value_2   = query.value(2)
+            i_system        = str( query.value(0) )
+            if i_system == "" or i_system is None:
+                i_system = "none"
+            i_sub_system    = str( query.value(1) )
+            if i_sub_system == "" or i_system is None:
+                i_sub_system = "none"
+            i_count         = query.value(2)
+
+            if current_system != i_system:
+                if current_system is not None:
+                    self.system_sub_count_out( system = current_system, subsystem_counts = i_subsystem_counts )
+                current_system      = i_system
+                i_subsystem_counts  = []
+
+            i_subsystem_counts.append( (i_sub_system, i_count ) )
+
+        if current_system is not None:
+            self.system_sub_count_out( system = i_system, subsystem_counts = i_subsystem_counts )
+
+        self.parent_window.activate_output_tab()
+        self.parent_window.to_top_of_msg()
+
+
+# ----------------------------------------
+class StuffTypeSubTab( QWidget ):
+    """
+    what it says
+
+        maint and report on ...
+    """
+    def __init__(self, parent_window ):
+        """
+
+        """
+        super().__init__()
+
+        self.parent_window          = parent_window
+        self.key_words_widget       = None      # set to value in gui if used may not be used
+        self.tab_name               = "may not be used"
+
+        self.build_gui()
+
+    # -----------------------------
+    def build_gui( self,   ):
+        """
+
+        """
+        self.gb_style_sheet = ( """
+            QGroupBox {
+                border: 2px solid blue;
+                border-radius: 10px;
+                margin-top: 15px;
+            }
+
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top center;
+                padding: 0 3px;
+                background-color: white;
+            }
+        """)
+
+        vlayout             = QVBoxLayout( self )
+
+        groupbox   = QGroupBox( "Stuff Report on Types and SubTypes" )
+        groupbox.setStyleSheet( self.gb_style_sheet )
+
+        vlayout.addWidget( groupbox )
+        gb_layout           = QHBoxLayout( groupbox  )
+
+        widget              = QPushButton( "Run Report" )
+        connect_to          = self.system_sub_count_rpt
+        widget.clicked.connect( connect_to  )
+        gb_layout.addWidget( widget )
+
+        # ---- arguments
+        #groupbox   = QGroupBox()  # no title
+        groupbox   = QGroupBox( "Update Type Value" )
+        groupbox.setStyleSheet( self.gb_style_sheet )
+
+        vlayout.addWidget( groupbox )
+
+        gb_layout     = QHBoxLayout( groupbox  )
+
+        # ---- "Target System"
+        widget              = QLabel( "Target System" )
+        gb_layout.addWidget( widget )
+
+        widget              = QLineEdit( )
+        self.target_system_1     = widget
+        gb_layout.addWidget( widget )
+
+        # ---- "spacer
+        width = 50
+        spacer = QSpacerItem( width, 20, QSizePolicy.Expanding, QSizePolicy.Minimum )
+        gb_layout.addItem(spacer)
+
+        # ---- "Revised System"
+        widget              = QLabel( "Revised System" )
+        gb_layout.addWidget( widget )
+
+        widget                  = QLineEdit( )
+        self.revised_system_1   = widget
+        gb_layout.addWidget( widget )
+
+        # ---- Apply
+        widget              = QPushButton( "Apply" )
+        connect_to          = self.go_update_system
+        widget.clicked.connect( connect_to )
+        gb_layout.addWidget( widget )
+
+        # ----  "Update Subsystem Value" ------------------------
+        groupbox   = QGroupBox( "Update SubType Value" )
+
+        groupbox.setStyleSheet( self.gb_style_sheet)
+
+        vlayout.addWidget( groupbox )
+        gb_layout     = QHBoxLayout( groupbox  )
+
+        # ---- "Target System"
+        widget              = QLabel( "Target System" )
+        gb_layout.addWidget( widget )
+
+        widget              = QLineEdit( )
+        self.target_system_2     = widget
+        gb_layout.addWidget( widget )
+
+        # ---- "Target SubSystem"
+        widget              = QLabel( "Target SubSystem" )
+        gb_layout.addWidget( widget )
+
+        widget                      = QLineEdit( )
+        self.target_system_sub_2    = widget
+        gb_layout.addWidget( widget )
+
+        # ---- "Revised SUB System"
+        widget              = QLabel( "Revised SUB System" )
+        gb_layout.addWidget( widget )
+
+        widget                      = QLineEdit( )
+        self.revised_system_sub_2   = widget
+        gb_layout.addWidget( widget )
+
+        # ---- Apply
+        widget              = QPushButton( "Apply" )
+        #connect_to          = self.get_file
+        widget.clicked.connect( self.go_update_system_sub  )
+        gb_layout.addWidget( widget )
+
+    #----------------
+    def go_update_system_sub( self,  ):
+        """
+        """
+        find_system     =  self.target_system_2.text()
+        find_system_sub =  self.target_system_sub_2.text()
+
+        replace_system_sub =  self.revised_system_sub_2.text()
+
+        msg    = f"go_update_system_sub {find_system = } { find_system_sub =} { replace_system_sub =} "
+        print( msg )
+        #print( find_system, replace_system  )
+
+        #self.update_system(self, find_system, replace_system)
+
+        self.update_system_sub( find_system, find_system_sub, replace_system_sub )
+
+    #----------------
+    def go_update_system( self, ):
+        """
+        """
+        find_system         =  self.target_system_1.text()
+        replace_system      =  self.revised_system_1.text()
+        #print( find_system, replace_system  )
+
+        self.update_system( find_system, replace_system )
+
+    #----------------
+    def update_system( self, find_system, replace_system ):
+        """
+         realy for types, needs rename !!
+
+        Update all records where system matches find_system (case-insensitive)
+        and set system to replace_system.
+
+        Args:
+            find_system: The system value to search for (case-insensitive)
+            replace_system: The new system value to set
+
+        Returns:
+            int: Number of records updated, or -1 on error
+
+        this is not efficient but fix needs to wait
+        """
+        perf_start   = time.perf_counter()
+
+        msg      = ("update_system():")
+        self.parent_window.output_msg( msg, clear = True )
+
+        ix_count    = 0
+        ix_update   = 0
+
+        db          = AppGlobal.qsql_db_access.db
+
+        # DEBUG GET RID OF ME
+        #print( db.isOpen() )   type type_sub
+
+        select_query = QSqlQuery( db )
+        #sql          = "SELECT id, system FROM DBA.stuff WHERE UPPER(system) = UPPER(:find_system)"
+        sql          = "SELECT id, type FROM stuff WHERE  type  =  :find_system"
+
+        select_query.prepare( sql )
+        select_query.bindValue(":find_system", find_system)
+
+        if not select_query.exec_():
+            print(f"Error selecting records: {select_query.lastError().text()}")
+            return -1
+
+        # Collect the IDs and current system values
+        records_to_update = []
+        while select_query.next():
+            ix_count         +=1
+            record_id        = select_query.value("id")
+            current_system   = select_query.value("system")
+            records_to_update.append((record_id, current_system))
+
+        if not records_to_update:
+            msg     = (f"No records found with system matching '{find_system}'")
+            self.parent_window.output_msg( msg )
+
+            self.parent_window.activate_output_tab()
+            self.parent_window.to_top_of_msg()
+
+            return 0
+
+        # Update each record
+        update_query = QSqlQuery( db )
+        update_query.prepare(
+            "UPDATE help_info SET system = :replace_system WHERE id = :id"
+        )
+
+        for record_id, old_system in records_to_update:
+
+            if old_system != replace_system:
+                update_query.bindValue(":replace_system", replace_system)
+                update_query.bindValue(":id", record_id)
+
+                if update_query.exec_():
+                    ix_update    += 1
+                    print(f"Updated record {record_id}: '{old_system}' -> '{replace_system}'")
+                else:
+                    print(f"Error updating record {record_id}: {update_query.lastError().text()}")
+            else:
+                pass # was already the right value
+
+        perf_end    = time.perf_counter()
+        delta_perf  = perf_end - perf_start
+
+        msg         = f"elapsed perf_counter { delta_perf }"
+        self.parent_window.output_msg( msg )
+
+        msg         = (f"Updated {ix_update} of {ix_count} records")
+        self.parent_window.output_msg( msg )
+
+        self.parent_window.activate_output_tab()
+        self.parent_window.to_top_of_msg()
+
+    #----------------
+    def update_system_sub( self, find_system, find_system_sub, replace_system_sub ):
+        """
+        see update_system, this is a mod
+
+        find_system     =  self.target_system_2.text()
+        find_system_sub =  self.target_system_sub_2.text()
+
+        #replace_system     =  self.revised_system_2.text()
+
+        replace_system_sub =  self.revised_system_sub_2.text()
+        SELECT id, sub_system FROM help_info WHERE  system  = "CAT"  AND sub_system  = "General"
+
+        """
+        perf_start   = time.perf_counter()
+
+        msg      = ("update_system_sub():")
+        self.parent_window.output_msg( msg, clear = True )
+
+        ix_count    = 0
+        ix_update   = 0
+
+        db          = AppGlobal.qsql_db_access.db
+
+        # DEBUG GET RID OF ME
+        #print( db.isOpen() )
+        # from PyQt.QtSql import QSqlQuery
+
+        # First, select all matching records
+        select_query = QSqlQuery( db )
+        #sql          = "SELECT id, system FROM DBA.help_info WHERE UPPER(system) = UPPER(:find_system)"
+        sql          = ( "SELECT id, sub_system FROM help_info WHERE  system  =  :find_system "
+                        " AND sub_system  = :find_system_sub  " )
+
+        select_query.prepare( sql )
+        select_query.bindValue(":find_system",     find_system )
+        select_query.bindValue(":find_system_sub", find_system_sub )
+
+        if not select_query.exec_():
+            print(f"Error selecting records: {select_query.lastError().text()}")
+            return -1
+
+        # Collect the IDs and current system values
+        records_to_update = []
+        while select_query.next():
+            ix_count            +=1
+            record_id           = select_query.value("id")
+            current_system_sub  = select_query.value("sub_system")
+            records_to_update.append((record_id, current_system_sub))
+
+        if not records_to_update:
+            msg     = (f"No records found with system matching '{find_system}' {find_system_sub}")
+            self.parent_window.output_msg( msg )
+
+            self.parent_window.activate_output_tab()
+            self.parent_window.to_top_of_msg()
+
+            return 0
+
+        # Update each record
+        update_query = QSqlQuery( db )
+        update_query.prepare(
+            "UPDATE help_info SET sub_system = :replace_system_sub WHERE id = :id"
+        )
+
+        for record_id, old_system_sub in records_to_update:
+
+            if old_system_sub != replace_system_sub:
+                update_query.bindValue(":replace_system_sub", replace_system_sub)
+                update_query.bindValue(":id", record_id)
+
+                if update_query.exec_():
+                    ix_update    += 1
+                    print(f"Updated record {record_id}: '{old_system_sub}' -> '{replace_system_sub}'")
+                else:
+                    print(f"Error updating record {record_id}: {update_query.lastError().text()}")
+            else:
+                pass # was already the right value
+
+        perf_end    = time.perf_counter()
+        delta_perf  = perf_end - perf_start
+
+        msg         = f"elapsed perf_counter { delta_perf }"
+        self.parent_window.output_msg( msg )
+
+        msg         = (f"Updated {ix_update} of {ix_count} records")
+        self.parent_window.output_msg( msg )
+
+        self.parent_window.activate_output_tab()
+        self.parent_window.to_top_of_msg()
+
+    #----------------------------
+    def system_sub_count_out( self, system, subsystem_counts ):
+        """
+        output the system and subsystem counts
+        """
+        # how about a generator instead
+        total    = sum( [ i_count for  i_gnore, i_count in subsystem_counts] )
+        line     = f"{system = } {total}"
+
+        self.parent_window.output_msg( line  )
+
+        for i_subsystem, i_count in subsystem_counts:
+            i_line     = (f"        {i_subsystem} {i_count}" )
+            self.parent_window.output_msg( i_line  )
+
+    #----------------------------
+    def system_sub_count_rpt( self, ):
+        """
+        What it says, read
+
+        """
+        table_name     = "stuff"
+
+        db             = AppGlobal.qsql_db_access.db
+
+        msg      = ("System_sub_count_rpt:")
+        self.parent_window.output_msg( msg, clear = True )
+
+        sql     = """
+            SELECT   type, type_sub, COUNT(*) as sub_type_count
+            FROM     stuff
+            WHERE    type IS NOT NULL AND type_sub IS NOT NULL
+            GROUP BY type, type_sub
+            ORDER BY type, type_sub;
+            """
+
+        query      = QSqlQuery( db )
+
+        query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
+
+        #  !! next all needs rename
         current_system      = None
         i_subsystem_counts  = []
         while query.next():

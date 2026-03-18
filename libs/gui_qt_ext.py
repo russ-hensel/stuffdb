@@ -37,6 +37,10 @@ gui_qt_ext.
 
 saved a compat version but convert this to qtpy
 
+
+TEST
+      /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/rshlib_qt/test/test_gui_qt_ext.py
+
 """
 # ---- tof
 
@@ -570,7 +574,7 @@ class MessageArea( QGroupBox ):
         group_placer.new_row( )
         group_placer.place( widget, rowspan = 1, columnspan = 1 )
 
-        widget = QPushButton("Clear")
+        widget      = QPushButton("Clear")
         widget.clicked.connect( lambda: self.clear_text( ) )
         clear_button = widget
         # layout.addWidget(copy_selected_button, 6, 0)
@@ -735,13 +739,11 @@ class MessageArea( QGroupBox ):
     #  --------
     def set_auto_scroll( self ):
         """
+        really set from check box
         the state you get is the new one
         """
-        pass
-        return
-
-        state  =  self.auto_scroll_widget.isChecked() # after  state has xhanged
-        self.auto_scroll_widget.setChecked( state )
+        state           =  self.auto_scroll_widget.isChecked() # after  state has xhanged
+        self.auto_scroll_widget.setChecked( state ) # why it does not change auto
 
         self.auto_scroll = state
 
@@ -790,7 +792,7 @@ class MessageArea( QGroupBox ):
             text_edit.ensureCursorVisible()
 
     #------------------------------
-    def insert_text(self,  text):
+    def insert_text( self,  text ):
         cursor = self.text_edit.textCursor()
         cursor.insertText(text)
 

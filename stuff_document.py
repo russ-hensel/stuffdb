@@ -1463,22 +1463,24 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
 
     #-------------------------------
     def submit_changes(self):
-        """Submit all changes to the database."""
+        """Submit all changes to the database.
+
+        !! this looks promotable -- check
+        """
 
         model  = self.model
 
-        print( f"Edit strategy:  {model.editStrategy()= } ")
-        print(f"submit_changes Primary key:  {model.primaryKey() =}" )
-        # Before submitAll(), check the model's state
-        print(f"submit_changes  {model.isDirty() = }" )
-        # print( f"submit_changes row dirty:  {model.isDirty(row_index) }" )
+        # print( f"Edit strategy:  {model.editStrategy()= } ")
+        # print(f"submit_changes Primary key:  {model.primaryKey() =}" )
+        # # Before submitAll(), check the model's state
+        # print(f"submit_changes  {model.isDirty() = }" )
+        # #rint( f"submit_changes row dirty:  {model.isDirty(row_index) }" )
 
-        # Check what SQL would be generated
-        for i in range(model.rowCount()):
-            record = model.record(i)
-            ix_col  = 4 # perhaps a loop but so much data
-            print(f"Row {i}  , { record.isGenerated( ix_col ) = }" )
-
+        # # Check what SQL would be generated -- not sure it does that
+        # for i in range(model.rowCount()):
+        #     record = model.record(i)
+        #     ix_col  = 4 # perhaps a loop but so much data
+        #     print(f"submit_changes Row {i}  , { record.isGenerated( ix_col ) = }" )
 
         if self.model.submitAll():
             pass

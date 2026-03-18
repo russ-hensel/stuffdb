@@ -82,6 +82,8 @@ COLUMN_ORDER  = 100
 # print( "    path now:" )
 # for i_path in sys.path:
 #     print( "        ", i_path )
+
+#-------------------------------------
 def create_some_data_dict_from_sql( sql ):
     """
 
@@ -262,6 +264,7 @@ class DataDict(   ):
         """
         self.table_dicts[a_table.table_name ] = a_table
 
+    #------------------------------
     def get_table(self, a_table_name  ):
         """
         what it says
@@ -301,7 +304,6 @@ class DataDict(   ):
         #print( column_list )
         return column_list
 
-
     # ----------------------
     def get_list_columns(self, a_table_name  ):
         """
@@ -317,7 +319,7 @@ class DataDict(   ):
             raise ValueError( error_msg )
 
         column_list  = a_table.get_list_columns()
-        print( column_list )
+        #rint( f"get_list_columns: {column_list}" )
         return column_list
 
     #------------------------------------------------
@@ -1570,11 +1572,11 @@ def test():
     a_table_dict.add_column( a_column_dict )
     a_data_dict.add_table( a_table_dict )
 
-    #print( a_table_dict.to_sql() )
+    #rint( a_table_dict.to_sql() )
 
-    #print( a_data_dict )
+    #rint( a_data_dict )
 
-    #print( a_table_dict.to_upgrade_self() )
+    #rint( a_table_dict.to_upgrade_self() )
 
 
 # def for_import( ):

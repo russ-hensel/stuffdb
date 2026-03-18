@@ -44,7 +44,7 @@ try:
     print( ix )
 
     src_root   = adjust_path_dir_name[ : ix   ]
-    print( f"in try {src_root = }" )
+    #rint( f"in try {src_root = }" )
 
 except ValueError as error:
     # Access the first argument (the message)
@@ -72,10 +72,9 @@ print( f"{app_dir_path          = }")
 print( f"{project_dir_path      = }")
 
 
-
 adjust_path_file      = __file__
 
-# # least important at top
+# least important at top
 
 sys.path.insert( 1, f"{src_root}/rshlib/in_spect" )
 sys.path.insert( 1, f"{src_root}/rshlib/utils" )
@@ -84,15 +83,9 @@ sys.path.insert( 1, f"{src_root}/rshlib" )
 sys.path.insert( 1, f"{src_root}/rshlib/app_services" )
 sys.path.insert( 1, f"{src_root}/rshlib/rshlib/utils" )
 
-#sys.path.insert( 1, f"{src_root}/_examples" )
-# sys.path.insert( 1, f"{src_root}/backup_qt" )
-
-
-sys.path.insert( 1, f"{src_root}/stuffdb/libs" )
-
-sys.path.insert( 1, f"{src_root}/stuffdb" )
 sys.path.insert( 1, "./HTML" )
-
+sys.path.insert( 1, f"{src_root}/stuffdb/libs" )
+sys.path.insert( 1, f"{src_root}/stuffdb" )
 sys.path.insert( 1, f"{src_root}/stuffdb/py_helpers" )
 sys.path.insert( 1, f"{src_root}/stuffdb/data_dict_src" )
 sys.path.insert( 1, f"{src_root}/stuffdb/sql" )
@@ -101,7 +94,6 @@ sys.path.insert( 1, f"{src_root}/stuffdb/sql" )
 sys.path.insert( 1, f"{src_root}/rsh" )
 
 
-#/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/backup_qt
 
 if VERBOSE >= 10:
     print( "your path has been adjusted"
@@ -111,6 +103,12 @@ if VERBOSE >= 20:
     print( "    path now:" )
     for i_path in sys.path:
         print( "        ", i_path )
+
+# ---- eof
+
+
+
+
 
 
 

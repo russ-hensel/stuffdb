@@ -147,7 +147,7 @@ class HelpDocument( base_document_tabs.DocumentBase ):
         defaults values for a new row in the detail and the
         text tabs
 
-        Changes state of detail and related tabs
+            Changes state of detail and related tabs
 
         """
         next_key      = AppGlobal.key_gen.get_next_key( self.detail_table_name )
@@ -170,22 +170,6 @@ class HelpDocument( base_document_tabs.DocumentBase ):
                                   self.detail_table_name )
         self.detail_tab.copy_prior_row( next_key )
         self.text_tab.copy_prior_row(   next_key )
-
-    #----------------------------
-    def on_tab_changedPromoted( self, index ):
-        """
-        will kick off criteria select if ...
-        what it says, read it
-        !!
-        extend
-        """
-        # debug_msg   = ( "on_tab_changed need validate update db but may be"
-        #                " redundant in some cases so perhaps provide a mechanism to skip" )
-        # logging.debug( debug_msg )
-        super().on_tab_changed( index )
-
-        if index == self.criteria_tab_index:
-            self.criteria_tab.key_words_widget.setFocus()
 
     # ---- sub window interactions ---------------------------------------
      # ------------------------------------------
@@ -446,7 +430,9 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
             grid_layout.addWidget( widget )
 
         # ---- criteria changed should be in parent
-        print( f"{self.tab_name} build_tab build criteria change put in as marker ")
+        msg     = ( f"{self.tab_name} build_tab build "
+                   "criteria change put in as marker ")
+        logging.log( LOG_LEVEL, msg, )
         grid_layout.new_row()
         widget  = QLabel( "criteria_changed_widget" )
         self.criteria_changed_widget  = widget
@@ -458,19 +444,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
             i_widget.on_value_changed       = lambda: self.criteria_changed( True )
             i_widget.on_return_pressed      = self.criteria_select
 
-            # ---- try to stop the jump
-            #i_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-                # try to stop the jump does not work
-            #i_widget.setMinimumWidth(120)
-                # also does not work
-
-        # TRY WOTH LAYOUT AND GRID layout  from chat but does ont work
-        # self.layout().activate()             # Force a full layout pass
-        # self.adjustSize()                    # Resize window to final layout size
-        # self.updateGeometry()                # Recompute geometry hints
-
-
-        #self.id_field.setFocus()  # seems not to work try
         QTimer.singleShot( 0, self.key_words_widget.setFocus )
 
     # ----------------------------------
@@ -481,8 +454,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         button_layout      = gui_qt_ext.CQGridLayout( col_max = col_max )
 
         groupbox.setLayout( button_layout )
-
-        # button_layout   = QVBoxLayout( groupbox )
 
         # ---- buttons
         a_widget        = QPushButton( "Clear" )
@@ -675,24 +646,8 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
             i_widget.on_value_changed       = lambda: self.criteria_changed( True )
             i_widget.on_return_pressed      = self.criteria_select
 
-            # ---- try to stop the jump
-            #i_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-                # try to stop the jump does not work
-            #i_widget.setMinimumWidth(120)
-                # also does not work
-
-        # TRY WOTH LAYOUT AND GRID layout  from chat but does ont work
-        # self.layout().activate()             # Force a full layout pass
-        # self.adjustSize()                    # Resize window to final layout size
-        # self.updateGeometry()                # Recompute geometry hints
-
-
         #self.id_field.setFocus()  # seems not to work try
         QTimer.singleShot( 0, self.key_words_widget.setFocus )
-
-        # QTimer.singleShot(0, self._stabilize_layout)
-
-
 
     #---------------------------------------
     def _stabilize_layout(self):
@@ -790,7 +745,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         # ---- add_where
         """
         where id > 5000
-
         """
         if parameters.PARAMETERS.use_add_where:
             add_where      = criteria_dict[ "add_where" ].strip()
@@ -870,6 +824,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         help_document.main_notebook.setCurrentIndex( help_document.list_tab_index )
         self.critera_is_changed = False
 
+    #----------------------------
     def search_me_new(self, criteria ):
         """
         see a promoted version in base
@@ -903,7 +858,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         # mayb this maybe not
         #self.criteria_select_if()    # may need to select is changed
         self.criteria_select()
-
 
 # ----------------------------------------
 class HelpListTab( base_document_tabs.ListTabBase  ):
@@ -1255,6 +1209,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         search_layout       = QHBoxLayout()
         text_layout.addLayout( search_layout )
 
+        # ---- Top and Bottom
         search_text_widget,  up_button,  dn_button  =  text_edit_widget.make_search_widgets(  )
 
         widget = QPushButton( "Top")
@@ -1297,7 +1252,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         text_edit_widget.set_stuffdb( AppGlobal.controller )
 
         # ---- id really fro debug hide --- no data manager needs this
-
         widget          =  cw.CQLineEdit(
                                      parent         = None,
                                      field_name     = "id",    )
@@ -1312,7 +1266,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         # ---- >> Go
         label       = ">> Go ..."
         widget      = QPushButton( label )
-        #connect_to  = functools.partial( text_edit_ext_obj.cmd_exec, text_entry_widget )
         connect_to  = text_edit_widget.cmd_exec
         widget.clicked.connect( connect_to )
         button_layout.addWidget ( widget, )
@@ -1324,117 +1277,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
             a_snippet_manager    = base_document_tabs.SnippetManager( edit_field )
             self.snippet_managers.append( a_snippet_manager )
             self.build_snippet_gui( a_snippet_manager, button_layout, ix)
-
-        # for ix in range( 0, 3 ):
-        #     self.build_snippet_gui( edit_field, button_layout, ix)
-
-        # # ---- snippets 1
-        # self.snippet_manager        = base_document_tabs.SnippetManager( edit_field )
-        # groupbox   = QGroupBox( "Snippets 1" )
-        # groupbox.setMaximumHeight( 80 )
-        # groupbox.setMaximumWidth( 120 )  # by experiment
-        # groupbox.setStyleSheet("""
-        #     QGroupBox {
-        #         border: 2px solid blue;
-        #         border-radius: 10px;
-        #         margin-top: 15px;
-        #     }
-
-        #     QGroupBox::title {
-        #         subcontrol-origin: margin;
-        #         subcontrol-position: top center;
-        #         padding: 0 3px;
-        #         background-color: white;
-        #     }
-        # """)
-
-
-        # button_layout.addWidget( groupbox )
-        # layout_g     = QVBoxLayout( groupbox  )
-        # # layout in the groubpox
-
-
-        # ddl_widget, ddl_button_widget  = self.snippet_manager.make_widgets()
-        # # ddl_widget.setMaximumWidth( 20 )   # see also groupbox
-        # # ddl_widget.view().setMinimumWidth( 30 )   # did not fix my issue
-        # ddl_widget.setFixedWidth( 100 )   # see also groupbox
-        # ddl_widget.view().setFixedWidth( 100 )   # did not fix my issue
-        # ddl_widget.setStyleSheet("QComboBox { width: 20px; }")  # did not work
-        # ddl_button_widget.setText( "Paste")
-        # layout_g.addWidget( ddl_widget  )
-        # layout_g.addWidget( ddl_button_widget  )
-
-
-        # # ---- snippets 2
-        # groupbox   = QGroupBox( "Snippets 2" )
-        # groupbox.setMaximumHeight( 80 )
-        # groupbox.setMaximumWidth( 120 )  # by experiment
-        # groupbox.setStyleSheet("""
-        #     QGroupBox {
-        #         border: 2px solid blue;
-        #         border-radius: 10px;
-        #         margin-top: 15px;
-        #     }
-
-        #     QGroupBox::title {
-        #         subcontrol-origin: margin;
-        #         subcontrol-position: top center;
-        #         padding: 0 3px;
-        #         background-color: white;
-        #     }
-        # """)
-
-
-        # button_layout.addWidget( groupbox )
-        # layout_g     = QVBoxLayout( groupbox  )
-        # # layout in the groubpox
-
-
-        # ddl_widget, ddl_button_widget  = self.snippet_manager.make_widgets()
-        # # ddl_widget.setMaximumWidth( 20 )   # see also groupbox
-        # # ddl_widget.view().setMinimumWidth( 30 )   # did not fix my issue
-        # ddl_widget.setFixedWidth( 100 )   # see also groupbox
-        # ddl_widget.view().setFixedWidth( 100 )   # did not fix my issue
-        # ddl_widget.setStyleSheet("QComboBox { width: 20px; }")  # did not work
-        # ddl_button_widget.setText( "Paste")
-        # layout_g.addWidget( ddl_widget  )
-        # layout_g.addWidget( ddl_button_widget  )
-
-        # # ---- snippets 3
-        # groupbox   = QGroupBox( "Snippets 3" )
-        # groupbox.setMaximumHeight( 80 )
-        # groupbox.setMaximumWidth( 120 )  # by experiment
-        # groupbox.setStyleSheet("""
-        #     QGroupBox {
-        #         border: 2px solid blue;
-        #         border-radius: 10px;
-        #         margin-top: 15px;
-        #     }
-
-        #     QGroupBox::title {
-        #         subcontrol-origin: margin;
-        #         subcontrol-position: top center;
-        #         padding: 0 3px;
-        #         background-color: white;
-        #     }
-        # """)
-
-
-        # button_layout.addWidget( groupbox )
-        # layout_g     = QVBoxLayout( groupbox  )
-        # # layout in the groubpox
-
-
-        # ddl_widget, ddl_button_widget  = self.snippet_manager.make_widgets()
-        # # ddl_widget.setMaximumWidth( 20 )   # see also groupbox
-        # # ddl_widget.view().setMinimumWidth( 30 )   # did not fix my issue
-        # ddl_widget.setFixedWidth( 100 )   # see also groupbox
-        # ddl_widget.view().setFixedWidth( 100 )   # did not fix my issue
-        # ddl_widget.setStyleSheet("QComboBox { width: 20px; }")  # did not work
-        # ddl_button_widget.setText( "Paste")
-        # layout_g.addWidget( ddl_widget  )
-        # layout_g.addWidget( ddl_button_widget  )
-
 
         # ---- Paste Prior
         label           = "Paste Prior"
@@ -1482,26 +1324,16 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
             widget.clicked.connect( connect_to )
             button_layout.addWidget( widget )
 
-
-
         label           = "Test\nDebug"
         widget          = QPushButton( label )
         connect_to  =  partial( self.current_record_to_pinned, 0 )
         widget.clicked.connect( self.test_debug )
         button_layout.addWidget( widget )
 
-        # # ---- pin 2
-        # label           = "Pin Current Row as 2"
-        # widget          = QPushButton( label )
-        # connect_to  =  partial( self.current_record_to_pinned, 1 )
-        # widget.clicked.connect( connect_to )
-        # button_layout.addWidget( widget )
-
-
  #-------------------------------------
     def build_snippet_gui( self, snippet_manager, layout, ix ):
         """
-
+        !! may hve been promoted look
         """
         # ---- snippets n
         # snippet_manager        = base_document_tabs.SnippetManager( edit_field )
@@ -1539,11 +1371,12 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         layout_g.addWidget( ddl_widget  )
         layout_g.addWidget( ddl_button_widget  )
 
- #-------------------------------------
+    #-------------------------------------
     def current_record_to_pinned( self, ix_row ):
         """
         get detail record and put in pinned table at position
         ix_row --- looks like could be promoted
+        check to see if can promote  !!
         """
         history_tab     = self.parent_window.history_tab
         history_tab.current_record_to_pinned( ix_row )
@@ -1592,6 +1425,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         """
         a test may be working or not
         self.field_list
+        may be some in base as well, perhaps combine ??
         """
         pass
         if self.file_writer  is None:

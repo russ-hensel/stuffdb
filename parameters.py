@@ -230,6 +230,8 @@ class Parameters( ):
         self.picture_db_root    = "/mnt/8ball1/first6_root/photos/photos_db"
         self.picture_db_sub     = "/73"
 
+        self.logging_level      = logging.ERROR   # ERROR DEBUG
+
         # /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db
         self.icon               =  "./misc/db_green_on_black.png"
 
@@ -511,8 +513,6 @@ class Parameters( ):
         # some of the next all?? should be moved over to RunningOn
         run_on.log_me( logger = None, logger_level = 10, print_flag = False )
 
-
-
         self.set_default_path_here  = True
             # to make app location the default path in the app, Think True may always be best.
             # above may be tricky to reset, but we may have the original dir in running on
@@ -669,7 +669,8 @@ class Parameters( ):
         self.screen_dirt   =    { "`":        "",
                                   "### ":     "",
                                   "###":      "",
-                                  ">>>":      "",   }
+                                  ">>>":      "",
+                                  ",,":       "",      }
 
         # ---- note_default_text
         # do not want to couple custom widgets to parametes, but maybe I should
@@ -833,9 +834,9 @@ class Parameters( ):
         a_dict     = self.text_snippets
 
         # ---- sort the templates so the user does not
-        #print(  "sort on key item[0]" )
+        #rint(  "sort on key item[0]" )
         self.text_snippets = {a_key: a_value for a_key, a_value in sorted( a_dict.items(), key = lambda item: item[0] ) }
-        #print( b_dict )
+        #rint( b_dict )
 
         # ---- systems for helpdb ??alpha  to sort make all quotes the same
         self.systems_list      =  [    '',
@@ -878,10 +879,11 @@ class Parameters( ):
                 return False
 
             exec_str           = f"self.{mode_str}()"
+
             try:
                 eval( exec_str, globals(), locals()  )
-            except ValueError as error:
 
+            except ValueError as error:
                 error_message = str(error)
                 msg  = (f"Caught an error: {error_message} for {exec_str = }")
                 print( msg )

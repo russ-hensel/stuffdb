@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# ---- tof
 """
 search for ia objects to create
 
@@ -8,8 +9,6 @@ this should make less setup code -- not sure if any implemented
 
 
 """
-
-# ---- tof
 
 # # --------------------
 # if __name__ == "__main__":
@@ -24,21 +23,18 @@ import os
 import sqlite3 as lite
 import subprocess
 import sys
-from functools import partial
-from pathlib import Path
-from platform import python_version
-from subprocess import PIPE, STDOUT, Popen, run
+from   functools import partial
+from   pathlib import Path
+from   platform import python_version
+from   subprocess import PIPE, STDOUT, Popen, run
 
 #import global_vars
 import ia_parameters
 
-#port wat_inspector
+# ---- end imports
 
-VERBOSE    = False
-# ---- ---- local imports
-#print_func_header  = uft.print_func_header
-
-LINE_LIMIT   = 25   # or move to parameters
+VERBOSE     = False
+LINE_LIMIT  = 25   # or move to parameters
 
 # -------------------------------------
 class IaSearch():
@@ -78,6 +74,7 @@ class IaSearch():
         directory_list      = ia_parameters.PARAMETERS.dir_for_search
         file_path_list      = []
         #i_directory    = Path( "./" )
+
         for i_directory in directory_list:
             i_directory = Path( i_directory )
 
@@ -85,11 +82,13 @@ class IaSearch():
                     # not .stem or .name whic may be needed later path not string
 
             file_path_list      = file_path_list + i_file_path_list
-        msg      =  f"find_ia_files {VERBOSE = }"
-        print( msg )
-        for ix, i_file_path in enumerate( file_path_list ):
-            if  VERBOSE is True:
-               print( ix, i_file_path)
+
+        if VERBOSE:
+            msg      =  f"find_ia_files {VERBOSE = }"
+            print( msg )
+            for ix, i_file_path in enumerate( file_path_list ):
+                if  VERBOSE:
+                   print( ix, i_file_path)
 
         return file_path_list
 
@@ -106,7 +105,7 @@ class IaSearch():
 
         key   = item[ "sort_order:" ]
         key   = -int( key )
-        #print( f"IaSearch get_key {key = }" )
+        #rint( f"IaSearch get_key {key = }" )
         return key
 
     #------------
@@ -160,11 +159,8 @@ class IaSearch():
         a_file  = open( file_path, 'r', encoding = "utf8", errors = 'ignore' )
 
         for ix, i_line in enumerate( a_file ):
-
             i_line          = i_line.strip()
             i_line_lower    = i_line.lower()
-
-
 
             # if i_line_lower.startswith( item ):
             #         i_line    = i_line[ len( item ) + 1 : ].strip()
@@ -181,27 +177,21 @@ class IaSearch():
             #         file_data[ i_file_data_item ] = file_data[ i_file_data_item ] + " " + i_line
                         # should get rid of id
 
-            # slightly different processing eware
+            # slightly different processingbeware
             item       =  "application:"
             if i_line_lower.startswith( item ):
                     i_line    = i_line[ len( item ) + 1 : ].strip()
                     file_data[ item ] =  i_line
-
 
             item       = "sort_order:"
             if i_line_lower.startswith( item ):
                     i_line    = i_line[ len( item ) + 1 : ].strip()
                     file_data[ item ] =  i_line
 
-
             item       =  "class_names:"  # can be multiple
             if i_line_lower.startswith( item ):
                     i_line    = i_line[ len( item ) + 1 : ].strip()
                     file_data[ item ] = file_data[ item ] + " " + i_line
-
-
-
-
 
             # if i_line.startswith
             #         i_line    = i_line[ 10: ].strip()
@@ -227,5 +217,6 @@ class IaSearch():
 
         return file_data
 
-
 # ---- eof
+
+
