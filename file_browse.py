@@ -23,7 +23,7 @@ import sys
 
 import gui_qt_ext
 
-# from qt_compat import QApplication, QAction, exec_app, qt_version
+
 from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 

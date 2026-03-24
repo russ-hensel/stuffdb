@@ -3308,6 +3308,10 @@ class CQDictComboBox( QComboBox, CQEditBase ):
     starting code from chat
     may need to run a select for values not in dd
 
+            lets take the raw data as as the dict key
+            assume that comes out of db
+                  but not sure that is right
+
     """
     def __init__(self,
                  parent                 = None,
@@ -3325,9 +3329,24 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         debug_msg    = ( "say give each its own copy of index_to_key ... but could centralized ")
         logging.log( LOG_LEVEL,  debug_msg, )
 
-        self.index_valid     = False   # false while in process of building
-        self.index_to_key    = {}   # needs to be shared with one in mdi
-                                    # anyway some issues
+        # ---- index_to_key is what
+        self.index_valid        = False   # false while in process of building --- may not be using
+
+
+        self.dict_data          = {}
+        self.index_to_key       = [ ]   # will always be list( self.dict_data.keys() )
+        self.key_wilst_mutating = None
+
+        """
+        to mutate dict
+            call pre_mutate
+            do the mutate
+            call post_mutate
+
+        A different structue for this might be the dict, and a dict of index to key
+
+        """
+
 
         # self.dict_data       = {}   # pointer to one in mdi
 
@@ -3431,21 +3450,64 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         #data  = self.get_selected_key()   # eliminate call after testing
         return data
 
-    #---------------------------
-    def update_dictionary( self, just_warning = True ):
+    #----------------------------
+    def pre_mutate( self, ):
         """
-        2 events, a warning to save the id and
-        then telling the dict has change --
-        but the index may not be valid -- as for
-        a new record in the fetch process  -- how do we detect that
+        the dictionary is about to be mutated but we assume
+        for now the key will not be deleted if it is we should
+        I guess make sure there is a null in it and use that
+        a mutate could include an entire swap of the dict, managed
+        the same way
         """
-        if just_warning:
-            self.db_value       = self.get_value_by_index()   # probably same as  get_raw_data()
-            self.index_valid    = False
+        # self.dict_data
+        # self.index_to_key       = [ ]   # will always be list( self.dict_data.keys() )
+        pass
+        ci                      = self.currentIndex()
+        if ci < 0:
+            self.key_wilst_mutating = None
         else:
-            self.load_combo_box()
-            self.index_valid    = True
-            self.set_selection_by_key( self.db_value )
+            self.key_wilst_mutating = self.index_to_key[ ci ]
+
+    #----------------------------
+    def post_mutate( self, ):
+        """
+        the dictionary has been mutated so find the key ... index and
+        put it back
+        """
+        # self.dict_data
+        self.index_to_key       = list( self.dict_data )
+
+        # now load in the value in dict order
+        self.clear()
+        self.addItems( self.dict_data.values() )
+
+        # and once each mutation I will need to get index from key, no struct
+        #    just find it here -- this could build index_to_key
+        for ix, key in enumerate( self.dict_data.keys() ):
+            if key   == self.key_wilst_mutating:
+                break
+        else:  # no break
+            pass # will need to decide this may work
+            ix = -1
+
+        self.setCurrentIndex( ix )
+
+    # #---------------------------
+    # def update_dictionary( self, just_warning = True ):
+    #     """
+    #     2 events, a warning to save the id and
+    #     then telling the dict has change --
+    #     but the index may not be valid -- as for
+    #     a new record in the fetch process  -- how do we detect that
+    #     """
+    #     if just_warning:
+    #         self.db_value       = self.get_value_by_index()   # probably same as  get_raw_data()
+    #         self.index_valid    = False
+
+    #     else:
+    #         self.load_combo_box()
+    #         self.index_valid    = True
+    #         self.set_selection_by_key( self.db_value )
 
     # --------------------------
     def load_combo_box( self ):

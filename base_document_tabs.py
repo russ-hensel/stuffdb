@@ -287,10 +287,6 @@ def is_delete_ok( ):
 
     msg_box.setModal(True)
 
-    # if qt_version == 6:
-    #     msg_box.exec()
-    # else:
-    #     msg_box.exec_()
 
     msg_box.exec()
     is_ok           = False
@@ -698,6 +694,9 @@ class DocumentBase( QMdiSubWindow ):
         #self.tab_page_info()
         if old_index == 0 and index != 0:  # !=0 happens at construct
             self.criteria_tab.criteria_select_if( )
+
+        if  index == self.criteria_tab_index:
+            self.criteria_tab.tab_selected()  # or activate
 
         if ( ( index == self.criteria_tab_index ) and
              ( self.criteria_tab.key_words_widget is not None ) ):
@@ -1174,6 +1173,16 @@ class DocumentBase( QMdiSubWindow ):
         #     return self.photos_tab.prior_next( delta )
         return   self.detail_tab.prior_next_picture( delta )
 
+    # --------------------------------
+    def get_topic( self ):
+        """
+        this version seems promotable -- from stuff
+        of the detail record -- now info
+        see picture get plant info.... --- !! will promote lets see what happens
+        """
+        info   = self.detail_tab.data_manager.get_topic_string()
+        return info
+
     # ------------------------------------------
     def doc_str( self, ):
         """
@@ -1466,7 +1475,7 @@ class DetailTabBase( QWidget ):
         self.send_topic_update()
 
     # ----------------------------
-    def fetch_detail_row( self,  a_id = None ):
+    def fetch_detail_row_xxxx( self,  a_id = None ):
         """
         Args:
             id can be external or as chat has it fetched
@@ -2101,6 +2110,25 @@ class CriteriaTabBase( QWidget ):
         criteria_dict[ "end_edit_date" ]    = self.end_edit_date_widget.get_date(   )
         criteria_dict[ "start_add_date" ]   = self.start_add_date_widget.get_date( )
         criteria_dict[ "end_add_date" ]     = self.end_add_date_widget.get_date( )
+
+    # -------------------------
+    def tab_selected( self,   ):
+        """
+        what it says, read
+             for now put in descandant or promote to here
+        """
+        pass
+        self.update_album_ddl()
+
+    #-------------------------------------
+    def update_album_ddl( self ):
+        """
+        what it says read
+            override in picture else let it sit ... consider
+            refactor, rename or something
+                BaseDocument.update_album_ddl()
+        """
+        pass
 
     # -------------------------
     def show_criteria( self,   ):
@@ -3380,8 +3408,6 @@ class TextTabBase( DetailTabBase  ):
         search_layout.addWidget( search_text_widget )
         search_layout.addWidget( dn_button )
         search_layout.addWidget( up_button )
-
-
 
         font                = QFont( * parameters.PARAMETERS.text_edit_font ) # ("Arial", 12)
         edit_field.setFont(font)

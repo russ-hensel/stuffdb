@@ -20,11 +20,7 @@ import os
 import traceback
 
 
-
-
-
 from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
-
 
 from qtpy.QtCore import Qt
 
@@ -133,23 +129,6 @@ class StuffdbMainWindow( QMainWindow ):
             #print( AppGlobal.fatal_error )
             msg   =  AppGlobal.fatal_error
             msg   =  f"{msg}/n   I can erase this file so the next restart works\say Yes only if you think it is OK"
-            # response = QMessageBox.question( None, "Confirmation", msg,
-            #                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-
-            # # ---- set up flags for different versions
-            # if qt_version == 6:
-            #     qmb_flag_yes     = QMessageBox.StandardButton.Yes
-            #     qmb_flag_no      = QMessageBox.StandardButton.No
-            #     qmb_respons_yes  = QMessageBox.StandardButton.Yes
-
-            # else: # qt5
-            #     qmb_flag_yes     = QMessageBox.Yes
-            #     qmb_flag_no      = QMessageBox.No
-            #     qmb_respons_yes  = QMessageBox.Yes
-
-            # response = QMessageBox.question( None, "Lock File Alert", msg,
-            #                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No )
-
 
             response = QMessageBox.question(
                 None,
@@ -817,13 +796,6 @@ class StuffdbMainWindow( QMainWindow ):
         """
         dialog     = show_parameters.DisplayParameters( parent = self )
 
-        # do we need the if and pass
-        # if qt_version == 6:
-        #     if dialog.exec() == QDialog.DialogCode.Accepted:
-        #         pass
-        # else:
-        #     if dialog.exec_() == QDialog.Accepted:
-        #         pass
         if dialog.exec() == QDialog.DialogCode.Accepted:
             pass
 

@@ -16,12 +16,8 @@ if __name__ == "__main__":
 # ---- imports
 import sys
 
-from app_global import AppGlobal
 
-#from qt_compat import QApplication, QAction, exec_app, qt_version
 
-# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-# from qt_compat import TextAlignmentRole
 
 
 from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
@@ -53,6 +49,7 @@ from qtpy.QtWidgets import (QApplication,
 
 # ---- local imports
 # import  tracked_qsql_relational_table_model
+#from   app_global import AppGlobal
 import custom_widgets as cw
 
 # ---- end imports

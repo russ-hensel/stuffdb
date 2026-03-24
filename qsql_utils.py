@@ -165,17 +165,6 @@ def query_exec_error_check( *, query, sql = None, raise_except = True ):
         query_ok   =  qsql_utils.query_exec_error_check(  query = query, sql = sql, raise_except = True )
     """
     query_ok    = True
-    # if qt_version == 6:
-    #     # qsqlquery_exec  =   # approach not taken
-    #     if sql is None:
-    #         result  = query.exec( )  # sql already in the query
-    #     else:
-    #         result  = query.exec( sql )
-    # else:
-    #     if sql is None:
-    #         result  = query.exec_( )  # sql already in the query
-    #     else:
-    #         result  = query.exec_( sql )
 
     if sql is None:
         result  = query.exec( )  # sql already in the query

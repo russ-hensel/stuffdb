@@ -392,6 +392,8 @@ def to_columns( current_str, item_list, format_list = ( "{: <30}", "{:<30}" ), i
 class ColumnFormater( ):
 
     """
+    this thing is probably a bad idea --- make something simpler
+    using  .format( 'test' ) )
     a_file_deleter    = FileDeleter( )
     a_file_deleter.do_delete_empty( a_path )
 
@@ -406,10 +408,10 @@ class ColumnFormater( ):
 
         """
         ...
-        self.reset( None )
+        self.reset(   )
 
     # ----------------------------------------
-    def reset( self, a_path ):
+    def reset( self, ):
         """
         reset for reuse
 
@@ -423,9 +425,19 @@ class ColumnFormater( ):
         #                     }
 
     # ----------------------------------------
+    def reset_data( self,  ):
+        """
+        reset for reuse
+        you can get the str from time to time and then reset
+
+        """
+        self.column_data   = []  # fill with tuples of the column data
+
+
+    # ----------------------------------------
     def get_default_spec(  self ):
-        a_default_spec  =  { "width": 5,
-                            "allign": "r",   # "l"
+        a_default_spec  =  { "width": 25,
+                             "allign": "r",   # "l"
                              }
         return a_default_spec
 
@@ -448,10 +460,30 @@ class ColumnFormater( ):
         """
         self.column_specs.append( column_spec )
 
+
+    # ----------------------------------------
+    def get_result( self,  ):
+        """
+        format it up
+        """
+        a_str   = ""
+
+        for i_line in self.column_data:
+            str_line   = ""
+            for i_col_data,  i_column_spec  in zip( i_line, self.column_specs ):
+                str_line  = ( f"{str_line} {i_col_data}   format with  {i_column_spec}" )
+
+        a_str   = f"\n{a_str} {str_line}"
+
+            #for i_column_spec in self.column_specs
+        return a_str
+
+
+
     # ----------------------------------------
     def get_str( self,  ):
         """
-
+        not sure what it does
         """
         a_str   = ""
 
@@ -732,7 +764,7 @@ def test_clean_string_to_list():
         print( f">{i_line}<" )
 
 #---------------------------
-def test_column_formatter():
+def test_column_formatterxxx():
     """
 
 
@@ -752,6 +784,9 @@ def test_column_formatter():
 
     print( a_column_formatter )
     print( a_column_formatter.get_str() )
+
+
+    print( a_column_formatter.get_result() )
 
 class TestClass():
     def __init__( self ):
@@ -775,8 +810,9 @@ def test_obj_to_str():
 
 # ---- test_column_formatter() and...
 # --------------------
-if __name__ == "__main__":
-
+if __name__ == "x__main__":
+   #move tests to sub dir and delete here
+   1/0
    test_num_to_string()
    test_obj_to_str()
    test_clean_string_to_list()

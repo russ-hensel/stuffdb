@@ -20,18 +20,6 @@ import time
 from   datetime import datetime
 from   functools import partial
 
-# from qt_compat import QApplication, QAction, exec_app, qt_version
-
-# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-# from qt_compat import TextAlignmentRole
-# from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
-# from qt_compat import OnManualSubmit, NoEditTriggers,  SelectRows
-# from qt_compat import  Horizontal   # 5 6 compat was   Horizontal  replace all
-
-# from qt_compat import AlignCenter, AlignLeft, AlignRight, AlignTop, AlignBottom, AlignVCenter
-
-
-
 
 from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 from qtpy.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, Slot
@@ -146,11 +134,11 @@ class StuffDocument( base_document_tabs.DocumentBase ):
         self.__init_2__()
 
     # --------------------------------
-    def get_topic( self ):
+    def get_topic_promoted ( self ):
         """
         this version seems promotable
         of the detail record -- now info
-        see picture get plant info....
+        see picture get plant info.... --- !! will promote lets see what happens
         """
         info   = self.detail_tab.data_manager.get_topic_string()
         return info
@@ -1339,16 +1327,15 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
         model       = self.model
         # parent=None, edit_data=None ):
         # could put at module level
-        if qt_version == 6:
-            exec = QDialog.exec
-            Accepted = QDialog.DialogCode.Accepted
-        else:
-            exec = QDialog.exec_
-            Accepted = QDialog.Accepted
+        # if qt_version == 6:
+        #     exec = QDialog.exec
+        #     Accepted = QDialog.DialogCode.Accepted
+        # else:
+        #     exec = QDialog.exec_
+        #     Accepted = QDialog.Accepted
 
-        if dialog.exec() == Accepted:
-            form_data = dialog.get_form_data()
-
+        exec      = QDialog.exec
+        Accepted  = QDialog.DialogCode.Accepted
 
         if  dialog.exec() ==  Accepted:
             form_data   = dialog.get_form_data()
@@ -1390,7 +1377,7 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
         # Get the model row index
         model_row = indexes[0].row()
 
-        a_timestamp = self.model.data(self.model.index(0, 4), EditRole)
+        a_timestamp = self.model.data(self.model.index(0, 4), Qt.EditRole )
         print(f"Raw timestamp: {a_timestamp = }")
 
         # Extract data from the row
@@ -1425,23 +1412,26 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
             # self the parent tab
 
         model     = self.model
-        if qt_version == 6:
-            exec = QDialog.exec
-            Accepted = QDialog.DialogCode.Accepted
-        else:
-            exec = QDialog.exec_
-            Accepted = QDialog.Accepted
+        # if qt_version == 6:
+        #     exec = QDialog.exec
+        #     Accepted = QDialog.DialogCode.Accepted
+        # else:
+        #     exec = QDialog.exec_
+        #     Accepted = QDialog.Accepted
+
+        exec = QDialog.exec
+        Accepted = QDialog.DialogCode.Accepted
 
         if dialog.exec() == Accepted:
             form_data = dialog.get_form_data()
 
             # Update the row with the new data
-            model.setData( model.index(row, 0), form_data["id"],        EditRole)
-            model.setData( model.index(row, 2), form_data["stuff_id"],  EditRole)
-            model.setData( model.index(row, 4), form_data["event_dt"],  EditRole)
-            model.setData( model.index(row, 5), form_data["dlr"],       EditRole)
-            model.setData( model.index(row, 6), form_data["cmnt"],      EditRole)
-            model.setData( model.index(row, 7), form_data["type"],      EditRole)
+            model.setData( model.index(row, 0), form_data["id"],        Qt.EditRole )
+            model.setData( model.index(row, 2), form_data["stuff_id"],  Qt.EditRole )
+            model.setData( model.index(row, 4), form_data["event_dt"],  Qt.EditRole )
+            model.setData( model.index(row, 5), form_data["dlr"],       Qt.EditRole )
+            model.setData( model.index(row, 6), form_data["cmnt"],      Qt.EditRole )
+            model.setData( model.index(row, 7), form_data["type"],      Qt.EditRole )
 
     # ----------------------------------
     def delete_selected_event(self):

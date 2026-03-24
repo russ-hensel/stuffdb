@@ -18,7 +18,6 @@ think should and do init in the main window
 
 """
 
-
 # ---- imports
 import weakref
 

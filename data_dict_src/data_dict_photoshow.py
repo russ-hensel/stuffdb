@@ -73,8 +73,9 @@ def build_it( a_data_dict_all ):
                                              is_key_word        = True,
                                              col_head_text      = "Name",
                                              col_head_width     = 50,
+                                             is_topic           = True,
                                              col_head_order     = 1,
-                                             form_col_span       = 4,
+                                             form_col_span      = 4,
                                             )
 
     a_table_dict.add_column( a_column_dict )

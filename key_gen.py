@@ -98,12 +98,6 @@ class KeyGenerator:
         query = QSqlQuery( self.db )
         sql   =  f"SELECT MAX(id) FROM  {table_name}"
 
-
-        # if qt_version == 6:
-        #     query.exec( sql )
-        # else:
-        #     query.exec_( sql )
-
         query.exec( sql )
 
         if query.next():

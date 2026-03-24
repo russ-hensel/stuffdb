@@ -342,8 +342,6 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget, )    # columnspan = 3 )
 
-
-
         # ---- name like
         grid_layout.new_row()
         widget  = QLabel( "Name (like)" )
@@ -355,8 +353,6 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self.critera_widget_list.append( widget )
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget )
-
-
 
         # ---- Order by
         grid_layout.new_row()
@@ -665,7 +661,6 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
                                                 field_name     = "plant_id", )
         self.plant_id_field           = edit_field
 
-
         widget_ext                    = combo_dict_ext.PLANT_COMBO_DICT_EXT
         widget_ext.add_widget( edit_field )
         edit_field.setPlaceholderText( "plant_id" )
@@ -679,7 +674,6 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         self.data_manager.add_field( edit_field, is_key_word = False )
 
         layout.addWidget( edit_field, columnspan = 2 )
-
 
         # ---- bed_old
         edit_field                  = cw.CQLineEdit(

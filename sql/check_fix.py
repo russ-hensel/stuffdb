@@ -3,8 +3,6 @@
 """
 
 """
-
-
 # ---- tof
 
 
@@ -13,21 +11,17 @@ import adjust_path
 # ---- begin pyqt from import_qt.py
 
 
+#from qt_compat import QApplication, QAction, exec_app, qt_version
+from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
+# from qt_compat import TextAlignmentRole
 
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
+from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
-
-
-from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
-
-#from PyQt.QtGui import ( QAction, QActionGroup, )
+#from qtpyQtGui import ( QAction, QActionGroup, )
 # # ----QtWidgets big
-from PyQt.QtWidgets import (
-
+from qtpy.QtWidgets import (
     QMenu,
     QApplication,
     QMainWindow,
@@ -42,14 +36,11 @@ from PyQt.QtWidgets import (
 
 
 # ---- imports
-
-
 import parameters
 import qsql_utils
 import data_dict
 import key_word_indexer
 import stuff_util_sql
-
 
 # ---- end imports
 
@@ -320,7 +311,6 @@ def find_excess_text( db, table_name, text_table_name ):
     line_out( msg )
     line_out( "")
 
-
 # ----------------------------------
 def find_missing_text( db, table_name, text_table_name ):
     """
@@ -338,14 +328,12 @@ def find_missing_text( db, table_name, text_table_name ):
         """
     line_out( sql )
 
+    record_count    = 0
+    max_ix          = 100000
 
+    query           = QSqlQuery( db )
 
-    record_count  = 0
-    max_ix        = 100000
-
-    query = QSqlQuery( db )
-
-    query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
+    query_ok        =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
 
     print( "select result" )
 
@@ -371,12 +359,17 @@ def find_missing_text( db, table_name, text_table_name ):
     line_out( msg )
     line_out( "")
 
-
-
 # ----------------------------------
 def check_key_words_for_dups( db, table_name ):
     """
     what it says
+            example
+            SELECT id, key_word, COUNT(*) AS count
+                        FROM  stuff_key_word help_key_word
+                        GROUP BY id, key_word
+                        HAVING COUNT(*) > 1;
+
+
     """
     line_out( "begin  check_key_words_for_dups ")
     max_ix        = 10044
@@ -385,9 +378,7 @@ def check_key_words_for_dups( db, table_name ):
 
     query = QSqlQuery( db )
 
-    sql         = f"SxxxELECT * FROM {table_name}"
-
-      #     >> find the dups
+    #     >> find the dups
     sql    = f""" SELECT id, key_word, COUNT(*) AS count
                 FROM {table_name} help_key_word
                 GROUP BY id, key_word
@@ -420,10 +411,12 @@ def tables_check_key_words_for_dups( db,   ):
     for i_table in table_list:
         check_key_words_for_dups( db, table_name = i_table )
 
-
+# ----------------------------------
 class DbCheck(   ):
 
-    """set up to run externally  """
+    """
+    set up to run externally
+    """
     def __init__( self, db ):
         """ """
         #db     = su.create_connection()
@@ -599,7 +592,6 @@ def  do_it_left_over_nomoreuse ():
 
     # ---- run command
 
-
     # drop_table(   DB_CONNECTION, table_name = table_name )
     # create_table( DB_CONNECTION, table_name = table_name )
     # check_key_words_for_dups( DB_CONNECTION, table_name = table_name )
@@ -617,24 +609,9 @@ def  do_it_left_over_nomoreuse ():
     # ---- no table name required
     tables_check_key_words_for_dups( DB_CONNECTION )
 
-
     # ---- clean up
     DB_CONNECTION.close()
     #print( "done")
-
-# # --------------------
-# if __name__ == "__main__":
-
-#     do_it()
-
-
-# # --------------------
-# if __name__ == "__main__":
-#     #----- run the full app
-#     import qt_sql_widgets
-#     qt_sql_widgets.main()
-# # --------------------
-
 
 
 # ---- eof

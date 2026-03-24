@@ -22,15 +22,6 @@ import gui_qt_ext
 #import string_utils
 from app_global import AppGlobal
 
-# from qt_compat import QApplication, QAction, exec_app, qt_version
-
-# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-# from qt_compat import TextAlignmentRole
-# from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum, QSizePolicy_Fixed, QSizePolicy_Preferred
-# from qt_compat import OnManualSubmit, OnRowChange, OnFieldChange
-# from qt_compat import NoEditTriggers
-# from qt_compat import SelectRows, SelectItems,ExtendedSelection
-
 
 from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 

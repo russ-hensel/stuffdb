@@ -169,6 +169,8 @@ class DataManager(   ):
                   is_key_word = False,
                   is_topic    = False ):
         """
+        who call me?  build fields, may not need arguments, could read from
+            data dict, note may be code generated not dynamic !! change to dd implementation
         a field on the form and in the record so to speak
         a field is some class from custom_widgets....
         """

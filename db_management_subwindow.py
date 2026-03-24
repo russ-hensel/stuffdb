@@ -25,11 +25,7 @@ import time
 #from functools import partial
 from pathlib import Path
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
 
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
-from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum  # and look at qt_compat there may be more
 
 
 from qtpy.QtCore   import ( QDate, QModelIndex, Qt, QTimer, Slot,  QThread, Signal )
@@ -1046,8 +1042,6 @@ class KeyWordTab( QWidget ):
         # msg    = f"{sql} "
         # self.parent_window.output_msg(  msg )
         self.parent_window.activate_output_tab()
-
-
 
     # -------------------------
     def system_sub_count_rpt( self,   ):

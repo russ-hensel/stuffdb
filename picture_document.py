@@ -34,14 +34,7 @@ from   pathlib import Path
 
 # from qt_compat import QApplication, QAction, exec_app, qt_version
 from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
-# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-# from qt_compat import TextAlignmentRole
-# from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum, QSizePolicy_Fixed, QSizePolicy_Preferred
-# from qt_compat import OnManualSubmit, OnRowChange, OnFieldChange
-# from qt_compat import SelectRows, SelectItems
-# from qt_compat import NoEditTriggers
-# from qt_compat import Horizontal, Vertical
-# from qt_compat import QFileDialog, ExistingFiles, ExistingFile, AnyFile, Directory
+
 
 from qtpy.QtCore import QCoreApplication
 
@@ -69,9 +62,7 @@ from qtpy.QtSql import (QSqlDatabase,
                          QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
-    # from qt_compat import QFileDialog, ExistingFiles, ExistingFile, AnyFile, Directory
 
-#from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
                              QApplication,
@@ -544,6 +535,20 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self.critera_widget_list.append( widget )
         grid_layout.addWidget( widget )
 
+        # # ---- Album
+        # grid_layout.new_row()
+        # widget  = QLabel( "In Album" )
+        # grid_layout.addWidget( widget )
+
+        # widget                 = cw.CQDictComboBox(
+        #                              field_name = "in_album" )
+        # self.in_album_widget   = widget
+        # self.critera_widget_list.append( widget )
+
+        # widget.addItem('album 1')
+        # widget.addItem("album 2")
+
+        # grid_layout.addWidget( widget )
 
         # ---- with file
         grid_layout.new_row()
@@ -694,13 +699,11 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )
 
         # ---- title like
-        name                          = criteria_dict[ "title" ].strip().lower()
-        if name:
+        title                          = criteria_dict[ "title" ].strip().lower()
+        if title:
             add_where       = "lower( title )  like :title"   # :is name of bind var below
             query_builder.add_to_where( add_where, [(  ":title",
                                                      f"%{title}%" ) ])
-
-
 
         # ---- name like
         name                          = criteria_dict[ "name" ].strip().lower()
@@ -748,7 +751,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         # ---- order by
         order_by   = criteria_dict[ "order_by" ]
 
-
         #dt_item  does not seem to exist  -- but this may be error
         # may need to convert to use table name or not
         if   order_by == "title - ignore case":
@@ -769,9 +771,8 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         else:   # !! might better handle this
             column_name = "dt_enter"   # check if exists  dt_item
 
-        # ----
+        # ---- "order_by_dir"
         order_by_dir   = criteria_dict[ "order_by_dir" ].lower( )
-
 
         if "asc" in order_by_dir:
             literal   = "ASC"
@@ -794,6 +795,19 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         parent_document.main_notebook.setCurrentIndex( parent_document.list_tab_index )
         self.critera_is_changed = False
+
+    #-------------------------------------
+    def update_album_ddl( self ):
+        """
+        what it says read
+            in picture criterial
+
+        """
+        # a_dict    = AppGlobal.mdi_management.recent_albums_dict
+        # self.in_album_widget.clear()
+        # for i_key, i_value in a_dict.items():
+        #     self.in_album_widget.addItem( i_value )
+
 
 # ----------------------------------------
 class PictureListTab( base_document_tabs.ListTabBase  ):
@@ -2887,13 +2901,13 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         else:
             query.bindValue(":a_id", a_id )
 
-            if qt_version == 6:
-                query_exec  = query.exec
-            else:
-                query_exec  = query.exec_
+            # if qt_version == 6:
+            #     query_exec  = query.exec
+            # else:
+            #     query_exec  = query.exec_
 
 
-            if not query_exec():
+            if not query.exec():
                 msg       = (f"Execution failed: {query.lastError().text()}")
                 logging.error( msg )
 
@@ -2941,14 +2955,14 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         else:
             query.bindValue(":a_id", a_id )
 
-            if qt_version == 6:
-                query_exec  = query.exec
-            else:
-                query_exec  = query.exec_
+            # if qt_version == 6:
+            #     query_exec  = query.exec
+            # else:
+            #     query_exec  = query.exec_
 
 
 
-            if not query_exec():
+            if not query.exec():
                 msg     = (f"Execution failed: {query.lastError().text()}")
                 logging.debug( msg )
             else:

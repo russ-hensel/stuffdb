@@ -12,8 +12,6 @@ album_document
 if __name__ == "__main__":
     #----- run the full app
     import main
-
-    #main.main()
 # --------------------
 
 #import functools
@@ -30,18 +28,9 @@ import gui_qt_ext
 import wat_inspector
 from app_global import AppGlobal
 
-# from qt_compat import QApplication, QAction, exec_app, qt_version
+
 from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
-# from qt_compat import QSizePolicy_Expanding, QSizePolicy_Minimum, QSizePolicy_Fixed, QSizePolicy_Preferred
 
-
-# from qt_compat import RModel_OnManualSubmit, RModel_OnFieldChange, RModel_OnRowChange
-# from qt_compat import SelectRows, SelectItems, ExtendedSelection
-# from qt_compat import NoEditTriggers
-# from qt_compat import Horizontal, Vertical
-# from qt_compat import CustomContextMenu, PreventContextMenu, DefaultContextMenu
-# from qt_compat import AscendingOrder, DescendingOrder
-# from qt_compat import  Select, Rows # and there are more
 
 from qtpy.QtWidgets import QTableView, QAbstractItemView
 from qtpy.QtCore import QItemSelectionModel
@@ -429,13 +418,21 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self.criteria_changed_widget  = widget
         grid_layout.addWidget( widget )
 
-
-
         # ---- function_on_return( self )
         for i_widget in self.critera_widget_list:
             # ---- new  only really changes some edits
             i_widget.on_value_changed       = lambda: self.criteria_changed( True )
             i_widget.on_return_pressed      = self.criteria_select
+
+    # -------------------------
+    def tab_selected( self,   ):
+        """
+        what it says, read
+             for now put in descandant or promote to here
+             AlbumCriteriaTab.tab_selected()
+        """
+        pass
+
 
     # -------------
     def criteria_select( self,     ):
@@ -446,7 +443,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         debug_msg = ( "criteria_select   trying to add key words " )
         logging.debug( debug_msg )
 
-        parent_document        = self.parent_window
+        parent_document         = self.parent_window
 
         model                   = parent_document.list_tab.list_model
 
@@ -649,7 +646,7 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
         detail_notebook           = QTabWidget()
         self.detail_notebook      = detail_notebook
 
-        # main_notebook.currentChanged.connect( self.on_tab_changed )
+        # main_notebook.currentxxxChanged.connect( self.on_tab_changed )
 
         # ix                        = -1
 
@@ -716,7 +713,7 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
                                                 field_name     = "name", )
         self.name_field     = edit_field
         edit_field.setPlaceholderText( "name" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
+        self.data_manager.add_field( edit_field, is_key_word = True, is_topic = True )
         layout.addWidget( edit_field, columnspan = 4 )
 
         # ---- cmnt
@@ -794,21 +791,30 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
 
+    # ---------------------------
+    def select_record( self, id_value  ):
+        """
+        from russ crud  works
+        !! could be promoted --- now move to extend
+        but topic update also send this may be rudundant
+        """
+        super().select_record( id_value )
+        topic    = self.parent_window.get_topic()
+        AppGlobal.mdi_management.update_album( id_value, topic )
+
     # ----------------------------
-    def fetch_detail_row( self, id=None ):
+    def fetch_detail_rowxxxx( self, id = None ):
         """
         Args:
             id can be external or as chat has it fetched
 
         Returns:
             None.
-        !! could be promoted
+        !! could be promoted --- now move to extend
         """
-        id         = self.id_field.text()
-        debug_msg  = ( f"fetch_row { id=}")
-        logging.debug( debug_msg )
-
-        self.fetch_detail_row_by_id( id )
+        super().fetch_detail_row( id )
+        topic    = self.parent_window.get_topic()
+        AppGlobal.mdi_management.add_album( id, topic )
 
     # -----------------------------
     def delete_detail_row(self):
@@ -901,7 +907,7 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
         self.id_field.setText( str( next_key ) )
 
     # -------------------------
-    def update_detail_row( self ):
+    def update_detail_row_may_be_dead_march( self ):
         """
         what it says, read
         row is the model   detail.model ??
@@ -1254,12 +1260,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         self.view       = view
         view.setModel( self.model )
 
-        # 5 6 ompat -- keeping these local
 
-        # if qt_version == 6:
-        #     DoubleClicked   = QAbstractItemView.EditTrigger.DoubleClicked
-        #     SelectedClicked = QAbstractItemView.EditTrigger.SelectedClicked
-        # else:
         DoubleClicked   = QAbstractItemView.DoubleClicked
         SelectedClicked = QAbstractItemView.SelectedClicked
 

@@ -133,7 +133,7 @@ SEARCH_CRITERIA_DICT["ob"]      =  "id",   # what is ob !!
 
 #mdi_management
 # may have been supplanted by TopicDict
-TopicData   = collections.namedtuple(   "TopicData", "table, id, topic" )
+TopicData   = collections.namedtuple( "TopicData", "table, id, topic" )
 # WindowData  = collections.namedtuple(   "WindowData",
 #                                        "menu_id, window_title" )  # maybe another dict ?/
 # WindowData( menu_id = menu_it, window_title = title)
@@ -234,6 +234,7 @@ class MdiManagement():
 
         self.plant_containers   = { None: "", 1: "1one", 2: "2two" }
         self.text_edit_search   = TextEditSearch( self, AppGlobal.parameters, )
+        self.recent_albums_dict = {}   # album id then its topic as a string
 
     # -------------------------
     def register_document( self,  window_id  ):
@@ -748,13 +749,27 @@ class MdiManagement():
         self.show_document( sub_window  )
         return sub_window
 
+    #----------------------------
     def get_topic_string( self, table_name, a_id ):
         """
         """
-
-
         return self.topic_di.ctget_topic_string( table_name, a_id )
 
+    #----------------------------
+    def update_album( self, a_id, topic, is_delete = False ):
+        """
+        add_album
+        sent by album document when a document is opened ( or saved probably )
+                mdi_management.add_album()
+        is_delete = False, then add or update
+        """
+        if is_delete:
+            pass
+        else:
+            self.recent_albums_dict[a_id]  = topic
+            pass   # debug
+
+#----------------------------
 class TextEditSearch( ):
     """
     About this class.....

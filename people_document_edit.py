@@ -20,12 +20,6 @@ if __name__ == "__main__":
 
 import sys
 
-# # from qt_compat import QApplication, QAction, exec_app, qt_version
-# from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-# from qt_compat import TextAlignmentRole
-
-
 
 from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 from qtpy.QtCore import Qt
