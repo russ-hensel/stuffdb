@@ -437,7 +437,8 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         if key_word_count > 0:
             query_builder.group_by_c_list   = column_list
-            query_builder.sql_inner_join    = " stuff_key_word  ON stuff.id = stuff_key_word.id "
+            #query_builder.sql_inner_join    = " stuff_key_word  ON stuff.id = stuff_key_word.id "
+            query_builder.add_to_inner_join( " INNER JOIN stuff_key_word  ON stuff.id = stuff_key_word.id " )
             query_builder.sql_having        = f" count(*) = {key_word_count} "
 
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )
@@ -733,6 +734,21 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         edit_field.setReadOnly( True )
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- id_in_ do by hand -- think needs conversion to work
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None,
+                                                field_name     = "id_in", )
+        #self.id_in_old_field     = edit_field
+        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
+        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
+        edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
+        edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
+        edit_field.setPlaceholderText( "id_in" )
+        edit_field.setReadOnly( True )
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
 
         # ---- loc_add_info
         edit_field                  = cw.CQLineEdit(

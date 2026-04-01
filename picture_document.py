@@ -514,7 +514,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self.critera_widget_list.append( widget )
         grid_layout.addWidget( widget, )    # columnspan = 3 )
 
-
         # ---- name like
         grid_layout.new_row()
         widget  = QLabel( "Name (like)" )
@@ -535,20 +534,20 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self.critera_widget_list.append( widget )
         grid_layout.addWidget( widget )
 
-        # # ---- Album
-        # grid_layout.new_row()
-        # widget  = QLabel( "In Album" )
-        # grid_layout.addWidget( widget )
+        # ---- Album
+        grid_layout.new_row()
+        widget  = QLabel( "In Album" )
+        grid_layout.addWidget( widget )
 
-        # widget                 = cw.CQDictComboBox(
-        #                              field_name = "in_album" )
-        # self.in_album_widget   = widget
-        # self.critera_widget_list.append( widget )
+        widget                 = cw.CQDictComboBox(
+                                     field_name = "in_album" )
+        self.in_album_widget   = widget
+        history_sync           = AppGlobal.mdi_management.get_history_sync( "album" )
+        widget.connect_to_history_sync( history_sync )  # or other way around connect_widget
+        history_sync.add_item( None, "<none>" ) # need a none element
+        self.critera_widget_list.append( widget )
 
-        # widget.addItem('album 1')
-        # widget.addItem("album 2")
-
-        # grid_layout.addWidget( widget )
+        grid_layout.addWidget( widget )
 
         # ---- with file
         grid_layout.new_row()
@@ -693,7 +692,8 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         if key_word_count > 0:
             query_builder.group_by_c_list   = column_list
-            query_builder.sql_inner_join    = " photo_key_word  ON photo.id = photo_key_word.id "
+            #query_builder.sql_inner_join    = " photo_key_word  ON photo.id = photo_key_word.id "
+            query_builder.add_to_inner_join( " INNER JOIN photo_key_word  ON photo.id = photo_key_word.id  " )
             query_builder.sql_having        = f" count(*) = {key_word_count} "
 
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )
@@ -728,6 +728,18 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             add_where       = "lower( file )  like :file_name_like"   # :is name of bind var below
             query_builder.add_to_where( add_where, [(  ":file_name_like",
                                                      f"%{file_name_like}%" ) ])
+
+        # ---- album  zz
+        album_id             = criteria_dict[ "in_album" ]
+        if album_id:
+            pass
+            #add_where       = "lower( file )  like :file_name_like"   # :is name of bind var below
+            query_builder.add_to_inner_join( " INNER JOIN photo_in_show ON photo.id = photo_in_show.photo_id  " )
+
+            add_where       = " photo_in_show.photo_show_id = :album_id "
+            query_builder.add_to_where( add_where, [(  ":album_id",
+                                                      f"{album_id}" ) ])
+
 
         # ---- dates
         # # ---- dates promote  -- may not work here or anywhere
@@ -796,17 +808,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         parent_document.main_notebook.setCurrentIndex( parent_document.list_tab_index )
         self.critera_is_changed = False
 
-    #-------------------------------------
-    def update_album_ddl( self ):
-        """
-        what it says read
-            in picture criterial
 
-        """
-        # a_dict    = AppGlobal.mdi_management.recent_albums_dict
-        # self.in_album_widget.clear()
-        # for i_key, i_value in a_dict.items():
-        #     self.in_album_widget.addItem( i_value )
 
 
 # ----------------------------------------

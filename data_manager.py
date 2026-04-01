@@ -695,13 +695,13 @@ def delete_record_by_id(model, id_value):
             # some debug stuff keep for abit
             #rint( f"********record_to_field {i_field.field_name}")
             # i_field.set_data_from_record( record )
-            # if i_field.field_name in [ "edit_ts",  ]:
-            #     field_name    =  i_field.field_name
-            #     breakpoint()
-            #     # look at the field names
-            #     for i_field in self.field_list:
-            #         print( f"{i_field.field_name}")
-            #     pass # for breakpoint
+            if i_field.field_name in [ "plant_id",  ]:
+                field_name    =  i_field.field_name
+                breakpoint()
+                # look at the field names
+                # for x_field in self.field_list:
+                #     print( f"{x_field.field_name}")
+                # pass # for breakpoint
 
             i_field.rec_to_edit( record, )  # format = None  hidden in closure
 

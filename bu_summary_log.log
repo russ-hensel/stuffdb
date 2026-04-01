@@ -1,0 +1,30 @@
+Backup_qt ver_003 2026 01 23
+startup arguments
+     src_dir                   = '/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb' 
+    dest_dir                  = '/mnt/k_wd_pp_silver/backup_on_k/russ' 
+    src_media_id              = None 
+    dest_media_id             = None 
+    detail_log_fn             = '/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/bu_detail_log.log' 
+    summary_log_fn            = '/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/bu_summary_log.log' 
+    error_log_fn              = '/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/bu_error_log.log' 
+    dry_run                   = 'wet_run' 
+    max_depth                 = -1 
+    src_dir_filter            = <function all_true at 0x7fd4b3a3c7c0> 
+    src_file_filter           = <function all_true at 0x7fd4b3a3c7c0> 
+    resolve_backup_type       = None 
+    parm_mode                 = 'mode_backup_russ_on_k' 
+    detail_log                = './detail_log.log' 
+    summary_log               = './summary_log.log' 
+    error_log                 = './error_log.log'
+Dry run = False   Max Depth =-1
+OK: Source Directory exits /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb
+OK: Source Directory is a directory /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb
+OK: Destination Directory exits /mnt/k_wd_pp_silver/backup_on_k/russ/0000/python00/python3/_projects/stuffdb
+OK: Destination Directory is a directory /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb
+OK: Summary log /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/bu_summary_log.log opened
+OK: Detail log /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/bu_detail_log.log opened
+OK: Error log /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/bu_error_log.log opened
+
+Starting backup_qr ver_003 2026 01 23 2026-03-11 12:50:06
+run time = 183.630  sec
+Ending backup_qr ver_003 2026 01 23 2026-03-11 13:35:47

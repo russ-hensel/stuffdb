@@ -85,7 +85,8 @@ from qtpy.QtWidgets import (QAbstractItemView,
 
 # ---- imports local
 import base_document_tabs
-import custom_widgets as cw
+import custom_widgets   as cw
+import custom_widgets_2 as cw_2
 import key_words
 import mdi_management
 import planting_document_edit
@@ -445,7 +446,8 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         if key_word_count > 0:
             query_builder.group_by_c_list   = column_list
-            query_builder.sql_inner_join    = " planting_key_word  ON planting.id = planting_key_word.id "
+            #query_builder.sql_inner_join    = " planting_key_word  ON planting.id = planting_key_word.id "
+            query_builder.add_to_inner_join( " INNER JOIN  planting_key_word  ON planting.id = planting_key_word.id  " )
             query_builder.sql_having        = f" count(*) = {key_word_count} "
 
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )
@@ -655,25 +657,50 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         # self.data_manager.add_field( edit_field, is_key_word = False )
         # layout.addWidget( edit_field, columnspan = 2 )
 
-        # ---- plant_id  by hand id_in_old ---------------
-        edit_field                  = cw.CQDictComboBox(
-                                                parent         = None,
-                                                field_name     = "plant_id", )
-        self.plant_id_field           = edit_field
 
-        widget_ext                    = combo_dict_ext.PLANT_COMBO_DICT_EXT
-        widget_ext.add_widget( edit_field )
-        edit_field.setPlaceholderText( "plant_id" )
-        #edit_field.set_dictionary     = self.parent_window.stuff_containers
-        #edit_field.get_info_for_id    = get_info_for_id          # will self get passed
+        # ---- plant_id  by hand ---------------
 
-        #edit_field.set_dictionary( AppGlobal.mdi_management.plant_containers )
+        edit_field                 = cw_2.CQModelComboBox(
+                                     field_name = "plant_id" )
 
-            # to get info given an id
-        # still validator / default func  None
+        # self.in_album_widget   = edit_field
+        kvl_model     = AppGlobal.mdi_management.get_key_value_list_model( "plant" )
+        # could check have default values or do in get function better
+        edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
         self.data_manager.add_field( edit_field, is_key_word = False )
-
         layout.addWidget( edit_field, columnspan = 2 )
+
+        # # ---- plant_id  by hand id_in_old ---------------
+        # edit_field                 = cw.CQDictComboBox(
+        #                              field_name = "plant_id" )
+        # self.in_album_widget   = edit_field
+        # history_sync           = AppGlobal.mdi_management.get_history_sync( "plant" )
+        # edit_field.connect_to_history_sync( history_sync )  # or other way around connect_widget
+        # history_sync.add_item( None, "<none>" ) # need a none element
+        # self.data_manager.add_field( edit_field, is_key_word = False )
+
+        # layout.addWidget( edit_field, columnspan = 2 )
+
+
+        # ---- old version plant id
+        # edit_field                  = cw.CQDictComboBox(
+        #                                         parent         = None,
+        #                                         field_name     = "plant_id", )
+        # self.plant_id_field           = edit_field
+
+        # widget_ext                    = combo_dict_ext.PLANT_COMBO_DICT_EXT
+        # widget_ext.add_widget( edit_field )
+        # edit_field.setPlaceholderText( "plant_id" )
+        # #edit_field.set_dictionary     = self.parent_window.stuff_containers
+        # #edit_field.get_info_for_id    = get_info_for_id          # will self get passed
+
+        # #edit_field.set_dictionary( AppGlobal.mdi_management.plant_containers )
+
+        #     # to get info given an id
+        # # still validator / default func  None
+        # self.data_manager.add_field( edit_field, is_key_word = False )
+
+        # layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- bed_old
         edit_field                  = cw.CQLineEdit(

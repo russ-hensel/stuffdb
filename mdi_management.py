@@ -91,14 +91,15 @@ import stuff_document
 import db_management_subwindow  # db_management_subwindow.DbManagementSubWindow( )
 
 import topic_for_table
-
+import history_sync
+import custom_widgets_2   as cw_2
 
 #import string_utils
 
 from collections import defaultdict
 
 # Create a defaultdict with int as default_factory (defaults to 0)
-counter = defaultdict(int)
+counter = defaultdict( int )
 # ---- imports end
 
 logger      = logging.getLogger( )
@@ -129,6 +130,16 @@ SEARCH_CRITERIA_DICT["id"]      =  "id",
 
 #SEARCH_CRITERIA_DICT["name"]    =  "name"
 SEARCH_CRITERIA_DICT["ob"]      =  "id",   # what is ob !!
+
+
+ALBUM_HISTORY_SYNC              = None    # created on demand
+STUFF_HISTORY_SYNC              = None    # created on demand
+PLANT_HISTORY_SYNC              = None
+
+# _KVLM  key value list model
+ALBUM_KVLM                      = None
+STUFF_KVLM                      = None    # created on demand
+PLANT_KVLM                      = None
 
 
 #mdi_management
@@ -163,7 +174,7 @@ NOT_FOR_SUBJECTS   = { picture_document.PictureDocument, album_document.AlbumDoc
 #         self.title          = None
 #         self.
 
-
+# -----------------------------------------
 class SendSignals( QObject ):
     """
     my signals for db changes and document topics
@@ -766,8 +777,76 @@ class MdiManagement():
         if is_delete:
             pass
         else:
-            self.recent_albums_dict[a_id]  = topic
+            history_sync   = self.get_history_sync( "album" )
+            history_sync.add_item( a_id, topic )
+
             pass   # debug
+
+    #----------------------------
+    def get_history_sync( self, a_type ):
+        """
+        for now to sync ddl dicts --- working on more histoy and
+        fold in earlier stuff
+        """
+        global  ALBUM_HISTORY_SYNC
+        global  STUFF_HISTORY_SYNC
+        global  PLANT_HISTORY_SYNC
+
+        if a_type == "album":
+            if ALBUM_HISTORY_SYNC is None:
+                ALBUM_HISTORY_SYNC = history_sync.HistorySync()
+
+            return ALBUM_HISTORY_SYNC
+
+        if a_type == "stuff":
+            if STUFF_HISTORY_SYNC is None:
+                STUFF_HISTORY_SYNC = history_sync.HistorySync( sql = history_sync.STUFF_QUERY )
+
+            return STUFF_HISTORY_SYNC
+
+        if a_type == "stuff":
+            if STUFF_HISTORY_SYNC is None:
+                STUFF_HISTORY_SYNC = history_sync.HistorySync( sql = history_sync.STUFF_QUERY )
+
+            return STUFF_HISTORY_SYNC
+
+        if a_type == "plant":
+            if PLANT_HISTORY_SYNC is None:
+                PLANT_HISTORY_SYNC = history_sync.HistorySync( sql = history_sync.PLANT_QUERY )
+
+            return PLANT_HISTORY_SYNC
+
+        return 1/0
+
+
+    #----------------------------
+    def get_key_value_list_model( self, a_type ):
+        """
+        the key value pairs for the combo boxes
+        """
+        global  ALBUM_KVLM
+        global  STUFF_KVLM
+        global  PLANT_KVLM
+
+        if a_type == "album":
+            if  ALBUM_KVLM is None:
+                ALBUM_KVLM = cw_2.KeyValueListModel( cw_2.ALBUM_QUERY )
+
+            return ALBUM_KVLM
+
+        if a_type == "stuff":
+            if  STUFF_KVLM is None:
+                STUFF_KVLM = cw_2.KeyValueListModel( sql = cw_2.STUFF_QUERY )
+
+            return STUFF_KVLM
+
+        if a_type == "plant":
+            if  PLANT_KVLM is None:
+                PLANT_KVLM = cw_2.KeyValueListModel( sql = cw_2.PLANT_QUERY )
+
+            return PLANT_KVLM
+
+        return 1/0
 
 #----------------------------
 class TextEditSearch( ):

@@ -37,6 +37,10 @@ from   unidecode import unidecode
 
 # ---- Qt
 
+
+
+
+
 from qtpy import QtGui
 from qtpy import QtCore
 from qtpy.QtCore import Qt
@@ -3451,6 +3455,16 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         return data
 
     #----------------------------
+    def connect_to_history_sync( self, a_history_sync ):
+        """
+        create the history sync then call this
+        # or other way around connect_widget
+        """
+        #self.history_sync history_sync.HISTORY_SYNC
+        a_history_sync.connect( self )
+
+    #----------------------------
+    @Slot( )
     def pre_mutate( self, ):
         """
         the dictionary is about to be mutated but we assume
@@ -3469,6 +3483,7 @@ class CQDictComboBox( QComboBox, CQEditBase ):
             self.key_wilst_mutating = self.index_to_key[ ci ]
 
     #----------------------------
+    @Slot( )
     def post_mutate( self, ):
         """
         the dictionary has been mutated so find the key ... index and
@@ -3529,7 +3544,9 @@ class CQDictComboBox( QComboBox, CQEditBase ):
     # --------------------------
     def get_value_by_index( self ):
         """
+        think function is ng
         but if index is invalid get our backup copy
+             could use get_key_by_indes
         """
         if self.index_valid:
             index   = self.currentIndex()
@@ -3542,7 +3559,7 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         return value
 
     # --------------------------
-    def get_key_by_index(self):
+    def get_key_by_index( self ):
         """
         that is by the current index
         """
@@ -3554,10 +3571,22 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         return key
 
     # --------------------------
-    def set_selection_by_key(self, key):
+    def get_index_by_key( self, ):
         """
+         zz
         """
 
+        debug_msg   = (f"get_key_by_index Selected key: {key}")
+        logging.log( LOG_LEVEL,  debug_msg, )
+        return key
+
+
+
+    # --------------------------
+    def set_selection_by_key(self, key):
+        """
+        if not found then just stays as is -- try for None or blank
+        """
         for index, stored_key in self.index_to_key.items():
             if stored_key == key:
                 self.setCurrentIndex(index)

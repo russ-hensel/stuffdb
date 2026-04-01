@@ -536,7 +536,8 @@ class PlantCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         if key_word_count > 0:
             query_builder.group_by_c_list   = column_list
-            query_builder.sql_inner_join    = " plant_key_word  ON plant.id = plant_key_word.id "
+            #query_builder.sql_inner_join    = " plant_key_word  ON plant.id = plant_key_word.id "
+            query_builder.add_to_inner_join( " INNER JOIN plant_key_word  ON plant.id = plant_key_word.id " )
             query_builder.sql_having        = f" count(*) = {key_word_count} "
 
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )

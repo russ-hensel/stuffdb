@@ -126,6 +126,7 @@ import exec_qt
 import clip_string_utils
 import string_list_utils
 import data
+import history_sync
 
 #import convert_db_display
 #import mdi_management
@@ -2119,7 +2120,7 @@ class CQEditBase(   ):
     #--------------------------------
     def build_criteria( self, a_dict ):
         """
-        mutate the dict for criteria
+        mutate the dict for criteria --
         think this is how we build criteria for criteria select
         note we always get raw data
         generally not replaceable
@@ -2127,7 +2128,14 @@ class CQEditBase(   ):
         # msg   = ( f"CQEditBase {self.field_name} {self.get_raw_data()}")
         # logging.debug( msg )
         # make this ascii
-        data                      = unidecode( self.get_raw_data() )
+        raw_data                  = self.get_raw_data()
+
+        if type( raw_data ) == str:
+            data    = unidecode( raw_data )
+
+        else:
+            data    = raw_data
+
         a_dict[ self.field_name ] = data
 
     # ---- low level no conversion get/set
@@ -2224,6 +2232,7 @@ class CQEditBase(   ):
 
         pass # debug
 
+    # -----------------------
     def set_pass( self, ):
         """
         set to prior by passing
@@ -3312,7 +3321,7 @@ class CQDictComboBox( QComboBox, CQEditBase ):
     def __init__(self,
                  parent                 = None,
                  field_name             = None,
-                  is_keep_prior_enabled = None ):
+                 is_keep_prior_enabled  = None ):
         """ """
         # init both parents
         QLineEdit.__init__( self, None  )     # need arg ?
@@ -3326,8 +3335,20 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         logging.log( LOG_LEVEL,  debug_msg, )
 
         self.index_valid     = False   # false while in process of building
-        self.index_to_key    = {}   # needs to be shared with one in mdi
-                                    # anyway some issues
+
+
+        # the dict and its various supplementary dicts
+        self.dict_data     = {}
+
+        self.ix_to_key     = { ix: i_key for ix, i_key in enumerate( self.dict_data.keys() ) }
+
+        self.key_to_ix     = { i_key: ix for ix, i_key in enumerate( self.dict_data.keys() ) }
+
+
+       # self.index_to_key       = [ ]   # will always be list( self.dict_data.keys() )
+        self.key_wilst_mutating = None
+        self.key_missing        = None    # set to a key while wating for it to be added
+        self.history_sync       = None
 
         # self.dict_data       = {}   # pointer to one in mdi
 
@@ -3398,6 +3419,30 @@ class CQDictComboBox( QComboBox, CQEditBase ):
     #----------------------------
     def set_preped_data( self, a_key, is_changed = None ):
         """
+        new
+            for now assume dict is ok
+        """
+        # # do i have the key?
+        # if not a_key in self.widget_ext.combo_dict:
+        #     # fix it
+        #     self.index_valid    = False
+        #     self.db_value       = a_key
+        #     value_not_used      = self.widget_ext.get_info_for_id( a_key )
+        #         # old comments may be some truth
+        #             # this will update the dictionary and  call all the
+        #             # tabs to refresh using some function
+        #             # but this may need to know the ddl is invalid
+        #             # which set in warning
+        #             # update will be called later
+
+        # else:
+
+        #     self.set_selection_by_key( a_key )
+        self.set_selection_by_key( a_key )
+
+    #----------------------------
+    def set_preped_data_with_widget_ext( self, a_key, is_changed = None ):
+        """
         specialize in extension
         what about prior value
             if we are fetching a value and the
@@ -3464,6 +3509,65 @@ class CQDictComboBox( QComboBox, CQEditBase ):
             self.index_to_key[index] = key
         pass # debug
 
+    #----------------------------
+    def connect_to_history_sync( self, a_history_sync ):
+        """
+        create the history sync then call this
+        # or other way around connect_widget
+        """
+        #self.history_sync history_sync.HISTORY_SYNC
+        a_history_sync.connect( self )
+
+
+    #----------------------------
+    @Slot( )
+    def pre_mutate( self, ):
+        """
+        the dictionary is about to be mutated but we assume
+        for now the key will not be deleted if it is we should
+        I guess make sure there is a null in it and use that
+        a mutate could include an entire swap of the dict, managed
+        the same way
+        """
+        # self.dict_data
+        # self.index_to_key       = [ ]   # will always be list( self.dict_data.keys() )
+        pass
+        ci                      = self.currentIndex()
+        if ci < 0:
+            self.key_wilst_mutating = None
+        else:
+            self.key_wilst_mutating = self.ix_to_key[ ci ]
+
+    #----------------------------
+    @Slot( )
+    def post_mutate( self, ):
+        """
+        the dictionary has been mutated so find the key ... index and
+        put it back
+        """
+        # self.dict_data
+        #self.index_to_key       = list( self.dict_data )
+        #self.index_to_key        = {}
+        # now load in the value in dict order
+        self.clear()
+        self.addItems( self.dict_data.values() )
+
+        # and once each mutation I will need to get index from key, no struct
+        #    just find it here -- this could build index_to_key
+
+        self.ix_to_key     = { ix: i_key for ix, i_key in enumerate( self.dict_data.keys() ) }
+
+        self.key_to_ix     = { i_key: ix for ix, i_key in enumerate( self.dict_data.keys() ) }
+
+        if  self.key_missing:
+            # missing key should have appeared
+            ix                  = self.key_to_ix.get( self.key_missing, -1 )
+            self.key_missing    = None
+        else:
+            ix                  = self.key_to_ix.get( self.key_wilst_mutating, -1 )
+
+        self.setCurrentIndex( ix )
+
     # --------------------------
     def get_value_by_index( self ):
         """
@@ -3480,25 +3584,56 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         return value
 
     # --------------------------
-    def get_key_by_index(self):
+    def get_index_by_key( self, key ):
+        """ """
+        ix     = self.key_to_ix.get( key, -1 )
+        return ix
+
+
+    # --------------------------
+    def get_key_by_index( self, index = None ):
         """
         that is by the current index
         """
-        index     = self.currentIndex()
-        key       = self.index_to_key.get(index)
+        if index is None:
+            index     = self.currentIndex()
+
+        key       = self.ix_to_key.get( index, None )
         #value = self.dict_data.get(key)
         debug_msg   = (f"get_key_by_index Selected key: {key}")
         logging.log( LOG_LEVEL,  debug_msg, )
         return key
 
-    # --------------------------
-    def set_selection_by_key(self, key):
-        """
-        """
+    # # --------------------------
+    # def get_index_by_key(self):
+    #     """
+    #     that is by the current index
+    #     """
 
-        for index, stored_key in self.index_to_key.items():
-            if stored_key == key:
-                self.setCurrentIndex(index)
+
+
+
+    #     #value = self.dict_data.get(key)
+    #     debug_msg   = (f"get_key_by_index Selected key: {key}")
+    #     logging.log( LOG_LEVEL,  debug_msg, )
+    #     return key
+
+    # --------------------------
+    def set_selection_by_key(self, key ):
+        """
+        if we do not have the key and we have a history sync
+        we will ask it to add it
+        """
+        ix     = self.get_index_by_key( key )
+
+        # !! refactor
+        if ix == -1:
+
+            if self.history_sync:
+                self.key_missing = key
+                self.history_sync.add_item( key, history_sync.MISSING_VALUE )
+
+        self.setCurrentIndex( ix )
                 # self.label.setText(f"Selection Set to: {self.dict_data[key]}")
 
     # --------------------------

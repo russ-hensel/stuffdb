@@ -65,8 +65,8 @@ class Parameters( ):
         get here"""
 
         #self.mode_new_user()
-        self.mode_data_sync()
-        #self.mode_data_sync_b()
+        #self.mode_data_sync()
+        self.mode_data_sync_b()
         #self.mode_data_sync_full_path()
         #self.mode_ramdisk()
         #self.mode_source_db_for_copy()

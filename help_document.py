@@ -737,7 +737,8 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         if key_word_count > 0:
             query_builder.group_by_c_list   = column_list
-            query_builder.sql_inner_join    = " help_key_word  ON help_info.id = help_key_word.id "
+            # query_builder.sql_inner_join    = " help_key_word  ON help_info.id = help_key_word.id "
+            query_builder.add_to_inner_join( " INNER JOIN help_key_word  ON help_info.id = help_key_word.id " )
             query_builder.sql_having        = f" count(*) >= {key_word_count} "    # >+ for key word errors
 
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )

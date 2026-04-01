@@ -75,7 +75,7 @@ class QueryBuilder(    ):
         self.table_name              = None     # part of interface populate prior to use
         self.sql_data                = None     # see:
         self.sql_order_by            = None     # see:
-        self.inner_join              = None
+        self.inner_join              = ""       # defaults to falsy
 
         self.reset( )
 
@@ -169,7 +169,7 @@ class QueryBuilder(    ):
         self._sql            = f"SELECT {sql_columns}  FROM {self.table_name}  "
 
         if self.sql_inner_join:
-            self._sql        = f"{self._sql}\n    INNER JOIN {self.sql_inner_join} "
+            self._sql        = f"{self._sql}\n  {self.sql_inner_join} "
 
         # ---- where
         self._sql            = f"{self._sql }\n    {self.sql_where} "
@@ -208,9 +208,9 @@ class QueryBuilder(    ):
         self.sql_order_by  = f"{self.sql_order_by} {column_name} {direction} "
 
     # ----------------------------------------------
-    def add_to_inner_join( self,    sql_inner_join,   ):
+    def add_to_inner_join( self, sql_inner_join, ):
         """
-        add to empty string only
+        add to inner join
         arg
             sql_inner_join
 
@@ -221,7 +221,7 @@ class QueryBuilder(    ):
         # else:
         #     self.sql_order_by += ", "
 
-        self.sql_inner_join  = sql_inner_join
+        self.sql_inner_join  = f"{self.sql_inner_join} {sql_inner_join} "
 
    # ----------- where methods
    # ----------------------------------------------
