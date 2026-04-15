@@ -12,46 +12,25 @@ stuff_document_edit.EditStuffEvents(
 # --------------------
 if __name__ == "__main__":
     import main
+    pass
 
 # --------------------
 
 # ---- imports
 
 import logging
-import sys
 
 
+from qtpy.QtCore import QDateTime
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
-
-from app_global import AppGlobal
-from qtpy.QtCore import QDateTime, Qt
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlDriver,
-                         QSqlQuery,
-                         QSqlRecord,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
-
-from qtpy.QtWidgets import (QApplication,
-                             QComboBox,
+from qtpy.QtWidgets import ( QComboBox,
                              QDateTimeEdit,
                              QDialog,
                              QDialogButtonBox,
                              QFormLayout,
-                             QGridLayout,
-                             QHBoxLayout,
-                             QLabel,
                              QLineEdit,
-                             QMainWindow,
-                             QMessageBox,
-                             QPushButton,
                              QSpinBox,
-                             QTableView,
-                             QVBoxLayout,
-                             QWidget)
+                             QVBoxLayout)
 
 # ---- imports local
 
@@ -72,7 +51,7 @@ class EditStuffEvents( QDialog ):
     perhaps this should as well
 
     """
-
+    #--------------------------------
     def __init__(self, parent=None, edit_data=None ):
         """
         includes the building of the form which is not
@@ -84,6 +63,7 @@ class EditStuffEvents( QDialog ):
         self.setWindowTitle("Add New Event" if edit_data is None else "Edit Event")
         if parent is None:
             1/0 # need parent which is the tab where the model is
+
         # Create form layout and fields
         form_layout = QFormLayout()
 
@@ -94,7 +74,7 @@ class EditStuffEvents( QDialog ):
         widget.setMaxLength( 10 )
         form_layout.addRow( "ID:", widget )
 
-        # Stuff ID field
+        # ---- Stuff ID field
         widget             = QLineEdit()
         self.stuff_id_edit = widget
         widget.setMaxLength(10)
@@ -106,7 +86,6 @@ class EditStuffEvents( QDialog ):
         form_layout.addRow("Event Date:", self.event_date_edit)
 
         # DLR field (integer)
-
         self.dlr_spinbox = QSpinBox()
         self.dlr_spinbox.setRange(0, 9999)
         form_layout.addRow("DLR:", self.dlr_spinbox)
@@ -118,7 +97,7 @@ class EditStuffEvents( QDialog ):
         self.comment_edit.setMinimumWidth( 350  )
         form_layout.addRow("Comment:", self.comment_edit)
 
-        # Type field
+        # ---- Type field
         self.type_combobox = QComboBox()
         # Add your event types here
         self.type_combobox.addItems(["Type1", "Type2", "Type3"])
@@ -157,7 +136,7 @@ class EditStuffEvents( QDialog ):
 
         # Button box
         button_box = QDialogButtonBox(
-            CQDialogButtonBox.Ok | CQDialogButtonBox.Cancel)
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
 
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
@@ -169,17 +148,21 @@ class EditStuffEvents( QDialog ):
 
         self.setLayout( main_layout )
 
+    # --------------
     def get_form_data(self):
         """
         Get the data from the form fields as a dictionary.
         """
         a_id   = self.id_edit.text().strip()
+
         if a_id == "":
             a_id  = 0
+
         else:
             a_id  = int( a_id )
 
         stuff_id = self.stuff_id_edit.text().strip()
+
         if stuff_id == "":
             stuff_id  = 0
         else:
@@ -188,18 +171,21 @@ class EditStuffEvents( QDialog ):
         data = {
             #"id": int( self.id_edit.text() ),
             "id":        a_id,
-
             #"stuff_id":  int( self.stuff_id_edit.text() ),
-            "stuff_id":   stuff_id,
-
+            "stuff_id":  stuff_id,
             "event_dt":  int(self.event_date_edit.dateTime().toSecsSinceEpoch()),
             "dlr":       self.dlr_spinbox.value(),
             "cmnt":      self.comment_edit.text(),
             "type":      self.type_combobox.currentText()
         }
-        msg    = f"EditStuffEvents.get_form_data {data = }"
-        print( msg )
+
+        # msg    = f"EditStuffEvents.get_form_data {data = }"
+        # print( msg )
+
         return data
 
-
 # ---- eof
+
+
+
+

@@ -22,15 +22,7 @@ history_sync.HISTORY_SYNC
 
 
 from qtpy.QtCore import QObject, Signal
-from qtpy.QtSql import ( QSqlDatabase,
-                         QSqlField,
-                         QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRecord,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel )
+from qtpy.QtSql import ( QSqlQuery )
 
 import logging
 
@@ -95,7 +87,6 @@ class HistorySync( QObject ):  # QObject my not really be needed
                 self.ddl_dict[key] = value
 
         self.my_sender.emit_post_mutate()
-        pass
 
     #--------------------------
     def connect(self, cq_dict_combo_box):
@@ -106,7 +97,6 @@ class HistorySync( QObject ):  # QObject my not really be needed
         cq_dict_combo_box.dict_data     = self.ddl_dict
         self.my_sender.pre_mutate.connect(  cq_dict_combo_box.pre_mutate )
         self.my_sender.post_mutate.connect( cq_dict_combo_box.post_mutate )
-        pass
 
     #--------------------------
     def topic_select(self, arg_id ):

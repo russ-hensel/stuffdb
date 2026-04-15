@@ -8,7 +8,7 @@ main window -- container for the mdi
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
-    import main
+    pass
     #main.main()
 # --------------------
 
@@ -25,38 +25,19 @@ from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 from qtpy.QtCore import Qt
 
 from qtpy.QtCore import QCoreApplication
-from qtpy.QtCore import QDate, QModelIndex, Qt, QTimer
-from qtpy.QtGui  import QIcon, QIntValidator, QStandardItem, QStandardItemModel
-from qtpy.QtSql  import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtCore import Qt
+from qtpy.QtGui  import QIcon
 from qtpy.QtGui  import QAction
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
                              QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
                              QDialog,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGridLayout,
-                             QInputDialog,
                              QLabel,
-                             QLineEdit,
-                             QListWidget,
                              QMainWindow,
                              QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
                              QMessageBox,
-                             QPushButton,
-                             QSpinBox,
-                             QTableView,
-                             QTabWidget,
-                             QTextEdit,
                              QToolBar,
                              QVBoxLayout,
                              QWidget)
@@ -145,7 +126,6 @@ class StuffdbMainWindow( QMainWindow ):
                 delete_file( AppGlobal.parameters.db_lock_file_name )
 
             else:
-                pass
                 print("User clicked No")
 
             # we are gone -- might be better back in stuff db
@@ -891,7 +871,6 @@ class StuffdbMainWindow( QMainWindow ):
         # Clean up temporary files
         # etc.
         AppGlobal.controller.cleanup()
-        pass
 
     # ---- test actions ----------------------
     # -----------------------------

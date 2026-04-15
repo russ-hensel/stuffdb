@@ -10,42 +10,27 @@ Created on Mon Jan 20 17:41:10 2025
 # ---- tof
 
 # ---- imports
-import adjust_path
 # ---- begin pyqt from import_qt.py
 
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-from qt_compat import TextAlignmentRole
+# from qt_compat import QApplication
 
 
 
-
-from PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlDatabase, QSqlQuery
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-# # ----QtWidgets big
-from PyQt.QtWidgets import (
 
-    QMenu,
+from qtpy.QtWidgets import (
+
     QApplication,
-    QMainWindow,
-    QTableView,
-    QFrame,
-    QMainWindow,
-    QMdiArea,
-    QMdiSubWindow,
-    QMdiArea,
-    QMdiSubWindow,
     )
 
 # ---- imports
 import parameters
 import qsql_utils
 import data_dict
-import stuff_util_sql   as su
 
 # ---- end imports
 

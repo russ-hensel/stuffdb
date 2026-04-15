@@ -20,7 +20,6 @@ rpt_data_dict.rpt_sql( table_name  )
 # ---- imports
 import data_dict
 #import dict_main
-import adjust_path
 import logging
 
 
@@ -384,83 +383,90 @@ def rpt_tables(   ):
     msg    = f"{data_dict.DATA_DICT} "
 
     print( msg )
-# ---- run from here
-
-# uncomment to make sure your table is available
-#print( data_dict.DATA_DICT )
 
 
-# a_table    = data_dict.DATA_DICT.get_table( "photo_key_word" )
+# --------------------
+if __name__ == "__main__":
+    #----- run the full app
 
-# a_table    = data_dict.DATA_DICT.get_table( "plant" )
-# a_table    = data_dict.DATA_DICT.get_table( "planting" )
-# a_table    = data_dict.DATA_DICT.get_table( "photo" )
+    # --------------------
+    # ---- run from here
 
-# ---- table name
-
-# ---- .... help_info
-table_name    = "help_info"
-#table_name    = "help_key_word"
-#table_name    = "help_text"
-
-#table_name    = "key_gen"
-
-# ---- .... people
-# table_name      = "people"
-# table_name      = "people_text"
-#table_name      = "people_phones"
+    # uncomment to make sure your table is available
+    #print( data_dict.DATA_DICT )
 
 
-# ---- .... photo
-#table_name      = "photo"
-# #table_name      = "photo_key_word"
-# # table_name      = "photo_text"
-#table_name      = "photo_subject"
+    # a_table    = data_dict.DATA_DICT.get_table( "photo_key_word" )
 
-# ---- .... photoshow
-# table_name      = "photoshow"               # album
-# #table_name      = "photoshow_text"
-# #table_name      = "photoshow_key_word"
+    # a_table    = data_dict.DATA_DICT.get_table( "plant" )
+    # a_table    = data_dict.DATA_DICT.get_table( "planting" )
+    # a_table    = data_dict.DATA_DICT.get_table( "photo" )
 
-# table_name      = "photo_subject"
+    # ---- table name
 
-# table_name      = "plant"
+    # ---- .... help_info
+    table_name    = "help_info"
+    #table_name    = "help_key_word"
+    #table_name    = "help_text"
 
-#table_name      = "planting"
+    #table_name    = "key_gen"
 
-#table_name      = "stuff"
-#table_name       = "stuff_event"
-
-
-#table_name      = "persons"
+    # ---- .... people
+    # table_name      = "people"
+    # table_name      = "people_text"
+    #table_name      = "people_phones"
 
 
-# ----  reports rpt_
+    # ---- .... photo
+    #table_name      = "photo"
+    # #table_name      = "photo_key_word"
+    # # table_name      = "photo_text"
+    #table_name      = "photo_subject"
 
-# ---- .... rpt_tables
-#rpt_tables()
-#rpt_topic_columns( "people" )
-# ---- .... rpt_display_order
-#rpt_display_order( table_name )
+    # ---- .... photoshow
+    # table_name      = "photoshow"               # album
+    # #table_name      = "photoshow_text"
+    # #table_name      = "photoshow_key_word"
 
-# ---- .... gen_build_fields
-gen_build_fields( table_name )
+    # table_name      = "photo_subject"
 
+    # table_name      = "plant"
 
-# ---- next only for primay document tables
-#rpt_list_order( table_name )
+    #table_name      = "planting"
 
-#rpt_key_words( table_name )
-
-# ---- sql for all tables
-
-# ---- rpt_sql
-#rpt_sql( table_name  )
+    #table_name      = "stuff"
+    #table_name       = "stuff_event"
 
 
-#rpt_list_order( table_name )  # uses data_dict.DATA_DICT.get_list_columns( table_name )
+    #table_name      = "persons"
 
 
-# ---- bootstrap   --- now in its own module not here
-# ---- eof
+    # ----  reports rpt_
+
+    # ---- .... rpt_tables
+    #rpt_tables()
+    #rpt_topic_columns( "people" )
+    # ---- .... rpt_display_order
+    #rpt_display_order( table_name )
+
+    # ---- .... gen_build_fields
+    gen_build_fields( table_name )
+
+
+    # ---- next only for primay document tables
+    #rpt_list_order( table_name )
+
+    #rpt_key_words( table_name )
+
+    # ---- sql for all tables
+
+    # ---- rpt_sql
+    #rpt_sql( table_name  )
+
+
+    #rpt_list_order( table_name )  # uses data_dict.DATA_DICT.get_list_columns( table_name )
+
+
+    # ---- bootstrap   --- now in its own module not here
+    # ---- eof
 

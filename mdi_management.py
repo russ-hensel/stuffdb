@@ -25,6 +25,7 @@ typically in AppGlobal as:
 if __name__ == "__main__":
     #----- run the full app
     import main
+    pass
 # --------------------
 
 # ---- imports
@@ -33,52 +34,25 @@ if __name__ == "__main__":
 import collections
 import functools
 import logging
-import sys
 
 from app_global import AppGlobal
 
 #from qtpy.QtCore    import Qt
 from qtpy.QtGui     import QAction
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtWidgets import QMessageBox
 
 
 from qtpy.QtCore import ( Qt,
-                          QDate,
-                          QModelIndex,
                           QObject,
                           Qt,
-                          QTimer,
                            )
 
-from qtpy.QtCore import Signal, Slot
+from qtpy.QtCore import Signal
 
 # from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
-                             QDialog,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QInputDialog,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QSpinBox,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
+                             QMessageBox)
 
 # !! think we just use the document so shorten see main_window
 import album_document
@@ -88,7 +62,6 @@ import picture_document
 import plant_document
 import planting_document
 import stuff_document
-import db_management_subwindow  # db_management_subwindow.DbManagementSubWindow( )
 
 import topic_for_table
 import history_sync
@@ -119,17 +92,19 @@ SEARCH_COMMAND_DICT["search_plant"    ]   = plant_document.PlantDocument
 SEARCH_COMMAND_DICT["search_planting" ]   = planting_document.PlantingDocument
 
 
-
+# think just for help_info but in any cans only work there
 # !! perhaps change to default
+# thse match up to the criteria tab
 SEARCH_CRITERIA_DICT    = defaultdict( lambda: None )
 
-SEARCH_CRITERIA_DICT["sys"]     =  "system"
-#SEARCH_CRITERIA_DICT["system"]  =    "system"
-SEARCH_CRITERIA_DICT["subsys"]  = "sub_system"
-SEARCH_CRITERIA_DICT["id"]      =  "id",
+SEARCH_CRITERIA_DICT["sys"]         = "system"
+SEARCH_CRITERIA_DICT["system"]      = "system"
+SEARCH_CRITERIA_DICT["table_name"]  = "table_name"
+SEARCH_CRITERIA_DICT["column_name"] = "column_name"
+SEARCH_CRITERIA_DICT["id"]          = "id",
 
 #SEARCH_CRITERIA_DICT["name"]    =  "name"
-SEARCH_CRITERIA_DICT["ob"]      =  "id",   # what is ob !!
+#SEARCH_CRITERIA_DICT["ob"]      =  "id",   # what is ob !! perhaps id
 
 
 ALBUM_HISTORY_SYNC              = None    # created on demand
@@ -140,7 +115,7 @@ PLANT_HISTORY_SYNC              = None
 ALBUM_KVLM                      = None
 STUFF_KVLM                      = None    # created on demand
 PLANT_KVLM                      = None
-
+PLANTING_BED_KVLM               = None
 
 #mdi_management
 # may have been supplanted by TopicDict
@@ -364,7 +339,6 @@ class MdiManagement():
                     main_window.window_menu.removeAction( i_action )
                     # QMessageBox.information( AppGlobal.main_window, "Info", f"Removed item: {menu_id}??")
         else:
-            pass
             QMessageBox.information( AppGlobal.main_window, "Info", "Item to remove not found.")
 
     # --------------------------------------
@@ -591,7 +565,6 @@ class MdiManagement():
             debug_msg     = ( f"update_stuff_container delete needs imp { stuff_id }   " )
             logging.error(    debug_msg, )
 
-        pass  # debugging
 
         # now finc all the stuff windows and send them notification
         # to rebuild dd list for stuff containers
@@ -664,9 +637,10 @@ class MdiManagement():
         # if dialog.exec_() == QDialog.Accepted:
         #     pass
 
+    # -----------------------------------------
     def stuffdb_help( self,  search_args ):
         """
-        open a high instance ix for help using eithe id or a search string
+        open a high instance ix for help using either id or a search string
         id removed for now
             for now put a_id in search_str
             do we need to register
@@ -755,7 +729,6 @@ class MdiManagement():
             debug_msg     = ( f"update_plant_containers delete needs imp { table_id }   " )
             logging.error(    debug_msg, )
 
-        pass  # debugging
 
         self.show_document( sub_window  )
         return sub_window
@@ -780,7 +753,6 @@ class MdiManagement():
             history_sync   = self.get_history_sync( "album" )
             history_sync.add_item( a_id, topic )
 
-            pass   # debug
 
     #----------------------------
     def get_history_sync( self, a_type ):
@@ -827,6 +799,7 @@ class MdiManagement():
         global  ALBUM_KVLM
         global  STUFF_KVLM
         global  PLANT_KVLM
+        global  PLANTING_BED_KVLM
 
         if a_type == "album":
             if  ALBUM_KVLM is None:
@@ -845,6 +818,14 @@ class MdiManagement():
                 PLANT_KVLM = cw_2.KeyValueListModel( sql = cw_2.PLANT_QUERY )
 
             return PLANT_KVLM
+
+        if a_type == "planting_bed":
+            if  PLANTING_BED_KVLM is None:
+                PLANTING_BED_KVLM = cw_2.KeyValueListModel( sql = cw_2.PLANTING_BED_QUERY )
+
+            return PLANTING_BED_KVLM
+
+
 
         return 1/0
 
@@ -948,6 +929,7 @@ class TextEditSearch( ):
         if cmd == "search":
             # get current window
             target_subwindow    = mdi_area.activeSubWindow() # grok says
+
         else:  # zz
             # breakpoint()
             # determine window type

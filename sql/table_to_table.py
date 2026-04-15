@@ -5,8 +5,7 @@
 
 
 
-import sys
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlError
+from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 
 #-------------------------------
 def connect_src():

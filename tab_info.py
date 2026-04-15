@@ -2,7 +2,6 @@ import http.server
 import json
 import socketserver
 import threading
-import time
 
 class TabInfoRequestHandler(http.server.BaseHTTPRequestHandler):
     """Handler for the HTTP requests"""

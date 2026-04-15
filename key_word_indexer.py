@@ -13,63 +13,15 @@ Index the key words for all of a table
 import logging
 
 
-from qtpy import QtGui
 
 
 
-from qtpy        import QtGui
 
-from qtpy.QtCore import (QDate,
-                          QModelIndex,
-                          QSize,
-                          QSortFilterProxyModel,
-                          Qt,
-                          QTimer)
 
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
+from qtpy.QtSql import (QSqlQuery)
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from qtpy.QtWidgets import ( QAbstractItemView,
-                             QAction,
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDataWidgetMapper,
-                             QDateEdit,
-                             QDialog,
-                             QDoubleSpinBox,
-                             QFormLayout,
-                             QGridLayout,
-                             QGroupBox,
-                             QHBoxLayout,
-                             QHeaderView,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QListWidgetItem,
-                             QMainWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QRadioButton,
-                             QSpinBox,
-                             QStyledItemDelegate,
-                             QTableView,
-                             QToolBar,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget )
 
 from collections import defaultdict
 

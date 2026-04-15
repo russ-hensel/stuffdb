@@ -35,21 +35,13 @@ unclear on how well this works -- keep trying for awhile
 # from qt_compat import QApplication, QAction, exec_app, qt_version
 
 
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 
 
-from PyQt.QtCore import Qt
 # ---- QtSql
-from PyQt.QtSql import (QSqlDatabase,
-                         QSqlDriver,
-                         QSqlError,
-                         QSqlField,
+from PyQt.QtSql import (QSqlDriver,
                          QSqlQuery,
-                         QSqlQueryModel,
                          QSqlRecord,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 

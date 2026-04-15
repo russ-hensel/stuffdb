@@ -94,7 +94,7 @@ sys.path.insert( 1, f"{src_root}/stuffdb" )
 
 sys.path.insert( 1, f"{src_root}/stuffdb/py_helpers" )
 sys.path.insert( 1, f"{src_root}/stuffdb/data_dict_src" )
-sys.path.insert( 1, f"{src_root}/stuffdb/sql" )
+
 sys.path.insert( 1, f"{src_root}/stuffdb/geo_photo" )
 sys.path.insert( 1, f"{src_root}/stuffdb/sql" )
 sys.path.insert( 1, f"{src_root}/rsh" )

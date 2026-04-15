@@ -15,17 +15,14 @@ I would like some code to do this:
 # ---- tof
 # --------------------
 if __name__ == "__main__":
-    import main
+    pass
 # --------------------
 # ---- import
-import sys
 import logging
 import os
-from   app_global import AppGlobal
 
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 from qtpy.QtCore import QRectF, Qt
 from qtpy.QtGui  import QPainter, QPixmap
@@ -35,22 +32,11 @@ from qtpy.QtGui  import QPainter, QPixmap
 
 from qtpy.QtWidgets import (
                              QApplication,
-                             QButtonGroup,
-                             QDateEdit,
-                             QDockWidget,
                              QGraphicsPixmapItem,
                              QGraphicsScene,
                              QGraphicsView,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiSubWindow,
                              QMenu,
-                             QMessageBox,
-                             QPushButton,
                              QSizePolicy,
-                             QSpinBox,
                              QTabWidget,
                              QTextEdit,
                              QVBoxLayout,

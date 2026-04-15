@@ -9,18 +9,14 @@ Created on Sat Jun 29 09:56:07 2024
 
 # --------------------
 if __name__ == "__main__":
-    #----- run the full app
+    #----- run the full app #   import main   for next line
     import main
-
 # --------------------
 
 
 #from   functools import partial
 #import collections
-import functools
 import logging
-import sqlite3
-import time
 from   datetime import datetime
 
 # from qt_compat import QApplication, QAction, exec_app, qt_version
@@ -28,60 +24,21 @@ from   datetime import datetime
 # from qt_compat import TextAlignmentRole
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qtpy.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, Slot
-from qtpy.QtGui import (QIntValidator,
-                         QPainter,
-                         QPixmap,
-                         QStandardItem,
-                         QStandardItemModel)
+from qtpy.QtCore import QModelIndex, Qt
 
 from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
                          QSqlTableModel)
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDataWidgetMapper,
-                             QDateEdit,
-                             QDialog,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGraphicsPixmapItem,
-                             QGraphicsScene,
-                             QGraphicsView,
-                             QGridLayout,
                              QHBoxLayout,
-                             QInputDialog,
                              QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
                              QSizePolicy,
                              QSpacerItem,
-                             QSpinBox,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
                              QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
+                             QVBoxLayout)
 
 # ---- imports local
 
@@ -97,7 +54,6 @@ import key_words
 #import mdi_management
 import people_document_edit
 import qt_sql_query
-import qt_with_logging
 
 logger          = logging.getLogger( )
 LOG_LEVEL       = 20 # level form much debug
@@ -293,10 +249,10 @@ class PeopleCriteriaTab( base_document_tabs.CriteriaTabBase,  ):
 
         widget          = cw.CQLineEdit(
                                     field_name = "key_words" )
+        self.key_words_widget = widget
         self.critera_widget_list.append( widget )
         widget.textChanged.connect( lambda: self.criteria_changed( True ) )
         grid_layout.addWidget( widget, columnspan = 3 )
-
 
         # ----id
         widget                = QLabel( "ID" )
@@ -443,7 +399,7 @@ class PeopleCriteriaTab( base_document_tabs.CriteriaTabBase,  ):
 
         if key_word_count > 0:
             query_builder.group_by_c_list   = column_list
-            query_builder.sql_inner_join    = " people_key_word  ON people.id = people_key_word.id "
+            query_builder.sql_inner_join    = " INNER JOIN people_key_word  ON people.id = people_key_word.id "
             query_builder.sql_having        = f" count(*) = {key_word_count} "
 
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )
@@ -1315,8 +1271,8 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         """
         debug_msg  = ( "get_picture_file_name to be implemented" )
         logging.log( LOG_LEVEL,  debug_msg, )
-        return ""  # none will cause exception  , just need file name that does not exist
-
+        return ""
+            # none will cause exception, just need file name that does not exist
 
 # ==================================
 class PeopleTextTab( base_document_tabs.TextTabBase  ):
@@ -1363,6 +1319,7 @@ class PeopleEventSubTab( base_document_tabs.SubTabWithEditBase ):
 
         # global EVENT_FIELD_DICT
         global EVENT_FIELD_DICT
+
         if EVENT_FIELD_DICT is None:
             EVENT_FIELD_DICT   = data_dict.rpt_sub_tab_columns_order( self.table_name, verbose = False  )
 
@@ -1462,7 +1419,6 @@ class PeopleContactSubTab( base_document_tabs.SubTabWithEditBase ):
         """
         dialog   = people_document_edit.EditPeopleContact( self, edit_data )
         return   dialog
-
 
     # ---------------------------------------
     def select_by_id( self, id ):
@@ -1573,10 +1529,13 @@ class ContactSqlTableModel(QSqlTableModel):
 
         elif role == Qt.TextAlignmentRole:
             # Handle alignment for all columns
+
             if col == 0:  # id
                 return Qt.AlignLeft | Qt.AlignVCenter
+
             elif col == 1:  # stuff_id
                 return Qt.AlignCenter | Qt.AlignVCenter
+
             elif col == 2:  # event_dt
                 return Qt.AlignRight | Qt.AlignVCenter
 

@@ -10,7 +10,7 @@ Created on Sat Dec 13 16:02:45 2025
 
 # --------------------
 if __name__ == "__main__":
-    import main
+    pass
 # --------------------
 
 # ---- imports
@@ -23,74 +23,28 @@ if __name__ == "__main__":
 import time
 
 #from functools import partial
-from pathlib import Path
 
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
-from qtpy.QtCore   import ( QDate, QModelIndex, Qt, QTimer, Slot,  QThread, Signal )
-
+from qtpy.QtCore   import ( QThread, Signal )
 
 
-from qtpy.QtCore   import Qt, QDateTime
-from qtpy.QtWidgets import QStyledItemDelegate
-from qtpy.QtGui import (QFont,
-                         QIntValidator,
-                         QStandardItem,
-                         QStandardItemModel,
-                         QTextCursor)
 
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
+
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
-                             QFileDialog,
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
                              QDialog,
-                             QDateEdit,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGroupBox,
-                             QGridLayout,
                              QHBoxLayout,
-                             QHeaderView,
-                             QInputDialog,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
                              QPushButton,
-                             QSpacerItem,
-                             QSpinBox,
-                             QSizePolicy,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
                              QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
+                             QVBoxLayout)
 
 
 
 # #import gui_qt_ext
-import info_about
 #import key_words
 #import string_util
 

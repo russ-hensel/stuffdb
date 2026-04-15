@@ -30,11 +30,8 @@ from qtpy.QtGui import (
                         )
 # ---- QtCore
 from qtpy.QtCore  import  (
-    QDate,
     QModelIndex,
-    QTimer,
     Qt,
-    Slot,
                             )
 
 from qtpy.QtGui import (
@@ -45,81 +42,42 @@ from qtpy.QtGui import (
 from qtpy.QtWidgets import (
     QWidget,
     QPushButton,
-    QAction,
-
-    QDateEdit,
-    QMenu,
-    QAction,
     QLineEdit,
-    QActionGroup,
-    QApplication,
-    QDockWidget,
     QTabWidget,
     QLabel,
-    QListWidget,
-    QMainWindow,
     QMessageBox,
-    QSpinBox,
-    QMdiSubWindow,
     QTextEdit,
-    QButtonGroup,
 
     )
 
 # ----QtWidgets big
 from qtpy.QtWidgets import (
-    QAction,
-    QMenu,
-    QApplication,
-    QMainWindow,
-
     QTableView,
-    QFrame,
-    QMainWindow,
-    QMdiArea,
-    QMdiSubWindow,
-    QMdiArea,
-    QMdiSubWindow,
     )
 
 # ----QtWidgets layouts
 from PyQt5.QtWidgets import (
-    QGridLayout,
     QVBoxLayout,
     QHBoxLayout,
     )
 
 # ----QtWidgets Boxs, Dialogs
 from qtpy.QtWidgets import (
-    QAction,
-    QActionGroup,
-    QDockWidget,
-    QFileDialog,
-    QInputDialog,
-
     QLabel,
-    QListWidget,
-    QMenu,
     QMessageBox,
     QPushButton,
-    QSpinBox,
     QTextEdit,
     QVBoxLayout,
-    QCheckBox,
     QComboBox,
     )
 
 # ---- QtSql
 from qtpy.QtSql import (
-    QSqlDatabase,
     QSqlTableModel,
     QSqlQuery
     )
 
-import sqlite3
 #from   functools import partial
-import collections
-import functools
 import time
 
 # import winsound windows only
@@ -130,9 +88,7 @@ import time
 from    app_global import AppGlobal
 
 import  gui_qt_ext
-import  string_util
 import  qt_sql_query
-import  document_maker
 import  stuffdb_tabbed_sub_window
 import  ia_qt
 
@@ -1188,7 +1144,6 @@ class HelpTextTab( stuffdb_tabbed_sub_window.StuffdbTab  ):
 
     def __init__(self, parent_window  ):
 
-        pass
         super().__init__()
         self.parent_window   = parent_window
         self._create_gui()

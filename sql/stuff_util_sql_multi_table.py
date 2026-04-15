@@ -11,10 +11,9 @@ Created on Mon Jan 20 17:41:10 2025
 
 
 # ---- imports
-import adjust_path
 # ---- begin pyqt from import_qt.py
 
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 
 
 # from PyQt5.QtGui import (
@@ -62,17 +61,7 @@ from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
 # # ----QtWidgets big
 from PyQt5.QtWidgets import (
-    QAction,
-    QMenu,
     QApplication,
-    QMainWindow,
-    QTableView,
-    QFrame,
-    QMainWindow,
-    QMdiArea,
-    QMdiSubWindow,
-    QMdiArea,
-    QMdiSubWindow,
     )
 
 

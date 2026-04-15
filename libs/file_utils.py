@@ -69,7 +69,7 @@ def file_name_has_extension( file_name, *, ext_list, invert_logic = False ):
 
 
 # ------------------------------
-def file_name_starts_with(file_name, *, prefix_list):
+def file_name_starts_with( file_name, *, prefix_list ):
     """
     Checks if a filename has a prefix in prefix_list.
     Handles both string paths and Path objects.
@@ -85,11 +85,16 @@ def path_name_starts_with( path_name, *, prefix_list = [ "txt" ], invert_logic  
     invert logic for exclusing
     """
     # Convert list to tuple: str.startswith() accepts a tuple for bulk checking
+    # name      = Path(path_name).name
+
+
     is_true   = Path(path_name).name.startswith(tuple(prefix_list))
 
     if invert_logic:
+        print( f">>>{not is_true} {Path(path_name).name}" )
         return not is_true
     else:
+        print( f">>>{is_true} {Path(path_name).name}" )
         is_true
 
 # ----------------------------
@@ -112,7 +117,37 @@ def file_iterator_for_all( root_dir,   ):
 
     return file_iterator
 
+# ----------------------------
+def file_iterator_for_py( root_dir,   ):
+    """
+    any file except
+            __pycache__
+            virtual env   =  .venv.
+            hidden        = .xxxx
 
+
+            zz
+    any depth
+
+    """
+
+    file_filter         = all_true
+    dir_filter          = path_name_starts_with( )
+
+    fi_config           = FileFilterConfig(
+                                file_ok     = file_filter,
+                                dir_ok      = dir_filter,
+                                max_depth   = -1,
+                                initial_dir = root_dir )
+
+    file_iterator    = FileIterator(  config = fi_config   )
+
+    return file_iterator
+
+
+
+
+# ----------------------------
 @dataclass
 class FileFilterConfig:
     """
@@ -188,6 +223,8 @@ class FileIterator:
         else:
             self.stack = []
 
+        pass
+
     # ------------------------------
     def __iter__(self):
         return self
@@ -227,7 +264,23 @@ class FileIterator:
         raise StopIteration
 
 # ---- tests
+# -----------------------------
+def rpt_test( correct, function,  path, ):
 
+    """
+    """
+    test_correct   = function( path )
+    is_ok  = test_correct == correct
+    if is_ok:
+        is_ok = "ok"
+
+    else:
+        is_ok = "NG"
+
+    msg    = f"{is_ok} {test_correct} {path}"
+    print( msg )
+
+# -----------------------------
 def test_file_iterator():
 
     """
@@ -239,9 +292,9 @@ def test_file_iterator():
 
     """
     # 1. Define your filter logic
-    def my_file_filter( path ): return path.suffix == '.py'
+    def my_file_filter( path ):   return path.suffix == '.py'
 
-    def my_dir_filter(path):    return 'temp' not in path.name
+    def my_dir_filter( path ):    return 'temp' not in path.name
 
     # 2. Package it into a config object
     config = FileFilterConfig(
@@ -253,6 +306,7 @@ def test_file_iterator():
     for i_file in file_iterator:
         print( f"{i_file}" )
 
+# --------------------------------
 def test_file_iterator_2():
 
     """
@@ -320,9 +374,14 @@ def test_file_iterator_for_all():
 #         print(f)
 
 #-------------------
-def test_has_entension( )    :
+def test_has_entension( ):
+
 
     ext_list    = [ "txt",  "py",  ]
+    msg         = ( f"\ntest_has_entension with {ext_list = }\n")
+    print( msg )
+
+
     file_name     =  "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/data_hidden.py"
 
     print(  f"{file_name_has_extension( file_name, ext_list=  ext_list) = } {file_name}" )
@@ -349,20 +408,87 @@ def test_has_entension( )    :
 
     print(  f"{foo( file_name,) = } {file_name}" )
 
-file_name_starts_with
+    print( "==== end ==== \n")
 
 #-------------------------------
 def test_file_name_starts_with( )    :
 
     prefix_list_    = [ "data",  "hidden",  ]
+    msg         = ( f"\test_file_name_starts_with with {prefix_list_ = }\n")
+    print( msg )
+
     file_name       =  "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/data_hidden.py"
 
     print(  f"{file_name_starts_with( file_name, prefix_list=  prefix_list_) = } {file_name}" )
 
     prefix_list_    = [ "xdata",  "hidden",  ]
+    msg             = ( f"\test_file_name_starts_with with {prefix_list_ = }\n")
+    print( msg )
+
     file_name       =  "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/data_hidden.py"
 
     print(  f"{file_name_starts_with( file_name, prefix_list=  prefix_list_) = } {file_name}" )
+
+#-------------------------------
+def test_file_name_starts_with_partial( )    :
+
+    prefix_list    = [ "data",  "hidden",  ]
+    msg         = ( f"\ntest_file_name_starts_with_partial with {prefix_list = }\n")
+    print( msg )
+
+    partial_filter   = partial( file_name_starts_with, prefix_list = prefix_list )
+
+    file_name       =  "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/data_hidden.py"
+
+    print(  f"{partial_filter( file_name,) }  {file_name} " )
+
+    prefix_list_    = [ "xdata",  "hidden",  ]
+    msg             = ( f"\ntest_file_name_starts_with_partial with {prefix_list_ = }\n")
+    print( msg )
+
+
+    partial_filter   = partial( file_name_starts_with, prefix_list = prefix_list )
+
+    file_name       =  "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/data_hidden.py"
+    print(  f"{partial_filter( file_name,) }  {file_name} " )
+
+
+#-------------------------------
+def test_path_name_starts_with_partial( )    :
+    """
+
+
+    """
+    prefix_list    = [ "__pycache__",  ".",  ]
+    msg         = ( f"\test_path_name_starts_with_partial with {prefix_list = }\n")
+    print( msg )
+
+    partial_filter   = partial( path_name_starts_with, prefix_list = prefix_list, invert_logic  = True )
+
+    file_name       =  "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/.venv"
+    rpt_test( False, partial_filter, file_name )
+
+    file_name       =  "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/old"
+    rpt_test( True, partial_filter, file_name )
+
+    file_name       =  "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/__pycache__"
+    rpt_test( False, partial_filter, file_name )
+
+    # prefix_list_    = [ "xdata",  "hidden",  ]
+    # msg             = ( f"\ntest_file_name_starts_with_partial with {prefix_list_ = }\n")
+    # print( msg )
+
+
+    # partial_filter   = partial( path_name_starts_with_partial, prefix_list = prefix_list )
+
+    # file_name       =  "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/data_hidden.py"
+    # print(  f"{partial_filter( file_name,) }  {file_name} " )
+
+
+
+
+
+
 
 # ---- run a test(s)
 # --------------------
@@ -372,15 +498,16 @@ if __name__ == "__main__":
     at some low level of testing thse things work
     """
     # ---- ........functions
-    test_has_entension()
+    #test_has_entension()
     # test_file_name_starts_with()
 
     # ---- .       iterator
 
     #test_file_iterator()
 
-    test_file_iterator_2()
-
+    #test_file_iterator_2()
+    #test_file_name_starts_with_partial()
+    test_path_name_starts_with_partial()
     # test_file_iterator_for_all()
 
     print( "all done")

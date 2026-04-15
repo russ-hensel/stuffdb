@@ -28,7 +28,7 @@ the "true" main for the stuffdb, but launch from main
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
-    import main
+    pass
 # --------------------
 
 # ---- version

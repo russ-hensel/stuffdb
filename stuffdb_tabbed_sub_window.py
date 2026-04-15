@@ -9,25 +9,15 @@ Created on Sat Jun 29 10:01:46 2024
 
 # --------------------
 if __name__ == "__main__":
-    import main
+    pass
 # --------------------
 
 
 # ---- begin pyqt from import_qt.py
-from qtpy.QtGui import (
-    QIntValidator,
-    )
 
-from qtpy.QtGui import (
-    QStandardItemModel,
-    QStandardItem,
-                        )
 # ---- QtCore
 # -------- xx
 from qtpy.QtCore  import  (
-    QDate,
-    QModelIndex,
-    QTimer,
     Qt,
     Slot,
                             )
@@ -36,76 +26,32 @@ from qtpy.QtCore  import  (
 from qtpy.QtWidgets import (
     QWidget,
     QPushButton,
-    QAction,
-
-    QDateEdit,
-    QMenu,
-    QAction,
-    QLineEdit,
-    QActionGroup,
-    QApplication,
-    QDockWidget,
-    QTabWidget,
     QLabel,
-    QListWidget,
-    QMainWindow,
     QMessageBox,
-    QSpinBox,
     QMdiSubWindow,
-    QTextEdit,
-    QButtonGroup,
 
     )
 
 # ----QtWidgets big
 from qtpy.QtWidgets import (
-    QAction,
-    QMenu,
-    QApplication,
-    QMainWindow,
-
-    QTableView,
-    QFrame,
-    QMainWindow,
-    QMdiArea,
     QMdiSubWindow,
-    QMdiArea,
     QMdiSubWindow,
     )
 
 # ----QtWidgets layouts
 from qtpy.QtWidgets import (
-    QGridLayout,
     QVBoxLayout,
-    QHBoxLayout,
     )
 
 # ----QtWidgets Boxs, Dialogs
 from qtpy.QtWidgets import (
-    QAction,
-    QActionGroup,
-    QDockWidget,
-    QFileDialog,
-    QInputDialog,
-
     QLabel,
-    QListWidget,
-    QMenu,
     QMessageBox,
     QPushButton,
-    QSpinBox,
-    QTextEdit,
     QVBoxLayout,
-    QCheckBox,
-    QComboBox,
     )
 
 # ---- QtSql
-from qtpy.QtSql import (
-    QSqlDatabase,
-    QSqlTableModel,
-    QSqlQuery
-    )
 
 # ---- more imports
 import ia_qt

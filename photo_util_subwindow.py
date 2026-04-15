@@ -9,70 +9,30 @@
 #import adjust_path
 # --------------------
 if __name__ == "__main__":
-    import main
+    pass
 # --------------------
 
 # ---- imports
-import functools
-import inspect
 import logging
-import pprint
-import subprocess
 import os
 #from functools import partial
 from pathlib import Path
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qtpy.QtCore   import QDate, QModelIndex, Qt, QTimer, Slot
-from qtpy.QtCore   import Qt, QDateTime
-from qtpy.QtWidgets import QStyledItemDelegate
-from qtpy.QtGui import (QFont,
-                         QIntValidator,
-                         QStandardItem,
-                         QStandardItemModel,
-                         QTextCursor)
+from qtpy.QtCore   import Slot
 
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
+from qtpy.QtSql import (QSqlQuery)
 
 
 from qtpy.QtWidgets import (
                              QFileDialog,
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
                              QComboBox,
-                             QDialog,
-                             QDateEdit,
-                             QDockWidget,
                              QFileDialog,
-                             QFrame,
                              QGroupBox,
-                             QGridLayout,
                              QHBoxLayout,
-                             QHeaderView,
-                             QInputDialog,
-                             QLabel,
                              QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
                              QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
                              QPushButton,
-                             QSpacerItem,
-                             QSpinBox,
-                             QSizePolicy,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
                              QTabWidget,
                              QTextEdit,
                              QVBoxLayout,
@@ -80,8 +40,6 @@ from qtpy.QtWidgets import (
 
 import collections
 import parameters
-import data_dict
-import check_fix
 
 #import gui_qt_ext
 import info_about
@@ -89,7 +47,6 @@ import info_about
 
 import wat_inspector
 from   app_global     import AppGlobal
-import qsql_utils
 import geo_track
 import photo_ext
 #import ex_qt

@@ -33,53 +33,18 @@ import db_create
 # ---- imports
 
 
-import sqlite3
 
 import ex_helpers
 #import ia_qt
 # ---- QtCore
-from qtpy.QtCore import QDate, QModelIndex, Qt, QTimer, Slot
-from qtpy.QtGui import QIntValidator, QStandardItem, QStandardItemModel
 # ---- QtSql
-from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlDatabase, QSqlQuery
 # ----QtWidgets Boxs, Dialogs
 # ----QtWidgets layouts
 # ----QtWidgets big
 # ----QtWidgets
-from qtpy.QtWidgets import ( QAction,
-                             QActionGroup,
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGridLayout,
-                             QHBoxLayout,
-                             QInputDialog,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QSpinBox,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
 
-import adjust_path
 import code_gen
-import data_dict
 
 
 

@@ -21,78 +21,25 @@ __version__   = "Ver 19: 2024 07 26.01"
 # ---- imports
 
 import sys
-import random
 
-from PyQt5 import QtWidgets, uic
-from PyQt5.QtCore import Qt
 
 # from MainWindow import Ui_MainWindow
 
-from PyQt5.QtCore import (
-    PYQT_VERSION_STR,
-    QFile,
-    QFileInfo,
-    QSettings,
-    QT_VERSION_STR,
-    QTimer,
-    QVariant,
-    Qt,
-          )
 
-from PyQt5.QtCore import pyqtSignal as Signal
 
 from PyQt5.QtWidgets import (
-    QAction,
-    QActionGroup,
     QApplication,
-    QDockWidget,
-    QFileDialog,
-    QFrame,
-    QInputDialog,
-    QLabel,
-    QListWidget,
-    QMainWindow,
-    QMessageBox,
-    QSpinBox,
-    QMdiSubWindow,
-    QTextEdit,
     )
 
 # ---- QtSql
-from PyQt5.QtSql import (
-    QSqlDatabase,
-    QSqlTableModel,
-    QSqlQuery
-    )
 
-from PyQt5.QtGui import (
-    QIcon,
-    QImage,
-    QImageReader,
-    QImageWriter,
-    QKeySequence,
-    QPainter,
-    QPixmap,   )
 
-from PyQt5.QtPrintSupport import   (
-    QPrintDialog,
-    QPrinter  )
 
-from PyQt5.QtWidgets import   QMainWindow, QMenu, QAction, QMessageBox
 
 from PyQt5.QtWidgets import (
     QApplication,
-    QMainWindow,
-    QMenu, QAction,
-    QMdiArea,
-    QMdiSubWindow,
-    QPushButton,
-    QVBoxLayout,
-    QWidget,
-    QMessageBox,
     )
 
-from PyQt5.QtCore import pyqtSlot
 
 
 import   os
@@ -102,7 +49,6 @@ import   time
 
 # ------- local
 from     app_global import AppGlobal
-import   mdi_management
 import   stuffdb_main_window
 import   parameters
 import   sql_util
@@ -362,7 +308,6 @@ class App( ):
 
 
 def main():
-    pass
     app         = App(   )
     # mainWin     = stuff_db_main_window.StuffDbMainWindow()
     # mainWin.show()

@@ -26,11 +26,9 @@ todo!!   add clear_fields
 # ---- imports
 
 import pprint
-import sys
 
 import pyperclip
 
-import adjust_path
 import clip_string_utils
 import data_dict
 

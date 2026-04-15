@@ -10,86 +10,48 @@ this is the code for the StuffDocument
 if __name__ == "__main__":
     #----- run the full app
     import main
+    pass
 
 # --------------------
 
-import functools
 import inspect
 import logging
-import time
 from   datetime import datetime
-from   functools import partial
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qtpy.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, Slot
-from qtpy.QtGui import (QIntValidator,
-                         QPainter,
-                         QPixmap,
-                         QStandardItem,
-                         QStandardItemModel)
+from qtpy.QtWidgets import QMessageBox
+from qtpy.QtCore import QModelIndex, Qt
 
 from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
                          QSqlTableModel)
 
 
 from qtpy.QtWidgets import (
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
                              QDialog,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGraphicsPixmapItem,
-                             QGraphicsScene,
-                             QGraphicsView,
-                             QGridLayout,
                              QHBoxLayout,
-                             QHeaderView,
-                             QInputDialog,
                              QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
                              QMessageBox,
                              QPushButton,
                              QSizePolicy,
                              QSpacerItem,
-                             QSpinBox,
                              QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
                              QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
+                             QVBoxLayout)
 #OnManualSubmit
 # ---- imports local
 import base_document_tabs
-import custom_widgets as cw
+import custom_widgets   as cw
+import custom_widgets_2 as cw_2
 #import data_manager
 import key_words
-import mdi_management
 import qt_sql_query
-import qt_with_logging
 import stuff_document_edit
 import combo_dict_ext
 import data_dict
 import gui_qt_ext
 import info_about
 import string_utils as string_util
-import string_utils
 
 
 from app_global import AppGlobal
@@ -699,13 +661,41 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 2 )
 
         # ---- type
-        edit_field                  = cw.CQLineEdit(
+        # edit_field                  = cw.CQLineEdit(
+        #                                         parent         = None,
+        #                                         field_name     = "type", )
+        # self.type_field     = edit_field
+        # edit_field.setPlaceholderText( "type" )
+        # self.data_manager.add_field( edit_field, is_key_word = False )
+        # layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- type hand adjusted .... still in test
+        # edit_field                  = cw.CQComboBox(
+        #                                         parent         = None,
+        #                                         field_name     = "type",
+        #                                         is_keep_prior_enabled        = True   )
+
+        edit_field                  = cw.CQHistoryComboBox(
                                                 parent         = None,
-                                                field_name     = "type", )
+                                                field_name     = "type",
+                                                is_keep_prior_enabled        = True   )
+
+
+
+
         self.type_field     = edit_field
+        #edit_field.setEditable( True )
         edit_field.setPlaceholderText( "type" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
+        edit_field.clear()
+        edit_field.setEditable( True )
+        edit_field.setMaxVisibleItems( 25 )  # Number of rows shown in the popup
+        type_list    = [ "type1", "type2", "type3"]
+        edit_field.add_items( type_list )
+        # still validator / default func  None
+        edit_field.is_keep_prior_enabled        = True
+        self.data_manager.add_field( edit_field, is_key_word = True )
+        layout.addWidget( edit_field, columnspan = 1 )
+
 
         # ---- type_sub
         edit_field                  = cw.CQLineEdit(
@@ -735,19 +725,31 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
 
-        # ---- id_in_ do by hand -- think needs conversion to work
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id_in", )
-        #self.id_in_old_field     = edit_field
-        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
-        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
-        edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
-        edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
-        edit_field.setPlaceholderText( "id_in" )
-        edit_field.setReadOnly( True )
+        # # ---- id_in_ do by hand old -- think needs conversion to work
+        # edit_field                  = cw.CQLineEdit(
+        #                                         parent         = None,
+        #                                         field_name     = "id_in", )
+        # #self.id_in_old_field     = edit_field
+        # edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
+        # edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
+        # edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
+        # edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
+        # edit_field.setPlaceholderText( "id_in" )
+        # edit_field.setReadOnly( True )
+        # self.data_manager.add_field( edit_field, is_key_word = False )
+        # layout.addWidget( edit_field, columnspan = 2 )
+
+        # ---- id_in_ do by hand
+        edit_field                 = cw_2.CQModelComboBox(
+                                     field_name = "id_in" )
+
+        self.in_id_widget          = edit_field
+        kvl_model     = AppGlobal.mdi_management.get_key_value_list_model( "stuff" )
+        # could check have default values or do in get function better
+        edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
+
 
 
         # ---- loc_add_info
@@ -981,6 +983,9 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         # self.stuff_combo_dict_ext.get_info_from_record(
         #                 self.data_manager.current_id,
         #                 self.data_manager.current_record  )
+        model       = self.in_id_widget.kvl_model
+        a_id        = self.data_manager.current_id
+        model.row_for_key( a_id )
 
     # ------------------------
     def get_picture_file_name(self):

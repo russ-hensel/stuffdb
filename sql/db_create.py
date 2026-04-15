@@ -33,49 +33,16 @@ import db_create
 # ---- imports
 
 
-import sqlite3
 
 #import ex_helpers
 #import ia_qt
 # ---- QtCore
-from PyQt5.QtCore import QDate, QModelIndex, Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import QIntValidator, QStandardItem, QStandardItemModel
 # ---- QtSql
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 # ----QtWidgets Boxs, Dialogs
 # ----QtWidgets layouts
 # ----QtWidgets big
 # ----QtWidgets
-from PyQt5.QtWidgets import (QAction,
-                             QActionGroup,
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGridLayout,
-                             QHBoxLayout,
-                             QInputDialog,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QSpinBox,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
 
 
 # ---- imports loxal
@@ -85,7 +52,6 @@ from PyQt5.QtWidgets import (QAction,
 
 # ---- begin pyqt from import_qt.py
 
-import parameters
 
 
 

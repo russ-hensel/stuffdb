@@ -28,12 +28,10 @@ import logging
 #import sys
 import sqlite3 as lite
 import time
-from subprocess import Popen
 
 import app_global
 
 import string_utils as string_util
-import string_utils
 from app_global import AppGlobal
 
 # ------------ local
@@ -300,7 +298,6 @@ class SqlRunner(   ):
         return: zip or exception
         argument in builder  ..... help_mode = True aborts the actual select
         """
-        pass
 
         help_mode    = self.help_mode
 
@@ -338,7 +335,6 @@ class SqlRunner(   ):
 
         except app_global.UserCancel as exception:   #  !!this is probably the Right one
         #except Exception as exception:
-            pass  # Catch the  exception and swallow as user wants out not an error
             line_out( exception )  # debug only
 
         msg   = f"Select Done, rows selected: {self.row_count} time = {self.end_time - self.start_time}"
@@ -788,7 +784,6 @@ class TableInfo( object ):
         this makes sure it is sorted
         dict_info    not sure what is in this  may just be column_names now but will be more
         """
-        pass
         self.__table_data_dict      = collections.OrderedDict()
         col_names                   = list( dict_info )
         col_names.sort( )       # but might want to put key fields first
@@ -848,7 +843,6 @@ class TableInfo( object ):
 
             if column in self.table_data_dict:      # should be gone select_table_data_dict:
                 # ok update data
-                pass # pick up after
                 if is_in_select_list( column, self.format_list ):
                    msg  =  f"columns() problem on line {file_line_reader.ix_line}: {column} is repeated"
                    AppGlobal.print_debug(  msg )
@@ -1223,7 +1217,6 @@ class TableInfo( object ):
             AppGlobal.print_debug( msg )
 
         if not done_where:
-            pass
             msg   = "no section for where"
             AppGlobal.gui_write_progress( msg )
         file_line_reader.close_file()

@@ -15,23 +15,15 @@ speeds things up a lot
 
 
 # ---- tof
-import adjust_path
 # ---- imports
 #import sqlite3
 #import sys
 import  time
 
 
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QPushButton, QTextEdit, QLabel
-)
-from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtSql import QSqlQuery, QSqlDatabase
 import traceback
 
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QPushButton, QTextEdit, QLabel, QMessageBox
-)
 #from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 
 import parameters

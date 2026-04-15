@@ -31,19 +31,10 @@ from pathlib import Path
 
 
 from qtpy.QtWidgets import (
-                             QInputDialog,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
                              QMessageBox,
                                  )
 
 
-import adjust_path
 
 import parameters
 from app_global import AppGlobal

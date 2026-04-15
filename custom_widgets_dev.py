@@ -22,11 +22,9 @@ if __name__ == "__main__":
 # ---- imports
 #import functools
 import logging
-import pdb
 import traceback
 import time
 import webbrowser
-import textwrap
 
 from   datetime  import datetime
 from   functools import partial
@@ -41,14 +39,10 @@ from   unidecode import unidecode
 
 
 
-from qtpy import QtGui
-from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy.QtCore import QDate, QDateTime, QTime, QPoint
 
-from qtpy.QtGui  import ( QColor,
-                         QPalette,
-                         QTextCursor,
+from qtpy.QtGui  import ( QTextCursor,
                          QTextDocument,
                          QAction, )
 
@@ -56,69 +50,25 @@ from qtpy.QtGui  import ( QColor,
 from qtpy.QtCore import ( QAbstractTableModel,
                           QDate,
                           QDateTime,
-                          QModelIndex,
-                          QRectF,
                           Qt,
-                          QTimer,
                           Slot,
                           Signal, )
 
 from qtpy.QtGui import (QCursor,
-                         QIntValidator,
-                         QPainter,
-                         QPixmap,
-                         QStandardItem,
-                         QStandardItemModel,
                          QTextCursor)
 
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRecord,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
+from qtpy.QtSql import (QSqlRecord)
 
 # from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
                              QApplication,
-                             QButtonGroup,
-                             QCheckBox,
                              QComboBox,
                              QDateEdit,
-                             QDialog,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGraphicsPixmapItem,
-                             QGraphicsScene,
-                             QGraphicsView,
-                             QGridLayout,
-                             QGroupBox,
-                             QHBoxLayout,
-                             QInputDialog,
-                             QLabel,
                              QLineEdit,
-                             QListWidget,
-                             QListWidgetItem,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
                              QMenu,
-                             QMessageBox,
                              QPushButton,
-                             QRadioButton,
-                             QSizePolicy,
-                             QSpinBox,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
+                             QTextEdit)
 
 
 
@@ -1149,7 +1099,6 @@ class TextEditExtMixin(  ):
             venv            = cmd_args[ 0 ]
             file_name       = cmd_args[ 1 ]
             self.idle_exe.idle_file( venv, file_name  )
-            pass  # debug point
 
         # ---- text
         elif cmd == "text":
@@ -2226,7 +2175,6 @@ class CQEditBase(   ):
         # debug_msg   = ( f"do_ct_value {self.field_name}")
         # logging.log( LOG_LEVEL,  debug_msg, )
 
-        pass # debug
 
     def set_pass( self, ):
         """
@@ -2359,7 +2307,6 @@ class CQEditBase(   ):
         code for this in TextEditExtMixin or for each edit
 
         """
-        pass
         # self.context_menu.exec( global_pos )
         # lets see if   self.context_menu  is just self
         self.exec( global_pos )
@@ -2532,7 +2479,6 @@ class CQEditBase(   ):
 
         # is raw_data a valid key in the dict
         if  self.is_key_in_dict( raw_data ):
-            pass
             """got the data in the dict ok to go"""
 
         else:
@@ -3475,7 +3421,6 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         """
         # self.dict_data
         # self.index_to_key       = [ ]   # will always be list( self.dict_data.keys() )
-        pass
         ci                      = self.currentIndex()
         if ci < 0:
             self.key_wilst_mutating = None
@@ -3502,7 +3447,6 @@ class CQDictComboBox( QComboBox, CQEditBase ):
             if key   == self.key_wilst_mutating:
                 break
         else:  # no break
-            pass # will need to decide this may work
             ix = -1
 
         self.setCurrentIndex( ix )
@@ -3539,7 +3483,6 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         for index, (key, value) in enumerate( self.widget_ext.combo_dict.items() ):
             self.addItem(str(value))
             self.index_to_key[index] = key
-        pass # debug
 
     # --------------------------
     def get_value_by_index( self ):
@@ -3742,10 +3685,8 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         """
         save contents of the text in one level deep buffer
         """
-        pass   # some confusion with added mixin _cache may have been bad choice here
         #self.insert_text_at_cursor( self.prior_text )
         self.insert_text_at_cursor( self.prior_text )
-        pass # debug
 
     def keyPressEvent_for_tab(self, event):   # automatically called? no setup
 

@@ -11,13 +11,11 @@ photo_viewer.PhotoViewer()
 """
 # --------------------
 if __name__ == "__main__":
-    import main
+    pass
 # --------------------
 
 #import sys
-from qtpy.QtWidgets import ( QApplication, QMainWindow,
-                                QGraphicsView, QGraphicsScene, QGraphicsPixmapItem,
-                                QVBoxLayout, QWidget, QPushButton, QDockWidget
+from qtpy.QtWidgets import ( QGraphicsView, QGraphicsScene, QGraphicsPixmapItem
                                 )
 
 from qtpy.QtGui import QPixmap, QPainter
@@ -26,25 +24,7 @@ from qtpy.QtCore import Qt, QRectF
 
 # ----QtWidgets
 from qtpy.QtWidgets import (
-    QWidget,
-    QPushButton,
-    QAction,
-    QDateEdit,
     QMenu,
-    QAction,
-    QLineEdit,
-    QActionGroup,
-    QApplication,
-    QDockWidget,
-    QTabWidget,
-    QLabel,
-    QListWidget,
-    QMainWindow,
-    QMessageBox,
-    QSpinBox,
-    QMdiSubWindow,
-    QTextEdit,
-    QButtonGroup,
     )
 
 # ------------------------------------------------

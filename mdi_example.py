@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QMdiArea, QMdiSubWindow,
                             QTextEdit, QVBoxLayout, QWidget, QPushButton, QHBoxLayout,
                             QLabel, QColorDialog, QComboBox)
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QColor, QPalette
+from PyQt5.QtGui import QColor
 
 
 class CustomMdiSubWindow(QMdiSubWindow):

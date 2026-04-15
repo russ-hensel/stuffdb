@@ -22,7 +22,6 @@ import HTML
 import string_utils
 # ------------ local
 from   app_global import AppGlobal
-import app_exceptions
 
 
 #====================================

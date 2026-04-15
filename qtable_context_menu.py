@@ -16,7 +16,7 @@ from grok works --- move to qt examples
 
 
 
-from qtpy import QtCore, QtWidgets, QtSql
+from qtpy import QtCore, QtWidgets
 from qtpy.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QTableWidget, QMenu
 from qtpy.QtCore   import Qt
 import sys

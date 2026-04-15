@@ -15,117 +15,29 @@ if __name__ != "__main__":
 
 
 # ---- imports
-import adjust_path
 # ---- begin pyqt from import_qt.py
 
-from PyQt5.QtGui import (
-    QStandardItemModel,
-    QStandardItem,
-                        )
 # ---- QtCore
-from PyQt5.QtCore  import  (
-    QDate,
-    QModelIndex,
-    QTimer,
-    Qt,
-    pyqtSlot,
-                            )
 
-from PyQt5.QtGui import (
-    QIntValidator,
-    )
 
 # ----QtWidgets
-from PyQt5.QtWidgets import (
-    QWidget,
-    QPushButton,
-    QAction,
-    QTableWidgetItem,
-    QTableWidget,
-    QDateEdit,
-    QMenu,
-    QAction,
-    QLineEdit,
-    QActionGroup,
-    QApplication,
-    QDockWidget,
-    QTabWidget,
-    QLabel,
-    QListWidget,
-    QMainWindow,
-    QMessageBox,
-    QSpinBox,
-    QMdiSubWindow,
-    QTextEdit,
-    QButtonGroup,
-
-    )
 
 # ----QtWidgets big
-from PyQt5.QtWidgets import (
-    QAction,
-    QMenu,
-    QApplication,
-    QMainWindow,
-
-    QTableView,
-    QFrame,
-    QMainWindow,
-    QMdiArea,
-    QMdiSubWindow,
-    QMdiArea,
-    QMdiSubWindow,
-    )
 
 # ----QtWidgets layouts
-from PyQt5.QtWidgets import (
-    QGridLayout,
-    QVBoxLayout,
-    QHBoxLayout,
-    )
 
 # ----QtWidgets Boxs, Dialogs
-from PyQt5.QtWidgets import (
-    QAction,
-    QActionGroup,
-    QDockWidget,
-    QFileDialog,
-    QInputDialog,
-
-    QLabel,
-    QListWidget,
-    QMenu,
-    QMessageBox,
-    QPushButton,
-    QSpinBox,
-    QTextEdit,
-    QVBoxLayout,
-    QCheckBox,
-    QComboBox,
-    )
 
 # ---- QtSql
 from PyQt5.QtSql import (
-    QSqlDatabase,
-    QSqlTableModel,
     QSqlQuery
     )
 
 
-import pprint
-import sqlite3
 
 
 # ---- Imports
-import shutil
-import os
-import time
-import stat
-import os
 #import datetime
-from   datetime import datetime
-from   pathlib import Path
-import traceback
 
 # import ex_helpers
 # import ex_helpers  as ex_h

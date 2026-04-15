@@ -16,113 +16,28 @@ if __name__ == "__main__":
 # ---- imports
 #import functools
 import logging
-import pdb
-import traceback
-import time
-import webbrowser
-import textwrap
 
-from   datetime  import datetime
 from   functools import partial
-import os
-import platform
-import subprocess
-from   unidecode import unidecode
 
 # ---- Qt
+from qtpy.QtCore import QAbstractListModel
 
-from qtpy import QtGui
-
-from qtpy import QtCore
-
-from qtpy.QtCore import QDate, QDateTime, QTime, QPoint, QAbstractListModel, QModelIndex, Qt
-
-from qtpy.QtCore import QObject, Signal
-
-
-from qtpy.QtGui  import ( QColor,
-                         QPalette,
-                         QTextCursor,
-                         QTextDocument,
-                         QAction, )
-
-from qtpy.QtCore import ( QAbstractTableModel,
-                          QDate,
-                          QDateTime,
-                          QModelIndex,
-                          QRectF,
+from qtpy.QtCore import ( QModelIndex,
+                          QObject,
                           Qt,
-                          QTimer,
                           Slot,
                           Signal, )
 
-from qtpy.QtGui import (QCursor,
-                         QIntValidator,
-                         QPainter,
-                         QPixmap,
-                         QStandardItem,
-                         QStandardItemModel,
-                         QTextCursor)
-
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRecord,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
+from qtpy.QtSql import (QSqlQuery)
 
 # from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from qtpy.QtWidgets import (
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
-                             QDialog,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGraphicsPixmapItem,
-                             QGraphicsScene,
-                             QGraphicsView,
-                             QGridLayout,
-                             QGroupBox,
-                             QHBoxLayout,
-                             QInputDialog,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QListWidgetItem,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QRadioButton,
-                             QSizePolicy,
-                             QSpinBox,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
-
-
+from qtpy.QtWidgets import ( QComboBox,
+                             QLineEdit )
 
 # ---- imports local -- then constants
-import string_utils
-import wat_inspector
 from   app_global     import AppGlobal
-import exec_qt
-import clip_string_utils
-import string_list_utils
-import data
+# import data
 import history_sync
 import custom_widgets as cw
 
@@ -131,13 +46,17 @@ LOG_LEVEL           = 1    # higher is more
 logger              = logging.getLogger( )
 
 
-
-STUFF_QUERY    = "SELECT id, name, title, descr,   FROM stuff  WHERE id = :arg_id"
+# watch out for trailing comma ins sql column names
+STUFF_QUERY    = "SELECT id, name, title, descr   FROM stuff  WHERE id = :arg_id"
      # perhaps later can get from data dict
 
-ALBUM_QUERY    = "SELECT id, name, cmnt,  FROM photoshow  WHERE id = :arg_id"
+ALBUM_QUERY    = "SELECT id, name, cmnt  FROM photoshow  WHERE id = :arg_id"
 
 PLANT_QUERY    = "SELECT id, name, latin_name,  add_kw, descr  FROM plant  WHERE id = :arg_id"
+
+PLANTING_BED_QUERY = STUFF_QUERY
+
+
 
 #--------------------------
 class ModelSender( QObject ):
@@ -156,9 +75,11 @@ class ModelSender( QObject ):
 
     #--------------------------
     def emit_key_restore( self,   ):
+        """
+        the box should restore the key, the
+        model change is complete
+        """
         self.key_restore.emit(   )
-
-
 
 # --------------------------------------------------
 class KeyValueListModel(QAbstractListModel):
@@ -179,19 +100,12 @@ class KeyValueListModel(QAbstractListModel):
         super().__init__(parent)
         self.KEY_ROLE    = Qt.UserRole
         self.VALUE_ROLE  = Qt.UserRole + 1
-        # self._rows = [
-        #     (1, "one"),
-        #     (2, "two"),
-        #     (3, "three"),
-        #     (4, "four"),
-        #     (5, "five"),
-        # ]
+
         self._rows = [
             ( None, "<none>"),
         ]
         self.sender    = ModelSender()
         self.sql       = sql
-
 
     # -----------------------
     def rowCount(self, parent=QModelIndex()):
@@ -230,9 +144,12 @@ class KeyValueListModel(QAbstractListModel):
 
         # Optional: if a caller asks for "column-like" values by display role,
         # still allow access to both fields by QModelIndex column.
+
         if role == Qt.ToolTipRole:
+
             if col == 0:
                 return f"key={key}"
+
             if col == 1:
                 return f"value={value}"
 
@@ -240,8 +157,13 @@ class KeyValueListModel(QAbstractListModel):
 
     # -----------------------
     def headerData(self, section, orientation, role=Qt.DisplayRole):
+        """
+        what it says, read
+        but more info might be good
+        """
         if role != Qt.DisplayRole:
             return None
+
         if orientation == Qt.Horizontal:
             if section == 0:
                 return "key"
@@ -250,12 +172,11 @@ class KeyValueListModel(QAbstractListModel):
         return None
 
     # -----------------------
-    def row_for_key(self, target_key):
+    def row_for_key( self, target_key):
         """
         given a key find the row
         if not found then try to select to get it
             -1 if not found
-
         """
         for row, (key, _value) in enumerate(self._rows):
             if key == target_key:
@@ -267,7 +188,6 @@ class KeyValueListModel(QAbstractListModel):
         for row, (key, _value) in enumerate(self._rows):
             if key == target_key:
                 return row
-
 
         return -1
 
@@ -294,7 +214,6 @@ class KeyValueListModel(QAbstractListModel):
             logging.error(msg)
             return select_ok
 
-
         while query.next():
             topic     = f"{query.value(0)} {query.value(1)} {query.value(2)}"
             select_ok = True
@@ -307,10 +226,11 @@ class KeyValueListModel(QAbstractListModel):
 
         return  select_ok
 
-
-
     # -----------------------
     def append_row(self, key, value):
+        """
+        what it says, read
+        """
         insert_row = len(self._rows)
         self.beginInsertRows(QModelIndex(), insert_row, insert_row)
         self._rows.append((key, value))
@@ -318,10 +238,12 @@ class KeyValueListModel(QAbstractListModel):
 
     # -----------------------
     def prepend_row(self, key, value):
+        """
+        what it says, read
+        """
         self.beginInsertRows(QModelIndex(), 0, 0)
         self._rows.insert(0, (key, value))
         self.endInsertRows()
-
 
 #-------------------------------
 class CQModelComboBox( QComboBox, cw.CQEditBase ):
@@ -444,7 +366,6 @@ class CQModelComboBox( QComboBox, cw.CQEditBase ):
         key should be correct type
         this actually should be the data to go back to the db
         """
-
         data    = self.currentData( Qt.UserRole )
         return data
 
@@ -463,23 +384,6 @@ class CQModelComboBox( QComboBox, cw.CQEditBase ):
             self.load_combo_box()
             self.index_valid    = True
             self.set_selection_by_key( self.db_value )
-
-    # # --------------------------
-    # def load_combo_box( self ):
-    #     """
-    #     assumes dict is in place
-    #         builds the index and loads the drop down
-    #     """
-    #     debug_msg  = ( "load_combo_box get the value, save in temp, reset the combo and reset")
-    #     logging.log( LOG_LEVEL,  debug_msg, )
-    #     debug_msg  = ( "load_combo_box not necessary if we always add at the end ????")
-    #     logging.log( LOG_LEVEL,  debug_msg, )
-    #     self.index_to_key    = {}
-    #     self.clear()
-    #     for index, (key, value) in enumerate( self.widget_ext.combo_dict.items() ):
-    #         self.addItem(str(value))
-    #         self.index_to_key[index] = key
-    #     pass # debug
 
     #----------------------------
     @Slot( )
@@ -524,7 +428,6 @@ class CQModelComboBox( QComboBox, cw.CQEditBase ):
         """ """
         ix     = self.key_to_ix.get( key, -1 )
         return ix
-
 
     # --------------------------
     def get_key_by_indexxxx( self, index = None ):

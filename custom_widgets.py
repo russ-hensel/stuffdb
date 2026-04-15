@@ -22,11 +22,9 @@ if __name__ == "__main__":
 # ---- imports
 #import functools
 import logging
-import pdb
 import traceback
 import time
 import webbrowser
-import textwrap
 
 from   datetime  import datetime
 from   functools import partial
@@ -37,14 +35,10 @@ from   unidecode import unidecode
 
 # ---- Qt
 
-from qtpy import QtGui
-from qtpy import QtCore
 from qtpy.QtCore import Qt
 from qtpy.QtCore import QDate, QDateTime, QTime, QPoint
 
-from qtpy.QtGui  import ( QColor,
-                         QPalette,
-                         QTextCursor,
+from qtpy.QtGui  import ( QTextCursor,
                          QTextDocument,
                          QAction, )
 
@@ -52,69 +46,25 @@ from qtpy.QtGui  import ( QColor,
 from qtpy.QtCore import ( QAbstractTableModel,
                           QDate,
                           QDateTime,
-                          QModelIndex,
-                          QRectF,
                           Qt,
-                          QTimer,
                           Slot,
                           Signal, )
 
 from qtpy.QtGui import (QCursor,
-                         QIntValidator,
-                         QPainter,
-                         QPixmap,
-                         QStandardItem,
-                         QStandardItemModel,
                          QTextCursor)
 
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRecord,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
+from qtpy.QtSql import (QSqlRecord)
 
 # from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
                              QApplication,
-                             QButtonGroup,
-                             QCheckBox,
                              QComboBox,
                              QDateEdit,
-                             QDialog,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGraphicsPixmapItem,
-                             QGraphicsScene,
-                             QGraphicsView,
-                             QGridLayout,
-                             QGroupBox,
-                             QHBoxLayout,
-                             QInputDialog,
-                             QLabel,
                              QLineEdit,
-                             QListWidget,
-                             QListWidgetItem,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
                              QMenu,
-                             QMessageBox,
                              QPushButton,
-                             QRadioButton,
-                             QSizePolicy,
-                             QSpinBox,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
+                             QTextEdit)
 
 
 
@@ -1146,7 +1096,6 @@ class TextEditExtMixin(  ):
             venv            = cmd_args[ 0 ]
             file_name       = cmd_args[ 1 ]
             self.idle_exe.idle_file( venv, file_name  )
-            pass  # debug point
 
         # ---- text
         elif cmd == "text":
@@ -1370,109 +1319,6 @@ class TextEditExtMixin(  ):
         return lines
 
     #----------------------------------
-    def get_snippet_lines_6_dead_delete(self, do_undent=True):
-        """
-        qt6 version I hope
-        :param do_undent: DESCRIPTION, defaults to True
-        :type do_undent: TYPE, optional
-        :return: DESCRIPTION
-        :rtype: TYPE
-
-        """
-
-        lines = []
-        cursor = self.textCursor()
-
-        consecutive_blank = 0
-        original_position = cursor.position()
-
-        # Move to start of current line (Qt6 uses StartOfBlock)
-        cursor.movePosition(QTextCursor.MoveOperation.StartOfBlock)
-        prior_start = cursor.position()
-
-        # -------------------------
-        # UPWARD SCAN
-        # -------------------------
-        for ix in range(SCAN_LINES):
-
-            # Select whole line
-            cursor.movePosition(
-                QTextCursor.MoveOperation.StartOfBlock
-            )
-            cursor.movePosition(
-                QTextCursor.MoveOperation.EndOfBlock,
-                QTextCursor.MoveMode.KeepAnchor
-            )
-
-            selected = cursor.selectedText().rstrip()
-
-            if selected == "":
-                consecutive_blank += 1
-            else:
-                consecutive_blank = 0
-
-            # Stop at begin marker
-            if selected.strip().lower().startswith(MARKER):
-                break
-
-            # Move up
-            cursor.movePosition(QTextCursor.MoveOperation.Up)
-            cursor.movePosition(QTextCursor.MoveOperation.StartOfBlock)
-            position = cursor.position()
-
-            # Hit top of document
-            if position == prior_start:
-                self.log(msg=f"hit top of text {ix=}")
-                break
-            else:
-                prior_start = position
-
-        # DOWNWARD SCAN: collect lines
-        consecutive_blank = 0
-        on_top_line = True
-
-        for ix in range(SCAN_LINES):
-
-            cursor.movePosition(
-                QTextCursor.MoveOperation.EndOfBlock,
-                QTextCursor.MoveMode.KeepAnchor
-            )
-
-            selected = cursor.selectedText().rstrip()
-
-            if selected == "":
-                consecutive_blank += 1
-
-            else:
-                consecutive_blank = 0
-
-            if consecutive_blank > 3:
-                break
-
-            # Stop if we hit the next bottom marker
-            if not on_top_line and selected.strip().lower().startswith(MARKER):
-                break
-            else:
-                on_top_line = False
-
-            lines.append(selected)
-
-            # Move to next line
-            cursor.movePosition(QTextCursor.MoveOperation.Down)
-            cursor.movePosition(QTextCursor.MoveOperation.StartOfBlock)
-            position = cursor.position()
-
-            # End of document
-            if position == prior_start:
-                break
-
-            else:
-                prior_start = position
-
-        if do_undent:
-            lines = self.undent_lines(lines)
-
-        return lines
 
     #------------------------------------
     def update_markup(self, ):
@@ -2230,7 +2076,6 @@ class CQEditBase(   ):
         # debug_msg   = ( f"do_ct_value {self.field_name}")
         # logging.log( LOG_LEVEL,  debug_msg, )
 
-        pass # debug
 
     # -----------------------
     def set_pass( self, ):
@@ -2364,7 +2209,6 @@ class CQEditBase(   ):
         code for this in TextEditExtMixin or for each edit
 
         """
-        pass
         # self.context_menu.exec( global_pos )
         # lets see if   self.context_menu  is just self
         self.exec( global_pos )
@@ -2537,7 +2381,6 @@ class CQEditBase(   ):
 
         # is raw_data a valid key in the dict
         if  self.is_key_in_dict( raw_data ):
-            pass
             """got the data in the dict ok to go"""
 
         else:
@@ -3186,6 +3029,16 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         # Pass the event to the parent class
         super().keyPressEvent(event)
 
+
+    #----------------------------
+    def add_items( self, a_list ):
+        """'
+        probably use addItems directly
+        a_list is a list of strings
+        """
+        self.addItems( a_list  )
+
+    #----------------------------
     def get_history(self):
         """Get the current history as a list of strings."""
         return [self.itemText(i) for i in range(self.count())]
@@ -3507,7 +3360,6 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         for index, (key, value) in enumerate( self.widget_ext.combo_dict.items() ):
             self.addItem(str(value))
             self.index_to_key[index] = key
-        pass # debug
 
     #----------------------------
     def connect_to_history_sync( self, a_history_sync ):
@@ -3531,7 +3383,6 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         """
         # self.dict_data
         # self.index_to_key       = [ ]   # will always be list( self.dict_data.keys() )
-        pass
         ci                      = self.currentIndex()
         if ci < 0:
             self.key_wilst_mutating = None
@@ -3786,10 +3637,8 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         """
         save contents of the text in one level deep buffer
         """
-        pass   # some confusion with added mixin _cache may have been bad choice here
         #self.insert_text_at_cursor( self.prior_text )
         self.insert_text_at_cursor( self.prior_text )
-        pass # debug
 
     def keyPressEvent_for_tab(self, event):   # automatically called? no setup
 

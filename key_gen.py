@@ -15,21 +15,15 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- imports
-import sqlite3
 
 from app_global import AppGlobal
 
 
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 # ---- QtSql
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlError,
-                         QSqlField,
-                         QSqlQuery,
-                         QSqlRecord,
+from qtpy.QtSql import (QSqlQuery,
                          QSqlTableModel)
 # ----QtWidgets
 from qtpy.QtWidgets import QWidget

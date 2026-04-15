@@ -1,0 +1,220 @@
+======== run to build fields ======== <<
+
+
+        # ---- code_gen: TableDict.to_build_form not maintained for planting -- begin table entries ----------------------- 
+
+        # ---- id
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "id",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
+        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
+        edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
+        edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
+        edit_field.setReadOnly( True ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "id" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 1 ) 
+
+        # ---- id_old
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "id_old",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.setReadOnly( True ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "id_old" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 1 ) 
+
+        # ---- name
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "name",   
+                                                is_keep_prior_enabled     = True, ) 
+        edit_field.is_keep_prior_enabled        = True
+        edit_field.setPlaceholderText( "name" ) 
+        self.data_manager.add_field( edit_field, is_key_word = True ) 
+        layout.addWidget( edit_field, columnspan = 4 ) 
+
+        # ---- plant_id_old
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "plant_id_old",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "plant_id_old" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- plant_id
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "plant_id",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
+        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
+        edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
+        edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
+        edit_field.setReadOnly( True ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "plant_id" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 1 ) 
+
+        # ---- bed_old
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "bed_old",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "bed_old" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- location
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "location",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "location" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- add_kw
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "add_kw",   
+                                                is_keep_prior_enabled     = True, ) 
+        edit_field.is_keep_prior_enabled        = True
+        edit_field.setPlaceholderText( "add_kw" ) 
+        self.data_manager.add_field( edit_field, is_key_word = True ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- descr
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "descr",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "descr" ) 
+        self.data_manager.add_field( edit_field, is_key_word = True ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- type
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "type",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "type" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- cmnt
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "cmnt",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "cmnt" ) 
+        self.data_manager.add_field( edit_field, is_key_word = True ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- lbl
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "lbl",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "lbl" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- bed_id_old
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "bed_id_old",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "bed_id_old" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- bed_id
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "bed_id",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
+        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
+        edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
+        edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
+        edit_field.setReadOnly( True ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "bed_id" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 1 ) 
+
+        # ---- lbl_name
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "lbl_name",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "lbl_name" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- itag1
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "itag1",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "itag1" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- planting_status
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "planting_status",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "planting_status" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- need_stake
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "need_stake",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "need_stake" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- need_label
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "need_label",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "need_label" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 
+
+        # ---- need_work
+        edit_field                  = cw.CQLineEdit(
+                                                parent         = None, 
+                                                field_name     = "need_work",   
+                                                is_keep_prior_enabled     = False, ) 
+        edit_field.is_keep_prior_enabled        = False
+        edit_field.setPlaceholderText( "need_work" ) 
+        self.data_manager.add_field( edit_field, is_key_word = False ) 
+        layout.addWidget( edit_field, columnspan = 2 ) 

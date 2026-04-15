@@ -10,7 +10,7 @@ Created on Sat Jun 29 09:56:07 2024
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
-    import main
+    pass
 # --------------------
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -24,11 +24,8 @@ from qtpy.QtGui import (
                         )
 # ---- QtCore
 from qtpy.QtCore  import  (
-    QDate,
     QModelIndex,
-    QTimer,
     Qt,
-    Slot,
                             )
 
 from qtpy.QtGui import (
@@ -37,94 +34,52 @@ from qtpy.QtGui import (
 
 # ----QtWidgets
 from qtpy.QtWidgets import (
-    QWidget,
     QPushButton,
-    QAction,
-
-    QDateEdit,
-    QMenu,
-    QAction,
     QLineEdit,
-    QActionGroup,
-    QApplication,
-    QDockWidget,
     QTabWidget,
     QLabel,
-    QListWidget,
-    QMainWindow,
     QMessageBox,
-    QSpinBox,
-    QMdiSubWindow,
     QTextEdit,
-    QButtonGroup,
 
     )
 
 # ----QtWidgets big
 from qtpy.QtWidgets import (
-    QAction,
-    QMenu,
-    QApplication,
-    QMainWindow,
-
     QTableView,
-    QFrame,
-    QMainWindow,
-    QMdiArea,
-    QMdiSubWindow,
-    QMdiArea,
-    QMdiSubWindow,
     )
 
 # ----QtWidgets layouts
 from qtpy.QtWidgets import (
-    QGridLayout,
     QVBoxLayout,
     QHBoxLayout,
     )
 
 # ----QtWidgets Boxes, Dialogs
 from qtpy.QtWidgets import (
-    QAction,
-    QActionGroup,
-    QDockWidget,
-    QFileDialog,
-    QInputDialog,
-
     QLabel,
-    QListWidget,
-    QMenu,
     QMessageBox,
     QPushButton,
-    QSpinBox,
     QTextEdit,
     QVBoxLayout,
-    QCheckBox,
     QComboBox,
     )
 
 # ---- QtSql
 from qtpy.QtSql import (
-    QSqlDatabase,
     QSqlTableModel,
     QSqlQuery
     )
 
 # ---- not in standard imports
-from qtpy.QtWidgets import ( QApplication, QMainWindow,
- QGraphicsView, QGraphicsScene, QGraphicsPixmapItem,
- QVBoxLayout, QWidget, QPushButton, QDockWidget
+from qtpy.QtWidgets import ( QVBoxLayout, QPushButton
  )
-from qtpy.QtGui import QPixmap, QPainter
-from qtpy.QtCore import Qt, QRectF
+from qtpy.QtCore import Qt
 
 
-import sqlite3
 
 
 #from   functools import partial
 #import collections
-import functools
 import time
 
 # import winsound windows only
@@ -135,7 +90,6 @@ import time
 from    app_global import AppGlobal
 
 import  gui_qt_ext
-import  string_utils   as string_util  # later change all
 import  qt_sql_query
 #import  document_maker
 import  stuffdb_tabbed_sub_window

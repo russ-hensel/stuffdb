@@ -28,7 +28,7 @@ from collections import defaultdict
 
 # --------------------
 if __name__ == "__main__":   # for testing
-    import adjust_path
+    pass
 
 
 import  data_dict
@@ -118,7 +118,6 @@ class TopicForTable():
 # --------------------
 if __name__ == "__main__":
 
-    import adjust_path
     import stuff_util_sql as su
 
     # ---- get ready

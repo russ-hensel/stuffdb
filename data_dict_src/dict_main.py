@@ -9,7 +9,6 @@ Created on Thu Jan  2 17:21:25 2025
 /mnt/WIN_D/Russ/0000/python00/python3/_projects/stuffdb/data_dict_src/ data_dict help .py
 """
 
-import adjust_path
 
 # DATA_DICT  = None
 
@@ -48,6 +47,11 @@ def  build_it():
 
     import data_dict_stuff
     data_dict_stuff.build_it( data_dict.DATA_DICT )
+
+
+    # ---- stuff_temp remove when done
+    import data_dict_stuff_temp
+    data_dict_stuff_temp.build_it( data_dict.DATA_DICT )
 
     import data_dict_photoshow
     data_dict_photoshow.build_it( data_dict.DATA_DICT )

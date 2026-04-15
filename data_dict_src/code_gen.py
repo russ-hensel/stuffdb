@@ -31,7 +31,6 @@ todo!!   add clear_fields
 # ---- imports
 #import adjust_path
 import pprint
-import sys
 
 #import pyperclip
 

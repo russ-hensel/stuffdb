@@ -16,111 +16,60 @@ some local variables need to be promoted to instance for later reference
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
-    import main
+    pass
 # --------------------
 
 # ---- imports
 
 from qtpy.QtGui import (
-    QStandardItemModel,
-    QStandardItem,
     QIcon,
            )
 # ---- QtCore
-from qtpy.QtCore  import  (
-    QDate,
-    QModelIndex,
-    QTimer,
-    Qt,
-    pyqtSlot,
-    )
 
 # ----QtWidgets
 from qtpy.QtWidgets import (
     QWidget,
-    QPushButton,
     QAction,
-    QDateEdit,
-    QMenu,
     QAction,
-    QLineEdit,
-    QActionGroup,
-    QApplication,
-    QDockWidget,
-    QTabWidget,
     QLabel,
-    QListWidget,
     QMainWindow,
     QMessageBox,
-    QSpinBox,
-    QMdiSubWindow,
-    QTextEdit,
-    QButtonGroup,
     )
 
 
 # ----QtWidgets big
 from qtpy.QtWidgets import (
     QAction,
-    QMenu,
-    QApplication,
     QMainWindow,
     QToolBar,
-    QTableView,
-    QFrame,
     QMainWindow,
     QMdiArea,
-    QMdiSubWindow,
     QMdiArea,
-    QMdiSubWindow,
     )
 
 # ----QtWidgets layouts
 from qtpy.QtWidgets import (
-    QGridLayout,
     QVBoxLayout
     )
 
 # ----QtWidgets Boxes, Dialogs
 from qtpy.QtWidgets import (
     QAction,
-    QActionGroup,
-    QDockWidget,
-    QFileDialog,
-    QInputDialog,
-
     QLabel,
-    QListWidget,
-    QMenu,
     QMessageBox,
-    QPushButton,
-    QSpinBox,
-    QTextEdit,
     QVBoxLayout,
-    QCheckBox,
-    QComboBox,
     )
 
-from qtpy.QtGui import (
-    QIntValidator,
-    )
 
 # ---- QtSql
-from qtpy.QtSql import (
-    QSqlDatabase,
-    QSqlTableModel,
-    QSqlQuery
-    )
 
 # ---- imports more
 #import random
-import collections
 import functools
 import traceback
 
 
 # ------- local
-import    gui_qt_ext
 import    document_maker
 #import    help_sub_window
 import   db_create

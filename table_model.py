@@ -18,13 +18,9 @@ table_model.
 
 #from   functools import partial
 #import collections
-import functools
-import sqlite3
 
 #import  gui_qt_ext
 import   string_utils as string_util
-import   string_utils
-from     app_global import AppGlobal
 
 
 # from qt_compat import QApplication, QAction, exec_app, qt_version
@@ -33,68 +29,15 @@ from     app_global import AppGlobal
 # from qt_compat import Horizontal, Vertical
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 # ---- QtCore
 from qtpy.QtCore import (QAbstractTableModel,
-                          QDate,
-                          QModelIndex,
-                          QRectF,
-                          Qt,
-                          QTimer,
-                          Slot)
+                          Qt)
 
-from qtpy.QtGui import (QIntValidator,
-                         QPainter,
-                         QPixmap,
-                         QStandardItem,
-                         QStandardItemModel)
 # ---- QtSql
-from PyQt.QtSql import (QSqlDatabase,
-                         QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRecord,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from qtpy.QtWidgets import (
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
-                             QDialog,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGraphicsPixmapItem,
-                             QGraphicsScene,
-                             QGraphicsView,
-                             QGridLayout,
-                             QHBoxLayout,
-                             QInputDialog,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QSpinBox,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
 
-import file_browse
 
 # ---- imports local
 

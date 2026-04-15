@@ -17,10 +17,7 @@ see rpt_data_dict and some sql util thing
 help for tab_custom_update_manager may be of assist
 
 """
-import adjust_path
 import logging
-import string_utils
-import custom_widgets
 
 # ---- end imports
 
@@ -1489,7 +1486,6 @@ class ColumnDict(  ):
 
         self.foreign_key_info    = foreign_key_info
 
-        pass
 
     def __str__( self, ):
         """ """
@@ -1635,6 +1631,10 @@ def  build_it( db_schema_name = None ):
 
     import data_dict_stuff
     data_dict_stuff.build_it(  DATA_DICT )
+
+
+    import data_dict_stuff_temp
+    data_dict_stuff_temp.build_it(  DATA_DICT )
 
     import data_dict_photoshow
     data_dict_photoshow.build_it(  DATA_DICT )

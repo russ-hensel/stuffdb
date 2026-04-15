@@ -18,7 +18,6 @@ if __name__ == "__main__":
 
 import os
 #import logging
-import importlib
 from   subprocess import Popen   #, PIPE  #
 import time
 import datetime

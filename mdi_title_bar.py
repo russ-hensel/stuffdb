@@ -7,9 +7,8 @@
 import sys
 from qtpy.QtWidgets import (QApplication, QMainWindow, QMdiArea, QMdiSubWindow,
                             QTextEdit, QVBoxLayout, QWidget, QPushButton, QHBoxLayout,
-                            QLabel, QCheckBox, QSpinBox, QComboBox)
-from qtpy.QtCore import Qt, QTimer, Signal, QEvent
-from qtpy.QtGui import QMouseEvent
+                            QLabel, QCheckBox, QComboBox)
+from qtpy.QtCore import Qt, QTimer, Signal
 
 
 class CustomMdiSubWindow(QMdiSubWindow):

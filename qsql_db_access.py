@@ -18,7 +18,7 @@ qsql_db_access.QsqlDbAcess()
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
-    import main
+    pass
 
 # --------------------
 
@@ -26,51 +26,23 @@ if __name__ == "__main__":
 import logging
 import sqlite3
 from   pathlib import Path
-import time
 
 
 # from qt_compat import QApplication, QAction, exec_app, qt_version
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtWidgets import QMessageBox
 #from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
 #from qt_compat import TextAlignmentRole
 
 
 
-from qtpy.QtCore import QDate, QModelIndex, Qt, QTimer
-from qtpy.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
-from qtpy.QtSql import QSqlDatabase, QSqlError, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlDatabase
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGridLayout,
-                             QInputDialog,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QSpinBox,
-                             QTableView,
-                             QTabWidget,
-                             QTextEdit,
-                             QToolBar,
-                             QVBoxLayout,
-                             QWidget)
+                             QMessageBox)
 
 LOG_LEVEL   =   10
 

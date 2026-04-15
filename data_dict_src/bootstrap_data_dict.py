@@ -9,7 +9,6 @@ report on code gen and perhaps all code gen
 # ---- tof
 import data_dict
 #import dict_main
-import adjust_path
 
 # ---- imports
 

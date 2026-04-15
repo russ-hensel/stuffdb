@@ -12,7 +12,7 @@ ex_qt_table_model.py
 """
 import sys
 from qtpy.QtWidgets import QApplication, QMainWindow, QTableView, QVBoxLayout, QWidget, QMessageBox, QPushButton, QHBoxLayout
-from qtpy.QtSql import QSqlDatabase, QSqlQueryModel, QSqlTableModel, QSqlQuery
+from qtpy.QtSql import QSqlDatabase, QSqlTableModel
 from qtpy.QtCore import Qt
 
 class MainWindow(QMainWindow):

@@ -16,7 +16,6 @@ Created on Mon Feb 24 11:18:20 2025
 # ---- tof
 import data_dict
 #import dict_main
-import adjust_path
 
 # ---- imports
 

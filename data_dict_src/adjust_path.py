@@ -14,7 +14,6 @@ import adjust.path
 import os
 import socket
 import sys
-from   pathlib import Path
 
 # adjust according to where I am -- in progress
 hostname              = socket.gethostname()

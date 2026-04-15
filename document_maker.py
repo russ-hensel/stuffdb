@@ -16,107 +16,27 @@ if __name__ == "__main__":
 
 # ---- imports
 
-import sys
 
 
 # ---- begin pyqt from import_qt.py
 
-from qtpy.QtGui import (
-    QStandardItemModel,
-    QStandardItem,
-                        )
 # ---- QtCore
-from qtpy.QtCore  import  (
-    QDate,
-    QModelIndex,
-    QTimer,
-    Qt,
-    pyqtSlot,
-                            )
 
 # ----QtWidgets
-from qtpy.QtWidgets import (
-    QWidget,
-    QPushButton,
-    QAction,
-
-    QDateEdit,
-    QMenu,
-    QAction,
-    QLineEdit,
-    QActionGroup,
-    QApplication,
-    QDockWidget,
-    QTabWidget,
-
-    QLabel,
-    QListWidget,
-    QMainWindow,
-    QMessageBox,
-    QSpinBox,
-    QMdiSubWindow,
-    QTextEdit,
-    QButtonGroup,
-
-    )
-
-
-from qtpy.QtWidgets import (
-    QAction,
-    QMenu,
-    QApplication,
-    QMainWindow,
-
-    QTableView,
-    QFrame,
-    QMainWindow,
-    QMdiArea,
-    QMdiSubWindow,
-    QMdiArea,
-    QMdiSubWindow,
-    )
 
 
 
-from qtpy.QtWidgets import (
-    QGridLayout,
-    QVBoxLayout
-    )
+
+
 
 # ----QtWidgets Boxs, Dialogs
-from qtpy.QtWidgets import (
-    QAction,
-    QActionGroup,
-    QDockWidget,
-    QFileDialog,
-    QInputDialog,
-
-    QLabel,
-    QListWidget,
-    QMenu,
-    QMessageBox,
-    QPushButton,
-    QSpinBox,
-    QTextEdit,
-    QVBoxLayout,
-    QCheckBox,
-    QComboBox,
-    )
 
 # ---- QtSql
-from qtpy.QtSql import (
-    QSqlDatabase,
-    QSqlTableModel,
-    QSqlQuery
-    )
 
 
 # ---- imports more
 
 #import sqlite3
-from qtpy.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit,
-                             QTabWidget, QLabel, QMessageBox)
-from qtpy.QtSql import QSqlDatabase, QSqlTableModel, QSqlRecord
 #from PyQt5.QtGui import QIntValidator
 
 
@@ -134,7 +54,6 @@ import stuff_sub_window
 import photo_sub_window
 import photoshow_sub_window
 
-import gui_qt_ext
 # import sys
 # import sqlite3
 # from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit,
@@ -148,7 +67,6 @@ import gui_qt_ext
 class DocumentMaker(   ):
 
     def __init__(self,  ):
-        pass
         # super().__init__()
         # self.setWindowTitle(title)
         self.counter   = 0

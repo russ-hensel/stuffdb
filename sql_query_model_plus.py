@@ -22,8 +22,7 @@ if __name__ == "__main__":
 
 # ---- import
 
-from PyQt5.QtSql import QSqlQuery, QSqlQueryModel
-from PyQt5.QtCore import Qt
+from PyQt5.QtSql import QSqlQueryModel
 
 
 class  SqlQueryModelPlus( QSqlQueryModel ):

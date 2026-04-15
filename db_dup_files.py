@@ -11,17 +11,12 @@ just a bit of test in /mnt/8ball1/first6_root/russ/0000/python00/python3/_projec
 #import adjust_path
 # --------------------
 if __name__ == "__main__":
-    import main
+    pass
 # --------------------
 
 # ---- imports
-import functools
-import inspect
 import logging
-import pprint
-import subprocess
 import os
-import time
 
 from   pathlib import Path
 # from datetime import datetime
@@ -34,13 +29,7 @@ from pathlib import Path
 
 
 
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
+from qtpy.QtSql import (QSqlQuery)
 
 
 

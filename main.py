@@ -4,6 +4,8 @@
 
 
 """
+
+import adjust_path
 import os
 
 # Get the directory of the current .py file
@@ -17,7 +19,6 @@ print(os.getcwd())  # Prints the new working directory
 # from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 
-import adjust_path
 import stuffdb
 
 stuffdb.main()

@@ -21,58 +21,33 @@ import ex_qt
 """
 # ---- imports
 #import adjust_path
-import dis
-import inspect
 import io
-import pprint
 import subprocess
 import sys
 import traceback
 from functools import partial
-from pprint import pprint as pp
-from subprocess import PIPE, STDOUT, Popen, run
 
 # import wat
 
 #from qt_compat import QApplication, QAction, exec_app, qt_version
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 
 
-from qtpy import QtGui
 from qtpy.QtGui import QFont
-from qtpy.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
 from qtpy.QtGui import QTextCursor, QTextDocument
 # sql
-from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
 # from PyQt.QtGui import ( QAction, QActionGroup, )
 from qtpy.QtWidgets import (
                              QApplication,
-                             QButtonGroup,
-                             QCheckBox,
                              QComboBox,
-                             QDateEdit,
                              QDialog,
-                             QGridLayout,
-                             QGroupBox,
                              QHBoxLayout,
                              QLabel,
                              QLineEdit,
-                             QListWidget,
-                             QListWidgetItem,
-                             QMainWindow,
-                             QMenu,
-                             QMessageBox,
                              QPushButton,
-                             QRadioButton,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
                              QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
+                             QVBoxLayout)
 
 
 

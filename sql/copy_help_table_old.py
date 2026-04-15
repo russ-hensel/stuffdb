@@ -8,19 +8,9 @@ Created on Fri Oct 24 15:36:04 2025
 
 
 # ---- tof
-import adjust_path
 # ---- imports
-import sqlite3
-import sys
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QPushButton, QTextEdit, QLabel
-)
-from PyQt5.QtCore import QThread, pyqtSignal
 
 
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QPushButton, QTextEdit, QLabel, QMessageBox
-)
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 
 import parameters

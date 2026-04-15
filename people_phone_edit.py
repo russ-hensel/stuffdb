@@ -20,36 +20,17 @@ if __name__ == "__main__":
 # ---- local imports
 # import  tracked_qsql_relational_table_model
 import logging
-import sys
 
-from app_global import AppGlobal
-from qtpy.QtCore import QDateTime, Qt
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlDriver,
-                         QSqlQuery,
-                         QSqlRecord,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
+from qtpy.QtCore import QDateTime
 # ----
-from qtpy.QtWidgets import (QApplication,
-                             QComboBox,
+from qtpy.QtWidgets import (QComboBox,
                              QDateTimeEdit,
                              QDialog,
                              QDialogButtonBox,
                              QFormLayout,
-                             QGridLayout,
-                             QHBoxLayout,
-                             QLabel,
                              QLineEdit,
-                             QMainWindow,
-                             QMessageBox,
-                             QPushButton,
                              QSpinBox,
-                             QTableView,
-                             QVBoxLayout,
-                             QWidget)
+                             QVBoxLayout)
 
 logger          = logging.getLogger( )
 

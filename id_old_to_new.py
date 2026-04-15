@@ -13,64 +13,18 @@ Search for the following in the code below:
 
 
 """
-import os
-import pprint
-import shutil
-import sqlite3
-import stat
-import time
-import traceback
 #import datetime
-from datetime import datetime
-from pathlib import Path
 
-import ex_helpers
-import ex_helpers as ex_h
 # ---- QtCore
-from qtpy.QtCore import QDate, QModelIndex, Qt, QTimer, Slot
-from qtpy.QtGui import QIntValidator, QStandardItem, QStandardItemModel
 # ---- QtSql
-from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlQuery
 # ----QtWidgets Boxs, Dialogs
 # ----QtWidgets layouts
 # ----QtWidgets big
 # ----QtWidgets
-from qtpy.QtWidgets import (QAction,
-                             QActionGroup,
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGridLayout,
-                             QHBoxLayout,
-                             QInputDialog,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QSpinBox,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
 
 # ---- imports
-import adjust_path
-import code_gen
 import db_create
-import import_utils
 
 # ---- begin pyqt from import_qt.py
 
@@ -267,7 +221,6 @@ def update_photo_subject_data(   ):
         photo_id    = lookup_photo_by_id( photo_id_old )
 
         if photo_id is not None:
-            pass
             do_update( a_id, photo_id )
 
         # next incase they are flipp1ed

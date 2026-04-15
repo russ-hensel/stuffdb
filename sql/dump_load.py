@@ -11,7 +11,6 @@ Created on Tue Jan 28 07:58:59 2025
 
 # ---- imports
 import sqlite3
-import sys
 # ---- end imports
 
 

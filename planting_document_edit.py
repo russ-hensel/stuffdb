@@ -9,43 +9,21 @@ Created on Sun Aug 11 08:28:36 2024
 # ---- tof
 # --------------------
 if __name__ == "__main__":
-    import main
+    pass
 
 # --------------------
 
 # ---- imports
-import sys
 
 
 
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qtpy.QtCore import Qt
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlDriver,
-                         QSqlQuery,
-                         QSqlRecord,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
 
-from qtpy.QtWidgets import (QApplication,
-                             QComboBox,
-                             QDialog,
+from qtpy.QtWidgets import (QDialog,
                              QFormLayout,
-                             QGridLayout,
-                             QHBoxLayout,
                              QDialogButtonBox,
-                             QLabel,
-                             QLineEdit,
-                             QMainWindow,
-                             QMessageBox,
-                             QPushButton,
-                             QTableView,
-                             QVBoxLayout,
-                             QWidget)
+                             QVBoxLayout)
 
 # ---- local imports
 # import  tracked_qsql_relational_table_model

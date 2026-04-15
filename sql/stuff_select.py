@@ -6,110 +6,28 @@ Created on Sat Sep 21 11:07:49 2024
 @author: russ
 """
 
-import adjust_path
 
 # ---- begin pyqt from import_qt.py
 
-from PyQt5.QtGui import (
-    QStandardItemModel,
-    QStandardItem,
-                        )
 # ---- QtCore
-from PyQt5.QtCore  import  (
-    QDate,
-    QModelIndex,
-    QTimer,
-    Qt,
-    pyqtSlot,
-                            )
 
-from PyQt5.QtGui import (
-    QIntValidator,
-    )
 
 # ----QtWidgets
-from PyQt5.QtWidgets import (
-    QWidget,
-    QPushButton,
-    QAction,
-    QTableWidgetItem,
-    QTableWidget,
-    QDateEdit,
-    QMenu,
-    QAction,
-    QLineEdit,
-    QActionGroup,
-    QApplication,
-    QDockWidget,
-    QTabWidget,
-    QLabel,
-    QListWidget,
-    QMainWindow,
-    QMessageBox,
-    QSpinBox,
-    QMdiSubWindow,
-    QTextEdit,
-    QButtonGroup,
-
-    )
 
 # ----QtWidgets big
-from PyQt5.QtWidgets import (
-    QAction,
-    QMenu,
-    QApplication,
-    QMainWindow,
-
-    QTableView,
-    QFrame,
-    QMainWindow,
-    QMdiArea,
-    QMdiSubWindow,
-    QMdiArea,
-    QMdiSubWindow,
-    )
 
 # ----QtWidgets layouts
-from PyQt5.QtWidgets import (
-    QGridLayout,
-    QVBoxLayout,
-    QHBoxLayout,
-    )
 
 # ----QtWidgets Boxs, Dialogs
-from PyQt5.QtWidgets import (
-    QAction,
-    QActionGroup,
-    QDockWidget,
-    QFileDialog,
-    QInputDialog,
-
-    QLabel,
-    QListWidget,
-    QMenu,
-    QMessageBox,
-    QPushButton,
-    QSpinBox,
-    QTextEdit,
-    QVBoxLayout,
-    QCheckBox,
-    QComboBox,
-    )
 
 # ---- QtSql
 from PyQt5.QtSql import (
-    QSqlDatabase,
-    QSqlTableModel,
     QSqlQuery
     )
 
-import sqlite3
 
 
 #from   functools import partial
-import collections
-import functools
-import time
 
 # import winsound windows only
 
@@ -118,11 +36,8 @@ import time
 
 #from    app_global import AppGlobal
 
-import  gui_qt_ext
-import  string_util
 import  qt_sql_query
 
-import  ia_qt
 import qt_sql_query
 import key_words
 

@@ -13,43 +13,13 @@ convert_db_display.convert_from_to( )
 import traceback
 from datetime import datetime
 
-from qtpy import QtGui
-from qtpy.QtCore import QDate, QDateTime, QModelIndex, Qt, QTimer
-from qtpy.QtGui import QTextCursor
+from qtpy.QtCore import QDate, QDateTime
 # sql
-from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 # widgets biger
 # widgets -- small
 # layouts
-from qtpy.QtWidgets import ( QAction,
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
-                             QGridLayout,
-                             QGroupBox,
-                             QHBoxLayout,
-                             QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QListWidgetItem,
-                             QMainWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QRadioButton,
-                             QSizePolicy,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
 
 # ---- imports
-import adjust_path
 
 # ---- imports neq qt
 

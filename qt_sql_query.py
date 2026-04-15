@@ -8,15 +8,12 @@ this code is not part of the wat_inspector but belongs in stuffdb
 
 # --------------------
 if __name__ == "__main__":
-    import main
+    pass
 # --------------------
 
 
 # ---- imports
-import datetime
 import logging
-import sqlite3 as lite
-import time
 
 
 # ------- local imports
@@ -27,7 +24,6 @@ import time
 #import pseudo_column
 #import sql_writers
 import string_utils  as string_util
-from   app_global import AppGlobal
 
 
 # ----------------------------------------

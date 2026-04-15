@@ -13,30 +13,19 @@ if __name__ == "__main__":
     main.main()
 # --------------------
 
-import functools
 import logging
-import sqlite3
-import time
 
 import gui_qt_ext
 #import string_utils
 from app_global import AppGlobal
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtWidgets import QMessageBox
 
-from qtpy.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, Slot
-from qtpy.QtGui import (QIntValidator,
-                         QPainter,
-                         QPixmap,
-                         QStandardItem,
-                         QStandardItemModel)
+from qtpy.QtCore import QModelIndex, Qt
 
 from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
@@ -44,47 +33,22 @@ from qtpy.QtSql import (QSqlDatabase,
 
 
 from qtpy.QtWidgets import (
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
                              QDialog,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGraphicsPixmapItem,
-                             QGraphicsScene,
-                             QGraphicsView,
-                             QGridLayout,
                              QHBoxLayout,
-                             QInputDialog,
                              QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
                              QMessageBox,
                              QPushButton,
                              QSizePolicy,
                              QSpacerItem,
-                             QSpinBox,
                              QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
                              QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
+                             QVBoxLayout)
 
 # ---- imports local
 
 import base_document_tabs
 import custom_widgets as cw
 import key_words
-import mdi_management
 import qt_sql_query
 import qt_with_logging
 import combo_dict_ext

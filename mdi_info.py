@@ -16,33 +16,14 @@ if __name__ == "__main__":
 # import ia_qt
 
 
-import sys
 
-from app_global import AppGlobal
-from qtpy.QtCore import Qt
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlDriver,
-                         QSqlQuery,
-                         QSqlRecord,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
 # ----QtWidgets layouts
-from qtpy.QtWidgets import (QApplication,
-                             QComboBox,
-                             QDialog,
+from qtpy.QtWidgets import (QDialog,
                              QFormLayout,
-                             QGridLayout,
                              QHBoxLayout,
-                             QLabel,
                              QLineEdit,
-                             QMainWindow,
-                             QMessageBox,
                              QPushButton,
-                             QTableView,
-                             QVBoxLayout,
-                             QWidget)
+                             QVBoxLayout)
 
 # ---- local imports
 # import  tracked_qsql_relational_table_model

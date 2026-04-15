@@ -18,41 +18,16 @@ if __name__ == "__main__":
 # --------------------
 
 
-import sys
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qtpy.QtCore import Qt
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlDriver,
-                         QSqlQuery,
-                         QSqlRecord,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
 
-from qtpy.QtWidgets import (QApplication,
-                             QComboBox,
-                             QDateTimeEdit,
-                             QDialog,
+from qtpy.QtWidgets import (QDialog,
                              QDialogButtonBox,
                              QFormLayout,
-                             QGridLayout,
-                             QHBoxLayout,
-                             QLabel,
-                             QLineEdit,
-                             QMainWindow,
-                             QMessageBox,
-                             QPushButton,
-                             QSpinBox,
-                             QTableView,
-                             QVBoxLayout,
-                             QWidget)
+                             QVBoxLayout)
 
 # ---- local imports
 
-from   app_global import AppGlobal
 import custom_widgets
 
 # ---- end imports

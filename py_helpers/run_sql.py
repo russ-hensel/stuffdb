@@ -12,17 +12,16 @@ Created on Sun Jul 13 08:28:33 2025
 # ---- tof
 # --------------------
 if __name__ == "__main__":
-    import main
+    pass
     #main.main()
 # ----------------
 
 
 
 # ---- imports
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 # ---- end imports
 
-from stuffdb import STUFFDB_CONNECTION_NAME
 import parameters
 
 #-------------------------------
@@ -113,7 +112,6 @@ class RunSql(   ):
     print goes back to gui
     if run from >>py
     """
-
     def __init__(self, sql_dict ):
         """
         the usual
@@ -135,7 +133,6 @@ class RunSql(   ):
         try:
             self.go()
 
-
         except Exception as error:
 
             error_message = str(error)
@@ -153,7 +150,7 @@ class RunSql(   ):
             self.finalize_db()
             self.close_file_out()
 
-
+    # -------------------------------------
     def go(self,   ):
         """
 
@@ -182,15 +179,12 @@ class RunSql(   ):
         self.columns    = None
         self.file_out   = None   # changes if file is opened
 
-
         sql_type   = self.sql_dict["sql_type"].lower( )
         if  sql_type == "select":
-            pass
             self.select_data()
             #self.run_sql_select   = RunSqlSelect( sql_dict )
 
         elif sql_type ==  "delete":
-            pass
             self.delete_data()
 
         self.close_file_out()
@@ -444,7 +438,6 @@ class RunSql(   ):
             raise Exception( "sqlerror", debug_msg )
 
         else:
-            pass
             #rint("Query executed successfully.")
             rows_deleted = query.numRowsAffected()
             msg          = f"Rows deleted: {rows_deleted}"

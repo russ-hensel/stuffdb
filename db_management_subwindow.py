@@ -9,11 +9,10 @@
 
 # --------------------
 if __name__ == "__main__":
-    import main
+    pass
 # --------------------
 
 # ---- imports
-import functools
 from   functools import partial
 #import inspect
 import logging
@@ -28,59 +27,28 @@ from pathlib import Path
 
 
 
-from qtpy.QtCore   import ( QDate, QModelIndex, Qt, QTimer, Slot,  QThread, Signal )
+from qtpy.QtCore   import ( Slot )
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
-from qtpy.QtCore   import Qt, QDateTime
-from qtpy.QtWidgets import QStyledItemDelegate
-from qtpy.QtGui import ( QFont,
-                         QIntValidator,
-                         QStandardItem,
-                         QStandardItemModel,
-                         QTextCursor)
+from qtpy.QtWidgets import QMessageBox
 
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
+from qtpy.QtSql import (QSqlQuery)
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
                              QFileDialog,
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
                              QComboBox,
-                             QDialog,
-                             QDateEdit,
-                             QDockWidget,
                              QFileDialog,
-                             QFrame,
                              QGroupBox,
-                             QGridLayout,
                              QHBoxLayout,
-                             QHeaderView,
-                             QInputDialog,
                              QLabel,
                              QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
                              QMdiSubWindow,
-                             QMenu,
                              QMessageBox,
                              QPushButton,
                              QSpacerItem,
-                             QSpinBox,
                              QSizePolicy,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
                              QTabWidget,
                              QTextEdit,
                              QVBoxLayout,
@@ -2495,20 +2463,20 @@ class StuffTypeSubTab( QWidget ):
 
         vlayout             = QVBoxLayout( self )
 
-        groupbox   = QGroupBox( "Stuff Report on Types and SubTypes" )
+        groupbox            = QGroupBox( "Stuff Report on Types and SubTypes" )
         groupbox.setStyleSheet( self.gb_style_sheet )
 
         vlayout.addWidget( groupbox )
         gb_layout           = QHBoxLayout( groupbox  )
 
         widget              = QPushButton( "Run Report" )
-        connect_to          = self.system_sub_count_rpt
+        connect_to          = self.type_sub_count_rpt
         widget.clicked.connect( connect_to  )
         gb_layout.addWidget( widget )
 
         # ---- arguments
         #groupbox   = QGroupBox()  # no title
-        groupbox   = QGroupBox( "Update Type Value" )
+        groupbox   = QGroupBox( "!!Update Type Value" )
         groupbox.setStyleSheet( self.gb_style_sheet )
 
         vlayout.addWidget( groupbox )
@@ -2516,7 +2484,7 @@ class StuffTypeSubTab( QWidget ):
         gb_layout     = QHBoxLayout( groupbox  )
 
         # ---- "Target System"
-        widget              = QLabel( "Target System" )
+        widget              = QLabel( "!!Target System" )
         gb_layout.addWidget( widget )
 
         widget              = QLineEdit( )
@@ -2529,7 +2497,7 @@ class StuffTypeSubTab( QWidget ):
         gb_layout.addItem(spacer)
 
         # ---- "Revised System"
-        widget              = QLabel( "Revised System" )
+        widget              = QLabel( "!!Revised System" )
         gb_layout.addWidget( widget )
 
         widget                  = QLineEdit( )
@@ -2537,13 +2505,13 @@ class StuffTypeSubTab( QWidget ):
         gb_layout.addWidget( widget )
 
         # ---- Apply
-        widget              = QPushButton( "Apply" )
+        widget              = QPushButton( "!!Apply" )
         connect_to          = self.go_update_system
         widget.clicked.connect( connect_to )
         gb_layout.addWidget( widget )
 
         # ----  "Update Subsystem Value" ------------------------
-        groupbox   = QGroupBox( "Update SubType Value" )
+        groupbox   = QGroupBox( "!!Update SubType Value" )
 
         groupbox.setStyleSheet( self.gb_style_sheet)
 
@@ -2584,6 +2552,7 @@ class StuffTypeSubTab( QWidget ):
     def go_update_system_sub( self,  ):
         """
         """
+        return
         find_system     =  self.target_system_2.text()
         find_system_sub =  self.target_system_sub_2.text()
 
@@ -2601,6 +2570,7 @@ class StuffTypeSubTab( QWidget ):
     def go_update_system( self, ):
         """
         """
+        return
         find_system         =  self.target_system_1.text()
         replace_system      =  self.revised_system_1.text()
         #print( find_system, replace_system  )
@@ -2624,6 +2594,7 @@ class StuffTypeSubTab( QWidget ):
 
         this is not efficient but fix needs to wait
         """
+        return
         perf_start   = time.perf_counter()
 
         msg      = ("update_system():")
@@ -2789,22 +2760,22 @@ class StuffTypeSubTab( QWidget ):
         self.parent_window.to_top_of_msg()
 
     #----------------------------
-    def system_sub_count_out( self, system, subsystem_counts ):
+    def type_sub_count_out( self, a_type, sub_type_counts ):
         """
         output the system and subsystem counts
         """
         # how about a generator instead
-        total    = sum( [ i_count for  i_gnore, i_count in subsystem_counts] )
-        line     = f"{system = } {total}"
+        total    = sum( [ i_count for  i_gnore, i_count in sub_type_counts] )
+        line     = f"{a_type = } {total}"
 
         self.parent_window.output_msg( line  )
 
-        for i_subsystem, i_count in subsystem_counts:
-            i_line     = (f"        {i_subsystem} {i_count}" )
+        for i_sub_type, i_count in sub_type_counts:
+            i_line     = (f"        {i_sub_type} {i_count}" )
             self.parent_window.output_msg( i_line  )
 
     #----------------------------
-    def system_sub_count_rpt( self, ):
+    def type_sub_count_rpt( self, ):
         """
         What it says, read
 
@@ -2829,30 +2800,33 @@ class StuffTypeSubTab( QWidget ):
         query_ok   =  qsql_utils.query_exec_error_check( query = query, sql = sql, raise_except = True )
 
         #  !! next all needs rename
-        current_system      = None
-        i_subsystem_counts  = []
+        current_type         = None
+        i_type_sub_counts    = []
         while query.next():
             # a_id        = query.value(0)
             # value_1        = query.value(1)
             # value_2   = query.value(2)
-            i_system        = str( query.value(0) )
-            if i_system == "" or i_system is None:
-                i_system = "none"
-            i_sub_system    = str( query.value(1) )
-            if i_sub_system == "" or i_system is None:
+            i_type        = str( query.value(0) )
+
+            if i_type == "" or i_type is None:
+                i_type = "none"
+            i_type_sub    = str( query.value(1) )
+
+            if i_type_sub == "" or i_type_sub is None:
                 i_sub_system = "none"
             i_count         = query.value(2)
 
-            if current_system != i_system:
-                if current_system is not None:
-                    self.system_sub_count_out( system = current_system, subsystem_counts = i_subsystem_counts )
-                current_system      = i_system
-                i_subsystem_counts  = []
+            if current_type != i_type:
+                if current_type is not None:
+                    self.type_sub_count_out( a_type = current_type, sub_type_counts = i_type_sub_counts )
+                current_type      = i_type
+                i_type_sub_counts  = []
 
-            i_subsystem_counts.append( (i_sub_system, i_count ) )
+            i_type_sub_counts.append( ( i_type_sub, i_count ) )
 
-        if current_system is not None:
-            self.system_sub_count_out( system = i_system, subsystem_counts = i_subsystem_counts )
+        if current_type is not None:
+            self.type_sub_count_out( a_type = i_type, sub_type_counts = i_type_sub_counts )
+
 
         self.parent_window.activate_output_tab()
         self.parent_window.to_top_of_msg()

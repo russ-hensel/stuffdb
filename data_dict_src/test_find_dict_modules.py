@@ -7,12 +7,8 @@ Created on Sun Jan 11 10:01:04 2026
 """
 # ---- tof
 # ---- imports
-from   pathlib import Path
-import importlib
 
 
-import adjust_path
-import data_dict_all
 
 import find_dict_modules
 

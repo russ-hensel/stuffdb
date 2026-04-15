@@ -10,59 +10,35 @@
 # --------------------
 if __name__ == "__main__":
     import main
+    pass
 # --------------------
 
 import logging
-import time
 from   functools import partial
 
-from qtpy.QtCore import QDate, QModelIndex, Qt, QTimer, Slot
+from qtpy.QtCore import Qt, QTimer
 # ---- Qt
-from qtpy.QtGui import QFont, QIntValidator, QStandardItem, QStandardItemModel
+from qtpy.QtGui import QFont
 
-from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlQuery, QSqlTableModel
 
-from qtpy.QtWidgets import QSizePolicy
+
 
 from qtpy.QtWidgets import (
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGridLayout,
                              QGroupBox,
                              QHBoxLayout,
-                             QInputDialog,
                              QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
                              QPushButton,
                              QSizePolicy,
                              QSpacerItem,
-                             QSpinBox,
-                             QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
                              QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
+                             QVBoxLayout)
 
 # ---- imports local
 
 import data_dict
 import gui_qt_ext
 import string_utils as string_util
-import string_utils
 from   app_global import AppGlobal
 
 import base_document_tabs
@@ -358,6 +334,34 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget.addItem( "<none>" )
         # widget.addItem( '' )
 
+        widget.setCurrentIndex( 0 )
+        widget.setEditable( True )
+
+        # ---- table_name
+        grid_layout.new_row()
+        widget          = QLabel( "Table Name" )
+        grid_layout.addWidget( widget  )
+
+        widget                  = cw.CQHistoryComboBox( field_name = "table_name" )
+        self.critera_widget_list.append( widget )
+        widget.setMaxVisibleItems( 25 )
+        grid_layout.addWidget( widget )
+        #widget.addItems( SYSTEM_LIST )
+        widget.addItem( "<none>" )
+        widget.setCurrentIndex( 0 )
+        widget.setEditable( True )
+
+        # ---- column_name
+        grid_layout.new_row()
+        widget          = QLabel( "Column Name" )
+        grid_layout.addWidget( widget  )
+
+        widget                  = cw.CQHistoryComboBox( field_name = "column_name" )
+        self.critera_widget_list.append( widget )
+        widget.setMaxVisibleItems( 25 )
+        grid_layout.addWidget( widget )
+        #widget.addItems( SYSTEM_LIST )
+        widget.addItem( "<none>" )
         widget.setCurrentIndex( 0 )
         widget.setEditable( True )
 
@@ -713,6 +717,22 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         id_old     = criteria_dict[ "id_old" ].strip().lower()
         if id_old:
             add_where       =  f' help_info.id_old = "{id_old}" '
+            query_builder.add_to_where( add_where, [ ])
+
+        # ---- table_name
+        data     = criteria_dict[ "table_name" ].strip().lower()
+        if data == "<none>":
+            data = ""
+        if data:
+            add_where       =  f' help_info.table_name = "{data}" '
+            query_builder.add_to_where( add_where, [ ])
+
+        # ---- column_name
+        data     = criteria_dict[ "column_name" ].strip().lower()
+        if data == "<none>":
+            data = ""
+        if data:
+            add_where       =  f' help_info.column_name = "{data}" '
             query_builder.add_to_where( add_where, [ ])
 
         # ---- system
@@ -1428,7 +1448,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         self.field_list
         may be some in base as well, perhaps combine ??
         """
-        pass
         if self.file_writer  is None:
             self.file_writer   = file_writers.TxtWriter( "./output/txt_writer.txt" )
         file_writer    = self.file_writer

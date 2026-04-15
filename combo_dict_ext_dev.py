@@ -22,19 +22,11 @@ think should and do init in the main window
 import weakref
 
 # ---- QtSql
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
+from qtpy.QtSql import (QSqlQuery)
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 import logging
 import string_utils as string_util
-import string_utils
 
 logger          = logging.getLogger( )
 
@@ -87,7 +79,6 @@ class  BaseComboDictExt():
             if i_widget is not None:
                 i_widget.update_dictionary( just_warning = False )
 
-        pass   # debug
 
     # ------------------------------
     def add_widget( self, widget ):
@@ -202,7 +193,6 @@ class  StuffComboDictExt( BaseComboDictExt ):
         self.update_widget_dict(  update_type = UPDATE,
                                                 a_id   = a_id,
                                                 info   = info )
-        pass # debug
 
     # ------------------------------------------
     def get_info_from_record( self, a_id, record ):
@@ -259,7 +249,6 @@ class  PlantComboDictExt( BaseComboDictExt ):
                                                 a_id   = a_id,
                                                 info   = info )
 
-        pass # debug
 
     # ------------------------------------------
     def get_info_from_record( self, a_id, record ):

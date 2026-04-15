@@ -9,13 +9,12 @@
 # ---- tof
 # --------------------
 if __name__ == "__main__":
-    import main
+    pass
     #main.main()
 # --------------------
 
 # ---- imports
 #import functools
-import inspect
 import logging
 import pprint
 import subprocess
@@ -24,27 +23,19 @@ import traceback
 from   functools  import partial
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtWidgets import QMessageBox
 
 from qtpy import QtCore, QtWidgets
 
-from qtpy.QtCore   import QDate, QModelIndex, Qt, QTimer, Signal, Slot
-from qtpy.QtGui import QIcon, QIntValidator, QStandardItem, QStandardItemModel
+from qtpy.QtCore   import QDate, QModelIndex, Qt, Slot
+from qtpy.QtGui import QIcon
 from qtpy.QtCore   import Qt, QDateTime
 from qtpy import QtCore
 from qtpy.QtWidgets import QStyledItemDelegate
-from qtpy.QtGui import (QFont,
-                         QIntValidator,
-                         QStandardItem,
-                         QStandardItemModel,
-                         QTextCursor)
+from qtpy.QtGui import (QFont)
 
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlQuery,
+from qtpy.QtSql import (QSqlQuery,
                          QSqlQueryModel,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
                          QSqlTableModel)
 
 
@@ -52,36 +43,22 @@ from qtpy.QtSql import (QSqlDatabase,
 
 from qtpy.QtWidgets import (
                              QApplication,
-                             QButtonGroup,
-                             QCheckBox,
                              QComboBox,
                              QDialog,
-                             QDateEdit,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
                              QGroupBox,
                              QGridLayout,
                              QHBoxLayout,
                              QHeaderView,
-                             QInputDialog,
                              QLabel,
                              QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
                              QMdiSubWindow,
                              QMenu,
                              QMessageBox,
                              QPushButton,
-                             QSpacerItem,
-                             QSpinBox,
-                             QSizePolicy,
                              QTableView,
                              QTableWidget,
                              QTableWidgetItem,
                              QTabWidget,
-                             QTextEdit,
                              QVBoxLayout,
                              QWidget)
 
@@ -572,7 +549,6 @@ class DocumentBase( QMdiSubWindow ):
 
         if self.add_history_to_data_manager:
             # this is bad consider refactor
-            pass
             self.detail_tab.data_manager.history_tab  = self.history_tab
 
     # --------------------------------
@@ -2117,7 +2093,6 @@ class CriteriaTabBase( QWidget ):
         what it says, read
              for now put in descandant or promote to here
         """
-        pass
         self.update_album_ddl()
 
     #-------------------------------------
@@ -3181,7 +3156,6 @@ class HistoryTabBase( QWidget ):
             #rint( f"base record_to_tablerecord-to_table {ix_col}, {i_col_name}" )
 
          # ---- put back in
-            pass
             item             = QTableWidgetItem( str( record.value( i_col_name ) ) )
             table.setItem( ix_row, ix_col, item   )
             ix_col          += 1

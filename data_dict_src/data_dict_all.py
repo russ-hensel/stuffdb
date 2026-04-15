@@ -19,11 +19,11 @@ see rpt_data_dict and some sql util thing
 help for tab_custom_update_manager may be of assist
 
 """
+
 import adjust_path
 import logging
 
 import string_utils as string_util
-import string_utils
 #import custom_widgets
 
 # ---- end imports
@@ -1434,7 +1434,6 @@ class ColumnDict(  ):
 
         self.foreign_key_info    = foreign_key_info
 
-        pass
 
     def __str__( self, ):
         """ """

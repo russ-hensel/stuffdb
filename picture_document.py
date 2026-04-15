@@ -19,7 +19,6 @@ if __name__ == "__main__":
 #from   functools import partial
 #import collections
 
-import inspect
 import logging
 import os
 import shutil
@@ -33,69 +32,38 @@ from   pathlib import Path
 
 
 # from qt_compat import QApplication, QAction, exec_app, qt_version
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtWidgets import QMessageBox
 
 
 from qtpy.QtCore import QCoreApplication
 
-from qtpy.QtCore import (QAbstractTableModel,
-                          QDate,
-                          QModelIndex,
-                          QRectF,
+from qtpy.QtCore import (QModelIndex,
                           QSortFilterProxyModel,
                           Qt,
-                          QTimer,
-                          Slot)
+                          QTimer)
 
-from qtpy.QtGui import (QIntValidator,
-                         QPainter,
-                         QPixmap,
-                         QStandardItem,
-                         QStandardItemModel)
+from qtpy.QtGui import (QIntValidator)
 
 
 from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlQueryModel,
-                         QSqlRecord,
                          QSqlRelation,
-                         QSqlRelationalDelegate,
                          QSqlRelationalTableModel,
                          QSqlTableModel)
 
 
 from qtpy.QtWidgets import (
-                             QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDataWidgetMapper,
-                             QDateEdit,
                              QDialog,
-                             QDockWidget,
                              QFileDialog,
-                             QFrame,
-                             QGraphicsPixmapItem,
-                             QGraphicsScene,
-                             QGraphicsView,
-                             QGridLayout,
                              QHBoxLayout,
-                             QInputDialog,
                              QLabel,
                              QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
                              QMessageBox,
                              QPushButton,
                              QSizePolicy,
                              QSpacerItem,
-                             QSpinBox,
                              QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
                              QTabWidget,
                              QTextEdit,
                              QVBoxLayout,
@@ -111,7 +79,6 @@ import parameters
 import picture_viewer
 import qsql_utils
 import qt_sql_query
-import qt_with_logging
 import table_model
 import app_exceptions
 import data_dict
@@ -732,7 +699,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         # ---- album  zz
         album_id             = criteria_dict[ "in_album" ]
         if album_id:
-            pass
             #add_where       = "lower( file )  like :file_name_like"   # :is name of bind var below
             query_builder.add_to_inner_join( " INNER JOIN photo_in_show ON photo.id = photo_in_show.photo_id  " )
 
@@ -3283,7 +3249,6 @@ class AlbumSqlTableModel( QSqlRelationalTableModel ):
             pass
         # Check role first
         elif role == Qt.DisplayRole:
-            pass
             # if col == 4:  # match to code in veiw
             #     value = super().data(index, Qt.EditRole)
             #     if value is not None:

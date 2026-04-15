@@ -10,77 +10,28 @@ Created on Sat Jun 29 09:56:07 2024
 if __name__ == "__main__":
     #----- run the full app
     import main
+    pass
 # --------------------
 
-import functools
-import sqlite3
-import time
 from   datetime import datetime
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
 from qtpy.QtCore import(   QModelIndex,
-                            QRectF,
-                            QDate,
                             QModelIndex,
                             Qt,
-                            QTimer,
-                            Slot, )
-
-
-from qtpy.QtGui import (QIntValidator,
-                         QPainter,
-                         QPixmap,
-                         QStandardItem,
-                         QStandardItemModel,
-                     )
+                            QTimer, )
 
 from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
                          QSqlTableModel)
 
-#from qtpy.QtGui import ( QAction, QActionGroup, )
-
-from qtpy.QtWidgets import (QAbstractItemView,
-
-                        QApplication,
-                        QButtonGroup,
-                        QCheckBox,
-                        QComboBox,
-                        QDateEdit,
-                        QDialog,
-                        QDockWidget,
-                        QFileDialog,
-                        QFrame,
-                        QGraphicsPixmapItem,
-                        QGraphicsScene,
-                        QGraphicsView,
-                        QGridLayout,
+from qtpy.QtWidgets import (QDialog,
                         QHBoxLayout,
-                        QInputDialog,
                         QLabel,
-                        QLineEdit,
-                        QListWidget,
-                        QMainWindow,
-                        QMdiArea,
-                        QMdiSubWindow,
-                        QMenu,
-                        QMessageBox,
-                        QPushButton,
                         QSizePolicy,
                         QSpacerItem,
-                        QSpinBox,
                         QTabWidget,
-                        QTableView,
-                        QTableWidget,
-                        QTableWidgetItem,
-                        QTextEdit,
                         QVBoxLayout,
-                        QWidget,
                         )
 
 # ---- imports local
@@ -88,20 +39,12 @@ import base_document_tabs
 import custom_widgets   as cw
 import custom_widgets_2 as cw_2
 import key_words
-import mdi_management
 import planting_document_edit
 import qt_sql_query
-import qt_with_logging
 import logging
-import combo_dict_ext
 import data_dict
 import gui_qt_ext
-import string_utils as string_util
-import string_utils
 from   app_global import AppGlobal
-import people_document
-import people_document_edit
-import import_utils
 
 # ---- end imports
 
@@ -140,6 +83,7 @@ class PlantingDocument( base_document_tabs.DocumentBase ):
 
         self._build_gui()
         self.__init_2__()
+
     # --------------------------------
     @property
     def topic( self ):
@@ -161,7 +105,7 @@ class PlantingDocument( base_document_tabs.DocumentBase ):
             from criteira to history
         """
         main_notebook           = self.tab_folder   # create in parent
-        # main_notebook           = QTabWidget()
+            # main_notebook           = QTabWidget()
         self.main_notebook      = main_notebook   # phase out for tab_folder !!
 
         sub_window              = self
@@ -241,7 +185,6 @@ class PlantingDocument( base_document_tabs.DocumentBase ):
         self.text_tab.copy_prior_row(  next_key )
 
     # ---- capture events ----------------------------
-    # ------------------------------------------
 
     # ------------------------------------------
     def on_list_double_clicked( self, index: QModelIndex ):
@@ -279,8 +222,6 @@ class PlantingDocument( base_document_tabs.DocumentBase ):
         # #rint( self.get_info() )
 
     # ---- sub window interactions ---------------------------------------
-    # ------------------------------------------
-
     # -----------------------
     def __str__( self ):
 
@@ -381,7 +322,6 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         widget.addItem('Ascending')
         widget.addItem('Decending')
-
 
         print( "build_tab build criteria change put in as marker ")
         widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
@@ -518,7 +458,6 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         """
         super().__init__( parent_window )
 
-
         self.tab_name                   = "PlantingDetailTab"
         self.key_word_table_name        = "planting_key_word"
         self.post_init()
@@ -578,7 +517,7 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         self.detail_notebook      = detail_notebook
 
         # ---- buttons
-        button_layout = QHBoxLayout()
+        #button_layout = QHBoxLayout()
 
         # create_button = QPushButton("Create Default")
         # create_button.clicked.connect( self.create_default_row )
@@ -659,7 +598,6 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
 
 
         # ---- plant_id  by hand ---------------
-
         edit_field                 = cw_2.CQModelComboBox(
                                      field_name = "plant_id" )
 
@@ -775,6 +713,31 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         # self.data_manager.add_field( edit_field, is_key_word = False )
         # layout.addWidget( edit_field, columnspan = 2 )
 
+        # ---- bed_id  cw_2
+        edit_field                 = cw_2.CQModelComboBox(
+                                     field_name = "bed_id" )
+        kvl_model     = AppGlobal.mdi_management.get_key_value_list_model( "planting_bed" )
+        # could check have default values or do in get function better
+        edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
+        self.data_manager.add_field( edit_field, is_key_word = False )
+        layout.addWidget( edit_field, columnspan = 2 )
+
+
+        # ---- bed id with just edit
+        # edit_field                  = cw.CQLineEdit(
+        #                                         parent         = None,
+        #                                         field_name     = "bed_id",
+        #                                         is_keep_prior_enabled     = False, )
+        # edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
+        # edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
+        # edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
+        # edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
+        # edit_field.setReadOnly( True )
+        # edit_field.is_keep_prior_enabled        = False
+        # edit_field.setPlaceholderText( "bed_id" )
+        # self.data_manager.add_field( edit_field, is_key_word = False )
+        # layout.addWidget( edit_field, columnspan = 1 )
+
         # ---- lbl_name
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
@@ -841,7 +804,7 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         """
         id      = self.id_field.text()
         ##self.detail_table_id    = id
-        print( f"PlantingDocumentDetaiTab fetch_row { id=}")
+        #rint( f"PlantingDocumentDetaiTab fetch_row { id=}")
         self.fetch_detail_row_by_id( id )
 
     # -----------------------------
@@ -914,7 +877,6 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
 
         self.parent_window.record_to_history_table( record )
 
-
     # ------------------------
     def clear_fields(self):
         """
@@ -948,8 +910,6 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
     def plant_containers_update( self, just_warning ):
         """sent down from on high update the stuff_id in dict  """
         self.plant_idfind_name_in_old_field.update_dictionary( just_warning )
-
-
 
 # ==================================
 class PlantingTextTab( base_document_tabs.TextTabBase  ):
@@ -1003,7 +963,6 @@ class PlantingEventSubTab( base_document_tabs.SubTabWithEditBase ):
 
         self._build_model()
         self._build_gui()
-
 
     # ---------------------------------
     def _build_model( self, ):

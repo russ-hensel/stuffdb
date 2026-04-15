@@ -11,7 +11,7 @@ album_document
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
-    import main
+    pass
 # --------------------
 
 #import functools
@@ -19,7 +19,6 @@ from   functools import partial
 import logging
 #import sqlite3
 import time
-import traceback
 import subprocess
 
 import data_dict
@@ -29,7 +28,7 @@ import wat_inspector
 from app_global import AppGlobal
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtWidgets import QMessageBox
 
 
 from qtpy.QtWidgets import QTableView, QAbstractItemView
@@ -37,26 +36,12 @@ from qtpy.QtCore import QItemSelectionModel
 
 from qtpy.QtGui import QAction
 
-from qtpy.QtCore import QDate, QModelIndex, QRectF, Qt, QTimer, Slot
-from qtpy.QtGui import (QIcon,
-                         QIntValidator,
-                         QPainter,
-                         QPixmap,
-                         QStandardItem,
-                         QStandardItemModel)
+from qtpy.QtCore import QModelIndex, Qt
 
 
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlDriver,
-                         QSqlError,
-                         QSqlField,
-                         QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRecord,
+from qtpy.QtSql import (QSqlQuery,
                          QSqlRelation,
-                         QSqlRelationalDelegate,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
+                         QSqlRelationalTableModel)
 
 
 
@@ -68,40 +53,16 @@ from qtpy.QtSql import (QSqlDatabase,
 
 from qtpy.QtWidgets import (
                              QApplication,
-                             QButtonGroup,
-                             QCheckBox,
-                             QComboBox,
-                             QDateEdit,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QGraphicsPixmapItem,
-                             QGraphicsScene,
-                             QGraphicsView,
-                             QGridLayout,
                              QHBoxLayout,
-                             QHeaderView,
-                             QInputDialog,
                              QLabel,
-                             QLineEdit,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
                              QMenu,
                              QMessageBox,
                              QPushButton,
                              QSizePolicy,
                              QSpacerItem,
-                             QSpinBox,
                              QTableView,
-                             QTableWidget,
-                             QTableWidgetItem,
                              QTabWidget,
-                             QTextEdit,
-                             QToolBar,
-                             QVBoxLayout,
-                             QWidget)
+                             QVBoxLayout)
 
 # ---- local imports
 import base_document_tabs

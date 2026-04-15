@@ -17,15 +17,14 @@ the "true" main for the stuffdb, but launch from main
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
-    import main
+    pass
 # --------------------
 
 # ---- version
-__version__   = "Ver .086: 2026-03-22.01"
+__version__   = "Ver .086: 2026-04-13.01"
 
 # ---- imports
 import datetime
-import inspect
 import logging
 import os
 #import random
@@ -33,53 +32,23 @@ import sys
 import time
 import traceback
 
-from   qtpy.QtCore import ( QTimer, QDateTime,  Qt,   )
+from   qtpy.QtCore import ( QTimer,   )
 
-from   qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from   qtpy.QtWidgets import QMessageBox
 
 
-from qtpy import QtWidgets, uic
-from qtpy.QtCore import ( PYQT_VERSION_STR,
-
-                          QFile,
-                          QFileInfo,
-                          QSettings,
-                          Qt,
-                          QTimer,
-                          QVariant)
+from qtpy import QtWidgets
+from qtpy.QtCore import ( QTimer)
 #from qtpy.QtCore import pyqtSignal as Signal
 # from qtpy.QtCore import pyqtSlot
-from qtpy.QtGui import ( QIcon,
-                         QImage,
-                         QImageReader,
-                         QImageWriter,
-                         QKeySequence,
-                         QPainter,
-                         QPixmap)
+from qtpy.QtGui import ( QIcon)
 
-from qtpy.QtPrintSupport import QPrintDialog, QPrinter
 
-from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
 
 from qtpy.QtWidgets import (
                              QApplication,
-                             QDockWidget,
-                             QFileDialog,
-                             QFrame,
-                             QInputDialog,
-                             QLabel,
-                             QListWidget,
-                             QMainWindow,
-                             QMdiArea,
-                             QMdiSubWindow,
-                             QMenu,
-                             QMessageBox,
-                             QPushButton,
-                             QSpinBox,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
+                             QMessageBox)
 
 from   app_global import AppGlobal
 # import app_logging

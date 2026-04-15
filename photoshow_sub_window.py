@@ -9,7 +9,7 @@ Created on Sat Jun 29 09:56:07 2024
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
-    import main
+    pass
 # --------------------
 
 # ---- imports
@@ -20,60 +20,42 @@ from qtpy.QtGui import (
                         )
 # ---- QtCore
 from qtpy.QtCore  import  (
-    QDate,
     QModelIndex,
-    QTimer,
     Qt,
-    pyqtSlot,
                             )
 
 from qtpy.QtGui import (
     QIntValidator,
     )
 
-from qtpy.QtWidgets import QApplication, QMainWindow, QMenu, QAction, QTableWidget, QTableWidgetItem, QMessageBox
+from qtpy.QtWidgets import QMenu, QAction, QTableWidget, QTableWidgetItem, QMessageBox
 
 # ----QtWidgets
 from qtpy.QtWidgets import (
     QWidget,
     QPushButton,
     QAction,
-    QDateEdit,
     QMenu,
     QAction,
     QLineEdit,
-    QActionGroup,
-    QApplication,
-    QDockWidget,
     QTabWidget,
     QLabel,
-    QListWidget,
-    QMainWindow,
     QMessageBox,
-    QSpinBox,
     QMdiSubWindow,
     QTextEdit,
-    QButtonGroup,
     )
 
 # ----QtWidgets big
 from qtpy.QtWidgets import (
     QAction,
     QMenu,
-    QApplication,
-    QMainWindow,
     QTableView,
-    QFrame,
-    QMainWindow,
-    QMdiArea,
     QMdiSubWindow,
-    QMdiArea,
     QMdiSubWindow,
     )
 
 # ----QtWidgets layouts
 from qtpy.QtWidgets import (
-    QGridLayout,
     QVBoxLayout,
     QHBoxLayout,
     )
@@ -81,43 +63,28 @@ from qtpy.QtWidgets import (
 # ----QtWidgets Boxes, Dialogs
 from qtpy.QtWidgets import (
     QAction,
-    QActionGroup,
-    QDockWidget,
-    QFileDialog,
-    QInputDialog,
-
     QLabel,
-    QListWidget,
     QMenu,
     QMessageBox,
     QPushButton,
-    QSpinBox,
     QTextEdit,
     QVBoxLayout,
-    QCheckBox,
     QComboBox,
     )
 
 from qtpy.QtSql import (
-    QSqlDatabase,
     QSqlTableModel,
-    QSqlQuery,
-    QSqlQueryModel
+    QSqlQuery
     )
 
-from qtpy.QtWidgets import ( QApplication, QMainWindow,
-                            QGraphicsView, QGraphicsScene, QGraphicsPixmapItem,
-                            QVBoxLayout, QWidget, QPushButton, QDockWidget
+from qtpy.QtWidgets import ( QVBoxLayout, QWidget, QPushButton
                             )
-from qtpy.QtGui import QPixmap, QPainter
-from qtpy.QtCore import Qt, QRectF
+from qtpy.QtCore import Qt
 
 
-import sqlite3
 
 
 #from   functools import partial
-import collections
 import functools
 import time
 
@@ -126,13 +93,10 @@ import time
 
 # ---- imports local
 
-import  sql_query_model_plus
 from    app_global import AppGlobal
 
 import  gui_qt_ext
-import  string_util
 import  qt_sql_query
-import  document_maker
 import  stuffdb_tabbed_sub_window
 import  ia_qt
 import  photo_viewer
@@ -707,7 +671,6 @@ class PhotoshowListTab( stuffdb_tabbed_sub_window.StuffdbTab  ):
 
     def __init__(self, parent_window ):
 
-        pass
         super().__init__()
         self.parent_window   = parent_window
         self.list_ix         = 5  # should track selected an item in detail
@@ -1361,7 +1324,6 @@ class PhotoTextTab( stuffdb_tabbed_sub_window.StuffdbTab  ):
 
     def __init__(self, parent_window  ):
 
-        pass
         super().__init__()
         self.parent_window   = parent_window
         self.__build_gui()
@@ -1905,7 +1867,6 @@ class PhotoshowEventTab( QWidget  ):
 
     def __init__(self, parent_window ):
 
-        pass
         super().__init__()
         self.parent_window   = parent_window
         self.list_ix         = 5  # should track selected an item in detail

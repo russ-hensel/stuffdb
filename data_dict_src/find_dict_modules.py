@@ -11,7 +11,6 @@ from   pathlib import Path
 import importlib
 
 
-import adjust_path
 import data_dict_all
 
 

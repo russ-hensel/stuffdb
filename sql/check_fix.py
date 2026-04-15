@@ -7,36 +7,24 @@
 
 
 # ---- imports
-import adjust_path
 # ---- begin pyqt from import_qt.py
 
 
 #from qt_compat import QApplication, QAction, exec_app, qt_version
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
 # from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
 # from qt_compat import TextAlignmentRole
 
 
-from qtpy.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from qtpy.QtSql import QSqlQuery
 
 #from qtpyQtGui import ( QAction, QActionGroup, )
 # # ----QtWidgets big
 from qtpy.QtWidgets import (
-    QMenu,
     QApplication,
-    QMainWindow,
-    QTableView,
-    QFrame,
-    QMainWindow,
-    QMdiArea,
-    QMdiSubWindow,
-    QMdiArea,
-    QMdiSubWindow,
     )
 
 
 # ---- imports
-import parameters
 import qsql_utils
 import data_dict
 import key_word_indexer
