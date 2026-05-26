@@ -9,17 +9,18 @@ Created on Sun Jul 13 08:28:33 2025
 
 # ---- tof
 
-# ---- tof
+
 # --------------------
 if __name__ == "__main__":
     pass
+    import main
     #main.main()
-# ----------------
+# --------------------
 
 
 
 # ---- imports
-from PyQt5.QtSql import QSqlDatabase, QSqlQuery
+from qtpy.QtSql import QSqlDatabase, QSqlQuery
 # ---- end imports
 
 import parameters
@@ -40,11 +41,6 @@ class KeyGenxxx(   ):
 
         """
         self.db_file_name    = db_file_name
-
-
-# ---- eof
-
-
 
     # --------------------------------
     def init_db( self, ):
@@ -94,15 +90,6 @@ class KeyGenxxx(   ):
 
 
 
-    #-----------------------------------------------
-    def delete_data( self ):
-        """
-
-        """
-        # print_func_header( "delete_data()  not implemented" )
-        # self.append_msg( tab_base.DONE_MSG )
-
-
 # ----------------------------------------
 class RunSql(   ):
     """
@@ -136,7 +123,7 @@ class RunSql(   ):
         except Exception as error:
 
             error_message = str(error)
-            msg  = (f"Caught an erro in __init__: {error_message}")
+            msg  = (f"Caught an error in trying go: {error_message}")
             print( msg )
 
             # msg_box_msg    = "this is a message"
@@ -187,9 +174,15 @@ class RunSql(   ):
         elif sql_type ==  "delete":
             self.delete_data()
 
+        elif sql_type ==  "update":
+            self.update_data()
+
+        else:
+            1/0
+
         self.close_file_out()
 
-        print( "__init__ all done ")
+        print( "go all done ")
 
 
     # --------------------------------
@@ -214,7 +207,6 @@ class RunSql(   ):
 
         db_file_name    = self.sql_dict["db_file_name"]
         db_type         = self.sql_dict["db_type"]
-
 
 
         # connection_name = "my_connection"
@@ -272,17 +264,15 @@ class RunSql(   ):
         self.open_file_output()
 
         msg         =  f"for file output see {self.file_out_full_name} "
-        print( msg )
         self.output_to_file( msg )
-
 
         self.parse_column_list()
 
-
-
         col_width        = self.sql_dict.get( "col_width", None )
+
         if col_width is None:
             col_widths  = [30] * len( self.columns )
+
         else:
             if type(col_width) == list:  # !! use is instance
                 pass
@@ -294,6 +284,9 @@ class RunSql(   ):
         query       = QSqlQuery( self.db  )
 
         query_ok    = True
+
+        msg   = f"sql is {sql} "
+        self.output_to_file( msg )
 
         result      = query.exec_( sql )
 
@@ -313,36 +306,54 @@ class RunSql(   ):
         else:
             pass
             #rint("Query executed successfully.")
+            msg   = "select result with line numbers, null to <null> and spaces to :"
+            self.output_to_file( msg )
+
+            msg   = "some heading might be nice "
+            self.output_to_file( msg )
 
         ix_line    = 0
         while query.next():
             # a_id        = query.value(0)
             # name        = query.value(1)
             # frequency   = query.value(1)
-            ix_line     += 1
-            msg         = f"{ix_line:<5} "
+
+            col_data    = []
             for ix, i_column in enumerate( self.columns):
-                msg   = f"{msg}{str(query.value(ix)):{col_widths[ix]}} "
+                data    = query.value(ix)
+
+                if data is None:
+                    data = "<null>"
+
+                if isinstance( data, str ):
+                    data = data.replace( " ", ":" )
+                    if data == "":
+                        data = '<"">'
+
+                col_data.append( data )
+
+            ix_line     += 1
+            msg         = f"#{ix_line:<5} " # number the rows
+
+            for ix, i_data in enumerate( col_data ):
+                msg   = f"{msg}{str( col_data[ ix ] ):{col_widths[ix]}} "
             # msg      = (f"row: {query.value(0) = }  { query.value(1) = }  {query.value(1)} ")
 
-            print( msg )
             self.output_to_file( msg )
 
 
         self.finalize_db()
 
-        msg         =  "number of lines {ix_line} "
-        print( msg )
+        msg         =  f"number of lines {ix_line} "
         self.output_to_file( msg )
 
         msg         =  f"for file output see {self.file_out_full_name} "
-        print( msg )
         self.output_to_file( msg )
 
         print( "-------------- all done ---------------------")
 
     #-----------------------------------------------
-    def insert_data( self ):
+    def insert_dataxx( self ):
         """
         also see the tab_qsql_database.py  populate_book_club_table
         this uses bind variables, probably the safeest way to execute sql
@@ -382,6 +393,8 @@ class RunSql(   ):
         """
         sql      = self.sql_dict["sql"].strip()
 
+        # this should be improved !!
+        sql      = sql.replace( "\n",       " " )   # parse on nl like a space
         sql      = sql.replace( "from ",   "FROM " )
         sql      = sql.replace( "select ", "SELECT " )
 
@@ -389,10 +402,10 @@ class RunSql(   ):
         sql_select  = sql_split[0]
         #                         1234567
         if sql_select.startswith( "SELECT "):
-            pass
+            pass # it should
         else:
-            return
-        sql_columns     = sql_select[ 7: ]
+            return  # this will be a problem !! probably should raise ex
+        sql_columns     = sql_select[ 7: ] # skip select
         sql_columns     = sql_columns.replace( ",", " ")
         columns         = sql_columns.split( " " )
         # remove empty
@@ -465,17 +478,56 @@ class RunSql(   ):
 
         """
         #-----------------------------------------------
-        self.delete_data(   )
+        # print_func_header( "delete_data()  not implemented" )
+        # self.append_msg( tab_base.DONE_MSG )
+        sql         = self.sql_dict["sql"]
+        self.init_db()
+        # self.open_file_output()
+
+        # self.parse_column_list()
+
+        query       = QSqlQuery( self.db  )
+
+        query_ok    = True
+
+        result      = query.exec_( sql )
+
+        msg         = ( f"update_data {sql =} " )
+        self.output_to_file( msg )
+        print( msg )
+
+        if not result:
+            query_ok        = False
+            error_txt       = query.lastError().text()
+            loc             = "query_exec_error_check"
+            debug_msg       = f"{loc} >>> error sql = { sql } \n lastError = {error_txt = }"
+            #logging.debug( debug_msg )
+            print( debug_msg )
+            # dialog          =  DisplaySQLError( parent = None, title = "SQL Error", msg = debug_msg )
+            # if dialog.exec_() == QDialog.Accepted:
+            #     pass
+
+            raise Exception( "sqlerror", debug_msg )
+
+        else:
+            #rint("Query executed successfully.")
+            rows    = query.numRowsAffected()
+            msg     = f"Rows numRowsAffected: {rows}"
+            print( msg )
 
 
+        # while query.next():
+        #     # a_id        = query.value(0)
+        #     # name        = query.value(1)
+        #     # frequency   = query.value(1)
+
+        #     msg      = (f"row: {query.value(0) = }  { query.value(1) = }  {query.value(1)} ")
+        #     print( msg )
+        #     self.output_to_file( msg )
 
 
-
-
-
-
-
-
+        self.finalize_db()
+        print( "-------------- all done ---------------------")
 
 
 
@@ -484,6 +536,7 @@ class RunSql(   ):
     #-----------------------------------------------
     def open_file_output( self ):
         """
+        could change to get file_name
         args in self.sql_dict
         """
         # print_func_header( "delete_data()  not implemented" )
@@ -491,12 +544,10 @@ class RunSql(   ):
         output_type         = self.sql_dict["output_type"].lower( )
         output_file_name    = self.sql_dict["output_file_name"]
 
-
         # lets put it under output
         output_file_name    = parameters.PARAMETERS.output_dir + "/" + output_file_name
         output_file_name    = output_file_name.replace( "//", "/" )
         output_file_name    = output_file_name.replace( "//", "/" )  # super sure
-
 
         self.file_out_full_name = output_file_name
 
@@ -514,7 +565,7 @@ class RunSql(   ):
         """
         if self.file_out:
             self.file_out.write( msg + "\n" )
-        #print( msg )
+        print( msg )
 
     # --------------------------------
     def close_file_out( self,  ):
@@ -524,8 +575,6 @@ class RunSql(   ):
         if self.file_out:
             self.file_out.close()
         self.file_out = None
-
-
 
 
 def query_exec_error_check( *, query, sql = None, raise_except = True ):
@@ -563,3 +612,5 @@ def query_exec_error_check( *, query, sql = None, raise_except = True ):
         pass
         #rint("Query executed successfully.")
     return query_ok
+
+

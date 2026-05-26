@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 """
+
+THIS IS A RESTORE FROM GITHUB, REPACINGING NEW_BROKEN
+
+
 Purpose:
     part of my ( rsh ) library of reusable code
     a library module for multiple applications
@@ -71,142 +75,41 @@ stuff related to photo extensions
 
 """
 
-import os
 # ---- imports
-#import collections
+import collections
 import stat
 import sys
-import time
-import traceback
-import webbrowser
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
-
-import exifread
 #import dis
 import geopy
-import geopy.distance
 import gmplot
-# import haversine as hs
-import PIL.ExifTags
-import PIL.Image
-# import datetime  -- this messes up above
-import pytz
+from   gmplot import gmplot
+from   geopy.geocoders import Nominatim
+import geopy.distance
+import webbrowser
 import requests
-from dateutil import tz
-from geopy.geocoders import Nominatim
-from gmplot import gmplot
+import os
+import time
+from   datetime import datetime, timedelta
 
+import exifread
+import PIL.Image
+import PIL.ExifTags
+
+from   pathlib import Path
+import haversine as hs
 # import Units
 
 # ---- local imports
 sys.path.append( r"D:\Russ\0000\python00\python3\_projects\rsh"  )
 import data
-from app_global import AppGlobal
-import app_exceptions
 
 # FileInfo     = collections.namedtuple( "FileInfo" , "lat long elav date", defaults=( None, None ) )
 # or could make a photo plus for each
 # GeoInfo      =  collections.namedtuple( "GeoInfo" ,
-                                       # "lat long elav date file_name speed address",
+                                       # "lat long elav date filename speed address",
                                        #  defaults=( None, None, None, None, None, None, None  )
                                        # )
 DATETIME_FORMAT         = "%Y:%m:%d %H:%M:%S"
-
-# ------------------------------------------
-def make_file_list( path_name  = None, suffixes = None ):
-    """
-    Purpose:
-        given a file name, scan the directory it is in
-        and make a file list in this object for it
-        not sure if is recusife uses glob
-        was geo_track.py def _dir_to_filelist_old( self, filename  = None ):
-    arguments
-        path_name -- for dir to search -- may be file or dir
-    returns:
-        file_list
-    """
-    if suffixes is None:
-        suffixes        = ["jpg","png", ]
-    file_list     = []
-    # apparently we also need to check for empty file name
-
-    path_name  = path_name.strip()
-    if path_name == "":
-        msg   = (f"File, {path_name}, is empty; operation terminated")
-        print( msg )
-        raise app_exceptions.ReturnToGui( msg )
-
-    path_name   = Path( path_name )
-    if not path_name.exists():
-        msg   = (f"File, {path_name}, does not exist; operation terminated")
-        print( msg )
-        raise app_exceptions.ReturnToGui( msg )
-
-    if path_name.is_file():
-        path_name    = path_name.parent
-
-    file_list       = [ str(path.absolute() )
-                        for i in suffixes for path in path_name.glob("*."+i)]
-
-    return file_list
-
-
-# ---- grok say, russ mods
-
-def dms_to_decimal( degrees, minutes, seconds, ref ):
-    """Convert DMS (degrees, minutes, seconds) to decimal degrees."""
-    decimal = degrees + (minutes / 60.0) + (seconds / 3600.0)
-    if ref in ['S', 'W']:
-        decimal = -decimal
-    return decimal
-
-def get_gps_coordinates( gps_info ): # exif['GPSInfo']
-        """ """
-
-
-        #gps_info = exif['GPSInfo']
-        # Map GPS sub-tags to names
-        gps_tags = {PIL.ExifTags.GPSTAGS.get(tag, tag): value for tag, value in gps_info.items()}
-
-        # Extract latitude and longitude
-        if 'GPSLatitude' in gps_tags and 'GPSLatitudeRef' in gps_tags:
-            lat_dms = gps_tags['GPSLatitude']
-            lat_ref = gps_tags['GPSLatitudeRef']
-            latitude = dms_to_decimal(
-                lat_dms[0].numerator / lat_dms[0].denominator,
-                lat_dms[1].numerator / lat_dms[1].denominator,
-                lat_dms[2].numerator / lat_dms[2].denominator,
-                lat_ref
-            )
-        else:
-            latitude = None
-
-        if 'GPSLongitude' in gps_tags and 'GPSLongitudeRef' in gps_tags:
-            lon_dms = gps_tags['GPSLongitude']
-            lon_ref = gps_tags['GPSLongitudeRef']
-            longitude = dms_to_decimal(
-                lon_dms[0].numerator / lon_dms[0].denominator,
-                lon_dms[1].numerator / lon_dms[1].denominator,
-                lon_dms[2].numerator / lon_dms[2].denominator,
-                lon_ref
-            )
-        else:
-            longitude = None
-
-        return latitude, longitude
-
-def exif_date_to_timestamp( date_str ):
-    """
-    Grok say, and seems to work
-    read it
-    """
-    try:
-        dt = datetime.strptime(date_str, '%Y:%m:%d %H:%M:%S')
-        return int(dt.timestamp())
-    except ValueError:
-        return None
-
 
 # ----------------------------------------
 class PhotoPlus():
@@ -224,59 +127,53 @@ class PhotoPlus():
 
     """
     # ----------------------------------------
-    def __init__(self, file_name = None, timezone_missing = None   ):
+    def __init__(self, filename = None ):
         """
-        file_name     name of a photo that hopefully contains exif data
-        file_name     is for now assumed to be full path... probably !!
+        filename     name of a photo that hopefull contains exif data
+        filename     is for now assumed to be full path... probably !!
         should convert if not
 
-        file_name is none will suppress read of file
+        filename is none will suppress read of file
         then manually populate
 
 
         """
-        self.reset( file_name, timezone_missing )
+        self.reset( filename )
 
     # -----------------------------
-    def reset( self, file_name = None, timezone_missing = None ):
+    def reset( self, filename = None ):
         """
         reset data, mostly to None, but
-        if file_name is not None
+        if filename is not None
         fetch the data from the file
         reset the file name for reuse of the instance
 
         better if these were @properties
 
-        file_name     name of a photo that hopefully contains exif data
+        filename     name of a photo that hopefull contains exif data
                     may use a None, then push in variables as in ..,,,
                     read_photo_points
         return
             mutates instance
         """
         #rint( "in reset" )
-        self.file_name           = file_name   # work  with path ??
-        self.timezone_missing   = timezone_missing
-                                    # timezone to use if missing in photo, or falsy
-        # self.ok                 = 1  # negative numbers for failure !! not implemented yet
-        # # self.geo_info.file_name  = file_name
-        # self.lat                = None       # latitude as a 40
-        # self.long               = None       # longitude as a -70.0
-
+        self.filename           = filename   # work  with path ??
+        self.ok                 = 1  # negative numbers for failure !! not implementd yet
+        # self.geo_info.filename  = filename
+        self.long               = None       # longiude as a desimal
+        self.lat                = None       # latitude as a desimal
         self.address            = None
-        # self.size               = None       # size of file in bytes
+        self.size               = None       # size of file in btes
         self.datetime           = None       # some datetime... the one we use may have zone or not
-                                             # make utc if possible
-        self.datetime_nz_str    = ""         # datetime with no zone info as a string
-        self.timezone_str       = ""         # timezone as a string  also flag if zone is present use truthiness
+        self.datetime_nz_str    = ""       # datetime with no zone info as a string
+        self.timezone_str       = ""      # timezone as a string  also flag if zone is present use truthyness
         # self.datetime_str       = None       # datetime as a string
         self.timestamp          = None       # from exif
         self.speed              = None       # !! unit conversion not yet done
-        # self.has_lat_long       = False
+        self.has_lat_long       = False
         # self.geo_info           = GeoInfo( )
-        # or put in one dict
-        self.exif_dict_from_pil = { }
-        self.os_dict            = { }
-
+        if filename:
+            self.get_fast_data()
 
     #----------------------------------------------------------------------
     def set_lat_long_from_str( self, lat_decimal_str, long_decimal_str ):
@@ -302,72 +199,12 @@ class PhotoPlus():
             self.long             = float( long_decimal_str )
         else:
             self.long             = None
-            self.has_lat_long     = False
+            self.has_lat_long    = False
 
     #----------------------------------------------------------------------
-    def utc_datetime_from_str( self, datetime_nz_str, timezone_str, default_timezone_str, msg = None ):
+    def set_datetime_from_str( self, datetime_nz_str, timezone_str ):
         """
-        using strings get a utc datetime
-        args:
-            read the code
-        return
-            utc_datetime
-        raises
-            will raise exception if errors
-
-        """
-        if timezone_str == "None":
-            timezone_str    = default_timezone_str
-
-        try:
-
-            if   timezone_str.startswith( "UTC" ):
-                a_timezone = tz.gettz( timezone_str  )
-
-            elif timezone_str.startswith( "+" ) or timezone_str.startswith( "-" ):
-                timezone_str    = f"UTC{timezone_str}"
-                a_timezone      = tz.gettz( timezone_str  )
-
-            else:
-                a_timezone   = pytz.timezone( timezone_str )
-
-            a_datetime   = datetime.strptime( datetime_nz_str, DATETIME_FORMAT  )
-            # apply zone
-            a_datetime   = a_datetime.replace( tzinfo = a_timezone )
-            # to utc
-            a_datetime   = a_datetime.astimezone( timezone.utc )
-            # print( repr( a_datetime ))
-
-            #self.set_datetime_from_str(   datetime_nz_str, timezone_str   )
-
-        except Exception as an_except:
-
-            msg     = f"a_except         >>{an_except}<<  type  >>{type( an_except)}<<"
-            print( msg )
-            AppGlobal.logger.debug( msg )
-
-
-            msg     = ( f"during processing for >>{msg}<< and "
-                        f"\n    default_timezone_str = {default_timezone_str} and"
-                        f"\n    timezone_str         = {timezone_str} " )
-            print( msg )
-            AppGlobal.logger.debug( msg )
-
-            s_trace = traceback.format_exc()
-            msg     = f"format-exc       >>{s_trace}<<"
-            print( msg )
-            AppGlobal.logger.error( msg )   #    AppGlobal.logger.debug( msg )
-
-            raise
-
-        debug_stop   = 1
-
-        return a_datetime
-
-    #----------------------------------------------------------------------
-    def set_datetime_from_strxxxx( self, datetime_nz_str, timezone_str ):
-        """
-        set from two strings that are also saved in self.
+        set from two strings that are also seved in self.
             datetime_nz_string     datetime in format: DATETIME_FORMAT            = "%Y:%m:%d %H:%M:%S"
             timezone_str
         return
@@ -409,7 +246,7 @@ class PhotoPlus():
             try:
                 msg     = str( datetime_nz_str )
                 print( msg )
-                self.datetime     = datetime.datetime.strptime( datetime_nz_str, DATETIME_FORMAT )
+                self.datetime     = datetime.strptime( datetime_nz_str, DATETIME_FORMAT )
             except ValueError as an_except:
                 self.datetime     = None
 
@@ -419,34 +256,26 @@ class PhotoPlus():
         return
             the short name of the file
             no dir structure at all
-            for None return ""
+
         """
-        if self.file_name is None:
-            return ""
-        else:
-            return Path( self.file_name ).name
+        return Path( self.filename ).name
+
 
     #----------------------------------------------------------------------
-    def exif_from_exifreadxxxx( self,  ):
+    def get_fast_data( self,  ):
         """
-        this is old, puts values into self
-        seems to required a lot of work compared to tet_exif_dict_from_pil
-
-        get the exif data we use that is quick
+        get the extif data we use that is quick
         see code for details
         return
             mutate:  self
                 ???
                     self.datetime           = None       # some datetime... the one we use may have zone or not
-                    self.datetime_nz_str    = None       # datetime with no zone info
-                    self.timezone_str       = None       # timezone as a string
+                    self.datetime_nz_str   = None       # datetime with no zone info
+                    self.timezone_str      = None       # timezone as a string
                     self.datetime_str       = None       # datetime as a string
         """
         # ret   = None, None
-        #file_name_debug   = self.file_name
-       # print( f"for debug, fast_data for {file_name_debug}")
-        timezone_missing_debug   = self.timezone_missing
-        with open( self.file_name, 'rb' ) as f:
+        with open( self.filename, 'rb' ) as f:
             tags            = exifread.process_file( f )
             latitude        = tags.get('GPS GPSLatitude'     )
             latitude_ref    = tags.get('GPS GPSLatitudeRef'  )
@@ -481,7 +310,7 @@ class PhotoPlus():
             # self.geo_info.long = long_value
 
             timestamp               = tags.get( "GPS GPSTimeStamp" )  # is a constant better than a literal test in ex_timing
-            # self.geo_info.timestampn = long_value
+            # self.geo_info.timestamp = long_value
             self.timstamp           = timestamp               # need type
 
 
@@ -495,46 +324,57 @@ class PhotoPlus():
             # self.geo_info.speed     = speed
             self.speed              = speed
 
-            size                    = os.path.getsize( self.file_name  )
+            size                    = os.path.getsize( self.filename  )
             self.size               = size
-            stats                   = os.stat( self.file_name )
+            stats                   = os.stat( self.filename )
             # self.datetime           = datetime.datetime.fromtimestamp( stats[stat.ST_MTIME] )
 
-            # ---- datetime is all that is left may be None
             tag          =  tags.get( "EXIF DateTimeOriginal"   )
             if tag:
                 datetime_nz_str = str( tag )
             else:
                 datetime_nz_str = ""
-                #print( f"datatime string not found for {self.file_name}")
 
-                # else:
-                self.datetime    = None
-                msg     =  f"for file {self.file_name} there was no datetime info "
-                print( msg )
-                AppGlobal.logger.log( 10, msg )
+            tag            =  tags.get( "EXIF OffsetTimeOriginal" )
+            if tag:
+                timezone_str = str( tag )
+            else:
+                timezone_str = ""
 
-                return
+            #debug                   =  tags.get( "EXIF OffsetTimeOriginal" )
+            #stop = 1
 
-            # there are 3 zone tags try them all
-            tag            =  tags.get( "EXIF OffsetTimeOriginal" )  # may not be valid?
-            tag            =  tags.get( "EXIF OffsetTime" )
+            self.set_datetime_from_str(   datetime_nz_str, timezone_str   )
+            # if datetime_nz_str and timezone_str:
+            #     a_datetime_with_zone  = self.make_dt_with_zone( datetime_nz_str, timezone_str  )
 
+            #     self.datetime_nz_str  = datetime_nz_str
+            #     self.timezone_str    = timezone_str
+            #     self.datetime         = a_datetime_with_zone
 
-            self.datetime             = self.utc_datetime_from_str(
-                datetime_nz_str       = datetime_nz_str,
-                timezone_str          = str( tag ),
-                default_timezone_str  = self.timezone_missing,
-                msg                   = f"for >>{self.file_name}<<" )
+            # else:
+            #     #------- now make the date not aware
+            #     try:
+            #         format            = "%Y:%m:%d %H:%M:%S"
+            #         msg     = str( datetime_nz_str )
+            #         print( msg )
+            #         self.datetime     = datetime.strptime( str( datetime_nz_str ), format )  # !! is str necessary ??
+            #     except ValueError as an_except:
+            #         self.datetime     = None
+            # need to convert speed
 
-            debug_stop   = 1
-
+        #rint( f"get_lat_long returns {ret}" )
+        # !! temp for debugging
+        # if ret == (None, None):
+        #     msg   = f"No lat long found in {self.filename}"
+        #     print( msg )
+        return
     # ----------------------------------
     def make_dt_with_zonexxx( self, exif_dt_original, exif_dt_offset  ):
         """
         args are strings or string like
-        change ?? to with zone or not depending on exif_dt_offset
-        use exif data to make a timezone aware dt
+        change ?? to with zone or not depending on extif_dt_offset
+        use extif data to make a timezone aware dt
         in ex_exif_tags.py ex_dates_and_times_with_zone  and photo_ext.py
         !! static
         """
@@ -542,12 +382,12 @@ class PhotoPlus():
         # print( "exif_dt_offset   {exif_dt_offset}")
 
         # ---- make exif dt timezone aware -- edited to short version
-        utc_timezone        = datetime.datetime.strptime( str( exif_dt_offset ), "%z").tzinfo
+        utc_timezone        = datetime.strptime( str( exif_dt_offset ), "%z").tzinfo
         #print( f"utc_timezone {utc_timezone}")
 
         #------- now make the date
         format         = "%Y:%m:%d %H:%M:%S"
-        a_datetime     =  datetime.datetime.strptime( str( exif_dt_original ), format )
+        a_datetime     = datetime.strptime( str( exif_dt_original ), format )
         # ex_helpers.info_about_datetime( a_datetime, msg = f"dt from {string_date}" )
         # ---- add timezone
         a_datetime    = a_datetime.astimezone( utc_timezone )
@@ -555,93 +395,46 @@ class PhotoPlus():
         return a_datetime
 
     # ----------------------------------------
-    def exif_stringxxx( self, all = False    ):
+    def exif_string( self, all = False    ):
         """
-
-        depricate --- a dict is better
+        all so far does nothing
         """
         # -----
-        img             = PIL.Image.open( self.file_name )
+        img             = PIL.Image.open( self.filename )
         exif            = { PIL.ExifTags.TAGS[k]: v for k, v in img._getexif().items() if k in PIL.ExifTags.TAGS }
         #rint( type(exif) )
         ret = "exif values:"
         for key, value in exif.items():
-            #rint( key, value )
-            ret     = f"{ret}\n{key}: {value}"
-            #rint( type(what))
+           #rint( key, value )
+           ret     = f"{ret}\n{key}: {value}"
+           #rint( type(what))
         #t( ret )
         return ret
 
-    #from PIL import Image, ExifTags
-    # ----------------------------------------
-    def get_exif_dict_from_pil( self,   ):
-        """
-        get data into a dict or None
-        read it
-        new 2025
-        """
-        exif_dict   = self.exif_dict
-        image       = PIL.Image.open( self.file_name )
-        exif_data   = image._getexif()
-
-        if exif_data:
-            exif_dict = {PIL.ExifTags.TAGS.get(tag, tag): value for tag, value in exif_data.items()}
-
-        else:
-            return exif_dict
-
-        # geo data is in its own dict
-        exif_geo_dict    = exif_dict.get( "GPSInfo", None )
-        if exif_geo_dict is not None:
-            msg    = (f" processing ----------- {exif_geo_dict = }")
-            print( msg )
-            latitude, longitude         = get_gps_coordinates( exif_geo_dict )
-            exif_dict[ "Latitude" ]     = latitude
-            exif_dict[ "Longitude" ]    = longitude
-            # else will be missing
-
-        # make_model     = ( f "{exif_dict.get( 'DateTime', 'none'  )}/
-        #                    {}  " )
-
-        dt_original_ts  =  exif_date_to_timestamp(
-                              exif_dict.get( "DateTime", None  ) )
-
-        exif_dict[ "dt_original_ts" ]    = dt_original_ts
-
-        # msg     = ( f"exif_dict_from_pil {exif}" )
-        # print( msg )
-
-        return exif_dict  # but mutated
-
     #----------------------------------------------------------------------
-    def get_os_dict( self,  ):
+    def get_size( self,  ):
         """
         file size
-        exif_dict[ "dt_original_ts" ]    = dt_original_ts
         """
-        os_dict    = self.os_dict   # and mutate
-
-        stats      = os.stat( self.file_name )
+        stats      = os.stat( self.filename )
         my_size    = stats[stat.ST_SIZE]
         #rint(( "last access",        time.ctime(stats[stat.ST_ATIME]) ))
         #rint(( "last modification",  time.ctime(stats[stat.ST_MTIME]) ))
         #rint(( "last status change", time.ctime(stats[stat.ST_CTIME]) ))
         #rint(( "size ",              os.path.getsize(  file_name ) ))
         #rint(( "size ",              os.stat( file_name ).st_size  ))
-
-
-        os_dict[ "size" ]     = my_size
-
-        return os_dict
+        self.size   = my_size
+        print( f"get_size {my_size}" )
+        return my_size
 
     #----------------------------------------------------------------------
     def get_datetimexx( self,  ):
         """
-        file get_datetime -- or is this just a time
+        file get_datetime -- or is this jus a time
         return
             mutates self
         """
-        stats      = os.stat( self.file_name )
+        stats      = os.stat( self.filename )
         dt         = time.ctime(stats[stat.ST_MTIME])
         #rint(( "last access",        time.ctime(stats[stat.ST_ATIME]) ))
         #rint(( "last modification",  time.ctime(stats[stat.ST_MTIME]) ))
@@ -666,7 +459,6 @@ class PhotoPlus():
         s = float(value.values[2].num) / float(value.values[2].den)
 
         return d + (m / 60.0) + (s / 3600.0)
-
 
     # #----------------------------------------------------------------------
     # def get_location( self, long, lat  ):
@@ -701,7 +493,7 @@ class PhotoPlus():
             get a human readable address
         Returns: an address
         note location has long and lat in int
-        this is somewhat expensive in terms of time
+        this is somewhat expenmsive in terms of time
         """
         #rint( "\nget_address")
         #rint( "self.arg = ", f"{self.lat}, {self.long}", flush = True  )
@@ -729,15 +521,14 @@ class PhotoPlus():
             more formatting might be nice
         """
         a_str =  ">>>>>>>>>>* PhotoPlus instance var (some) *<<<<<<<<<<<<"
-        a_str = f"{a_str}\n   file_name          {self.file_name}         {type(self.file_name)}"
+        a_str = f"{a_str}\n   filename          {self.filename}         {type(self.filename)}"
 
         a_str = f"{a_str}\n   lat               {self.lat}              {type(self.lat)}"
         a_str = f"{a_str}\n   long              {self.long}             {type(self.long)}"
         a_str = f"{a_str}\n   has_lat_long      {self.has_lat_long}     {type(self.has_lat_long)}"
         a_str = f"{a_str}\n   datetime          {self.datetime}         {type(self.datetime)}"
         a_str = f"{a_str}\n   datetime_nz_str   {self.datetime_nz_str}  {type(self.datetime_nz_str)}"
-        a_str = f"{a_str}\n   timezone_str      {self.timezone_str}     {type(self.timezone_str)}"
-        a_str = f"{a_str}\n   timezone_missing  {self.timezone_missing} {type(self.timezone_missing)}"
+        a_str = f"{a_str}\n   timezone_str      {self.timezone_str}          {type(self.timezone_str)}"
         a_str = f"{a_str}\n   address           {self.address}          {type(self.address)}"
         a_str = f"{a_str}\n   size              {self.size}             {type(self.size)}"
 
@@ -757,7 +548,7 @@ class PhotoPlus():
         address    = locname.address
         print( address )   # debug/test
         print( f"point  = {locname.point}")
-        print( f"altitude   {locname.point[2]}"  )
+        print( f"altitue   {locname.point[2]}"  )
         return address
 
 # ----------------------------------------
@@ -799,7 +590,7 @@ class WebMap():
         """
         open given long, lat and zoom level ( or use instance ??)
         parameters
-            ?? file_name html
+            ?? filename html
              ?? file name
              ?? open browser flag
 
@@ -809,11 +600,11 @@ class WebMap():
         if zoom_level is None:
             zoom_level =  10
 
-        file_name_html  = r"d:/temp.html"  # need full path
+        filename_html  = r"d:/temp.html"  # need full path
         gmap       = gmplot.GoogleMapPlotter( lat, long, zoom_level )
         gmap.marker( lat, long, "cornflowerblue" )
-        gmap.draw( file_name_html )   # a file name for the html
-        webbrowser.open( file_name_html, new = 2 )        # auto open file above in new tab
+        gmap.draw( filename_html )   # a file name for the html
+        webbrowser.open( filename_html, new = 2 )        # auto open file above in new tab
 
 
 # ----------------------------------------
@@ -866,7 +657,7 @@ class StaticMap():
         #size:mid%7Ccolor:0x2e3a5c%7Clabel:1%7CAlbany%2C%20NY
 
         # my_request: https://maps.googleapis.com/maps/api/staticmap?
-        # &center=41.53993055555556, -71.00936388888888&zoom=15&key=needkeyhere&
+        # &center=41.53993055555556, -71.00936388888888&zoom=15&key=AIzaSyAP6Vp7EvZFOf02PsnzQtR7oimSoTqtKJw&
         #size=600x600
         # &marker=cornflowerblue
 
@@ -987,7 +778,7 @@ class DistanceFrom():
         """
         unit           = unit.lower()
         if unit.startswith( "me"):
-            n_unit = self.METER
+           n_unit = self.METER
 
         elif unit.startswith( "mi"):
             n_unit = self.MILE
@@ -1055,7 +846,7 @@ class DistanceFrom():
         unit                 = self._normalise_unit( unit )
 
         if unit == self.METER:
-            converted_distance  = float( a_distance.m )
+           converted_distance  = float( a_distance.m )
 
         elif unit == self.MILE:
             converted_distance  = float( a_distance.mi )
@@ -1073,7 +864,7 @@ class DistanceFrom():
 
 
         """
-        # # -- using haversine
+        # # -- using haversign
         # the_distance = hs.haversine( (self.from_lat, self.from_long ), ( lat, long ) )
 
         # -- using geopy
@@ -1138,10 +929,11 @@ class DistanceFrom():
 def test_classPhotoPlus():
 
     print( "\n test_classPhotoPlus =====================")
-    file_name        = r"D:\Russ\0000\python00\python3\_examples\wedge.jpg"
+    filename        = r"D:\Russ\0000\python00\python3\_examples\wedge.jpg"
+    filename        = r"/mnt/8ball1/first6_root/photos/photos_raw/from_phone/more_phone_maybe_dup_aug/in_vt/PXL_20230712_222921092.jpg"
 
     # ---- PhotoPlus
-    a_photo_plus    = PhotoPlus( file_name )
+    a_photo_plus    = PhotoPlus( filename )
 
     # # ---- lat long
     # lat_long  = a_photo_plus.get_lat_long()
@@ -1176,13 +968,21 @@ def test_classPhotoPlus():
 
 # ----------------------------------------
 def test_static_map_class ():
+    """
+    seems to use google api key which is not maintained so do not use
+
+    Returns
+    -------
+    None.
+
+    """
     # ex_name  = "ex_static_map_class"   # end with >>    ex_helpers.end_example( ex_name )  # not part of example, marks end
     #rint( f"""{ex_helpers.begin_example( ex_name )}
     #        Python | Get a google map image of specified location using Google Static Maps API - GeeksforGeeks
     #                *>url  https://www.geeksforgeeks.org/python-get-google-map-image-specified-location-using-google-static-maps-api/
 
     #       """ )
-    print( "\n test_static_map_class =====================")
+    print( "\n test_static_map_class do you have an aip key? =====================")
     zoom_world      = 1
     zoom_landmass   = 5
     zoom_city       = 10
@@ -1196,13 +996,13 @@ def test_static_map_class ():
     size            = "600x600"   # may be limit at 640 ...
     #size            = None  # just do not pass
     marker          = None        # values "cornflowerblue" ??
-    sensor          = None        # don't know
+    sensor          = None        # dont know
     api_key         = None        # sign up for one
 
 
     fn_out          = "ex_static_map.png"
 
-    # ---- actual values -- but see dict setup where may be overwritten
+    # ---- actual values -- but see dict setup where may be ovewritten
     #api_key         = ex_helpers.get_data( "google_api_key_gmp" )
     api_key         = data.get_data( "google_api_key_gmp" )  # you will need to get you own key
 
@@ -1254,8 +1054,8 @@ def test_static_map_class ():
                                #"zoom":      5,     # east coast
                                "zoom":      15,     # east coast
                                #"center":    "45, 77",
-                               #"center":    "77, 45",   # off England
-                               #"center":    "-77, 45",  # Antarctica
+                               #"center":    "77, 45",   # off england
+                               #"center":    "-77, 45",  # antartic
                                "center":    center,
 
 
@@ -1354,9 +1154,9 @@ def test_multipls_class ():
     #       """ )
     """
 
-    lets take a list of photos and get the distance in meters from the firs photo
+    lets take a list of photos and get the distance in meters from the firs phooto
     """
-    print("=============== test_multiple_class =======================")
+    print("=============== test_multipls_class =======================")
     photo_list   = [
         r"D:\PhotosRaw\2022\Phone\sept\PXL_20220910_174726196.jpg",
         r"D:\PhotosRaw\2022\Phone\sept\PXL_20220910_174640945.MP.jpg",
@@ -1410,7 +1210,7 @@ def test_multipls_class ():
 
 # test_multipls_class()   put at bottom
 
-
+# ---- if main
 # ==============================================
 if __name__ == '__main__':
     """
@@ -1423,5 +1223,5 @@ if __name__ == '__main__':
 
     #test_DistanceFrom_class()
     #test_multipls_class ()
-    #test_classPhotoPlus()
-    test_static_map_class()
+    test_classPhotoPlus()
+    #test_static_map_class()   # needs google api key

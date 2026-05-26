@@ -9,7 +9,7 @@ DB_NAME:        stuffdb
 import data_dict_all
 
 
-def build_it( a_data_dict_all ):
+def build_it( a_schema_dict ):
     """
     build then entier data dictionary
 
@@ -17,7 +17,7 @@ def build_it( a_data_dict_all ):
     # import data_main
     # a_data_dict_all    = data_main.data_dict_all
 
-    sql = (
+    sqlxxxx = (
     """
      CREATE TABLE  stuff_text   (
 
@@ -28,7 +28,7 @@ def build_it( a_data_dict_all ):
 
     # ---- stuff_text ---------------------
     a_table_dict   = data_dict_all.TableDict(  "stuff_text" )
-    a_data_dict_all.add_table ( a_table_dict )
+    a_schema_dict.add_table ( a_table_dict )
 
     fk_info        =  (  "CONSTRAINT fk_stuff_text_stuff_info "
                         "\n       FOREIGN KEY (id)  "
@@ -36,7 +36,7 @@ def build_it( a_data_dict_all ):
                         "\n       ON DELETE CASCADE "
                        )
 
-
+    # ---- id
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",
                                              db_type        = "INTEGER",
                                              display_type   = "integer",
@@ -49,7 +49,7 @@ def build_it( a_data_dict_all ):
 
     a_table_dict.add_column( a_column_dict )
 
-
+    # ---- id_old
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "id_old",
                                              db_type        = "VARCHAR(15)",
                                              display_type   = "string",
@@ -118,7 +118,7 @@ def build_it( a_data_dict_all ):
 """)
 
     a_table_dict   = data_dict_all.TableDict(  "stuff" )
-    a_data_dict_all.add_table ( a_table_dict )
+    a_schema_dict.add_table ( a_table_dict )
 
     # ---- id
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",
@@ -277,16 +277,14 @@ def build_it( a_data_dict_all ):
 
     # ---- dt_enter
     a_column_dict = data_dict_all.ColumnDict(    column_name        = "dt_enter",
-                                             display_order      = 120,
-                                             form_col_span      = 1,
-                                             db_type            = "INTEGER",
+                                             display_order          = 120,
+                                             form_col_span          = 1,
+                                             db_type                = "INTEGER",
 
-                                             rec_to_edit_cnv      = "cnv_int_to_qdate",
-                                             dict_to_edit_cnv     = "cnv_int_to_qdate",
-                                             edit_to_rec_cnv      = "cnv_qdate_to_int",
-                                             edit_to_dict_cnv     = "cnv_qdate_to_int",
-
-
+                                             rec_to_edit_cnv        = "cnv_int_to_qdate",
+                                             dict_to_edit_cnv       = "cnv_int_to_qdate",
+                                             edit_to_rec_cnv        = "cnv_qdate_to_int",
+                                             edit_to_dict_cnv       = "cnv_qdate_to_int",
 
                                              display_type       = "timestamp",
                                              max_len            = None,
@@ -376,6 +374,9 @@ def build_it( a_data_dict_all ):
                                              form_col_span          = 1,
                                              db_type                = "INTEGER",
                                              form_read_only       = True,
+                                             col_head_text      = "In ID",
+                                             col_head_width     = 20,
+                                             col_head_order     = 25,
                                              rec_to_edit_cnv      = "cnv_int_to_str",
                                              dict_to_edit_cnv     = "cnv_int_to_str",
                                              edit_to_rec_cnv      = "cnv_str_to_int",
@@ -455,22 +456,21 @@ def build_it( a_data_dict_all ):
                                              default_func= None, )
     a_table_dict.add_column( a_column_dict )
 
-
     # ---- name
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "name",
-                                             display_order  =  20,
+                                             display_order      =  20,
                                              form_col_span      = 4,
-                                             db_type        = "VARCHAR(150)",
-                                             display_type   = "string",
-                                             max_len        = None,
+                                             db_type            = "VARCHAR(150)",
+                                             display_type       = "string",
+                                             max_len            = None,
                                              is_keep_prior_enabled  = True,
                                              is_key_word            = True,
                                              is_topic           = True,
                                              topic_column_order = 1,
-                                             default_func           = None,
+                                             default_func       = None,
                                              col_head_text      = "Name",
                                              col_head_width     = 20,
-                                             col_head_order     = 2, )
+                                             col_head_order     = 5, )
     a_table_dict.add_column( a_column_dict )
 
 
@@ -496,7 +496,7 @@ def build_it( a_data_dict_all ):
 
     # ---- stuff_key_word -----------------------------------
     a_table_dict   = data_dict_all.TableDict(  "stuff_key_word" )
-    a_data_dict_all.add_table ( a_table_dict )
+    a_schema_dict.add_table ( a_table_dict )
 
     # ---- id
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",
@@ -528,7 +528,7 @@ def build_it( a_data_dict_all ):
     # ---- stuff_event  ---------------------
 
     a_table_dict   = data_dict_all.TableDict(  "stuff_event" )
-    a_data_dict_all.add_table ( a_table_dict )
+    a_schema_dict.add_table ( a_table_dict )
 
     # ---- "id",
     a_column_dict = data_dict_all.ColumnDict( column_name           = "id",

@@ -24,7 +24,7 @@ typically in AppGlobal as:
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
-    import main
+    import main  # noqa  stops auto removal by pycln
     pass
 # --------------------
 
@@ -35,28 +35,25 @@ import collections
 import functools
 import logging
 
-from app_global import AppGlobal
+from app_global   import AppGlobal
 
-#from qtpy.QtCore    import Qt
-from qtpy.QtGui     import QAction
-from qtpy.QtWidgets import QMessageBox
+from qtpy.QtGui   import QAction
 
 
 from qtpy.QtCore import ( Qt,
                           QObject,
-                          Qt,
+                          Signal,
+                          Slot,
                            )
 
-from qtpy.QtCore import Signal
-
-# from PyQt.QtGui import ( QAction, QActionGroup, )
-
 from qtpy.QtWidgets import (
-                             QMessageBox)
+                             QMessageBox
+                             )
 
 # !! think we just use the document so shorten see main_window
 import album_document
 import help_document
+from    help_document import HelpDocument  # !! change from above
 import people_document
 import picture_document
 import plant_document
@@ -66,6 +63,7 @@ import stuff_document
 import topic_for_table
 import history_sync
 import custom_widgets_2   as cw_2
+import update_sync
 
 #import string_utils
 
@@ -163,6 +161,7 @@ class SendSignals( QObject ):
 
     stuff_container_update_signal  = Signal( str, int, dict )
 
+    # --------------------------
     def send_topic_update(self, table, table_id, info):
         debug_msg   = ( "send_topic_update emit next")
         logging.log( LOG_LEVEL,  debug_msg, )
@@ -183,16 +182,19 @@ class SendSignals( QObject ):
 
         self.stuff_container_update_signal.emit( update_type, stuff_id, stuff_data,   )
 
-
 # -------------------------------
-class MdiManagement():
+class MdiManagement( QObject ):
     """
     manage the mdi interface.  Need to fix the dyslexia
     mid
     look for creation in main_window
     AppGlobal.mdi_management        = a_mdi_management
     """
-    def __init__( self, main_window ):
+    def __init__( self, main_window,   ):
+        """ """
+        #def __init__(self, parent= main_window ):
+        super().__init__( main_window )  # must be called
+
         self.main_window       = main_window
         #rint( f"hello from MidManagement {1}")
         #self.window_menu        = main_window.window_menu
@@ -221,6 +223,17 @@ class MdiManagement():
         self.plant_containers   = { None: "", 1: "1one", 2: "2two" }
         self.text_edit_search   = TextEditSearch( self, AppGlobal.parameters, )
         self.recent_albums_dict = {}   # album id then its topic as a string
+        self.update_sync_obj    = update_sync.UpdateSync()   # ma y be old phase out
+
+    # -------------------------
+    def post_init( self ):
+        """
+        call after init, then all will be created
+
+        """
+        # too soon to put in init  apparently
+        sender_signal           = self.update_sync_obj.update_sync_signals.update_sync_pre
+        sender_signal.connect( self.update_sync_pre )
 
     # -------------------------
     def register_document( self,  window_id  ):
@@ -228,11 +241,15 @@ class MdiManagement():
         when a new window is created register
         keep a list, or dict.... for now a list
         !! in process sigh up for pubsub
-        called from ??
+        called from the document
         """
-        #self.window_list.append( window_id )
-        self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
-                                              "action_id":  None }   # title action_id
+        #self.window_list.append( window_id )  # how about subwindow_name
+        # self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
+        #                                       "action_id": None }   # title action_id
+
+        self.window_dict[ window_id ]     = { "title": window_id.subwindow_name,
+                                              "action_id": None }   # title action_id
+
         self.add_new_menu_item( window_id )
 
     # -------------------------
@@ -310,13 +327,55 @@ class MdiManagement():
         sub_window.setFocus()
 
     #----------------------------
-    def update_menu_item(self, window_id ):
+    def update_menu_itemxxx( self, ):
         """
         perhaps at end of select_by_id ish
-
+            ?? more on what this does might be nice
+            still hanging around in db maint take a look
         """
         action   = self.window_dict[ window_id ]["action_id"]
-        action.setText( window_id.windowTitle()   )
+        action.setText( window_id.windowTitle() )
+                # getTitle setTitle
+                # is a get for set self.setWindowTitle
+
+    # ---- update_menu_item
+    # -------------------------------
+    @Slot( object, str, str, int, object, )  # update_menu_item
+    def update_sync_pre( self,
+                        sender,
+                        type_of_change,      # select update add delete
+                        table_name,
+                        table_id,
+                        record_or_dict,
+                          ):
+        """
+        update_menu_item
+            look at self. register_document(  )
+        """
+        msg    = f"midi_management update_sync_pre {sender = } {type_of_change =} {table_name = } \n     {table_id = } {record_or_dict = } "
+        logging.debug( msg )
+
+        # screen out text table updates
+        if "text" in table_name:
+            return
+
+        detail_id   = sender
+        window_id   = sender.parent_window
+        action      = self.window_dict[ window_id ]["action_id"]
+        #topic       = window_id.get_topic()     # this failed in datamanager why
+        if record_or_dict:
+            topic       = update_sync.record_to_topic( table_name, record_or_dict )
+            action.setText( self.window_dict[ window_id ][ "title" ] + topic )
+        pass
+
+    #----------------------------
+    def initial_menu_item( self, window_id ):
+        """
+        perhaps at end of select_by_id ish
+            ?? more on what this does might be nice
+        """
+        action   = self.window_dict[ window_id ]["action_id"]
+        action.setText( window_id.windowTitle() )
                 # getTitle setTitle
                 # is a get for set self.setWindowTitle
 
@@ -325,7 +384,7 @@ class MdiManagement():
         """
         chat grok and me may have fixed !! do not need messages in future
         """
-        menu_id     = self.window_dict[window_id][ "action_id"]
+        menu_id     = self.window_dict[window_id][ "action_id" ]
         main_window = self.main_window
 
         actions     = main_window.window_menu.actions()  # no file menu here in main window
@@ -342,7 +401,7 @@ class MdiManagement():
             QMessageBox.information( AppGlobal.main_window, "Info", "Item to remove not found.")
 
     # --------------------------------------
-    def add_new_menu_item( self,  window_id ):
+    def add_new_menu_item( self, window_id ):
         """
         what it says, read.... more coming maybe
         assumes this is a new window
@@ -350,30 +409,32 @@ class MdiManagement():
 
         """
         a_dict       = self.window_dict[ window_id ]
+        topic        = window_id.get_topic()
         title        = window_id.windowTitle()
         if not title:
             title    = str( type( window_id ))
-        main_window                       = self.main_window
+        main_window                 = self.main_window
         #self.add_menu_item( title, main_window.window_menu )
 
         activate_window             = functools.partial( self.show_document, window_id )
 
         #show_sub_window_by_title( self, sub_window_title):
 
-        action    = QAction( title, self.main_window )
-        window_id.menu_action_id  = action
-        a_dict[ "action_id" ]     = action    # probably phase out ??
+        action                      = QAction( title, self.main_window )
+        window_id.menu_action_id    = action
+        a_dict[ "action_id" ]       = action    # should be q_action, use to chang text
 
         #action.triggered.connect( lambda: self.menu_item_clicked( title ) )
         action.triggered.connect( activate_window )
 
         main_window.window_menu.addAction( action )
 
-
-
     # -------------------------
     def get_a_doc_for_class( self, window_class, open = True ):
         """
+        this will get a document for a class, either first in list
+            or will open one -- right now
+            open argument is ignored
         a_doc      = AppGlobal.mdi_management.get_a_doc_for_class( window_class )
 
         what it says, read
@@ -381,11 +442,14 @@ class MdiManagement():
         if open = true open one if necessary
 
         """
-        docs  = self.get_docs_for_class(  window_class )
+        docs  = self.get_docs_for_class( window_class )
+
         if len( docs ) == 0: # then need to open one
             a_doc   = self.make_document( window_class, instance_ix = 1 )
+
         else:
             a_doc   = docs[0]
+
         return a_doc
 
     # -------------------------
@@ -399,17 +463,18 @@ class MdiManagement():
              self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
                                        "action_id":  None }   # title action_id
 
+        this should replace all of below, but need to find caller
         """
         docs    = []
         for i_doc in  self.window_dict.keys():   # !! better a comp
+
             if type( i_doc ) == window_class :
                 docs.append( i_doc )
 
         return docs
 
-
     # -------------------------
-    def get_help_docs( self, ):
+    def get_help_docs_depricated_for_above( self, ):
         """
         docs      = AppGlobal.mdi_management.get_help_docs()
 
@@ -432,7 +497,7 @@ class MdiManagement():
         return docs
 
     # -------------------------
-    def get_stuff_docs(self, ):
+    def get_stuff_docsdepricated_for_above( self, ):
         """
         album_docs      = AppGlobal.mdi_management..get_album_docs()
 
@@ -455,7 +520,7 @@ class MdiManagement():
         return docs
 
     # -------------------------
-    def get_picture_docs(self, ):
+    def get_picture_docs_depricated_for_above(self, ):
         """
         picture_docs      = AppGlobal.mdi_management..get_picture_docs()
 
@@ -468,7 +533,6 @@ class MdiManagement():
          self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
                                        "action_id":  None }   # title action_id
 
-
         """
         picture_docs    = []
         for i_doc in  self.window_dict.keys():   # !! better a comp
@@ -478,7 +542,7 @@ class MdiManagement():
         return picture_docs
 
     # -------------------------
-    def get_album_docs(self, ):
+    def get_album_docsdepricated_for_above(self, ):
         """
         album_docs      = AppGlobal.mdi_management..get_album_docs()
 
@@ -501,7 +565,7 @@ class MdiManagement():
         return album_docs
 
     # -------------------------
-    def get_album_doc(self, ):
+    def get_album_doc_generalized_work_on_scratch (self, ):
         """
         what it says, read.... more coming maybe
         for now only one, return None if not found
@@ -525,10 +589,52 @@ class MdiManagement():
         elif len( album_docs ) == 0:
             msg   = "You have no albums open, please open one"
         #elif len( album_docs ) == 0:
+
         else:
             msg     = "You have more than one album open, please close one."
 
-        QMessageBox.information( AppGlobal.main_window,   "Info", msg )
+        QMessageBox.information( AppGlobal.main_window, "Info", msg )
+
+    # -------------------------
+    def get_album_doc( self, ):
+        """
+        !! mostly generalized but not clear that needed for other documents
+            where only one open document is required
+            what it says, read.... more coming maybe
+            for now only one, return None if not found
+            this is not quite right need to make sure one
+            album is selected.
+
+             self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
+                                           "action_id":  None }   # title action_id
+             AlbumDocument
+
+        arguments
+
+                 doc_name     = "album"
+                 doc_class    = album_document.AlbumDocument
+
+        """
+        doc_name     = "album"
+        doc_class    = album_document.AlbumDocument
+
+        docs    = []
+        for i_doc in  self.window_dict.keys():
+
+            if type( i_doc ) == doc_class:
+                docs.append( i_doc )
+
+        if len( docs ) == 1:
+            # should have a bit more testing here
+            return docs[0]
+
+        elif len( docs ) == 0:
+            msg   = f"You have no {doc_name} open, please open one"
+
+        else:
+            msg     = f"You have more than one {doc_name} open, please close all but one."
+
+        QMessageBox.information( AppGlobal.main_window, "Info", msg )
 
     # -------------------------
     def do_db_search( self, cmd, args, ):
@@ -539,24 +645,27 @@ class MdiManagement():
         self.text_edit_search.do_db_search( cmd, args, )
 
     # -------------------------
-    def menu_item_clicked(self, name):
+    def menu_item_clicked( self, name):
         """
         what it says, read.... more coming maybe
 
         """
-        QMessageBox.information(self, "Info", f"You clicked on {name}")
+        QMessageBox.information( self, "Info", f"You clicked on {name}")
 
     # -------------------------
     def update_stuff_container_movedtostuffdocument( self, update_type, stuff_id, stuff_data):
         """
+        !! broken has it truely been moved  --- seems to be in combo_dict
         update should include add, delete, update
         what it says, read.... more coming maybe
 
         """
         #QMessageBox.information(self, "Info", f"You clicked on {name}")
+
         if update_type == stuff_document.UPDATE:
             if stuff_id in self.stuff_containers:
                 self.stuff_container[ stuff_id ].update( stuff_id, stuff_data )
+
             else:
                 self.stuff_containers[ stuff_id ] = StuffContainer( stuff_id, stuff_data )
 
@@ -677,17 +786,15 @@ class MdiManagement():
 
         # because sometims missing -- grok fix
 
-
-
         sub_window.setWindowFlags(Qt.SubWindow | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint)
         #sub_window.setWindowFlags( Window_SubWindow | Window_SystemMenuHint | Window_CloseButtonHint ) # 5 6 compat
-
 
         if AppGlobal.parameters.set_doc_maximized:
             sub_window.showMaximized()
 
         self.show_document
         self.main_window.assign_icon()   # reassign to see if we can keep it
+
         return sub_window
 
     #--------------------------------
@@ -712,6 +819,7 @@ class MdiManagement():
     # ----------------------------------------------
     def update_plant_containers( self, *, update_type, table_id, table_info ):
         """
+        !! why is this so messed up ?
         CHANGE THE DICTIONARY
         update should include add, delete, update
         what it says, read.... more coming maybe
@@ -749,10 +857,10 @@ class MdiManagement():
         """
         if is_delete:
             pass
+
         else:
             history_sync   = self.get_history_sync( "album" )
             history_sync.add_item( a_id, topic )
-
 
     #----------------------------
     def get_history_sync( self, a_type ):
@@ -790,11 +898,11 @@ class MdiManagement():
 
         return 1/0
 
-
     #----------------------------
     def get_key_value_list_model( self, a_type ):
         """
         the key value pairs for the combo boxes
+        ?? convert to dict
         """
         global  ALBUM_KVLM
         global  STUFF_KVLM
@@ -825,9 +933,62 @@ class MdiManagement():
 
             return PLANTING_BED_KVLM
 
-
-
         return 1/0
+
+    #----------------------------
+    def open_document_with_id( self, table, a_id ):
+        """
+
+        """
+        # make a module costant !!
+        dict_class_for_table   = {    "stuff": stuff_document.StuffDocument,
+                                      "photo": picture_document.PictureDocument,
+                                      "people": people_document.PeopleDocument,
+                                      "plant": plant_document.PlantDocument,
+                                      "planting": planting_document.PlantingDocument,
+                                      "album": album_document.AlbumDocument,
+                                      }
+
+        document_class = dict_class_for_table[ table ]
+        # ---- change above to a dict
+        doc     = self.get_a_doc_for_class( document_class )
+        # docs    = get_document()
+        # if  len( docs ) == 0:
+        #     self.make_document( document_class, instance_ix = 1 )
+        #     docs    = get_document()
+        # else:
+        #     pass
+        # doc     = docs[ 0 ]
+
+        doc.select_record( a_id  )
+
+        self.show_document( doc )
+
+    # ------------------------------------------
+    def open_picture_document_width_id( self, a_id   ):
+        """
+        what it says
+            if none open, if multiple open
+            what about save
+            what it says
+                if none open, if multiple open
+                what about save is ok in the document opened  !!
+
+        doc_class   = picture_document.PictureDocument
+        get_docs    = self.get_picture_docs
+        """
+        #mdi_management  = AppGlobal.mdi_management
+        docs    = self.get_picture_docs()
+        if  len( docs ) == 0:
+            self.make_document( picture_document.PictureDocument, instance_ix = 1 )
+            docs    = self.get_picture_docs()
+        else:
+            pass
+        doc     = docs[ 0 ]
+
+        doc.select_record( a_id  )
+
+        self.show_document( doc )
 
 #----------------------------
 class TextEditSearch( ):
@@ -848,7 +1009,6 @@ class TextEditSearch( ):
 
         # msg   = ( f"second instance of TextEditExt created move all methods in this object ?  {1  = }  ")
         # logging.error( msg )
-
 
     # ----------------------------------
     def parse_search_part( self, criteria, part ):

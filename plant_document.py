@@ -303,8 +303,6 @@ class PlantCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget, columnspan = 3 )
 
-
-
         # ----name
         widget                = QLabel( "Name" )
         grid_layout.new_row()
@@ -513,7 +511,7 @@ class PlantCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             query_builder.add_to_where( add_where, [(  ":name",
                                                      f"%{name}%" ) ])
 
-        # ---- name like
+        # ---- latin name like
         latin_name                          = criteria_dict[ "latin_name" ].strip().lower()
         if name:
             add_where       = "lower( latin_name )  like :latin_name"   # :is name of bind var below
@@ -1137,7 +1135,9 @@ class PlantHistorylTab( base_document_tabs.HistoryTabBase   ):
         self.tab_name            = "PlantHistorylTab"
 
 # ----------------------------------------
-class PlantEventSubTab( base_document_tabs.SubTabBaseOld  ):
+#
+#   class PlantEventSubTab( base_document_tabs.SubTabBaseOld  ):
+class PlantEventSubTab( base_document_tabs.SubTabBase  ):
     """
     do plants even have this !! !!
     """

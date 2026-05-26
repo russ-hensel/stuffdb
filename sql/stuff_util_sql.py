@@ -30,7 +30,7 @@ from qtpy.QtWidgets import (
 # ---- imports
 import parameters
 import qsql_utils
-import data_dict
+import data_dict_all
 
 # ---- end imports
 
@@ -342,7 +342,7 @@ def create_table(   db, table_name   ):
 
     query       = QSqlQuery( db )
 
-    a_table     = data_dict.DATA_DICT.get_table( table_name )
+    a_table     = data_dict_all.SCHEMA.get_table( table_name )
 
     sql         = a_table.to_sql_create()
     msg         = f"{sql} "
@@ -891,93 +891,93 @@ def insert_stuff_sample_data( db, ):
 
 # ====================================================================
 
-def  do_it( use_temp ):
-    # ---- run manuallually from here =====================================
-    global DB_CONNECTION
-    create_connection( use_temp = True )
-    data_dict.build_it()
-    app                 = QApplication( [] )
-    qsql_utils.APP      = app
+# def  do_it( use_temp ):
+#     # ---- run manuallually from here =====================================
+#     global DB_CONNECTION
+#     create_connection( use_temp = True )
+#     data_dict.build_it()
+#     app                 = QApplication( [] )
+#     qsql_utils.APP      = app
 
-    # ---- table_name
+#     # ---- table_name
 
-    # table_name    = "help_info"
-    #table_name    = "help_key_word"
-    #table_name    = "help_text"
+#     # table_name    = "help_info"
+#     #table_name    = "help_key_word"
+#     #table_name    = "help_text"
 
-    #table_name    = "key_gen"
+#     #table_name    = "key_gen"
 
-    # ---- .... people
-    table_name      = "people"
-    #table_name      = "people_text"
-    #table_name      = "people_key_word"
-    table_name      = "people_phone"
+#     # ---- .... people
+#     table_name      = "people"
+#     #table_name      = "people_text"
+#     #table_name      = "people_key_word"
+#     table_name      = "people_phone"
 
-    # ---- .... plant
-    # table_name      = "plant"
-    # table_name      = "plant_text"
-    # table_name      = "plant_key_word"
+#     # ---- .... plant
+#     # table_name      = "plant"
+#     # table_name      = "plant_text"
+#     # table_name      = "plant_key_word"
 
-    #table_name      = "planting"
-    #table_name      = "planting_text"
-    #table_name      = "planting_key_word"
+#     #table_name      = "planting"
+#     #table_name      = "planting_text"
+#     #table_name      = "planting_key_word"
 
-    # table_name      = "people"
-    # table_name      = "people_text"
-    #table_name       = "persons"   # for qt by example
+#     # table_name      = "people"
+#     # table_name      = "people_text"
+#     #table_name       = "persons"   # for qt by example
 
-    #table_name      = "photo"
-    #table_name      = "photo_text"     # not in old stuff may not use
-    #table_name      = "photo_key_word"
-
-
-    # table_name      = "photo_subject"
-    # table_name      = "photo_in_show"
+#     #table_name      = "photo"
+#     #table_name      = "photo_text"     # not in old stuff may not use
+#     #table_name      = "photo_key_word"
 
 
-    #table_name      = "photoshow"
-    #table_name      = "photoshow_key_word"
-    # table_name      = "photo_text"     # not yet
-    #table_name      = "photo_subject"
-    #table_name      = "photo_in_show"
-
-    table_name      = "stuff"
-    #table_name      = "stuff_key_word"
-    table_name      = "stuff_event"
-    #table_name      = "xxx"
-
-    # ---- run command
-
-    # ---- drop and create beware
-    # drop_table(   DB_CONNECTION, table_name = table_name )
-    #create_table( DB_CONNECTION, table_name = table_name )
-
-    print( "some stuff move to chekc and fix ")
-
-    #test_query( DB_CONNECTION, table_name = table_name )
-    #print_missing_text( DB_CONNECTION, table_name = table_name )
-    print_record_count( DB_CONNECTION, table_name = table_name )
-    #add_missing_text( DB_CONNECTION, table_name = table_name )
-    #test_query( DB_CONNECTION, table_name = table_name )
+#     # table_name      = "photo_subject"
+#     # table_name      = "photo_in_show"
 
 
-    # ----  ========================== beware ==============================
-    # ---- drop and create beware
-    # drop_table( DB_CONNECTION, table_name = table_name )
-    # create_table( DB_CONNECTION, table_name = table_name )
-    #key_gen_for( DB_CONNECTION, table_name = table_name )
-    #insert_key_gen( DB_CONNECTION, table_name  )
+#     #table_name      = "photoshow"
+#     #table_name      = "photoshow_key_word"
+#     # table_name      = "photo_text"     # not yet
+#     #table_name      = "photo_subject"
+#     #table_name      = "photo_in_show"
 
-    # ---- will deleted data, slight change woud delete and add tables
-    #      perhps that would be better
-    #insert_stuff_sample_data( DB_CONNECTION )
-    #find_stuff_event_fragments( DB_CONNECTION )
+#     table_name      = "stuff"
+#     #table_name      = "stuff_key_word"
+#     table_name      = "stuff_event"
+#     #table_name      = "xxx"
+
+#     # ---- run command
+
+#     # ---- drop and create beware
+#     # drop_table(   DB_CONNECTION, table_name = table_name )
+#     #create_table( DB_CONNECTION, table_name = table_name )
+
+#     print( "some stuff move to chekc and fix ")
+
+#     #test_query( DB_CONNECTION, table_name = table_name )
+#     #print_missing_text( DB_CONNECTION, table_name = table_name )
+#     print_record_count( DB_CONNECTION, table_name = table_name )
+#     #add_missing_text( DB_CONNECTION, table_name = table_name )
+#     #test_query( DB_CONNECTION, table_name = table_name )
 
 
-    # ---- clean up
-    DB_CONNECTION.close()
-    DB_CONNECTION = None
-    #print( "done")
+#     # ----  ========================== beware ==============================
+#     # ---- drop and create beware
+#     # drop_table( DB_CONNECTION, table_name = table_name )
+#     # create_table( DB_CONNECTION, table_name = table_name )
+#     #key_gen_for( DB_CONNECTION, table_name = table_name )
+#     #insert_key_gen( DB_CONNECTION, table_name  )
+
+#     # ---- will deleted data, slight change woud delete and add tables
+#     #      perhps that would be better
+#     #insert_stuff_sample_data( DB_CONNECTION )
+#     #find_stuff_event_fragments( DB_CONNECTION )
+
+
+#     # ---- clean up
+#     DB_CONNECTION.close()
+#     DB_CONNECTION = None
+#     #print( "done")
 
 
 
@@ -1001,30 +1001,30 @@ def insert_chosen_value( ):
 
 # ---- setup
 
-    create_connection( use_temp = True )
-    data_dict.build_it()
+#     create_connection( use_temp = True )
+#     data_dict.build_it()
 
-    db              = DB_CONNECTION
-    table_name      = "test_table"
-    table_name      = "plant"
+#     db              = DB_CONNECTION
+#     table_name      = "test_table"
+#     table_name      = "plant"
 
-    # ---- run command  -- read before running
+#     # ---- run command  -- read before running
 
-    print( "ready set go " )
+#     print( "ready set go " )
 
-    init_key_gen( db, table_name, 50_000 )
+#     init_key_gen( db, table_name, 50_000 )
 
-    print_record_count( db,   table_name = "key_gen" )
+#     print_record_count( db,   table_name = "key_gen" )
 
 
 
-# --------------------
-if __name__ == "__main__":
-    """
-    use from stuffdb or here to debug
-    """
-    # do_it( use_temp = True )
-    insert_chosen_value()
+# # --------------------
+# if __name__ == "__main__":
+#     """
+#     use from stuffdb or here to debug
+#     """
+#     # do_it( use_temp = True )
+#     insert_chosen_value()
 
 
 

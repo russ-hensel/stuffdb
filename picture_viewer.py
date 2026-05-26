@@ -66,12 +66,11 @@ class PictureViewer( QGraphicsView ):
         self.scene.addItem( self.pixmap_item )
 
         #self.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
-        self.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding ) # 5 6 compat
+        self.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
 
         #
         sb_policy           = Qt.ScrollBarAlwaysOn
         #sb_policy           = ScrollBarAlwaysOn   # 5  6 compat
-
 
             #  Qt.ScrollBarAsNeeded Qt.ScrollBarAlwaysOff  Qt.ScrollBarAlwaysOn
         self.setHorizontalScrollBarPolicy(  sb_policy )
@@ -99,6 +98,7 @@ class PictureViewer( QGraphicsView ):
         pixmap          = QPixmap( file_name )
         self.pixmap     = pixmap
         ok              = self.set_pixmap( pixmap )
+
         if not ok:
             if file_name is None:
                 file_exists   = False
@@ -167,12 +167,14 @@ class PictureViewer( QGraphicsView ):
     # def photo_2(self):
     #     self.display_file( "/mnt/WIN_D/PhotoDB/02/102_motor2.jpg" )
 
+    # -----------------------------
     def zoom_in(self):
         """
         what it says, read it
         """
         self.scale(1.5, 1.5)
         #p#rint("Zoomed In")
+
     # -----------------------------
     def zoom_out(self):
         """
@@ -189,7 +191,10 @@ class PictureViewer( QGraphicsView ):
     # -----------------------------
     def fit_image(self):
             """From Grok
-            Scale the image to fill the view while maintaining aspect ratio."""
+            Scale the image to fill the view while maintaining aspect ratio.
+            seems to get called all to often debug !!
+
+            """
             if not self.pixmap.isNull():
                 # Get the view's viewport size
                 view_rect = self.viewport().rect()
@@ -203,12 +208,25 @@ class PictureViewer( QGraphicsView ):
                 self.centerOn( self.pixmap_item )
 
     # -----------------------------
+    def fit_image_may(self):
+        """
+        new in may, older grok code not working
+            this seem to do what i want always can see all of picture
+        """
+        if self.pixmap_item:
+            self.fitInView(self.pixmap_item, Qt.AspectRatioMode.KeepAspectRatio)
+
+    # -----------------------------
     def fit_in_view( self ):
         """
         what it says, read it
         but what does it mean
+            a redirect for experiment
+            seems to get called all to often debug !!
         """
-        self.fit_image()
+        #self.fit_image()
+        self.fit_image_may()
+
         #self.fitInView( self.scene.sceneRect(), Qt.KeepAspectRatio)
         #rint("Fit in View")
 
@@ -225,6 +243,10 @@ class PictureViewer( QGraphicsView ):
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self.fit_in_view()
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.fit_in_view()  # fit once widget is visible and sized
 
     # ------------------------------------
     def get_file_name(self, event):

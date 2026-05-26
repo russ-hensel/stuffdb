@@ -11,7 +11,7 @@
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
-    import main
+    import main  # noqa  stops auto removal by pycln
     pass
 # --------------------
 
@@ -53,10 +53,9 @@ class Parameters( ):
             and if you wish add the plus_test_mode
             if you comment all out all modes you get the default mode which should
             run, perhaps not in the way you want
-
         """
         #breakpoint( )
-        # if you use the command line to set the mode, you will exit in the next
+        # if you use the command line to set the mode, you will return in the next
         #     few lines.
         if self.mode_from_command_line():
             return
@@ -67,17 +66,18 @@ class Parameters( ):
 
         #self.mode_new_user()
         #self.mode_data_sync()
-        self.mode_data_sync_b()
+        #self.mode_data_sync_b()
+        #self.mode_picture_test()
+
         #self.mode_data_sync_full_path()
         #self.mode_ramdisk()
         #self.mode_source_db_for_copy()
         #self.mode_data_sync_b()
         #self.mode_github()
-        # self.mode_picture_test()
-        #self.mode_github()
+
+        self.mode_github()
         #self.mode_postgres()
 
-        # ----mode_mh_2025_hd
         # self.mode_mh_2025_hd()
         # self.mode_theprof()
         # self.mode_king_homer()
@@ -105,6 +105,68 @@ class Parameters( ):
             # the type of database, so far we only support SQLite
         self.db_file_name       = "/tmp/ramdisk/target.db"
         self.db_file_name       = "./data/new_user.db"
+
+    # -------
+    def mode_data_sync( self ):
+        """
+        moved code to running+on_tweaks
+        """
+        self.mode               = "mode_data_sync"
+        self.db_file_name       = "./data_sync/stuffdb.db"      #  = "sample.db"   =  ":memory:"
+
+        self.db_lock_file_name  = "./data_sync/lock_db.txt"     # if present then db is locked else none
+        self.picture_db_root    = "/mnt/8ball1/first6_root/photos/photos_db"
+        self.picture_db_sub     = "/73"
+        self.picture_db_sub     = "/76"
+        self.picture_db_sub     = "/72"
+        self.picture_db_sub     = "/26"
+        self.picture_db_sub     = "/23"
+        self.picture_db_sub     = "/25"
+        self.picture_db_sub     = "/10"
+
+        self.logging_level      = logging.DEBUG  # ERROR DEBUG
+
+        # /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db
+        self.icon               =  "./misc/db_green_on_black.png"
+
+    # -------
+    def mode_data_sync_b( self ):
+        """
+        moved code to running+on_tweaks
+        """
+        self.mode              = "mode_data_sync_b"
+        self.db_file_name      = "./data_sync_b/stuffdb.db"      #  = "sample.db"   =  ":memory:"
+        self.db_lock_file_name = "./data_sync_b/lock_db.txt"     # if present then db is locked else none
+
+        self.logging_level      = logging.DEBUG   # ERROR DEBUG
+
+        self.icon              = "./misc/db_green_on_black.png"
+        self.icon              = "./misc/db_red_on_black.png"
+
+
+    # -------
+    def mode_picture_test( self ):
+        """
+        moved code to running+on_tweaks
+        """
+        self.mode               = "mode_picture_test"
+
+        self.db_file_name      = "./data_sync_b/stuffdb.db"
+
+        self.db_lock_file_name  = None
+        #self.db_lock_file_name  = "./data_test/lock_db.txt"     # if present then db is locked else none
+
+        self.picture_db_root    = "/mnt/8ball1/first6_root/temp_picture_test/picture_db"
+            # all pictures once in the db should be under this directory
+
+        self.picture_db_sub     = "/99"
+            # subdir for above used when adding new pictures
+
+        self.picture_browse     = "/mnt/8ball1/first6_root/temp_picture_test/temp_picture_src"
+
+        self.icon               =  "./misc/db_green_on_black.png"
+        self.icon               =  "./misc/db_red_on_black.png"
+        self.icon               =  "./misc/red_tube.png"
 
     # -------
     def mode_ramdisk( self ):
@@ -170,31 +232,7 @@ class Parameters( ):
         """
         self.mode               = "mode_theprof"
 
-    # -------
-    def mode_picture_test( self ):
-        """
-        moved code to running+on_tweaks
-        """
-        self.mode               = "mode_picture_test"
-        self.db_file_name       = "/mnt/8ball1/first6_root/temp_picture_test/stuffdb.db"
-        self.db_file_name       = "./data_test/stuffdb.db"
-        #self.db_file_name       = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_test/stuffdb.db"
 
-        self.db_lock_file_name  = None
-        self.db_lock_file_name  = "./data_test/lock_db.txt"     # if present then db is locked else none
-
-        self.picture_db_root    = "/mnt/8ball1/first6_root/temp_picture_test/picture_db"
-            # all pictures once in the db should be under this directory
-
-        self.picture_db_sub         = "/99"
-                  #
-            # subdir for above used when adding new pictures
-
-        self.picture_browse     = "/mnt/8ball1/first6_root/temp_picture_test/temp_picture_src"
-
-        self.icon               =  "./misc/db_green_on_black.png"
-        self.icon               =  "./misc/db_red_on_black.png"
-        self.icon               =  "./misc/red_tube.png"
 
     # -------
     def mode_source_db_for_copy( self ):
@@ -219,45 +257,18 @@ class Parameters( ):
 
         self.icon               =  "./misc/db_green_on_black.png"
 
-    # -------
-    def mode_data_sync( self ):
-        """
-        moved code to running+on_tweaks
-        """
-        self.mode               = "mode_data_sync"
-        self.db_file_name       = "./data_sync/stuffdb.db"      #  = "sample.db"   =  ":memory:"
 
-        self.db_lock_file_name  = "./data_sync/lock_db.txt"     # if present then db is locked else none
-        self.picture_db_root    = "/mnt/8ball1/first6_root/photos/photos_db"
-        self.picture_db_sub     = "/73"
-
-        self.logging_level      = logging.ERROR   # ERROR DEBUG
-
-        # /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db
-        self.icon               =  "./misc/db_green_on_black.png"
 
     # -------
     def mode_data_sync_full_path( self ):
         """
-        for running from othere than /stuffdb
+        for running from other than /stuffdb
         """
         self.mode               = "mode_data_sync_full_path"
         # kinghenry
         self.db_file_name      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db"
-
         self.db_lock_file_name =  "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/lock_db.txt"
 
-    # -------
-    def mode_data_sync_b( self ):
-        """
-        moved code to running+on_tweaks
-        """
-        self.mode              = "mode_data_sync_b"
-        self.db_file_name      = "./data_sync_b/stuffdb.db"      #  = "sample.db"   =  ":memory:"
-        self.db_lock_file_name = "./data_sync_b/lock_db.txt"     # if present then db is locked else none
-
-        self.icon              = "./misc/db_green_on_black.png"
-        self.icon              = "./misc/db_red_on_black.png"
 
     # -------
     def mode_postgres( self ):
@@ -303,9 +314,16 @@ class Parameters( ):
         #     # the type of database, so far we only support SQLite
 
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/theprof/stuffdb.db"
+        # /mnt/m_toshiba_silver/for_github/stuffdb/data/new_user.db
         self.db_file_name       = "./data/helpdb_from_scratch.db"
-        self.db_file_name       = self.project_root  + "/data_sync/stuffdb.db"
-        self.db_lock_file_name  = self.project_root  + "/data_sync/lock_db.txt"
+
+        # for dir remote from real source, real db
+        self.db_file_name       = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db"
+        self.db_lock_file_name  = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/lock_db.txt"
+
+
+        # self.db_file_name       = self.project_root  + "/data_sync/stuffdb.db"
+        # self.db_lock_file_name  = self.project_root  + "/data_sync/lock_db.txt"
               # if present then db is locked else none
         # self.logging_level      = logging.DEBUG   # ERROR
 
@@ -501,8 +519,8 @@ class Parameters( ):
 
         #--------------- automatic settings -----------------
         #---- running_on gathers information about you computer environment
-        run_on               = running_on.RunningOn
-        self.running_on     = run_on
+        run_on                      = running_on.RunningOn
+        self.running_on             = run_on
         run_on.gather_data()
 
         # this is the path to the main.py program --
@@ -537,7 +555,6 @@ class Parameters( ):
         self.platform           = self.our_os           #  redundant
 
         # ---- appearance -- including sizes, notes_only
-
         self.notes_only         = False
             # only the notes part of the app
             # will be available
@@ -569,7 +586,8 @@ class Parameters( ):
         self.icon               =  "./misc/iconfinder_database_103466.png"
         self.icon               =  "./misc/db_red_on_yellow.png"
 
-        self.text_edit_font     = ("Arial", 12)
+        self.text_edit_font     = ( "Arial", 12 )
+            # font used in the QTextEdit -- most large text fields
 
         # ---- logging
         self.pylogging_fn       = "./output/app.py_log"
@@ -600,8 +618,9 @@ class Parameters( ):
             # all pictures once in the db should be under this directory
 
         self.picture_db_sub         = "test_delete for mode default"
-                  # no leading /
-                  # /mnt/WIN_D/temp_photo/dest/99
+        self.picture_db_sub         = "/26"
+            # no leading /
+            # /mnt/WIN_D/temp_photo/dest/99
             # subdir for above used when adding new pictures
 
         self.output_dir             = "./output"
@@ -704,8 +723,10 @@ class Parameters( ):
         self.auto_run           = True  # run code examples -- !! what but needed
 
         self.num_pinned         = 3
+            # number of pinned items in history tab
 
         self.template_copy_marker = "___template_copy___"
+            # marks some field when using template copy
 
         # ---- templates snippets a bit odd to control left margin --
         self.num_help_snippets  = 4
@@ -863,6 +884,25 @@ class Parameters( ):
                             'Web',
 
                         ]
+
+        # ---- add a sort for the systems
+
+        # ---- systems for helpdb ??alpha  to sort make all quotes the same
+        self.exif_make_list      =  [
+                            '<Any>',
+                            'NIKON',
+                            'Google',
+                            'Canon',
+                            'Toguard',
+                           ]
+
+
+
+        self.exif_model_list      =  [
+                            '<Any>',
+                            'Pixel 4a',
+                            'Pixel 10 Pro',
+                           ]
 
         # ---- add a sort for the systems
 
@@ -1052,11 +1092,11 @@ class Parameters( ):
         a_str   = string_utils.to_columns( a_str, ["picture_browse",
                                            f"{self.picture_browse}" ] )
 
-
         a_str   = string_utils.to_columns( a_str, ["picture_db_root",
-                                           f"{self.picture_db_root}" ] )
+                                            f"{self.picture_db_root}" ] )
+
         a_str   = string_utils.to_columns( a_str, ["picture_db_sub",
-                                           f"{self.picture_db_sub}" ] )
+                                            f"{self.picture_db_sub}" ] )
 
         a_str   = string_utils.to_columns( a_str, ["pic_nf_file_name",
                                            f"{self.pic_nf_file_name}" ] )
@@ -1108,6 +1148,3 @@ create_if_needed()
 
 # =================== eof ==============================
 # ---- eof
-
-
-

@@ -26,7 +26,7 @@ from qtpy.QtWidgets import (
 
 # ---- imports
 import qsql_utils
-import data_dict
+import data_dict_all
 import key_word_indexer
 import stuff_util_sql
 
@@ -77,8 +77,6 @@ def update_table_key_gen_think_in_sql_util( db, table_name, key_value   ):
     #ia_qt.q_sql_error( query.lastError() )
     db.commit()
     line_out( f"end {what}"  )
-
-
 
 
 
@@ -524,82 +522,82 @@ class DbCheck(   ):
 
 # ====================================================================
 
-def  do_it_left_over_nomoreuse ():
-    # ---- run from here =====================================
-    create_connection()
-    data_dict.build_it()
-    app                 = QApplication( [] )
-    qsql_utils.APP      = app
+# def  do_it_left_over_nomoreuse ():
+#     # ---- run from here =====================================
+#     create_connection()
+#     data_dict.build_it()
+#     app                 = QApplication( [] )
+#     qsql_utils.APP      = app
 
-    # ---- table_name
+#     # ---- table_name
 
-    # table_name    = "help_info"
-    #table_name    = "help_key_word"
-    #table_name    = "help_text"
+#     # table_name    = "help_info"
+#     #table_name    = "help_key_word"
+#     #table_name    = "help_text"
 
-    #table_name    = "key_gen"
+#     #table_name    = "key_gen"
 
-    # ---- .... people
-    table_name      = "people"
-    #table_name      = "people_text"
-    #table_name      = "people_key_word"
-    table_name      = "people_phone"
+#     # ---- .... people
+#     table_name      = "people"
+#     #table_name      = "people_text"
+#     #table_name      = "people_key_word"
+#     table_name      = "people_phone"
 
-    # ---- .... plant
-    # table_name      = "plant"
-    # table_name      = "plant_text"
-    # table_name      = "plant_key_word"
+#     # ---- .... plant
+#     # table_name      = "plant"
+#     # table_name      = "plant_text"
+#     # table_name      = "plant_key_word"
 
-    #table_name      = "planting"
-    #table_name      = "planting_text"
-    #table_name      = "planting_key_word"
+#     #table_name      = "planting"
+#     #table_name      = "planting_text"
+#     #table_name      = "planting_key_word"
 
-    # table_name      = "people"
-    # table_name      = "people_text"
-    #table_name       = "persons"   # for qt by example
+#     # table_name      = "people"
+#     # table_name      = "people_text"
+#     #table_name       = "persons"   # for qt by example
 
-    #table_name      = "photo"
-    #table_name      = "photo_text"     # not in old stuff may not use
-    #table_name      = "photo_key_word"
-
-
-    # table_name      = "photo_subject"
-    # table_name      = "photo_in_show"
+#     #table_name      = "photo"
+#     #table_name      = "photo_text"     # not in old stuff may not use
+#     #table_name      = "photo_key_word"
 
 
-    #table_name      = "photoshow"
-    #table_name      = "photoshow_key_word"
-    # table_name      = "photo_text"     # not yet
-    #table_name      = "photo_subject"
-    #table_name      = "photo_in_show"
-    # ---- .... stuff
-    table_name      = "stuff"
-    table_name      = "stuff_key_word"
-    # table_name      = "stuff_event"
-    #table_name      = "xxx"
-
-    # ---- run command
-
-    # drop_table(   DB_CONNECTION, table_name = table_name )
-    # create_table( DB_CONNECTION, table_name = table_name )
-    # check_key_words_for_dups( DB_CONNECTION, table_name = table_name )
+#     # table_name      = "photo_subject"
+#     # table_name      = "photo_in_show"
 
 
-    #test_query( DB_CONNECTION, table_name = table_name )
-    #print_missing_text( DB_CONNECTION, table_name = table_name )
-    #print_record_count( DB_CONNECTION, table_name = table_name )
-    #add_missing_text( DB_CONNECTION, table_name = table_name )
-    #test_query( DB_CONNECTION, table_name = table_name )
+#     #table_name      = "photoshow"
+#     #table_name      = "photoshow_key_word"
+#     # table_name      = "photo_text"     # not yet
+#     #table_name      = "photo_subject"
+#     #table_name      = "photo_in_show"
+#     # ---- .... stuff
+#     table_name      = "stuff"
+#     table_name      = "stuff_key_word"
+#     # table_name      = "stuff_event"
+#     #table_name      = "xxx"
 
-    #key_gen_for( DB_CONNECTION, table_name = table_name )
-    #insert_key_gen( DB_CONNECTION, table_name  )
+#     # ---- run command
 
-    # ---- no table name required
-    tables_check_key_words_for_dups( DB_CONNECTION )
+#     # drop_table(   DB_CONNECTION, table_name = table_name )
+#     # create_table( DB_CONNECTION, table_name = table_name )
+#     # check_key_words_for_dups( DB_CONNECTION, table_name = table_name )
 
-    # ---- clean up
-    DB_CONNECTION.close()
-    #print( "done")
+
+#     #test_query( DB_CONNECTION, table_name = table_name )
+#     #print_missing_text( DB_CONNECTION, table_name = table_name )
+#     #print_record_count( DB_CONNECTION, table_name = table_name )
+#     #add_missing_text( DB_CONNECTION, table_name = table_name )
+#     #test_query( DB_CONNECTION, table_name = table_name )
+
+#     #key_gen_for( DB_CONNECTION, table_name = table_name )
+#     #insert_key_gen( DB_CONNECTION, table_name  )
+
+#     # ---- no table name required
+#     tables_check_key_words_for_dups( DB_CONNECTION )
+
+#     # ---- clean up
+#     DB_CONNECTION.close()
+#     #print( "done")
 
 
 # ---- eof

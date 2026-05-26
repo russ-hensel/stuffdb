@@ -7,9 +7,8 @@ photo
 photo_text
 photo_key_words
 
-DB_NAME:        stuffdb
-CLASS_NAME:     QFileDialogTab
 
+think i will not use, see end of old data_dict
 
 
 
@@ -341,7 +340,7 @@ def build_it( a_data_dict_all ):
                                              default_func= None,   )
     a_table_dict.add_column( a_column_dict )
 
-    # ---- latitude
+    # ---- longitude
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "longitude",
                                              db_type        = "float",
                                              max_len        = None,

@@ -11,6 +11,7 @@ album_document
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
+    import main  # noqa  stops auto removal by pycln
     pass
 # --------------------
 
@@ -21,7 +22,7 @@ import logging
 import time
 import subprocess
 
-import data_dict
+import data_dict_all
 import gui_qt_ext
 #import string_utils
 import wat_inspector
@@ -32,24 +33,18 @@ from qtpy.QtWidgets import QMessageBox
 
 
 from qtpy.QtWidgets import QTableView, QAbstractItemView
-from qtpy.QtCore import QItemSelectionModel
+from qtpy.QtCore    import QItemSelectionModel
 
 from qtpy.QtGui import QAction
 
 from qtpy.QtCore import QModelIndex, Qt
 
 
-from qtpy.QtSql import (QSqlQuery,
+from qtpy.QtSql import ( QSqlQuery,
                          QSqlRelation,
                          QSqlRelationalTableModel)
 
 
-
-
-
-
-
-#from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
                              QApplication,
@@ -62,7 +57,7 @@ from qtpy.QtWidgets import (
                              QSpacerItem,
                              QTableView,
                              QTabWidget,
-                             QVBoxLayout)
+                             QVBoxLayout )
 
 # ---- local imports
 import base_document_tabs
@@ -74,6 +69,7 @@ import app_exceptions
 import data_manager
 from   picture_document import PictureDocument
 # ---- end imports
+
 LOG_LEVEL  = 10
 
 
@@ -94,16 +90,8 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         self.text_table_name    = "photoshow_text"
         self.help_filename      = "album_doc.txt"
         self.subwindow_name     = "Album Document"
-
-        # !! perhaps in ancestor to a post innit
-        title       = self.subwindow_name
-        if instance_ix !=0:
-            title  += f" {instance_ix}"
-
-        self.setWindowTitle( title )
-        AppGlobal.mdi_management.update_menu_item( self )
-
         self._build_gui()
+        self.__init_2__()
 
     # ------------------------------------------
     def _build_gui( self, ):
@@ -148,6 +136,13 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         self.picture_tab_index     = ix
         self.photo_index           = ix
         main_notebook.addTab( self.picture_tab, "Picture"     )
+
+
+        ix                         += 1
+        self.detail_text_index      = ix  # phase out !!
+        self.text_tab_indexxxx         = ix
+        self.text_tab               = AlbumTextTab( self )
+        main_notebook.addTab( self.text_tab, "Text" )
 
         ix                        += 1
         self.history_tab_index     = ix
@@ -401,8 +396,10 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         from help   mod in process -- at least some works
 
         """
-        debug_msg = ( "criteria_select   trying to add key words " )
-        logging.debug( debug_msg )
+        start_dt     = time.time()
+
+        # debug_msg = ( "criteria_select   trying to add key words " )
+        # logging.debug( debug_msg )
 
         parent_document         = self.parent_window
 
@@ -414,7 +411,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         kw_table_name           = "photoshow_key_words"
 
         # !! next is too much
-        columns    = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
+        columns    = data_dict_all.SCHEMA.get_list_columns( self.parent_window.detail_table_name )
         #col_head_texts   = [ "seq" ]  # plus one for sequence
         col_names        = [   ]
         #col_head_widths  = [ "10"  ]
@@ -519,16 +516,15 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
                                                   model,
                                                   msg = "HelpSubWindow criteria_select" )
 
-# -------
-#         help_document.main_notebook.setCurrentIndex( help_document.list_tab_index )
-#         self.criteria_is_changed = False
-# -----------
-
         debug_msg      = (  query.executedQuery()   )
         logging.debug( debug_msg )
 
         parent_document.main_notebook.setCurrentIndex( parent_document.list_tab_index )
         self.critera_is_changed = False
+
+        end_dt     = time.time()   #          start_dt     = time.time()
+        msg        = (f"criteria_select time = {end_dt - start_dt } sec")
+        logging.info( msg )
 
 # ----------------------------------------
 class AlbumListTab( base_document_tabs.ListTabBase  ):
@@ -639,6 +635,16 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
             tweaks are:
                 ---  spacers
         """
+        self._build_fields_test( layout )
+
+        self.id_field           = self.field_dict[ "id" ]
+        self.cmnt_field         = self.field_dict[ "cmnt" ]
+        self.type_field         = self.field_dict[ "type" ]
+        self.add_kw_field       = self.field_dict[ "add_kw" ]
+
+        return
+
+
         width    = 10
         for ix in range( self.max_col ):  # try to tweak size to make it work
             widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -974,7 +980,8 @@ class AlbumHistoryTab(  base_document_tabs.HistoryTabBase  ):
         self.tab_name            = "AlbumHistorylTab"
 
 # ----------------------------------------
-class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
+#class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
+class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
     #class AlbumDetailListTab( base_document_tabs.SubTabBase  ):
     """
     This is the list of photos in the album
@@ -1048,7 +1055,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         self.photo_viewer   = a_photo_viewer
         photo_layout.addWidget( a_photo_viewer )
 
-        # ----
+        # ---- button_layout
         button_layout       = QHBoxLayout( self )
         main_layout.addLayout( button_layout )
 
@@ -1073,7 +1080,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         widget.clicked.connect( self.copy_file_name )
         button_layout.addWidget( widget )
 
-        #
+        # ---- Shell
         widget        = QPushButton( 'Shell')
         # connect_to     = functools.partial( self.prior_next, -1 )
         widget.clicked.connect( self.shell_file_name )
@@ -1113,7 +1120,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         widget.clicked.connect( self.duplicate )
         button_layout.addWidget( widget )
 
-        #
+        # ----
         widget      = QPushButton( 'set_move_target')
         widget.clicked.connect( self.set_move_target )
         button_layout.addWidget( widget )
@@ -1128,12 +1135,12 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         widget.clicked.connect( self.move_top )
         button_layout.addWidget( widget )
 
-        # ----
-        widget      = QPushButton( 'Test/Debug->')
+        # ---- 'Test/Debug->'
+        widget      = QPushButton( 'Test/Debug->' )
         button_layout.addWidget( widget )
 
-        # ----
-        widget      = QPushButton( 'resequence by 10')
+        # ---- 'resequence by 10'
+        widget      = QPushButton( 'resequence by 10' )
         connect_to  = partial( self.resequence, increment= 10 )
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
@@ -1209,6 +1216,9 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         self.sub_dir_col_ix     = 9
         self.name_col_ix        = 10
 
+        # what
+        self.photo_show_id_col_ix        = 11
+        self.photo_in_show_id_col_ix     = 12
 
         # Set filter for the specific `photo_show_id`
         # self.model.setFilter( f"photo_show_id = {10028}" )
@@ -1223,10 +1233,6 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         self.view       = view
         view.setModel( self.model )
 
-
-        DoubleClicked   = QAbstractItemView.DoubleClicked
-        SelectedClicked = QAbstractItemView.SelectedClicked
-
         view.setSelectionMode( QTableView.ExtendedSelection )
         view.setSelectionBehavior( QTableView.SelectRows )
         view.setEditTriggers( QTableView.DoubleClicked | QTableView.SelectedClicked )
@@ -1236,39 +1242,78 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
     def col_head_names( self ):
         """
         what it says
+            and width
+            and visible
+            ?? consider data dict for the width
+               i think this is ony place table is visible
+
+        self.id_col_ix          = 0 ... see abov3e
 
         """
-        # start using these  self.dt_item_col_ix   = 1
+        # start using these  self.dt_item_col_ix
         model    = self.model
         view     = self.view
 
+        # ---- ID
         model.setHeaderData(  self.id_col_ix,  Qt.Horizontal, "ID" )
         view.setColumnWidth(  self.id_col_ix, 50)  # Set ix_col  width in pixels
         # view.setColumnHidden( self.id_col_ix, True )
 
-        # ix_col      = 1
-        # view.setColumnHidden( ix_col, True )  # might or might not change
+        # ----
+        ix_col      = 1
+        view.setColumnHidden( ix_col, True )  # might or might not change
         #     # column numbers -- beware in all of order of operations
 
-        # ix_col      = 2
-        # view.setColumnHidden( ix_col, True )
+        # ----
+        ix_col      = 2
+        view.setColumnHidden( ix_col, True )
 
+        # ----
+        ix_col      = 4
+        view.setColumnHidden( ix_col, True )
 
-        model.setHeaderData(  self.seq_col_ix,  Qt.Horizontal, "Seq" )
-        view.setColumnWidth(  self.seq_col_ix, 50)
+        # ----
+        ix_col      = 5
+        view.setColumnHidden( ix_col, True )
 
-        #print( f"{self.dt_item_col_ix = }")
+        # ---- seq
+        ix_col        = self.seq_col_ix
+        model.setHeaderData(  ix_col, Qt.Horizontal, "Seq" )
+        view.setColumnWidth(  ix_col, 50 )
+
+        # ----  dir
+        ix_col = self.sub_dir_col_ix
+        model.setHeaderData(  ix_col, Qt.Horizontal, "Dir" )
+        view.setColumnWidth(  ix_col, 50 )
+
+        # ---- File
+        ix_col = self.file_col_ix
+        model.setHeaderData(  ix_col, Qt.Horizontal, "File" )
+        view.setColumnWidth(  ix_col, 250 )
+
+        # ---- photo_id_col_ix
+        ix_col = self.photo_id_col_ix
+        view.setColumnHidden( ix_col, True )
+
+        # ---- "Dt Item
         #delegate = base_document_tabs.DateFormatDelegate( view )
         delegate = base_document_tabs.DateTimeFormatDelegate( view )
         view.setItemDelegateForColumn( self.dt_item_col_ix, delegate)
-        model.setHeaderData(  self.dt_item_col_ix,  Qt.Horizontal, "Dt Item" )
-        view.setColumnWidth(  self.dt_item_col_ix, 100)
+        model.setHeaderData( self.dt_item_col_ix,  Qt.Horizontal, "Dt Item" )
+        view.setColumnWidth( self.dt_item_col_ix, 150 )
 
+        # ---- "Name"
+        ix_col      = self.name_col_ix
+        model.setHeaderData( ix_col,  Qt.Horizontal, "Name" )
+        view.setColumnWidth( ix_col, 400 )
 
+        # ----
+        ix_col      = self.photo_show_id_col_ix
+        view.setColumnHidden( ix_col, True )
 
-        # ix_col      += 1
-        model.setHeaderData(  self.name_col_ix  ,  Qt.Horizontal, "Name" )
-        view.setColumnWidth(  self.name_col_ix  , 120)
+        # ----
+        ix_col      = self.photo_in_show_id_col_ix
+        view.setColumnHidden( ix_col, True )
 
     # --------------------
     def col_head_no(self):
@@ -1279,7 +1324,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         view     = self.view
         for ix_col in range( 7 ):
             model.setHeaderData(  ix_col,  Qt.Horizontal, str( ix_col ) )
-            view.setColumnWidth(  ix_col, 80)  # Set column 0 width to  pixels
+            view.setColumnWidth(  ix_col, 80 )  # Set column 0 width to  pixels
 
     # --------------------
     def create_context_menu(self):
@@ -1377,6 +1422,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         if delta = 0 go to zero if it exists --- no
         could add second argument is_absolute or not_delta
         """
+
         view                    = self.view
         model                   = self.model
         #prior_list_ix    = self.list_ix  # ng
@@ -1973,7 +2019,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         QApplication.clipboard().setText( file_name )
 
     # ------------------------------------------
-    def open_picture_document( self,    ):
+    def open_picture_document_old( self,    ):
         """
         what it says
             if none open, if multiple open
@@ -1994,6 +2040,19 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
 
         AppGlobal.mdi_management.show_document( picture_doc )
 
+    # ------------------------------------------
+    def open_picture_document( self, ):
+        """
+        what it says
+            if none open, if multiple open
+            what about save is ok in the document opened
+        """
+        row             = self.get_selected_row()
+        a_id            = self.get_data_for_column( row, "photo_id"  )
+
+        #AppGlobal.mdi_management.open_picture_document_width_id( a_id )
+        AppGlobal.mdi_management.open_document_with_id( "photo", a_id )
+
     # --------------------------------------
     def copy_pic_setup( self,  ):
         """
@@ -2007,15 +2066,18 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
         detail_tab      = self.parent_window
         document        = detail_tab.parent_window
 
-        album_docs      = AppGlobal.mdi_management.get_album_docs()
+        #album_docs      = AppGlobal.mdi_management.get_album_docx()
+        album_docs      = AppGlobal.mdi_management.get_docs_for_class( AlbumDocument )
         len_album_docs  = len( album_docs )
 
         if len_album_docs !=  2:
-            msg     = f"For this to work you need 2 Album Document open, you have {len_album_docs}."
+            msg     = f"For this to work you need 2 Album Documents open, you have {len_album_docs}."
             raise app_exceptions.ReturnToGui( msg )
 
         album_target = None
+
         for i_album_doc in album_docs:
+
             if i_album_doc.instance_ix != document.instance_ix:
                 album_target = i_album_doc
                 break
@@ -2510,6 +2572,23 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBaseOld  ):
              #inspect_me     = self.people_model,
              a_locals       = locals(),
              a_globals      = globals(), )
+
+# ==================================
+class AlbumTextTab( base_document_tabs.TextTabBase  ):
+    """
+    """
+    #--------------------------------------
+    def __init__(self, parent_window  ):
+        """
+        Args:
+            parent_window (TYPE): DESCRIPTION.
+        """
+        super().__init__( parent_window )
+
+        self.tab_name            = "AlbumTextTab"
+
+        self.post_init()
+
 
 
 # ---- eof ------------------------------

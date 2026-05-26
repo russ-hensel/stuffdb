@@ -9,6 +9,7 @@
 
 # --------------------
 if __name__ == "__main__":
+    import main
     pass
 # --------------------
 
@@ -25,21 +26,17 @@ import time
 from pathlib import Path
 
 
-
-
 from qtpy.QtCore   import ( Slot )
-
-
-from qtpy.QtWidgets import QMessageBox
 
 from qtpy.QtSql import (QSqlQuery)
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
+from qtpy.QtGui import QTextCursor
+
 from qtpy.QtWidgets import (
                              QFileDialog,
                              QComboBox,
-                             QFileDialog,
                              QGroupBox,
                              QHBoxLayout,
                              QLabel,
@@ -52,27 +49,23 @@ from qtpy.QtWidgets import (
                              QTabWidget,
                              QTextEdit,
                              QVBoxLayout,
-                             QWidget)
+                             QWidget )
 
 # ---- local imports
 import collections
 import parameters
-import data_dict
+import data_dict_all
 import check_fix
 
 #import gui_qt_ext
 import info_about
 #import key_words
-#import string_util
-#import text_edit_ext
-#import table_model
+
 import wat_inspector
 from   app_global     import AppGlobal
 import qsql_utils
 
-#import ex_qt
-#import exec_qt
-#import mdi_management
+
 import db_dup_files
 import run_with_dialog
 import file_utils
@@ -86,6 +79,13 @@ EXEC_RUNNER     = None  # setup below
 
 # PERHAPS IN DATA DICT
 # list
+# -------------------------------
+def get_all_tables( file_name ):
+    """
+    to be written from data dict
+    what it says
+    """
+
 ALL_TABLES  = [
                     "help_info",
                     "help_key_word",
@@ -97,10 +97,11 @@ ALL_TABLES  = [
                     "people_text",
                     "photo",
                     "photo_new",
+                    "photo_subject",
                     "photoshow",
+                    "photoshow_text",
                     "photoshow_key_word",
                     "photo_in_show",
-                    "photo_in_show_text",
                     "photo_key_word",
                     "photo_text",
                     "plant",
@@ -156,13 +157,11 @@ def delete_file( file_name ):
     # Won't raise FileNotFoundError if file doesn't exist
     file_path.unlink( missing_ok = True )
 
-
 # -------------------------------
 def clean_path_part( path_part ):
     """
     consider add to some lib ??
     """
-
     # ---- crude but i hope effective
     if path_part:
         path_part    = path_part.replace( "\\", "/" )
@@ -210,61 +209,12 @@ def open_file_dialog( parent, default_dir ):
     # --- default file suggestion ---
     dialog.selectFile("untitled.txt")
 
-    # --- execute the dialog ---
     if dialog.exec_():
         selected_files = dialog.selectedFiles()
         return selected_files
 
     else:
         return []
-
-# #-----------------------------------------------
-# class AdvFileIterator:
-#     """expand later with dir depth and filters  """
-#     def __init__(self, directory):
-#         self.directory  = directory
-#         self._files     = os.listdir(directory)  # list of entries
-#         self._index     = 0
-
-#     def __iter__(self):
-#         return self
-
-#     def __next__(self):
-#         while self._index < len(self._files):
-#             filename = self._files[self._index]
-#             self._index += 1
-#             full_path = os.path.join(self.directory, filename)
-#             if os.path.isfile(full_path):
-#                 return full_path
-#             else: # is directory
-#                 pass
-
-
-#         raise StopIteration
-
-
-
-
-
-#-----------------------------------------------
-class FileIteratorxxxx:
-    """expand later with dir depth and filters  """
-    def __init__(self, directory):
-        self.directory = directory
-        self._files = os.listdir(directory)  # list of entries
-        self._index = 0
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        while self._index < len(self._files):
-            filename = self._files[self._index]
-            self._index += 1
-            full_path = os.path.join(self.directory, filename)
-            if os.path.isfile(full_path):
-                return full_path
-        raise StopIteration
 
 
 # ------------------------------------
@@ -301,8 +251,6 @@ def open_directory_dialog( parent, default_dir  ):
 
     else:
         return []
-
-
 
 # --------------------------------------
 class ExploreArgs(   ):
@@ -364,7 +312,6 @@ class DbManagementSubWindow( QMdiSubWindow ):
         # self.text_table_name        = "stuff_text"  # text tables always id and text_data
             # used in text tab base
         self.help_filename          = "stuff_doc.txt"
-        self.subwindow_name         = "Database Management"
         self.file_out = None
         self._build_gui()
         self.__init_2__()
@@ -400,6 +347,10 @@ class DbManagementSubWindow( QMdiSubWindow ):
         a_tab       = StuffTypeSubTab( self  )
         main_notebook.addTab( a_tab, "Stuff Types and SubTypes" )
 
+        a_tab       = SchemaTab( self  )
+        main_notebook.addTab( a_tab, "SchemaTab" )
+
+
         a_tab               = OutputTab( self  )
         self.output_tab     = a_tab
         main_notebook.addTab( a_tab, "Output" )
@@ -421,7 +372,7 @@ class DbManagementSubWindow( QMdiSubWindow ):
             title  += f" {self.instance_ix}"
 
         self.setWindowTitle( title )
-        AppGlobal.mdi_management.update_menu_item( self )
+        # AppGlobal.mdi_management.update_menu_item( self )
         self.set_size_pos()
 
     # --------------------------------
@@ -471,6 +422,7 @@ class DbManagementSubWindow( QMdiSubWindow ):
         dup with line_out
         """
         self.append_msg( msg, clear = clear  )
+        print( msg )
 
     # --------------------------------
     def output_to_file( self, msg ):
@@ -863,7 +815,7 @@ class BasicsTab( QWidget ):
         table_name  = self.table_widget.currentText()
         self.parent_window.output_msg(   f"for table {table_name = }", clear = True )
 
-        a_table     = data_dict.DATA_DICT.get_table( table_name )
+        a_table     = data_dict_all.SCHEMA.get_table( table_name )
 
         sql         = a_table.to_sql_create()
         msg         = f"{sql} "
@@ -879,7 +831,237 @@ class BasicsTab( QWidget ):
         table_name  = self.table_widget.currentText()
         self.parent_window.output_msg(   f"for table {table_name = }", clear = True )
 
-        a_table     = data_dict.DATA_DICT.get_table( table_name )
+        a_table     = data_dict_all.SCHEMA.get_table( table_name )
+
+        sql         = a_table.to_sql_create_pg()
+        msg         = f"{sql} "
+        self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+# ----------------------------------------
+# ----------------------------------------
+class SchemaTab( QWidget ):
+    """
+    what it says
+    """
+    def __init__(self, parent_window ):
+        """
+
+        """
+        super().__init__()
+
+        # self.criteria_dict          = {}
+        # self.critera_widget_list    = []
+        # self.critera_is_changed     = True
+        self.parent_window          = parent_window
+        self.key_words_widget       = None      # set to value in gui if used
+
+        self.tab_name               = "Schema -- can be done\n from notes"
+
+        self.function_dict                              = {}
+        self.function_dict[ "get_detail_columns" ]      = self.get_detail_columns
+        self.function_dict[ "get_list_columns" ]        = self.get_list_columns
+        self.function_dict[ "get_key_word_columns" ]    = self.get_key_word_columns
+        self.function_dict[ "get_topic_columns" ]       = self.get_topic_columns
+        self.function_dict[ "to_sql_create" ]           = self.to_sql_create
+
+        self.build_gui()
+
+    # -----------------------------
+    def build_gui( self,   ):
+        """
+
+        """
+        vlayout             = QVBoxLayout( self )
+
+        layout              = QHBoxLayout(  )
+        vlayout.addLayout( layout )
+
+        # ---- combobox for tables
+        widget              = QComboBox()
+
+        self.table_widget   = widget
+
+        a_list              = ALL_TABLES
+
+        widget.addItems( a_list )
+        widget.setCurrentIndex( 0 )
+        layout.addWidget( widget )
+
+        # ---- function
+        widget              = QComboBox()
+
+        self.function_widget   = widget
+
+        a_list              = self.function_dict.keys()
+
+        widget.addItems( a_list )
+        widget.setCurrentIndex( 0 )
+        layout.addWidget( widget )
+
+        # ---- Go
+        widget              = QPushButton( "Go...." )
+        self.q_pbutton_1    = widget
+        connect_to          = self.go
+        widget.clicked.connect( connect_to )
+        layout.addWidget( widget )
+
+        # widget              = QPushButton( "create sql pg" )
+        # self.q_pbutton_1    = widget
+        # # connect_to          = self.create_sql_pg
+        # # widget.clicked.connect(  connect_to   )
+        # layout.addWidget( widget )
+
+
+
+        # # ---- set_key_max_id row
+        # widget              = QPushButton( "set_key_max_id" )
+        # # connect_to          = self.set_key_max_id
+        # # widget.clicked.connect( connect_to  )
+        # layout.addWidget( widget )
+
+        # # ---- Systems and SubSystes
+        # layout              = QHBoxLayout( self )
+        # vlayout.addLayout( layout )
+
+        # widget              = QPushButton( "Systems and SubSystes" )
+        # connect_to          = self.system_sub_count_rpt
+        # widget.clicked.connect( connect_to  )
+        # layout.addWidget( widget )
+
+    # -------------------------
+    def go( self, ):
+        """
+        What it says, read
+        sets a new key value from user input with conditions
+
+        """
+        op_code   =  self.function_widget.currentText()
+        self.function_dict[ op_code ]()
+
+    # ---- reports
+    # -------------------------
+    def nop( self, ):
+        """
+        What it says, read
+
+        """
+    # -------------------------
+    def get_detail_columns( self,   ):
+        """
+        What it says, read
+
+        """
+        table_name      = self.table_widget.currentText()
+        a_table         = data_dict_all.SCHEMA.get_table( table_name )
+        a_result        = a_table.get_detail_columns()
+
+        msg             = f"............\n\nget_detail_columns for table >{table_name}<"
+        self.parent_window.output_msg( msg, clear = True )
+
+        for ix, i_column in enumerate( a_result ):
+            msg    = f"{ix} {i_column.column_name}  {i_column}"
+            self.parent_window.output_msg( msg, )
+
+        msg  = f">> ------------ End, {ix} items"
+        self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+    # -------------------------
+    def get_list_columns( self,   ):
+        """
+        What it says, read
+
+        """
+        table_name      = self.table_widget.currentText()
+        a_table         = data_dict_all.SCHEMA.get_table( table_name )
+        a_result        = a_table.get_list_columns()
+
+        msg             =  f"............\n\nget_list_columns for table >{table_name}<"
+        self.parent_window.output_msg( msg, clear = True )
+
+        for ix, i_column in enumerate( a_result ):
+            msg    =f"{ix} {i_column.column_name}  {i_column}"
+            self.parent_window.output_msg( msg, )
+
+        msg  = f">> ------------ End, {ix} items"
+        self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+    # -------------------------
+    def get_key_word_columns( self,   ):
+        """
+        What it says, read
+
+        """
+        table_name      = self.table_widget.currentText()
+        a_table         = data_dict_all.SCHEMA.get_table( table_name )
+        a_result        = a_table.get_list_columns()
+
+        msg             = f"............\n\nget_key_word_columns for table >{table_name}<"
+        self.parent_window.output_msg( msg, clear = True )
+
+        for ix, i_column in enumerate( a_result ):
+            msg    = f"\n\n{ix} {i_column.column_name}  {i_column}"
+            self.parent_window.output_msg( msg, )
+
+        msg  = f">> ------------ End, {ix} items"
+        self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+    # -------------------------
+    def get_topic_columns( self,   ):
+        """
+        What it says, read
+
+        """
+        table_name      = self.table_widget.currentText()
+        a_table         = data_dict_all.SCHEMA.get_table( table_name )
+        a_result        = a_table.get_topic_columns()
+
+        msg             = f"............\n\nget_topic_columns for table >{table_name}<"
+        self.parent_window.output_msg( msg, clear = True )
+
+        for ix, i_column in enumerate( a_result ):  # column_names
+            msg    = f"\n\n{ix}  {i_column}"
+            self.parent_window.output_msg( msg, )
+
+        msg  = f">> ------------ End, {ix} items"
+        self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+    # -------------------------
+    def to_sql_create( self,   ):
+        """
+        What it says, read
+
+        """
+        table_name      = self.table_widget.currentText()
+        a_table         = data_dict_all.SCHEMA.get_table( table_name )
+        a_result        = a_table.to_sql_create()
+
+        msg             = f"............\n\nto_sql_create for table >{table_name}<"
+        self.parent_window.output_msg( msg, clear = True )
+
+        msg             = f"\n\nSQL is \n{a_result}"
+        self.parent_window.output_msg( a_result, )
+
+        msg             = ">> ------------ End."
+        self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
+    #-------------------------
+    def create_sql_pg( self,   ):
+        """
+        What it says, read  postgres version
+
+        """
+        table_name  = self.table_widget.currentText()
+
+        msg      = f"............\n\ncreate_sql_pg for table >{table_name}<"
+        self.parent_window.output_msg( msg, clear = True )
+
+        a_table     = data_dict_all.SCHEMA.get_table( table_name )
 
         sql         = a_table.to_sql_create_pg()
         msg         = f"{sql} "
@@ -1061,7 +1243,7 @@ class KeyWordTab( QWidget ):
         msg    = ( f"Create SQL for table {table_name = }" )
         self.parent_window.output_msg( msg, clear = True )
 
-        a_table    = data_dict.DATA_DICT.get_table( table_name )
+        a_table    = data_dict_all.SCHEMA.get_table( table_name )
 
         sql        = a_table.to_sql_create()
 
@@ -2900,7 +3082,7 @@ class OutputTab( QWidget ):
 
 
     # -------------------------------
-    def _build_gui_bot(self, layout  ):
+    def _build_gui_bot( self, layout  ):
         """
         make the bottom of the gui, mostly the large
         message widget
@@ -2909,31 +3091,54 @@ class OutputTab( QWidget ):
         """
         # ---- new row
         row_layout      = QHBoxLayout(   )
-        layout.addLayout( row_layout,  )
+        layout.addLayout( row_layout, )
+
+        widget          = QPushButton( "Top" )
+        #connect_to             = self.pb_1_clicked
+        widget.clicked.connect( self.top )
+        row_layout.addWidget( widget )
+
+        widget          = QPushButton( "Bottom" )
+        # connect_to             = self.pb_1_clicked
+        widget.clicked.connect( self.bot )
+        row_layout.addWidget( widget )
+
+        # ---- new row
+        row_layout      = QHBoxLayout(   )
+        layout.addLayout( row_layout, )
 
         # ----
-        widget              = QTextEdit("load\nthis should be new row ")
-        self.msg_widget     = widget
+        widget          = QTextEdit("load\nthis should be new row ")
+        self.msg_widget = widget
         #widget.clicked.connect( self.load    )
-        row_layout.addWidget( widget,   )
+        row_layout.addWidget( widget, )
         self.output_edit    = widget
 
+    # ---- Actions
+    # -----------------------
+    def top( self, ):
+        """ """
+        widget      = self.msg_widget
+        cursor      = widget.textCursor()
+        cursor.movePosition(QTextCursor.Start)     # or QTextCursor.MoveAnchor mode is default
+        widget.setTextCursor(cursor)
+        widget.ensureCursorVisible()
 
-    # -------------------------
+    # -----------------------
+    def bot( self, ):
+        """ """
+        widget      = self.msg_widget
 
-    # ---- reports
-    # -------------------------
 
-    # -------------------------
-    def system_sub_count_rpt( self,   ):
-        """
-        What it says, read
-
-        """
+        widget.moveCursor(QTextCursor.End)
+        widget.ensureCursorVisible()
 
 
 
-    # ---- Actions none yet
+        # cursor      = widget.textCursor()
+        # cursor.movePosition(QTextCursor.Start)     # or QTextCursor.MoveAnchor mode is default
+        # widget.setTextCursor(cursor)
+        # widget.ensureCursorVisible()
 
 
     # -----------------------
@@ -2946,8 +3151,6 @@ class OutputTab( QWidget ):
 
 
 def test_clean_path_part(   ):
-
-
 
 
     path_parts     = [

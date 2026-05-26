@@ -16,7 +16,7 @@ history_sync.build_it()
 
 history_sync.HISTORY_SYNC
 
-
+        probably no longer useful, but included.
 
 """
 
@@ -120,7 +120,6 @@ class HistorySync( QObject ):  # QObject my not really be needed
 
         return topic
 
-
 #------------------------------------
 def build_itxxx():
     """
@@ -132,9 +131,11 @@ def build_itxxx():
         HISTORY_SYNC =  HistorySync()
 
 
-
-
 # ---- eof
+
+
+
+
 
 
 

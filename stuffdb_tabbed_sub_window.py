@@ -9,6 +9,7 @@ Created on Sat Jun 29 10:01:46 2024
 
 # --------------------
 if __name__ == "__main__":
+    import main
     pass
 # --------------------
 

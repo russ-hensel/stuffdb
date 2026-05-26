@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-
-
+cannot restart in spyder without a new console
+this could be fixed by creating a class and
+calling its main.  do I want to do this??
 
 """
 

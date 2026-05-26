@@ -19,7 +19,6 @@ import logging
 from   datetime import datetime
 
 
-from qtpy.QtWidgets import QMessageBox
 from qtpy.QtCore import QModelIndex, Qt
 
 from qtpy.QtSql import (QSqlDatabase,
@@ -48,7 +47,7 @@ import key_words
 import qt_sql_query
 import stuff_document_edit
 import combo_dict_ext
-import data_dict
+import data_dict_all
 import gui_qt_ext
 import info_about
 import string_utils as string_util
@@ -59,7 +58,7 @@ from app_global import AppGlobal
 # ---- end imports
 
 logger              = logging.getLogger( )
-LOG_LEVEL           = 5
+LOG_LEVEL           = 50
     # level form much debug    higher is more debugging
 
 FIF                 = info_about.INFO_ABOUT.find_info_for
@@ -130,8 +129,8 @@ class StuffDocument( base_document_tabs.DocumentBase ):
         self.list_tab            = StuffListTab( self  )
         main_notebook.addTab(  self.list_tab, "List"    )
 
-        ix                       += 1
-        self.detail_tab_index     = ix  #
+        #ix                       += 1
+        self.detail_tab_index     = ( ix := ix + 1 )
         self.detail_tab           = StuffDetailTab( self )
         main_notebook.addTab( self.detail_tab, "Detail"     )
 
@@ -142,14 +141,14 @@ class StuffDocument( base_document_tabs.DocumentBase ):
 
         ix                         += 1
         self.detail_text_index      = ix  # phase out !!
-        self.text_tab_index         = ix
+        self.text_tab_indexxxx         = ix
         self.text_tab               = StuffTextTab( self )
-        main_notebook.addTab( self.text_tab, "Text"     )
+        main_notebook.addTab( self.text_tab, "Text" )
 
         ix                         += 1
         self.history_tab_index     = ix
         self.history_tab           = StuffHistoryTab( self )
-        main_notebook.addTab( self.history_tab, "History"    )
+        main_notebook.addTab( self.history_tab, "History" )
 
         sub_window.setWidget( main_notebook )
         mdi_area.addSubWindow( sub_window )
@@ -285,6 +284,19 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget, columnspan = 3 )
 
+        # ---- id_in for test
+        widget  = QLabel( "id_in" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                 = cw.CQComboBox( field_name  = "id_in",  )
+        self.critera_widget_list.append( widget )
+
+        widget.addItem('<none>')
+        widget.addItem('')
+        widget.addItem( "not_null" )
+        grid_layout.addWidget( widget )
+
         # ---- Order by  CQComboBox
         widget  = QLabel( "Order by" )
         grid_layout.new_row()
@@ -359,7 +371,7 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         # !!  may want clear as in help
         # !! next is too much
-        columns    = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
+        columns    = data_dict_all.SCHEMA.get_list_columns( self.parent_window.detail_table_name )
         #col_head_texts   = [ "seq" ]  # plus one for sequence
         col_names        = [   ]
 
@@ -419,6 +431,13 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             query_builder.add_to_where( add_where, [(  ":stuff_name",
                                                       f"%{stuff_name}%" ) ])
 
+        # ---- id_in
+        id_in           = criteria_dict[ "id_in" ].strip().lower()
+        if id_in == "not_null":
+            add_where       = "stuff.id_in IS NOT NULL"   # :is name of bind var below
+            query_builder.add_to_where( add_where, [ ])
+
+
         # ---- order by
         order_by   = criteria_dict[ "order_by" ]
 
@@ -462,7 +481,7 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         logging.log( LOG_LEVEL, debug_msg )
 
         # !! next is too much
-        columns         = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
+        columns         = data_dict_all.SCHEMA.get_list_columns( self.parent_window.detail_table_name )
         col_head_texts  = []  # plus one for sequence
         col_names       = []
         col_head_widths = []
@@ -681,8 +700,6 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
                                                 is_keep_prior_enabled        = True   )
 
 
-
-
         self.type_field     = edit_field
         #edit_field.setEditable( True )
         edit_field.setPlaceholderText( "type" )
@@ -744,13 +761,17 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
                                      field_name = "id_in" )
 
         self.in_id_widget          = edit_field
-        kvl_model     = AppGlobal.mdi_management.get_key_value_list_model( "stuff" )
+        kvl_model                  = AppGlobal.mdi_management.get_key_value_list_model( "stuff" )
         # could check have default values or do in get function better
         edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
 
-
+        # ---- clear button
+        widget                     = QPushButton( "Clear In List" )
+        connect_to                 = kvl_model.clear
+        widget.clicked.connect( connect_to )
+        layout.addWidget( widget, columnspan = 2 )
 
         # ---- loc_add_info
         edit_field                  = cw.CQLineEdit(
@@ -1055,14 +1076,7 @@ class StuffTextTab( base_document_tabs.TextTabBase  ):
         """
         super().__init__( parent_window )
 
-        # msg       = ( "init StuffTextTab" )
-        # logging.debug( msg )
-
-        #super().__init__( parent_window )
         self.tab_name            = "StuffTextTab"
-
-        # msg       = ( "init end StuffTextTab {self.tab_name = }" )
-        # logging.debug( msg )
 
         self.post_init()
 
@@ -1422,28 +1436,20 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
         Open dialog to edit the currently selected event.
         """
         selected_data = self.get_selected_row_data()
+
         if selected_data is None:
             return
 
         row, data = selected_data
 
-        # Open dialog with the current data
-        #dialog = StuffEventDialog(self, edit_data=data)
-        dialog = stuff_document_edit.EditStuffEvents( self, edit_data=data )
+        dialog = stuff_document_edit.EditStuffEvents( self, edit_data = data )
             # self the parent tab
 
-        model     = self.model
-        # if qt_version == 6:
-        #     exec = QDialog.exec
-        #     Accepted = QDialog.DialogCode.Accepted
-        # else:
-        #     exec = QDialog.exec_
-        #     Accepted = QDialog.Accepted
+        model       = self.model
 
-        exec = QDialog.exec
-        Accepted = QDialog.DialogCode.Accepted
+        exec        = QDialog.exec
 
-        if dialog.exec() == Accepted:
+        if dialog.exec() == QDialog.DialogCode.Accepted:
             form_data = dialog.get_form_data()
 
             # Update the row with the new data

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+            #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Sat Jun 29 09:56:07 2024
@@ -10,7 +10,7 @@ Created on Sat Jun 29 09:56:07 2024
 # --------------------
 if __name__ == "__main__":
     #----- run the full app #   import main   for next line
-    import main
+    import main   # noqa  stops auto removal by pycln
 # --------------------
 
 
@@ -19,14 +19,10 @@ if __name__ == "__main__":
 import logging
 from   datetime import datetime
 
-# from qt_compat import QApplication, QAction, exec_app, qt_version
-# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-# from qt_compat import TextAlignmentRole
-
 
 from qtpy.QtCore import QModelIndex, Qt
 
-from qtpy.QtSql import (QSqlDatabase,
+from qtpy.QtSql import ( QSqlDatabase,
                          QSqlQuery,
                          QSqlTableModel)
 
@@ -38,13 +34,11 @@ from qtpy.QtWidgets import (
                              QSizePolicy,
                              QSpacerItem,
                              QTabWidget,
-                             QVBoxLayout)
+                             QVBoxLayout )
 
 # ---- imports local
 
-import data_dict
-#import  picture_viewer
-#import  tracked_qsql_relational_table_model  # dump for qt with logging
+import data_dict_all
 import gui_qt_ext
 #import string_utils
 from   app_global import AppGlobal
@@ -79,8 +73,6 @@ CONTACT_FIELD_DICT        = None
 # IX_EVENT_DLR            = 5
 # IX_EVENT_CMNT           = 6
 # IX_EVENT_TYPE           = 7
-
-
 
 # ----------------------------------------
 class PeopleDocument( base_document_tabs.DocumentBase ):
@@ -203,9 +195,9 @@ class PeopleDocument( base_document_tabs.DocumentBase ):
             None.
             """
         next_key      = AppGlobal.key_gen.get_next_key(
-            self.detail_table_name )
+                                     self.detail_table_name )
         self.detail_tab.copy_prior_row( next_key )
-        self.text_tab.copy_prior_row(  next_key )
+        self.text_tab.copy_prior_row(   next_key )
 
     # ---- sub window interactions ---------------------------------------
     # -----------------------
@@ -369,18 +361,14 @@ class PeopleCriteriaTab( base_document_tabs.CriteriaTabBase,  ):
         kw_table_name                   = "platning_key_words"
 
         # !! next is too much
-        columns    = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
+        columns         = data_dict_all.SCHEMA.get_list_columns( self.parent_window.detail_table_name )
         #col_head_texts   = [ "seq" ]  # plus one for sequence
-        col_names        = [   ]
-        #col_head_widths  = [ "10"  ]
+        column_list       = [  ]
+
         for i_column in columns:
-            col_names.append(        i_column.column_name  )
+            column_list.append(        i_column.column_name  )
             #col_head_texts.append(   i_column.col_head_text  )
             #col_head_widths.append(  i_column.col_head_width  )
-        column_list                     = col_names
-        # old below
-        # column_list                     = [ "id", "id_old", "name", "descr",  "add_kw",         ]
-        #column_list                     = [ "id", "id_old",   "add_kw", "f_name",  "l_name",     ]
 
         a_key_word_processor            = key_words.KeyWords( kw_table_name, AppGlobal.qsql_db_access.db )
         query_builder.table_name        = parent_document.detail_table_name
@@ -477,8 +465,7 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         """
         page            = self
 
-
-        box_layout_1    =  QVBoxLayout( page )
+        box_layout_1    = QVBoxLayout( page )
         max_col         = 10
         self.max_col    = max_col
 
@@ -530,7 +517,6 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         for ix in range( self.max_col ):  # try to tweak size to make it work
             widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
             layout.addItem( widget, 0, ix  )  # row column
-
 
         # ---- code_gen: TableDict.to_build_form 2025_04_01 for people -- begin table entries -----------------------
 
@@ -1321,7 +1307,7 @@ class PeopleEventSubTab( base_document_tabs.SubTabWithEditBase ):
         global EVENT_FIELD_DICT
 
         if EVENT_FIELD_DICT is None:
-            EVENT_FIELD_DICT   = data_dict.rpt_sub_tab_columns_order( self.table_name, verbose = False  )
+            EVENT_FIELD_DICT   = data_dict_all.rpt_sub_tab_columns_order( self.table_name, verbose = False  )
 
         self.field_dict     = EVENT_FIELD_DICT  # order is ix  key is field_name then a dict
 
@@ -1354,10 +1340,10 @@ class PeopleEventSubTab( base_document_tabs.SubTabWithEditBase ):
         """ """
         # print( "SubTabBase still need to fix this perahps add_dict_adjust( form_data ) not clear how to paramaterize ")
         # ver 3  --- but some may be passed in ?
-        a_id    = AppGlobal.key_gen.get_next_key( self.table_name )
+        a_id                        = AppGlobal.key_gen.get_next_key( self.table_name )
 
-        form_data[ "seq_id" ]     = a_id
-        form_data[ "people_id" ]  = self.current_id
+        form_data[ "seq_id" ]       = a_id
+        form_data[ "people_id" ]    = self.current_id
 
     # ---------------------------------------
     def select_by_id( self, id ):
@@ -1389,7 +1375,7 @@ class PeopleContactSubTab( base_document_tabs.SubTabWithEditBase ):
 
         global CONTACT_FIELD_DICT   # where when is used ??
         if CONTACT_FIELD_DICT is None:
-            CONTACT_FIELD_DICT   = data_dict.rpt_sub_tab_columns_order( self.table_name, verbose = False  )
+            CONTACT_FIELD_DICT   = data_dict_all.rpt_sub_tab_columns_order( self.table_name, verbose = False  )
 
         self.field_dict     = CONTACT_FIELD_DICT  # order is ix  key is field_name then a dict
 
@@ -1401,10 +1387,10 @@ class PeopleContactSubTab( base_document_tabs.SubTabWithEditBase ):
     # ---------------------------------
     def _build_model( self, ):
         """
-        MAY BE PROMATABLE
+        MAY BE PROMATABLE  -- look for other uses
         put in some init do delay build = lazy
         """
-        model              = ContactSqlTableModel(  self, self.db    )
+        model              = ContactSqlTableModel( self, self.db )
         self.model         = model
 
         model.setTable( self.table_name )
@@ -1423,7 +1409,8 @@ class PeopleContactSubTab( base_document_tabs.SubTabWithEditBase ):
     # ---------------------------------------
     def select_by_id( self, id ):
         """
-        maybe make anscestor and promote
+        maybe make anscestor and promote -- probably not worth it
+        need filter
 
         """
         model               = self.model
@@ -1452,10 +1439,11 @@ class PeopleContactSubTab( base_document_tabs.SubTabWithEditBase ):
 
     # -------------------------------------
     def default_new_row( self ):
-        """tail_tab.default_new_row( next_key )
+        """
+        tail_tab.default_new_row( next_key )
         default values for a new row in the detail and the
         text tabs
-
+        consider promote
         Returns:
             None.
 
@@ -1478,7 +1466,7 @@ class PeopleContactSubTab( base_document_tabs.SubTabWithEditBase ):
 # ------------------------------------
 class PeoplePictureListSubTab( base_document_tabs.PictureListSubTabBase ):
     """
-    almos all promoted even this may not be necessary
+    almost all promoted even this may not be necessary
     """
     def __init__(self, parent_window ):
         super().__init__( parent_window )
@@ -1492,6 +1480,7 @@ class ContactSqlTableModel(QSqlTableModel):
         self.non_editable_columns = { 99 }
             # 99 not used Columns ..doe it have to be in init or is synamic ..
 
+    # -----------------------
     def flags(self, index: QModelIndex):
         """
         from chat, not really used as for non edit

@@ -11,17 +11,18 @@
 
 
 """
-the "true" main for the stuffdb, but launch from main
+the "true" main for the stuffdb, but launch from main.py
 
 """
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
+    import main # noqa  stops auto removal by pycln
     pass
 # --------------------
 
 # ---- version
-__version__   = "Ver .086: 2026-04-13.01"
+__version__   = "Ver .090: 2026-05-21.01"
 
 # ---- imports
 import datetime
@@ -32,33 +33,26 @@ import sys
 import time
 import traceback
 
-from   qtpy.QtCore import ( QTimer,   )
-
-from   qtpy.QtWidgets import QMessageBox
+from   qtpy.QtCore import ( QTimer, )
 
 
 from qtpy import QtWidgets
-from qtpy.QtCore import ( QTimer)
-#from qtpy.QtCore import pyqtSignal as Signal
-# from qtpy.QtCore import pyqtSlot
+
 from qtpy.QtGui import ( QIcon)
 
-
-
-
 from qtpy.QtWidgets import (
-                             QApplication,
-                             QMessageBox)
+                            QMessageBox,
+                            QApplication,
+                           )
 
 from   app_global import AppGlobal
 # import app_logging
-import data_dict
+import data_dict_all
 #import   stuffdb_def
 #import dict_main
 import text_edit_ext
 import wat_inspector
 import key_gen
-#import   mdi_management
 import main_window
 import parameters
 import qsql_db_access
@@ -173,11 +167,25 @@ class App( ):
         a_key_gen               = key_gen.KeyGenerator( a_qsql_db_access.db  )  #  AppGlobal.qsql_db_access.db
         AppGlobal.key_gen       = a_key_gen
 
-        data_dict.build_it( "stuffdb" )    # access as data_dict.DATA_DICT
+       #  data_dict_all.build_it( "stuffdb" )    # access as data_dict.DATA_DICT
+
+        a_schema_dict   = data_dict_all.SchemaDict( "stuffdb" )
+        a_schema_dict.import_modules( [ "data_dict_help",
+                                        "data_dict_stuff",
+                                        "data_dict_plant",
+                                        "data_dict_planting",
+                                        "data_dict_photoshow",
+                                        "data_dict_photo",
+                                        "data_dict_people",
+                                        "data_dict_key_gen",
+                                        # "data_dict_stuff",
+                                        # "data_dict_stuff",
+
+                                        ])
+            # access as data_dict.SCHEMA = a_schema_dict
 
 
-
-        table_name_list  = data_dict.DATA_DICT.get_table_name_list()
+        table_name_list         = data_dict_all.SCHEMA.get_table_name_list()
         if len( table_name_list ) < 10:
             msg     = f"we seem to be short on data_dict items {len( table_name_list )}"
             logging.error( msg )
@@ -213,7 +221,6 @@ class App( ):
         """
         record info about the program to the log file
         """
-        #logger_level( "until_foo.prog_info"  )
         fll         = AppGlobal.force_log_level
         logger      = logging.getLogger( )
         # logger      = self.logger
@@ -281,13 +288,16 @@ class App( ):
     # ---- autostart functions for parameters
     # ----------------------------------------------
     def welcome_msg( self,  ):
-
-     #PARAMETERS   = parameters.PARAMETERS
+        """
+        for the future perhaps
+        """
+        #PARAMETERS   = parameters.PARAMETERS
 
         msg      = ( "{Hello")
         QMessageBox.information( AppGlobal.main_window,
                                      "welcome msg ", msg )
 
+    # ----------------------------------------------
     def cleanup( self ):
         """
         Perform cleanup operations
@@ -300,8 +310,7 @@ class App( ):
         # etc.
         AppGlobal.qsql_db_access.remove_lock_file(   )
 
-
-
+# -------------------------
 def main():
     app         = App(   )
     # mainWin     = stuff_db_main_window.StuffDbMainWindow()
@@ -313,3 +322,5 @@ def main():
 #  # sys.e
 
 # ---- eof
+
+

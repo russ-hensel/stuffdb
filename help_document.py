@@ -9,19 +9,19 @@
 # ---- tof
 # --------------------
 if __name__ == "__main__":
-    import main
+    import main   # noqa  stops auto removal by pycln
     pass
 # --------------------
 
 import logging
 from   functools import partial
+import time
 
 from qtpy.QtCore import Qt, QTimer
 # ---- Qt
 from qtpy.QtGui import QFont
 
 from qtpy.QtSql import QSqlQuery, QSqlTableModel
-
 
 
 from qtpy.QtWidgets import (
@@ -36,7 +36,7 @@ from qtpy.QtWidgets import (
 
 # ---- imports local
 
-import data_dict
+import data_dict_all
 import gui_qt_ext
 import string_utils as string_util
 from   app_global import AppGlobal
@@ -48,6 +48,8 @@ import key_words
 import parameters
 import qt_sql_query
 import file_writers
+
+
 
 # ---- constants
 SYSTEM_LIST     = parameters.PARAMETERS.systems_list
@@ -99,17 +101,17 @@ class HelpDocument( base_document_tabs.DocumentBase ):
         ix                       += 1
         self.list_tab_index      = ix
         self.list_tab            = HelpListTab( self  )
-        main_notebook.addTab(  self.list_tab,   "List"    )
+        main_notebook.addTab(  self.list_tab, "List"    )
 
         ix                       += 1
         self.detail_tab_index     = ix
         self.detail_tab           = HelpDetailTab( self )
-        main_notebook.addTab( self.detail_tab,    "Detail"     )
+        main_notebook.addTab( self.detail_tab, "Detail" )
 
         ix                        += 1
         self.history_tab_index     = ix
         self.history_tab           = HelpHistorylTab( self )
-        main_notebook.addTab( self.history_tab ,   "History"    )
+        main_notebook.addTab( self.history_tab, "History" )
 
         sub_window.setWidget( main_notebook )
         mdi_area.addSubWindow( sub_window )
@@ -251,13 +253,13 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         layout_0.addWidget( groupbox, alignment = AlignLeft)
         self.build_tab_criteria( groupbox )
 
-        widget   = QSpacerItem( 500, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
+        widget      = QSpacerItem( 500, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
         layout_2.addItem( widget,  )
 
-        layout_3        = QVBoxLayout(   )
+        layout_3    = QVBoxLayout(   )
         top_layout.addLayout( layout_3 )
 
-        widget   = QSpacerItem( 500, 500, QSizePolicy.Expanding, QSizePolicy.Expanding )
+        widget      = QSpacerItem( 500, 500, QSizePolicy.Expanding, QSizePolicy.Expanding )
         layout_3.addItem( widget,  )  # row column
 
     # ------------------------------------------
@@ -296,7 +298,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         grid_layout.addWidget( widget, )    # columnspan = 3 )
 
         # ----id_old
-        widget                = QLabel( "ID Old" )
+        widget                  = QLabel( "ID Old" )
         grid_layout.new_row()
         grid_layout.addWidget( widget )
 
@@ -306,7 +308,8 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         # widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         #try to fix jump with columnspan did not work
         #grid_layout.addWidget( widget, columnspan = 11 )
-        grid_layout.addWidget( widget,   )
+        grid_layout.addWidget( widget, )
+
         # ---- grid_layout.new_row()
         grid_layout.new_row()
 
@@ -453,6 +456,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
     # ----------------------------------
     def build_top_widgets_for_help( self, groupbox ):
         """
+        what it says, read
         """
         col_max            = 1
         button_layout      = gui_qt_ext.CQGridLayout( col_max = col_max )
@@ -496,7 +500,6 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         # for ix in range( col_max ):  # layout.col_max
         #     widget   = QSpacerItem( 50, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
         #     grid_layout.addItem( widget, 0, ix  )
-
 
         self._build_top_widgets_grid( grid_layout )
 
@@ -655,8 +658,10 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
     #---------------------------------------
     def _stabilize_layout(self):
-        """another stablization attempt
-        from chat, do not think it is used """
+        """
+        another stablization attempt
+        from chat, do not think it is used
+        """
         print( "_stabilize_layout" )
         self.layout().activate()
         self.adjustSize()
@@ -674,6 +679,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
             use fully qualified names in all sql
 
         """
+        start_dt                        = time.time()
         parent_document                 = self.parent_window
         help_document                   = self.parent_window
 
@@ -689,7 +695,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         kw_table_name                   = "help_key_words"
 
         # !! next is too much
-        columns         = data_dict.DATA_DICT.get_list_columns( self.parent_window.detail_table_name )
+        columns         = data_dict_all.SCHEMA.get_list_columns( self.parent_window.detail_table_name )
         #col_head_texts   = [ "seq" ]  # plus one for sequence
         col_names       = [  ]
         #col_head_widths  = [ "10"  ]
@@ -764,20 +770,11 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )
 
         # ---- add_where
-        """
-        where id > 5000
-        """
+        # """
+        # where id > 5000
+        # """
         if parameters.PARAMETERS.use_add_where:
             add_where      = criteria_dict[ "add_where" ].strip()
-            # if   system == "<none>":
-            #     #add_where       =  f' help_info.system)= "{system}" '
-            #     add_where       =  ' help_info.system  IS NULL OR TRIM(help_info.system)= "" '
-            #     #WHERE system IS NULL OR TRIM(system) = ''
-            #     query_builder.add_to_where( add_where, [ ])
-
-            # elif system:
-            #     add_where       =  f' lower(help_info.system)= "{system}" '
-            #     query_builder.add_to_where( add_where, [ ])
 
             # ---- key words
             criteria_key_words              = criteria_dict[ "key_words" ]
@@ -844,6 +841,10 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         # parent_document might be improvement !!
         help_document.main_notebook.setCurrentIndex( help_document.list_tab_index )
         self.critera_is_changed = False
+
+        end_dt     = time.time()   #          start_dt     = time.time()
+        msg        = (f"criteria_select time = {end_dt - start_dt } sec")
+        logging.info( msg )
 
     #----------------------------
     def search_me_new(self, criteria ):
@@ -1010,7 +1011,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
         """
         for ix in range( self.max_col ):
-            widget   = QSpacerItem( 50, 10,  QSizePolicy.Expanding, QSizePolicy.Minimum)
+            widget   = QSpacerItem( 50, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
             layout.addItem( widget, 0, ix  )  # row column
 
         # ---- code_gen: TableDict.to_build_form 2025_02_01 for help_info -- begin table entries -----------------------
@@ -1312,26 +1313,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget, )
 
-
-        # # ---- search text
-        # search_layout       = QHBoxLayout()
-        # text_layout.addLayout( search_layout )
-
-        # search_text_widget,  up_button,  dn_button  =  text_edit_widget.make_search_widgets(  )
-
-        # widget = QPushButton( "Top")
-        # widget.clicked.connect(  text_edit_widget.scroll_to_top   )
-        # search_layout.addWidget( widget )
-
-        # widget = QPushButton( "Bottom")
-        # widget.clicked.connect(  text_edit_widget.scroll_to_bottom   )
-        # search_layout.addWidget( widget )
-
-        # search_layout.addWidget( search_text_widget )
-        # search_layout.addWidget( dn_button )
-        # search_layout.addWidget( up_button )
-
-
         # ---- pins n
         history_tab     = self.parent_window.history_tab
         # timing is off for this -- so do at run time
@@ -1345,11 +1326,11 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
             widget.clicked.connect( connect_to )
             button_layout.addWidget( widget )
 
-        label           = "Test\nDebug"
-        widget          = QPushButton( label )
-        connect_to  =  partial( self.current_record_to_pinned, 0 )
-        widget.clicked.connect( self.test_debug )
-        button_layout.addWidget( widget )
+        # label           = "Test\nDebug"
+        # widget          = QPushButton( label )
+        # connect_to  =  partial( self.current_record_to_pinned, 0 )
+        # widget.clicked.connect( self.test_debug )
+        # button_layout.addWidget( widget )
 
  #-------------------------------------
     def build_snippet_gui( self, snippet_manager, layout, ix ):
@@ -1503,3 +1484,6 @@ class HelpHistorylTab( base_document_tabs.HistoryTabBase  ):
         self.tab_name            = "HelpHistorylTab"
 
 # ---- eof ------------------------------
+
+
+

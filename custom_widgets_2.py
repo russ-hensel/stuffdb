@@ -57,15 +57,22 @@ PLANT_QUERY    = "SELECT id, name, latin_name,  add_kw, descr  FROM plant  WHERE
 PLANTING_BED_QUERY = STUFF_QUERY
 
 
-
 #--------------------------
 class ModelSender( QObject ):
     """
     sender for KeyValueListModel
         not sure if we need
     """
-    key_save        =  Signal()    # a signal not a method
-    key_restore     =  Signal()
+    key_save          = Signal()           # a signal not a method
+    key_restore       = Signal()
+    get_keys_in_use   = Signal()
+
+    def __init__( self ):
+        """ """
+        super().__init__( )
+
+        #self.keys_in_use  = [] now in model
+
     #--------------------------
     def emit_key_save( self,   ):
         """
@@ -79,10 +86,37 @@ class ModelSender( QObject ):
         the box should restore the key, the
         model change is complete
         """
-        self.key_restore.emit(   )
+        self.key_restore.emit( )
+
+    #--------------------------
+    def emit_get_keys_in_use( self,  ):
+        """
+        mutate the list so that it ends up with a list of keys
+        that are in use
+        perhaps could do this with presave which might have advanges
+        need link to model set to init first
+        """
+        self.get_keys_in_use.emit(  )
+
+        pass
+
+    # ---- set get ... or just direct access
+    # #--------------------------
+    # def set_keys_in_use( self,  a_list_of_keys ):
+    #     """
+
+    #     """
+    #     self.keys_in_use   = a_list_of_keys
+
+    # #--------------------------
+    # def emit_key_restore( self,   ):
+    #     """
+
+    #     """
+    #     return self.keys_in_use
 
 # --------------------------------------------------
-class KeyValueListModel(QAbstractListModel):
+class KeyValueListModel( QAbstractListModel ):
     """
     create as singleton for each set of combo boxes see below
     this stores the data, but does not keep current
@@ -96,43 +130,65 @@ class KeyValueListModel(QAbstractListModel):
     have it in charge of the signals
     """
     # -----------------------
-    def __init__(self, sql,  parent = None ):
-        super().__init__(parent)
-        self.KEY_ROLE    = Qt.UserRole
-        self.VALUE_ROLE  = Qt.UserRole + 1
+    def __init__( self, sql,  parent = None ):
+        """ """
+        super().__init__( parent )
+        self.KEY_ROLE       = Qt.UserRole
+        self.VALUE_ROLE     = Qt.UserRole + 1
 
-        self._rows = [
-            ( None, "<none>"),
-        ]
-        self.sender    = ModelSender()
-        self.sql       = sql
+        self._rows          = [
+                                ( None, "<none>"),
+                              ]
+        self.keys_in_use    = []
+        self.sender         = ModelSender()
+        self.sql            = sql
 
     # -----------------------
-    def rowCount(self, parent=QModelIndex()):
+    def rowCount(self, parent = QModelIndex() ):
+        """ """
         if parent.isValid():
             return 0
+
         return len(self._rows)
 
     # -----------------------
-    def columnCount(self, parent=QModelIndex()):
+    def columnCount(self, parent = QModelIndex()):
         if parent.isValid():
             return 0
         return 2
 
     # -----------------------
-    def data(self, index, role=Qt.DisplayRole):
+    def removeRows(self, row, count, parent=QModelIndex()):
+        """
+        Remove count rows starting at row.
+        """
+        if row < 0 or row + count > len(self._rows):
+            return False
+
+        self.beginRemoveRows(parent, row, row + count - 1)
+        del self._rows[row : row + count]
+        self.endRemoveRows()
+
+        return True
+
+    # -----------------------
+    def data( self, index, role = Qt.DisplayRole ):
+        """
+        index   -- not a number but a
+
+        fetch data, which type depends on role  """
         if not index.isValid():
             return None
 
-        row = index.row()
-        col = index.column()
+        row         = index.row()
+        col         = index.column()
         if row < 0 or row >= len(self._rows):
             return None
 
-        key, value = self._rows[row]
+        key, value  = self._rows[ row ]
 
         # For combo rendering, always provide the string value.
-        if role in (Qt.DisplayRole, Qt.EditRole):
+        if role in ( Qt.DisplayRole, Qt.EditRole ):
             return value
 
         # Always provide the integer key as user data.
@@ -156,7 +212,7 @@ class KeyValueListModel(QAbstractListModel):
         return None
 
     # -----------------------
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
+    def headerData( self, section, orientation, role=Qt.DisplayRole ):
         """
         what it says, read
         but more info might be good
@@ -165,20 +221,25 @@ class KeyValueListModel(QAbstractListModel):
             return None
 
         if orientation == Qt.Horizontal:
+
             if section == 0:
                 return "key"
+
             if section == 1:
                 return "value"
+
         return None
 
     # -----------------------
     def row_for_key( self, target_key):
         """
         given a key find the row
-        if not found then try to select to get it
-            -1 if not found
+            if not found then try to select to get it
+        return the row
+                   -1 if not found
         """
         for row, (key, _value) in enumerate(self._rows):
+
             if key == target_key:
                 return row
 
@@ -186,6 +247,7 @@ class KeyValueListModel(QAbstractListModel):
 
         # now it should work
         for row, (key, _value) in enumerate(self._rows):
+
             if key == target_key:
                 return row
 
@@ -204,7 +266,7 @@ class KeyValueListModel(QAbstractListModel):
 
         select_ok       = False
         logger          = logging.getLogger( )
-        query = QSqlQuery( AppGlobal.qsql_db_access.db )
+        query           = QSqlQuery( AppGlobal.qsql_db_access.db )
 
         query.prepare( self.sql )
         query.bindValue(":arg_id", target_key )
@@ -222,7 +284,7 @@ class KeyValueListModel(QAbstractListModel):
         if select_ok:  # could be inside
             self.append_row( target_key, topic, )
 
-        self.sender.emit_key_save()
+        self.sender.emit_key_restore()
 
         return  select_ok
 
@@ -232,18 +294,75 @@ class KeyValueListModel(QAbstractListModel):
         what it says, read
         """
         insert_row = len(self._rows)
-        self.beginInsertRows(QModelIndex(), insert_row, insert_row)
-        self._rows.append((key, value))
+        self.beginInsertRows( QModelIndex(), insert_row, insert_row)
+        self._rows.append( (key, value) )
         self.endInsertRows()
 
     # -----------------------
-    def prepend_row(self, key, value):
+    def prepend_row( self, key, value):
         """
         what it says, read
         """
         self.beginInsertRows(QModelIndex(), 0, 0)
         self._rows.insert(0, (key, value))
         self.endInsertRows()
+
+    # -----------------------
+    def clear( self, ):
+        """
+        clear all values not in use.
+            what it says, read
+            always keep None even if not in use
+            this is ok just printing the keys
+            in the table
+        """
+        pass
+        self.keys_in_use = [ None, "<none>" ]
+        self.sender.emit_get_keys_in_use( )
+        pass
+        msg    = ( f"{self.keys_in_use = }" )
+        print( msg )
+        pass
+
+        # need to process in reverse order because of deletes
+        # see code in history delete
+        # for  i_row in rows:
+        #     if i_row.key in  self.sender.keys_in_use:
+        #         pass
+        #     else:
+        #         delete the row
+
+        # Iterate through rows from bottom to top to avoid index shifting
+        table  = self
+
+        for row in reversed( range( table.rowCount() ) ):
+            index    = self.index( row, 0 )
+            key      = table.data( index, role = table.KEY_ROLE )
+            print( f"key in table {str( key )}" )
+            pass
+            if key not in self.keys_in_use:
+                msg    = ( f"    removeRow {key = }" )
+                print( msg )
+                table.removeRow( row )
+
+        self.print_model_data()
+
+            # if item and item.text() != str(current_id):
+            #     # print(f"Deleting row {row} with   {item = }")
+            #     table.removeRow(row)
+
+    # -----------------------
+    def print_model_data( self, ):
+        """
+        what it says
+        """
+        table  = self
+        print( "key in print_model_data:" )
+        for row in ( range( table.rowCount() ) ):
+            index    = self.index( row, 0 )
+            key      = table.data( index, role = table.KEY_ROLE )
+            print( f"    key in table {str( key )}" )
+
 
 #-------------------------------
 class CQModelComboBox( QComboBox, cw.CQEditBase ):
@@ -268,11 +387,6 @@ class CQModelComboBox( QComboBox, cw.CQEditBase ):
         # debug_msg    = ( "say give each its own copy of index_to_key ... but could centralized ")
         # logging.log( LOG_LEVEL,  debug_msg, )
 
-
-
-       #  self.key_wilst_mutating = None
-       #  self.key_missing        = None    # set to a key while wating for it to be added
-        #self.history_sync       = None
         self.kvl_model          = None      # model wehre i get my data set in connect
 
         # # others do this it might work for us with None
@@ -290,12 +404,12 @@ class CQModelComboBox( QComboBox, cw.CQEditBase ):
         else:
             self.set_prior      = a_partial
 
-        self.db_value       = None
+        self.db_value           = None
             # value from the db, used in debugging
 
         # these should be the only functions we need -- !! check holdovers
-        self.rec_to_edit    = self.rec_to_dict_edit
-        self.edit_to_rec    = self.dict_edit_to_rec
+        self.rec_to_edit        = self.rec_to_dict_edit
+        self.edit_to_rec        = self.dict_edit_to_rec
 
     #----------------------------
     def rec_to_dict_edit( self, record, format = None ):
@@ -369,44 +483,39 @@ class CQModelComboBox( QComboBox, cw.CQEditBase ):
         data    = self.currentData( Qt.UserRole )
         return data
 
-    #---------------------------
-    def update_dictionaryxxxx(self, just_warning = True ):
-        """
-        2 events, a warning to save the id and
-        then telling the dict has change --
-        but the index may not be valid -- as for
-        a new record in the fetch process  -- how do we detect that
-        """
-        if just_warning:
-            self.db_value       = self.get_value_by_index()   # probably same as  get_raw_data()
-            self.index_valid    = False
-        else:
-            self.load_combo_box()
-            self.index_valid    = True
-            self.set_selection_by_key( self.db_value )
-
     #----------------------------
     @Slot( )
     def key_save( self, ):
         """
-        the dictionary is about to be mutated but we assume
+        the model is about to be mutated but we assume
         for now the key will not be deleted if it is we should
         I guess make sure there is a null in it and use that
         a mutate could include an entire swap of the dict, managed
         the same way
         """
+        pass
         self.saved_key    = self.currentData( self.kvl_model.KEY_ROLE )
 
     #----------------------------
-    @Slot( )
+    @Slot( ) # decorator requires the list of types
     def key_restore( self, ):
         """
-        the dictionary has been mutated so find the key ... index and
+        the model has been mutated so find the key ... index and
         put it back
         """
+        pass
         if self.saved_key is not None:
-            row = self.key_value_model.row_for_key( current_key_2 )
+            row   = self.kvl_model.row_for_key( self.saved_key )
             self.setCurrentIndex( row )
+
+    #----------------------------
+    @Slot( )   # decorator requires the list of types
+    def get_keys_in_use( self, ):
+        """
+        the model may be changed, but wants to know the key in use
+        """
+        self.kvl_model.keys_in_use.append( self.currentData( self.kvl_model.KEY_ROLE ) )
+        pass
 
     # --------------------------
     def get_value_by_indexxxx( self ):
@@ -424,56 +533,6 @@ class CQModelComboBox( QComboBox, cw.CQEditBase ):
         return value
 
     # --------------------------
-    def get_index_by_keyxxx( self, key ):
-        """ """
-        ix     = self.key_to_ix.get( key, -1 )
-        return ix
-
-    # --------------------------
-    def get_key_by_indexxxx( self, index = None ):
-        """
-        that is by the current index
-        """
-        if index is None:
-            index     = self.currentIndex()
-
-        key       = self.ix_to_key.get( index, None )
-        #value = self.dict_data.get(key)
-        debug_msg   = (f"get_key_by_index Selected key: {key}")
-        logging.log( LOG_LEVEL,  debug_msg, )
-        return key
-
-    # # --------------------------
-    # def get_index_by_key(self):
-    #     """
-    #     that is by the current index
-    #     """
-
-
-    #     #value = self.dict_data.get(key)
-    #     debug_msg   = (f"get_key_by_index Selected key: {key}")
-    #     logging.log( LOG_LEVEL,  debug_msg, )
-    #     return key
-
-    # --------------------------
-    def set_selection_by_keyxxx( self, key ):
-        """
-        if we do not have the key and we have a history sync
-        we will ask it to add it
-        """
-        ix     = self.get_index_by_key( key )
-
-        # !! refactor
-        if ix == -1:
-
-            if self.history_sync:
-                self.key_missing = key
-                self.history_sync.add_item( key, history_sync.MISSING_VALUE )
-
-        self.setCurrentIndex( ix )
-                # self.label.setText(f"Selection Set to: {self.dict_data[key]}")
-
-    # --------------------------
     def setPlaceholderText( self, ignoered ):
         """
         add missing method ??
@@ -482,17 +541,26 @@ class CQModelComboBox( QComboBox, cw.CQEditBase ):
 
     # --------------------------
     def connect_to_kvl_model( self, kvl_model ):
-        """ """
+        """
+        """
         self.kvl_model   = kvl_model  # may be rudundant
 
         self.setModel( kvl_model )
-        kvl_model.sender.key_save.connect(     self.key_save    )
-        kvl_model.sender.key_restore.connect(  self.key_restore )
+        kvl_model.sender.key_save.connect(        self.key_save    )
+        kvl_model.sender.key_restore.connect(     self.key_restore )
+        kvl_model.sender.get_keys_in_use.connect( self.get_keys_in_use )
 
         #self.my_sender.post_mutate.connect( cq_dict_combo_box.post_mutate )
 
+    # --------------------------
+    def clear_kvl_model( self,  ):
+        """
+        clear all but the ky se in use
+        """
+        self.kvl_model.clear()
 
-# # ---- in use
+
+# # ---- in use --
 # # ---- plant_id  by hand id_in_old ---------------
 #import custom_widgets_2 as cw_2
 # edit_field                 = CQModelComboBox(

@@ -39,10 +39,8 @@ from   unidecode import unidecode
 
 
 
-from qtpy.QtCore import Qt
-from qtpy.QtCore import QDate, QDateTime, QTime, QPoint
-
 from qtpy.QtGui  import ( QTextCursor,
+                         QCursor,
                          QTextDocument,
                          QAction, )
 
@@ -50,16 +48,15 @@ from qtpy.QtGui  import ( QTextCursor,
 from qtpy.QtCore import ( QAbstractTableModel,
                           QDate,
                           QDateTime,
+                          QTime,
+                          QPoint,
                           Qt,
                           Slot,
                           Signal, )
 
-from qtpy.QtGui import (QCursor,
-                         QTextCursor)
 
-from qtpy.QtSql import (QSqlRecord)
+from qtpy.QtSql import ( QSqlRecord )
 
-# from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
                              QApplication,
@@ -69,8 +66,6 @@ from qtpy.QtWidgets import (
                              QMenu,
                              QPushButton,
                              QTextEdit)
-
-
 
 # ---- imports local -- then constants
 import string_utils
@@ -100,17 +95,17 @@ REPLACE_LIST        = [    ( "*>url ",   ">>url " ),   # note deliberate spacema
 
 # make sure equivalent
 QT_DATE_FORMAT         = "yyyy-MM-dd"  # "yyyy-MM-dd"
-PY_DATE_FORMAT         = "%Y-%m-%d"   # strftime("%Y-%m-%d")
+PY_DATE_FORMAT         = "%Y-%m-%d"   # strftime ( "%Y-%m-%d  " )
 
 # DATE_FORMAT         = "yyyy-MM-dd"
 # "%Y-%m-%d" )
     # my standard date format
 
-class ValidationIssue(  Exception ):
+class ValidationIssue( Exception ):
     """
     see __init__
     """
-    def __init__(self, why, widget   ):
+    def __init__( self, why, widget ):
         """
         use:
             raise custom.widgets.ValidationIssue( why, this_control )
@@ -123,7 +118,7 @@ class ValidationIssue(  Exception ):
             msg  = f"File Load failed, {an_except.why}"
             AppGlobal.gui.display_info_string( msg )
         """
-        super( ).__init__(  why  )  # message
+        super( ).__init__( why )  # message
         self.control   = widget
 
 #-------------------------------
@@ -148,7 +143,7 @@ def move_cursor_to_button( button ):
     QCursor.setPos(global_point)
 
 # -----------------------
-def validate_no_z( a_string   ):
+def validate_no_z( a_string ):
     """
     a debug thing
     what type need models be? -- think should throw except
@@ -160,7 +155,7 @@ def validate_no_z( a_string   ):
     return msg
 
 # -----------------------
-def get_rec_data( record, field_name  ):
+def get_rec_data( record, field_name ):
     """
     get data from the record unless record is the data
     rec = record
@@ -172,13 +167,13 @@ def get_rec_data( record, field_name  ):
 
         if record.indexOf( field_name ) == -1:
             msg         = ( f"get_rec_data Field {field_name = } "
-                            f"does not exist in the record.")
+                            f"does not exist in the record. " )
             logging.error( msg )
             raise ValueError( msg )
-            #rint( f"set_data_from_record {debug_fn}")
+            #rint( f"set_data_from_record {debug_fn}  " )
             #data       = record.value( field_name  )
             # msg        =  ( f"set_data_from_record {field_name} {data = }"
-            #                 f" {self.db_type = }")
+            #                 f" {self.db_type = }  " )
             # logging.debug( msg )
         # still need None !!
     else:
@@ -200,26 +195,26 @@ def set_rec_data( record, field_name, data   ):
     """
     if  not isinstance( record, QSqlRecord ):
         msg         = ( f"set_rec_data Field {field_name} "
-                        f"record is not a QSqlRecord Assume testing else ERROR")
+                        f"record is not a QSqlRecord Assume testing else ERROR " )
         logging.error( msg )
         return
 
     if record.indexOf( field_name ) == -1:
         msg         = ( f"set_rec_data Field {field_name} "
-                        f"does not exist in the record. Assume testing else ERROR ")
+                        f"does not exist in the record. Assume testing else ERROR  " )
         logging.error( msg )
         return
         #raise ValueError( msg )
-        #rint( f"set_data_from_record {debug_fn}")
+        #rint( f"set_data_from_record {debug_fn}  " )
         #data       = record.value( field_name  )
         # msg        =  ( f"set_data_from_record {field_name} {data = }"
-        #                 f" {self.db_type = }")
+        #                 f" {self.db_type = }  " )
         # logging.debug( msg )
     # still need None !!
     record.setValue( field_name, data )
 
 # -----------------------
-def get_sudo(  ):
+def get_sudo():
     """
     for the easter egg
     """
@@ -229,19 +224,19 @@ def get_sudo(  ):
     return a_value
 
 # -----------------------
-def model_dump(  model, msg = "model dump msg" ):
+def model_dump( model, msg = "model dump msg" ):
     """
     a debug thing
     what type need models be?
     """
-    msg     = ( "model_dump begin may want to add back for information about  not ia any more ")
+    msg     = ( "model_dump begin may want to add back for information about  not ia any more  " )
     logging.debug( msg )
     # ia_qt.q_abstract_table_model( model )
     # ia_qt.q_sql_table_model( model )
 
     row_count    = model.rowCount()
     column_count = model.columnCount()
-    a_str   = ( f"model_dump begin {row_count = } ")
+    a_str   = ( f"model_dump begin {row_count = }  " )
 
     for row in range( row_count ):
         row_data = []
@@ -252,17 +247,19 @@ def model_dump(  model, msg = "model dump msg" ):
             # Get the data for the current index
             data    = model.data(index)
             row_data.append(data)
+
             if   column == 2:
                 table_name = data
+
             elif column == 1:
                 table_id = data
 
-    a_str   = ( f"{a_str}\nRow {row}: {row_data}")
-    a_str   = ( f"{a_str}\nmodel_dump end")
+    a_str   = ( f"{a_str}\nRow {row}: {row_data} " )
+    a_str   = ( f"{a_str}\nmodel_dump end " )
     logging.debug( a_str )
 
 # --------------------------------------
-class ModelIndexer(   ):
+class ModelIndexer():
     """
     so we can do a find inside same sort of model ... later
     make an extension to the model..
@@ -320,18 +317,19 @@ class ModelIndexer(   ):
             row_data = []
             key      = []
             # build key using index_tuple, index itself is a tuple
+
             for i_column in self.index_tuple:
                 index   = model.index( i_row, i_column )
 
                 data    = model.data( index )
                 key.append( data )
 
-            key                         = tuple( key )
-            self.index_dict[ key ]      = i_row         # row with ( table, table_id )
-            #rint(f"Row {i_row = }: {key = }")
+            key                     = tuple( key )
+            self.index_dict[ key ]  = i_row   # row with ( table, table_id )
+            #rint(f"Row {i_row = }: {key = }  " )
         self.set_is_valid( True )
-        #rint( f"{self.index_dict = }")
-        #rint( f"{str( self )  = }")
+        #rint( f"{self.index_dict = }  " )
+        #rint( f"{str( self )  = }  " )
 
     # -----------------------------------
     def find( self, key ):
@@ -351,6 +349,7 @@ class ModelIndexer(   ):
 class TableModel( QAbstractTableModel ):
     """
     for a table display
+        but why in this module, may be a duplicate or misplaced or deae
     """
     def __init__(self,  headers):
         super().__init__()
@@ -376,22 +375,26 @@ class TableModel( QAbstractTableModel ):
         what it says read
         why index = None, drop it
         """
-        return len(self._data)
+        return len( self._data )
 
-    def columnCount(self, index=None):
-        return len(self._headers)
+    #-------
+    def columnCount( self, index=None ):
+        return len( self._headers )
 
+    #-------
     def data(self, index, role = Qt.DisplayRole ):
         """ !! FIX RETURN """
         if role == Qt.DisplayRole:
             return self._data[index.row()][index.column()]
 
-    def set_data(self, data ):
+    #-------
+    def set_data( self, data ):
         self._data      = data
 
     # def add_data(self, data ):
     #     pass
 
+    #-------
     def set_data_at_index(self, index, value, role = Qt.EditRole):
         """
         index might be index = model.index(ix_row,  ix_col )  # Row 1, Column 1
@@ -410,12 +413,16 @@ class TableModel( QAbstractTableModel ):
             self.dataChanged.emit(index, index, [ Qt.DisplayRole ] )
                 # Emit dataChanged signal for this index
             return True
+
         return False
 
-    def headerData(self, section, orientation, role = Qt.DisplayRole):
+    #-------
+    def headerData( self, section, orientation, role = Qt.DisplayRole ):
         if role == Qt.DisplayRole:
+
             if orientation == Qt.Horizontal:
                 return self._headers[section]
+
             elif orientation == Qt.Vertical:
                 return str(section + 1)
 
@@ -449,7 +456,7 @@ class TableModel( QAbstractTableModel ):
         self.endResetModel()
 
 # ---------------------------
-class ShellExe( object ):
+class ShellExe( ):
     """
     for executing shell commands that begin as a list
     this may need refactoring
@@ -467,7 +474,6 @@ class ShellExe( object ):
         """
         we may be rsripping multimple times like in caller
         """
-
         code_lines_new     = [i_code_line.strip()
                                for i_code_line in code_lines
                                    if i_code_line.strip() != "" ]
@@ -487,22 +493,23 @@ class ShellExe( object ):
                 code_lines_newer.append( i_code_line )
 
             # remove trailing \
-
             last_line   = len(code_lines_newer) - 1
+
             if code_lines_newer[ last_line ].endswith( "\\" ):
                 got_bs             = True
                 code_lines_newer[ last_line ] = code_lines_newer[ last_line ].removesuffix( "\\" )
+
             else:
                 got_bs             = False
 
         code_lines_new   = code_lines_newer
-        #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}")
+        #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}  " )
         # line one == 0 is a comment add echo in front and quote
         code_lines_new[ 0 ]    = f"echo '{code_lines_new[ 0 ]}'   "
 
-        #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}")
+        #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}  " )
         code_lines_new      = self.add_echo( code_lines_new )
-        debug_msg    = ( f""""run_code_lines in shellext    >>shell {code_lines_new =}""")
+        debug_msg    = ( f""""run_code_lines in shellext    >>shell {code_lines_new =}""" )
         logging.log( LOG_LEVEL,  debug_msg, )
 
         cmd_str     = ";".join( code_lines_new )
@@ -512,21 +519,21 @@ class ShellExe( object ):
         logging.log( LOG_LEVEL,  debug_msg, )
 
         result = os.system( cmd_str  )
-        #rint( f"result = os.system >>{result}<<\n\n")
+        #rint( f"result = os.system >>{result}<<\n\n  " )
 
     # ----------------------------------
     def add_echo(self, code_lines ):
         """
         add echo commands except to echo commands
         and for now remove comments from the command part
-
+            might be replaced by flag to bash
         """
         new_list      = []
         for i_item in code_lines:
             if i_item.startswith( "echo" ):
                 new_list.append( i_item )
             else:
-                new_list.append( f"echo '{i_item}'")
+                new_list.append( f"echo '{i_item}' " )
                 # now look for command part comment
                 splits     = i_item.split( "#" )
                 i_item     = splits[0]     # combine lines for clean
@@ -569,6 +576,7 @@ class ShellExe( object ):
 
         return cmd_str
 
+#-----------------------------------
 class IdleExe( ):
     """
     for executing shell commands that begin as a list
@@ -589,7 +597,7 @@ class IdleExe( ):
 
         with open( file_name, 'w' ) as a_file:
                 # wa will append so file should be deleted time to time w will overwrite
-            a_file.writelines(f"{line}\n" if not line.endswith("\n") else line for line in code_lines )
+            a_file.writelines(f"{line}\n" if not line.endswith ( "\n " ) else line for line in code_lines )
 
     #--------
     def write_file_sh( self, sh_lines, file_name = None ):
@@ -597,7 +605,7 @@ class IdleExe( ):
         file_name    = self.file_name_temp_sh
 
         with open( file_name, 'w' ) as a_file:    # wa will append so file should be deleted time to time w will overwrite
-            a_file.writelines(f"{line}\n" if not line.endswith("\n") else line for line in sh_lines )
+            a_file.writelines(f"{line}\n" if not line.endswith ( "\n " ) else line for line in sh_lines )
 
     #--------
     def get_venv_lines( self, venv ):
@@ -635,10 +643,10 @@ class IdleExe( ):
         # !! what to do if none
 
         sh_lines            = venv_lines
-        sh_lines.append( f"idle {self.file_name_temp_py}")
+        sh_lines.append( f"idle {self.file_name_temp_py} " )
         self.write_file_sh( sh_lines )
 
-        #subprocess.run(  ["bash", self.file_name_temp_sh ] )
+        #subprocess.run( ["bash", self.file_name_temp_sh ] )
         #    # blocking
         subprocess.Popen(["bash", self.file_name_temp_sh] )
             # non blocking --- see help
@@ -661,12 +669,11 @@ class IdleExe( ):
         # should be non blocking
         subprocess.Popen([ "bash", self.file_name_temp_sh])
 
-
         # next is wrong because we need the environment set up
         #subprocess.run([ "idle", file_name ])
 
 # -------------------------------
-class TextEditExtMixin(  ):
+class TextEditExtMixin():
     """
     new extension to text edits with stuffdb support optional
 
@@ -703,7 +710,7 @@ class TextEditExtMixin(  ):
         self.ext_logger             = stuffdb.app_global.logger
         #self.stuff_text_ext         = self.stuffdb.get_stuff_text_edit_ext( self )
 
-     #-----------------------------------------
+    #-----------------------------------------
     def log( self, *, level = LOG_LEVEL, msg ):
         """
         self.log( msg = msg )
@@ -713,8 +720,9 @@ class TextEditExtMixin(  ):
             #self.ext_logger( msg )
             self.ext_logger.log( level, msg  )
         else:
-            print( f"self.log {msg}")
+            print( f"self.log {msg} " )
 
+    #-----------------------------------------
     # beware may be used multiple places
     def keyPressEvent(self, event):
         """
@@ -739,21 +747,21 @@ class TextEditExtMixin(  ):
 
     #------------------------------
     def fooxxx(self):
-        print("Ctrl+F pressed!")
-        self.append("foo() executed!")
+        print ( "Ctrl+F pressed! " )
+        self.append ( "foo() executed! " )
 
     #------------------------------
     def make_search_widgets( self, ):
         """
-        search_text_widget,  up_button,  dn_button  =  text_edit.make_search_wigets(  )
+        search_text_widget,  up_button,  dn_button  =  text_edit.make_search_wigets()
         ⇑ Up Double Arrow (U+21D1)
         ⇓ Down Double Arrow (U+21D3)
         """
-        widget      = QPushButton( "⇑ Up ⇑")
+        widget      = QPushButton( "⇑ Up ⇑  " )
         self.up_button  = widget
-        widget.clicked.connect(  self.search_up  )
+        widget.clicked.connect( self.search_up )
 
-        widget      = QPushButton( "⇓ Down ⇓")
+        widget      = QPushButton( "⇓ Down ⇓  " )
         self.dn_button  = widget
         widget.clicked.connect( self.search_down )
 
@@ -768,7 +776,7 @@ class TextEditExtMixin(  ):
 
         """
         selected_text    = self.capture_selected_text()
-        #self.append( f"ctrl_f_search_down {selected_text = }")
+        #self.append( f"ctrl_f_search_down {selected_text = }  " )
         self.search_text_widget.setText( selected_text )
         # do not do the firs search
 
@@ -863,56 +871,56 @@ class TextEditExtMixin(  ):
         can_paste       = QApplication.clipboard().text() != ""
 
         # Add standard actions
-        undo_action = menu.addAction("Undo")
+        undo_action = menu.addAction ( "Undo  " )
         undo_action.triggered.connect(widget.undo)
         undo_action.setEnabled(can_undo)
 
         menu.addSeparator()
 
-        cut_action = menu.addAction("Cut")
+        cut_action = menu.addAction ( "Cut  " )
         cut_action.triggered.connect(widget.cut)
         cut_action.setEnabled(has_selection)
 
-        copy_action = menu.addAction("Copy")
+        copy_action = menu.addAction ( "Copy  " )
         copy_action.triggered.connect( widget.copy )
         copy_action.setEnabled(has_selection)
 
-        paste_action = menu.addAction("Paste")
+        paste_action = menu.addAction ( "Paste  " )
         paste_action.triggered.connect( widget.paste )
         paste_action.setEnabled(can_paste)
         #menu.addSeparator()
 
         # ---- date
-        paste_action = menu.addAction("Paste Date")
+        paste_action = menu.addAction ( "Paste Date  " )
         paste_action.triggered.connect( widget.paste_date )
         paste_action.setEnabled(can_paste)
 
         # ---- "Smart Paste"
-        foo_action = menu.addAction("Smart Paste")
+        foo_action = menu.addAction ( "Smart Paste  " )
         foo_action.triggered.connect(self.smart_paste_clipboard )
         foo_action.setEnabled(can_paste)
 
         menu.addSeparator()
 
         # ---- "Smarten"
-        foo_action = menu.addAction("Smarten")
+        foo_action = menu.addAction ( "Smarten  " )
         foo_action.triggered.connect( self.smarten  )
         foo_action.setEnabled(has_selection)
 
         # ---- "Search Selected"
-        foo_action = menu.addAction("Search Selected")
+        foo_action = menu.addAction ( "Search Selected  " )
         foo_action.triggered.connect( self.search_selected  )
         foo_action.setEnabled(has_selection)
 
         menu.addSeparator()
 
         # ---- submenu
-        submenu                 = menu.addMenu("Max Lines ...")
+        submenu                 = menu.addMenu ( "Max Lines ...  " )
 
         # Add actions to the submenu -- but for now these might not connet to anything
-        # pdf_action              = submenu.addAction("Export to PDF")
-        # csv_action              = submenu.addAction("Export to CSV")
-        # json_action             = submenu.addAction("Export to JSON")
+        # pdf_action              = submenu.addAction ( "Export to PDF  " )
+        # csv_action              = submenu.addAction ( "Export to CSV  " )
+        # json_action             = submenu.addAction ( "Export to JSON  " )
 
         # ---- "Max 0 Blank Lines"
         foo_action              = submenu.addAction( "Max 0 Blank Lines" )
@@ -929,14 +937,14 @@ class TextEditExtMixin(  ):
         foo_action.setEnabled(has_selection)
 
         # ---- "max_2_blank_lines"
-        foo_action              = submenu.addAction("Max 2 Blank Lines")
+        foo_action              = submenu.addAction ( "Max 2 Blank Lines  " )
         processing_function     = partial( string_list_utils.list_to_list_max_n_blank,  max_blank = 2 )
         foo                     = partial( self.process_selected,  processing_function = processing_function )
         foo_action.triggered.connect( foo )
         foo_action.setEnabled( has_selection )
 
         # ---- "Strip Trail in Sel"
-        foo_action = menu.addAction("Strip Trail in Sel")
+        foo_action = menu.addAction ( "Strip Trail in Sel  " )
         foo        = partial( self.strip_selected,  keep_leading = True )
         foo_action.triggered.connect( foo )
         foo_action.setEnabled(has_selection)
@@ -948,9 +956,11 @@ class TextEditExtMixin(  ):
         foo_action.setEnabled(has_selection)
 
         # ---- "0_sreen_dirt"
-        foo_action = menu.addAction("0_sreen_dirt")
-        processing_function     = partial( clip_string_utils.list_to_list_remove_dirt, screen_dirt = AppGlobal.parameters.screen_dirt )
-        foo                     = partial( self.process_selected,  processing_function = processing_function )
+        foo_action = menu.addAction ( "0_sreen_dirt  " )
+        processing_function     = partial( clip_string_utils.list_to_list_remove_dirt,
+                                           screen_dirt = AppGlobal.parameters.screen_dirt )
+        foo                     = partial( self.process_selected,
+                                           processing_function = processing_function )
         foo_action.triggered.connect( foo )
         foo_action.setEnabled( has_selection )
 
@@ -958,33 +968,37 @@ class TextEditExtMixin(  ):
 
         # ---- "Sort/Del Dups for Line Pairs"
         foo_action              = menu.addAction( "Sort/Del Dups for Line Pairs" )
-        processing_function     = partial( string_list_utils.alt_line_sort,  which_line = 0, del_dups = True   )
-        foo                     = partial( self.process_selected,  processing_function = processing_function )
+
+        processing_function     = partial( string_list_utils.alt_line_sort,
+                                           which_line = 0, del_dups = True )
+
+        foo                     = partial( self.process_selected,
+                                           processing_function = processing_function )
         foo_action.triggered.connect( foo )
         foo_action.setEnabled( has_selection )
 
         # ---- ""Update Markup""
-        foo_action = menu.addAction("Update Markup")
+        foo_action = menu.addAction( "Update Markup" )
         foo_action.triggered.connect( self.update_markup )
         foo_action.setEnabled(has_selection)
         menu.addSeparator()
 
         # ---- "Open Urls"
-        foo_action = menu.addAction("Open Urls")
+        foo_action = menu.addAction ( "Open Urls  " )
         foo_action.triggered.connect( self.goto_urls_in_selection )
         foo_action.setEnabled(has_selection)
         menu.addSeparator()
 
-        select_all_action = menu.addAction("Select All")
+        select_all_action = menu.addAction ( "Select All  " )
         select_all_action.triggered.connect(widget.selectAll)
 
         # ---- "coyp all "
-        foo_action = menu.addAction("Copy All")
+        foo_action = menu.addAction ( "Copy All  " )
         foo_action.triggered.connect(self.copy_all )
         menu.addSeparator()
 
         # ---- >>   go
-        menu_action = menu.addAction(">> Go ...")
+        menu_action = menu.addAction ( ">> Go ...  " )
         menu_action.triggered.connect( self.cmd_exec )
         menu.addSeparator()
 
@@ -1001,11 +1015,11 @@ class TextEditExtMixin(  ):
         selected_text = cursor.selectedText()
 
         # if selected_text:
-        #     print(f"Captured highlighted text: '{selected_text}'")
+        #     print(f"Captured highlighted text: '{selected_text}'  " )
         #     # Call your function with the captured text
         #     #self.foo(selected_text)
         # else:
-        #     print("No text is currently highlighted/selected")
+        #     print ( "No text is currently highlighted/selected  " )
 
         return selected_text
 
@@ -1031,7 +1045,7 @@ class TextEditExtMixin(  ):
         code_lines       = self.get_snippet_lines( text_edit  )
         debug_msg        = ( f"code lines >>{code_lines}<<" )
         #self.logging( debug_msg )
-        self.log(  msg = debug_msg  )
+        self.log( msg = debug_msg )
 
         code_lines       = self.undent_lines(code_lines)
         splits           = code_lines[0].split()
@@ -1052,7 +1066,7 @@ class TextEditExtMixin(  ):
         cmd         = splits[0].lower()
         cmd_args    = splits[ 1:]
 
-        debug_msg   = ( f"cmd_exec {cmd = } \n {cmd_args = }")
+        debug_msg   = ( f"cmd_exec {cmd = } \n {cmd_args = }  " )
         # need to fic
         #self.logging.log( LOG_LEVEL,  debug_msg, )
         self.log( msg = debug_msg )
@@ -1078,7 +1092,7 @@ class TextEditExtMixin(  ):
                         autorun    = True )
 
         elif cmd == "copy":
-            #rint( "you need to implement >>idle")
+            #rint( "you need to implement >>idle  " )
             QApplication.clipboard().setText( " ".join( cmd_args )   )
 
         # ---- snippet
@@ -1090,7 +1104,7 @@ class TextEditExtMixin(  ):
 
         # ---- idle and idle file
         elif cmd == "idle":   # want a one line and may line
-            msg     = ( "  >>idle in process ................................")
+            msg     = ( "  >>idle in process ................................  " )
             self.log( msg = msg, )
             self.idle_exe.idle_on_temp_file( code_lines )
 
@@ -1113,7 +1127,7 @@ class TextEditExtMixin(  ):
 
         # ---- bash  >>bash
         elif cmd == "bash":
-            #rint( f"you need to implement >>shell {code_lines}")
+            #rint( f"you need to implement >>shell {code_lines}  " )
             print(f"need to fix bash{code_lines} how comments " )
             code_lines   = [i_line.rstrip() for i_line in code_lines ]
 
@@ -1141,7 +1155,7 @@ class TextEditExtMixin(  ):
         # ---- search  !! should not have in this object move to stuff db
         # as a plugin of some source
         elif cmd.startswith( "search" ):
-            # msg   = ( "implementing >>search")
+            # msg   = ( "implementing >>search  " )
             # logging.debug( msg )
             #breakpoint( )
 
@@ -1150,7 +1164,7 @@ class TextEditExtMixin(  ):
             #     return
 
             if  self.stuffdb  is None:
-                msg   = ( f"cannot do search as STUFF_DB  = none  ")
+                msg   = ( "cannot do search as STUFF_DB  = none    " )
                 #self.logging.error( msg )
                 self.log( msg = msg, )
                 # !! put up dialog
@@ -1160,7 +1174,7 @@ class TextEditExtMixin(  ):
                 self.stuffdb_app_global.mdi_management.do_db_search( cmd, cmd_args )
 
 
-            #     # msg   = ( f"you need to implement >>search {STUFF_DB  = }  ")
+            #     # msg   = ( f"you need to implement >>search {STUFF_DB  = }    " )
             #     # logging.debug( msg )
             #     new_args =  []  # drop after #
             #     for i_arg in cmd_args:
@@ -1185,7 +1199,7 @@ class TextEditExtMixin(  ):
             parse_3 = parse_2.strip()            # strip lead and trail spaces
             selected_text         =  parse_3     # could clean up code
             # selected_text    = self.capture_selected_text()
-            #self.append( f"ctrl_f_search_down {selected_text = }")
+            #self.append( f"ctrl_f_search_down {selected_text = }  " )
             self.search_text_widget.setText( selected_text )
             # self.dn_button.setFocus()
             move_cursor_to_button( self.dn_button )
@@ -1257,7 +1271,7 @@ class TextEditExtMixin(  ):
                 consective_blank_lines  = 0
 
             if selected_text.strip().lower().startswith( MARKER ):
-                #rint( f"hit the top of marked text {ix =}")
+                #rint( f"hit the top of marked text {ix =}  " )
                 break # leave curor at begin of marker line
 
             cursor.movePosition( cursor.Up )
@@ -1265,7 +1279,7 @@ class TextEditExtMixin(  ):
             position       = cursor.position()
 
             if position == prior_start_of_line:
-                debug_msg = ( f"is error !! hit the top of all text {ix =}")
+                debug_msg = ( f"is error !! hit the top of all text {ix =}  " )
                 # self.logging.log( LOG_LEVEL,  debug_msg, )
                 self.log( msg = debug_msg, )
                 break
@@ -1274,7 +1288,7 @@ class TextEditExtMixin(  ):
                 prior_start_of_line  = position
 
         # now at top of text
-        #rint( f"found the top of  text {ix =}")
+        #rint( f"found the top of  text {ix =}  " )
 
         # ---- start down collecting lines
         consective_blank_lines  = 0
@@ -1288,7 +1302,7 @@ class TextEditExtMixin(  ):
                 consective_blank_lines  += 1
 
             else:
-                 consective_blank_lines  = 0
+                consective_blank_lines  = 0
 
             if consective_blank_lines  > 3:
                 #msg = f"scan down blank line limit {consective_blank_lines}"
@@ -1297,7 +1311,7 @@ class TextEditExtMixin(  ):
 
             # hot on firs line down
             if not on_top_line and selected_text.strip().lower().startswith( MARKER ):
-                #rint( f"hit the next line of marked text {ix =}")
+                #rint( f"hit the next line of marked text {ix =}  " )
                 break # leave curor at begin of marker line
             else:
                 on_top_line = False
@@ -1310,7 +1324,7 @@ class TextEditExtMixin(  ):
             position       = cursor.position()
 
             if position == prior_start_of_line:
-                #rint( f"hit the end of text {ix =} ")
+                #rint( f"hit the end of text {ix =}   " )
                 break
 
             else:
@@ -1374,7 +1388,7 @@ class TextEditExtMixin(  ):
 
             # Hit top of document
             if position == prior_start:
-                self.log(msg=f"hit top of text {ix=}")
+                self.log(msg=f"hit top of text {ix=}  " )
                 break
             else:
                 prior_start = position
@@ -1463,7 +1477,7 @@ class TextEditExtMixin(  ):
         #breakpoint()
         line    = line.replace( "\t", "  " )
         for old, new in REPLACE_LIST:
-                line   = line.replace( old, new )
+            line   = line.replace( old, new )
 
         return line
 
@@ -1483,7 +1497,7 @@ class TextEditExtMixin(  ):
             return new_lines
 
         num_leading_spaces   = len( lines[0] ) - len( lines[0].lstrip(' ') )
-        #rint( f"{num_leading_spaces = }")
+        #rint( f"{num_leading_spaces = }  " )
         leading_spaces       = " " * num_leading_spaces
 
         for i_line in lines:
@@ -1550,13 +1564,13 @@ class TextEditExtMixin(  ):
 
     #-----------------------------------
     def paste_date( self, ):
-         """
-         what it says
-         inc extra spaces ??
-         """
-         dt_now     = datetime.now()
-         text       = dt_now.strftime("%Y-%m-%d") + " "
-         self.insert_text_at_cursor( text )
+        """
+        what it says
+        inc extra spaces ??
+        """
+        dt_now     = datetime.now()
+        text       = dt_now.strftime ( "%Y-%m-%d  " ) + " "
+        self.insert_text_at_cursor( text )
 
     #-----------------------------------
     def copy_all( self, ):
@@ -1687,7 +1701,7 @@ class TextEditExtMixin(  ):
             new_lines.append( ii_line )
 
         # !! integrate the next if a multiline
-        #new_lines.append( "the end")
+        #new_lines.append( "the end  " )
         new_text = "\n".join( new_lines )
 
         self.insert_text_at_cursor( new_text )
@@ -1714,7 +1728,7 @@ class TextEditExtMixin(  ):
             if j_line.startswith( ">>url" ):
                 i_line = i_line[ 5: ]
 
-            # i_line.replace( ">>url", "") # what about caps -- do better
+            # i_line.replace( ">>url", "  " ) # what about caps -- do better
             i_line    = i_line.strip( )
             if string_utils.begins_with_url( i_line ):
                 # msg    = f" webbrowser.open {i_line = }"
@@ -1794,7 +1808,7 @@ class TextEditExtMixin(  ):
             cursor.setPosition(new_end, QTextCursor.KeepAnchor)
 
         except Exception as e:
-            print(f"Error during indentation: {e}")
+            print(f"Error during indentation: {e}  " )
         finally:
             cursor.endEditBlock()
             self.setTextCursor(cursor)
@@ -1862,14 +1876,14 @@ class TextEditExtMixin(  ):
             cursor.setPosition(new_end, QTextCursor.KeepAnchor)
 
         except Exception as e:
-            print(f"Error during unindentation: {e}")
+            print(f"Error during unindentation: {e}  " )
 
         finally:
             cursor.endEditBlock()
             self.setTextCursor(cursor)
 
     #-----------------------------------
-    def _indent_at_cursor(self, cursor):
+    def _indent_at_cursor( self, cursor ):
         """Handle tab when there's no selection - insert spaces to next tab stop.
 
         """
@@ -1882,10 +1896,10 @@ class TextEditExtMixin(  ):
             spaces_to_next_tab = self.tab_width - (cursor_pos_in_block % self.tab_width)
 
             # Insert spaces
-            cursor.insertText(' ' * spaces_to_next_tab)
+            cursor.insertText( ' ' * spaces_to_next_tab )
 
         except Exception as e:
-            print(f"Error during cursor indentation: {e}")
+            print( f"Error during cursor indentation: {e}" )
 
     #-----------------------------------
     def _calculate_indent_spaces(self, start_block):
@@ -1919,13 +1933,13 @@ class TextEditExtMixin(  ):
             return self.tab_width
 
         except Exception as e:
-            msg      = (f"Error calculating indent spaces: {e}")
+            msg      = (f"Error calculating indent spaces: {e}  " )
             logging.error( msg )
             return 0
 
 # ---- Edits are also for criteria
 # ---------------------------------
-class CQEditBase(   ):
+class CQEditBase():
     """
     second parent for QT edit child controls
 
@@ -1936,9 +1950,9 @@ class CQEditBase(   ):
                 events for above
     """
     def __init__( self,
-                 parent                 = None        ,
-                 field_name             = None      ,
-                 is_keep_prior_enabled  = None   ):  # perhaps last should be false or is it defaulted later
+                 parent                 = None,
+                 field_name             = None,
+                 is_keep_prior_enabled  = None, ):  # perhaps last should be false or is it defaulted later
         """
         read it
         appears to be a mixin as it is only used to add methods to other classes
@@ -1947,12 +1961,13 @@ class CQEditBase(   ):
         but having trouble with inherit so added defaults
         may check some for none and except
         """
-        # print( "        begin init CQEditBase")
-        # super(   ).__init__(   )  no parent
+        # print( "        begin init CQEditBase  " )
+        # super().__init__()  no parent
         self.context_menu           = None  # override if one is added
+
         if not field_name:
             pass
-            #rint( "!! CQEditBase need except here ??")
+            #rint( "!! CQEditBase need except here ??  " )
             # 1/0
         # can be used as interface
         self.field_name             = field_name
@@ -2077,7 +2092,7 @@ class CQEditBase(   ):
         note we always get raw data
         generally not replaceable
         """
-        # msg   = ( f"CQEditBase {self.field_name} {self.get_raw_data()}")
+        # msg   = ( f"CQEditBase {self.field_name} {self.get_raw_data()}  " )
         # logging.debug( msg )
         # make this ascii
         data                      = unidecode( self.get_raw_data() )
@@ -2172,7 +2187,7 @@ class CQEditBase(   ):
         #     breakpoint()
         #rint( "set_data_to_default_value {a_value = }" )
         self.set_preped_data( a_value, is_changed = True )
-        # debug_msg   = ( f"do_ct_value {self.field_name}")
+        # debug_msg   = ( f"do_ct_value {self.field_name}  " )
         # logging.log( LOG_LEVEL,  debug_msg, )
 
 
@@ -2253,7 +2268,7 @@ class CQEditBase(   ):
         int_maybe   = int( data )
 
         if int_maybe > max_int:
-            raise ValueError( "int too big ")
+            raise ValueError( "int too big   " )
 
     #-----------------------------
     def validate_max_length( self, max_len ):
@@ -2285,7 +2300,7 @@ class CQEditBase(   ):
         direct call world be ok
         """
         pass
-        # print( f"{self.on_return_pressed = }")
+        # print( f"{self.on_return_pressed = }  " )
 
     #-----------------------------
     def on_value_changed( self ):
@@ -2359,11 +2374,11 @@ class CQEditBase(   ):
         return converted_data
 
     #----------------------------
-    def cnv_int_to_str( self, data  ):
+    def cnv_float_to_str( self, data  ):
         """
         convert dictionary data to a new data type
         here new = old string to string
-        perhaps the easiest conversion
+        seems same as str_to_int
         """
         if data is None:
             converted_data      = ""
@@ -2372,6 +2387,22 @@ class CQEditBase(   ):
             converted_data      = str( data )
 
         return converted_data
+
+    #----------------------------
+    def cnv_str_to_float( self, data ):
+        """
+        read
+        may need null management adj
+        could strip ??
+        """
+        if data in [ None, ""]:
+            converted_data      = None
+
+        else:
+            converted_data      = float( data )
+
+        return converted_data
+
 
     #----------------------------
     def cnv_qdate_to_int( self, qdate ):
@@ -2405,7 +2436,7 @@ class CQEditBase(   ):
 
         except ValueError as error:
             error_message   = str(error)
-            msg             = (f"Caught an error: for {self.field_name = } {error_message}")
+            msg             = (f"Caught an error: for {self.field_name = } {error_message}  " )
             logging.error( msg )
 
         return converted_data
@@ -2435,7 +2466,7 @@ class CQEditBase(   ):
         if data in [ None, "" ]:  # how do we get string here
             converted_data  = QDate( 1900, 1, 1 ) # surrogate for None
             # msg         = ( f"cnv_dict_int_to_qdate Fieintld {self.field_name} "
-            #                 f"got data of None used surrogate None ")
+            #                 f"got data of None used surrogate None   " )
 
             # raise ValueError( msg )
 
@@ -2537,7 +2568,7 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         in   -- into the widget
         out  -- out to the record
         """
-        #super(   ).__init__(   )   # seems to go to CQEditBase ???
+        #super().__init__()   # seems to go to CQEditBase ???
 
         QLineEdit.__init__( self, None  )
 
@@ -2556,8 +2587,10 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         a_partial               = partial( self.set_value, a_value = "" )
         self.set_clear          = a_partial
         self.set_default        = a_partial
+
         if self.is_keep_prior_enabled:
             self.set_prior      = self.set_pass
+
         else:
             self.set_prior      = a_partial
 
@@ -2660,13 +2693,13 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         widget      = self
 
         # Undo
-        undo_action = QAction("Undo", self)
+        undo_action = QAction ( "Undo", self)
         undo_action.triggered.connect(self.undo)
         undo_action.setEnabled(self.isUndoAvailable())
         menu.addAction(undo_action)
 
         # Redo
-        redo_action = QAction("Redo", self)
+        redo_action = QAction ( "Redo", self)
         redo_action.triggered.connect(self.redo)
         redo_action.setEnabled(self.isRedoAvailable())
         menu.addAction(redo_action)
@@ -2674,25 +2707,25 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         menu.addSeparator()
 
         # Cut
-        cut_action = QAction("Cut", self)
+        cut_action = QAction ( "Cut", self)
         cut_action.triggered.connect(self.cut)
         cut_action.setEnabled(self.hasSelectedText() and not self.echoMode() == QLineEdit.Password)
         menu.addAction(cut_action)
 
         # Copy
-        copy_action = QAction("Copy", self)
+        copy_action = QAction ( "Copy", self)
         copy_action.triggered.connect(self.copy)
         copy_action.setEnabled(self.hasSelectedText() and not self.echoMode() == QLineEdit.Password)
         menu.addAction(copy_action)
 
         # Paste
-        paste_action = QAction("Paste", self)
+        paste_action = QAction ( "Paste", self)
         paste_action.triggered.connect(self.paste)
         paste_action.setEnabled(not self.isReadOnly() and bool(QApplication.clipboard().text()))
         menu.addAction(paste_action)
 
         # Delete
-        delete_action = QAction("Delete", self)
+        delete_action = QAction ( "Delete", self)
         delete_action.triggered.connect(lambda: self.del_())
         delete_action.setEnabled(self.hasSelectedText())
         menu.addAction(delete_action)
@@ -2700,7 +2733,7 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         menu.addSeparator()
 
         # Select All
-        select_all_action = QAction("Select All", self)
+        select_all_action = QAction ( "Select All", self)
         select_all_action.triggered.connect(self.selectAll)
         select_all_action.setEnabled(bool(self.text()))
         menu.addAction(select_all_action)
@@ -2719,7 +2752,7 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         what it says
         """
         dt_now     = datetime.now()
-        text       = dt_now.strftime("%Y-%m-%d") + " "
+        text       = dt_now.strftime ( "%Y-%m-%d  " ) + " "
         self.insert( text  )
 
 
@@ -2744,7 +2777,7 @@ class CQLineEdit( QLineEdit, CQEditBase ):
     #     #self.is_changed  = True
     #     self.on_data_changed( )
     #     self.prior_value   = new_data
-    #     #rint(f"line edit on_data_changed: {new_data} saved to prior_value ")  !!
+    #     #rint(f"line edit on_data_changed: {new_data} saved to prior_value   " )  !!
 
     # -------------------------
     def _build_context_menu_is_used_correct ( self ):
@@ -2754,19 +2787,19 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         self.context_menu   = context_menu
 
         # Add actions for common operations
-        undo_action     = context_menu.addAction("Undo")
+        undo_action     = context_menu.addAction ( "Undo  " )
         undo_action.triggered.connect(self.undo)
 
-        redo_action     = context_menu.addAction("Redoxx")
+        redo_action     = context_menu.addAction ( "Redoxx  " )
         context_menu.addSeparator()
-        cut_action = context_menu.addAction("Cutxx")
-        copy_action = context_menu.addAction("Copy")
-        paste_action = context_menu.addAction("Paste")
+        cut_action = context_menu.addAction ( "Cutxx  " )
+        copy_action = context_menu.addAction ( "Copy  " )
+        paste_action = context_menu.addAction ( "Paste  " )
         context_menu.addSeparator()
-        select_all_action = context_menu.addAction("Select All")
+        select_all_action = context_menu.addAction ( "Select All  " )
         select_all_action.triggered.connect(self.selectAll)
 
-        # select_all_action = context_menu.addAction("PrintStr")
+        # select_all_action = context_menu.addAction ( "PrintStr  " )
         # select_all_action.triggered.connect(self.print_str )
 
         # Connect actions to QLineEdit methods
@@ -2821,19 +2854,17 @@ class CQComboBox( QComboBox, CQEditBase ):
 
     try         self.setEditable(True)
     """
-    def __init__(self,
+    def __init__( self,
                  parent                 = None,
                  field_name             = None,
-                 is_keep_prior_enabled  = False):
+                 is_keep_prior_enabled  = False ):
 
         """
         read it
         in   -- into the widget
         out  -- out to the record
         """
-        #super(   ).__init__(   )   # seems to go to CQEditBase ???
-
-        QLineEdit.__init__( self, None  )     # need arg ?
+        QLineEdit.__init__( self, None )     # need arg ?
 
         CQEditBase.__init__( self,
                         parent             = None,
@@ -2841,8 +2872,7 @@ class CQComboBox( QComboBox, CQEditBase ):
                                )
 
         # self.setEditable(True)  # !! may need to be at top debug make ...
-        self.default_typexxx          = "string"          # deprecate
-        #self.default_value         = "default-value"     # deprecate
+
         self.prior_value           = ""  # something of a valid type
         #self.textEdited.connect(self.on_text_changed )  #  text is sent new_text
         #self.textChanged.connect(self.on_text_changed)
@@ -2942,19 +2972,19 @@ class CQComboBox( QComboBox, CQEditBase ):
         self.context_menu   = context_menu
 
         # Add actions for common operations
-        undo_action     = context_menu.addAction("Undo")
+        undo_action     = context_menu.addAction ( "Undo  " )
         undo_action.triggered.connect(self.undo)
 
-        redo_action     = context_menu.addAction("Redoxx")
+        redo_action     = context_menu.addAction ( "Redoxx  " )
         context_menu.addSeparator()
-        cut_action = context_menu.addAction("Cutxx")
-        copy_action = context_menu.addAction("Copy")
-        paste_action = context_menu.addAction("Paste")
+        cut_action = context_menu.addAction ( "Cutxx  " )
+        copy_action = context_menu.addAction ( "Copy  " )
+        paste_action = context_menu.addAction ( "Paste  " )
         context_menu.addSeparator()
-        select_all_action = context_menu.addAction("Select All")
+        select_all_action = context_menu.addAction ( "Select All  " )
         select_all_action.triggered.connect(self.selectAll)
 
-        # select_all_action = context_menu.addAction("PrintStr")
+        # select_all_action = context_menu.addAction ( "PrintStr  " )
         # select_all_action.triggered.connect(self.print_str )
 
         # Connect actions to QLineEdit methods
@@ -3019,19 +3049,17 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
 
     textSubmitted = Signal(str)  # Signal emitted when text is submitted
 
-    def __init__(self,
+    def __init__( self,
                  parent                 = None,
                  field_name             = None,
-                 is_keep_prior_enabled  = False):
+                 is_keep_prior_enabled  = False ):
 
         """
         read it
         in   -- into the widget
         out  -- out to the record
         """
-        #super(   ).__init__(   )   # seems to go to CQEditBase ???
-
-        QLineEdit.__init__( self, None  )     # need arg ?  # parent
+        QLineEdit.__init__( self, None )     # need arg ?  # parent
 
         CQEditBase.__init__( self,
                         parent             = None,  # parent
@@ -3224,7 +3252,7 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
 
         # self.setText( a_string  )   #
         #self.setCurrentText( a_string )
-        self.set_text(  a_string, add_to_history =True)
+        self.set_text( a_string, add_to_history = True )
 
             # with prior there ? depending on is_changed ??
         self.prior_value  = a_string
@@ -3240,7 +3268,7 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         """
         #data  = self.text()
         data  = self.currentText()
-        self.add_current_text_to_history(   )
+        self.add_current_text_to_history()
         return data
 
     # --------------------------
@@ -3276,7 +3304,7 @@ class CQDictComboBox( QComboBox, CQEditBase ):
                         field_name              = field_name,
                         is_keep_prior_enabled   = is_keep_prior_enabled )
 
-        debug_msg    = ( "say give each its own copy of index_to_key ... but could centralized ")
+        debug_msg    = ( "say give each its own copy of index_to_key ... but could centralized   " )
         logging.log( LOG_LEVEL,  debug_msg, )
 
         # ---- index_to_key is what
@@ -3474,9 +3502,9 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         assumes dict is in place
             builds the index and loads the drop down
         """
-        debug_msg  = ( "load_combo_box get the value, save in temp, reset the combo and reset")
+        debug_msg  = ( "load_combo_box get the value, save in temp, reset the combo and reset  " )
         logging.log( LOG_LEVEL,  debug_msg, )
-        debug_msg  = ( "load_combo_box not necessary if we always add at the end ????")
+        debug_msg  = ( "load_combo_box not necessary if we always add at the end ????  " )
         logging.log( LOG_LEVEL,  debug_msg, )
         self.index_to_key    = {}
         self.clear()
@@ -3509,7 +3537,7 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         index     = self.currentIndex()
         key       = self.index_to_key.get(index)
         #value = self.dict_data.get(key)
-        debug_msg   = (f"get_key_by_index Selected key: {key}")
+        debug_msg   = (f"get_key_by_index Selected key: {key}  " )
         logging.log( LOG_LEVEL,  debug_msg, )
         return key
 
@@ -3519,7 +3547,7 @@ class CQDictComboBox( QComboBox, CQEditBase ):
          zz
         """
 
-        debug_msg   = (f"get_key_by_index Selected key: {key}")
+        debug_msg   = (f"get_key_by_index Selected key: {key}  " )
         logging.log( LOG_LEVEL,  debug_msg, )
         return key
 
@@ -3533,7 +3561,7 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         for index, stored_key in self.index_to_key.items():
             if stored_key == key:
                 self.setCurrentIndex(index)
-                # self.label.setText(f"Selection Set to: {self.dict_data[key]}")
+                # self.label.setText(f"Selection Set to: {self.dict_data[key]}  " )
 
     # --------------------------
     def setPlaceholderText( self, ignoered ):
@@ -3561,7 +3589,7 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         """
         Initialization for CQTextEdit
         """
-        #rint("begin init CQTextEdit")
+        #rint ( "begin init CQTextEdit  " )
 
         # Initialize QTextEdit properly
         QTextEdit.__init__( self, parent )  # Call QTextEdit constructor with parent
@@ -3661,7 +3689,7 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
     #-----------------------------
     def get_data_for_record_debug( self, record, record_state ):
         """a debug trick to try other than that consider an if  """
-        msg    = ( "get_data_for_record_debug this for debug only ")
+        msg    = ( "get_data_for_record_debug this for debug only   " )
         logging.debug( msg )
         CQEditBase.get_data_for_record( self, record, record_state )
 
@@ -3697,7 +3725,6 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         else:
             super().keyPressEvent(event)
 
-
     # ------------------------------------
     def on_text_changed( self,   ):
         """
@@ -3707,7 +3734,7 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         #self.is_changed  = True
         self.on_data_changed( )
         self.prior_value   = self.toPlainText()
-        msg        = (f"CQTextEdit text edit on_text_changed ")
+        msg        = (f"CQTextEdit text edit on_text_changed   " )
         logging.debug( msg )
 
     # ------------------------------------
@@ -3783,10 +3810,6 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         in   -- into the widget
         out  -- out to the record
         """
-        #super(   ).__init__(   )
-
-
-
         QDateEdit.__init__( self, parent  )     # mimic LineEdit try parent int there parent of None
         CQEditBase.__init__( self,
                         parent                  = parent,
@@ -3851,11 +3874,11 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         context_menu = QMenu( self )
 
         # # Add custom actions
-        # clear_action = QAction("Clear Date",   self)
+        # clear_action = QAction ( "Clear Date",   self)
         # clear_action.triggered.connect(self.clear_date)
         # context_menu.addAction(clear_action)
 
-        today_action = QAction("Set to Today", self)
+        today_action = QAction ( "Set to Today", self)
         today_action.triggered.connect(self.set_data_today)
         context_menu.addAction(today_action)
 
@@ -3881,10 +3904,10 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         # need or not ??  right or not
         # if  qdate.date().isValid():
         #     pass
-        #     #print("The date is invalid (NULL equivalent).")
+        #     #print ( "The date is invalid (NULL equivalent).  " )
         # else:
         #     qdate  = None   # cannot pass on invalid date
-        #     print("The date is valid:", date_edit.date().toString())
+        #     print ( "The date is valid:", date_edit.date().toString())
 
         return qdate
 
@@ -3946,7 +3969,7 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         if ( raw_data is None ) or ( raw_data == "" ):  # null may come as empty string
             # qdate       = QDate( 1900, 1, 1 ) # surrogate for None
             # msg         = ( f"rec_to_edit_ts_qdate Field {field_name} "
-            #                 f"got data of None used ....  maybe")
+            #                 f"got data of None used ....  maybe  " )
             # logging.error( msg )
             # or
             #raise ValueError( msg )
@@ -3999,7 +4022,7 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
 
         a_str   = ""
 
-        a_str   = f"{a_str}{CQEditBase.__str__( self, )    }"
+        a_str   = f"{a_str}{CQEditBase.__str__( self, )}"
 
         a_str   = f"{a_str}\n>>>>>>>>>>* CQDateEdit ( nothing so far ) *<<<<<<<<<<<<"
 

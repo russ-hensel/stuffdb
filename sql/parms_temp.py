@@ -79,6 +79,7 @@ class ParmsTemp( ):
         self.pic_nf_file_name       = "./misc/404.png"
 
         self.picture_db_root        = "/mnt/WIN_D/PhotoDB/"
+        self.picture_db_root        = "/mnt/8ball1/first6_root/photos/photos_db"
             # all pictures once in the db should be under this directory
 
         self.picture_db_sub         = "/test_delete"
@@ -106,9 +107,7 @@ class ParmsTemp( ):
         self.db_file_name      = "/tmp/ramdisk/stuff_types.db"        # recover stuf types column
         self.db_file_name      = "./data_sync_b/stuffdb.db"    # becareful
         self.db_file_name      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync_b/stuffdb.db"
-        self.db_file_name      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db"
-
-
+        # self.db_file_name      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db"
 
         self.idle_venv          = "py_12_misc"   # idle will open in this python venv
             # path leading to all docs and help

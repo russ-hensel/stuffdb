@@ -8,8 +8,8 @@ main window -- container for the mdi
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
+    import main  # noqa  stops auto removal by pycln
     pass
-    #main.main()
 # --------------------
 
 # ---- imports
@@ -20,12 +20,9 @@ import os
 import traceback
 
 
-from qtpy.QtWidgets import QMainWindow, QToolBar, QMessageBox
+from qtpy.QtCore import ( QCoreApplication,
+                         Qt, )
 
-from qtpy.QtCore import Qt
-
-from qtpy.QtCore import QCoreApplication
-from qtpy.QtCore import Qt
 from qtpy.QtGui  import QIcon
 from qtpy.QtGui  import QAction
 
@@ -40,7 +37,7 @@ from qtpy.QtWidgets import (
                              QMessageBox,
                              QToolBar,
                              QVBoxLayout,
-                             QWidget)
+                             QWidget )
 
 # ---- local imports
 # ------- local
@@ -68,6 +65,7 @@ from   people_document    import PeopleDocument
 from   picture_document   import PictureDocument
 
 from   db_management_subwindow   import DbManagementSubWindow
+from   db_sync_test_subwindow    import DbSyncTestSubWindow
 
 
 # ------------------------------------------
@@ -109,7 +107,7 @@ class StuffdbMainWindow( QMainWindow ):
             #
             #print( AppGlobal.fatal_error )
             msg   =  AppGlobal.fatal_error
-            msg   =  f"{msg}/n   I can erase this file so the next restart works\say Yes only if you think it is OK"
+            msg   =  f"{msg}\n   I can erase this file so the next restart works\nsay Yes only if you think it is OK"
 
             response = QMessageBox.question(
                 None,
@@ -119,14 +117,14 @@ class StuffdbMainWindow( QMainWindow ):
                 QMessageBox.No
                     )
 
-            # Check the response  -- really none
             if response == QMessageBox.Yes:
                 #print("User clicked Yes")
                 from stuffdb import delete_file
                 delete_file( AppGlobal.parameters.db_lock_file_name )
 
             else:
-                print("User clicked No")
+                #rint("User clicked No")
+                pass
 
             # we are gone -- might be better back in stuff db
             # ver 1 from chat --- ran right thru it
@@ -175,6 +173,7 @@ class StuffdbMainWindow( QMainWindow ):
         # need a_mdi_management to exist to call from menu,
         # but it needs a reference to the menu, so this.... hot mess
         a_mdi_management                = mdi_management.MdiManagement( self  )
+        a_mdi_management.post_init()
         self.mdi_management             = a_mdi_management
         AppGlobal.mdi_management        = a_mdi_management
 
@@ -285,7 +284,6 @@ class StuffdbMainWindow( QMainWindow ):
         toolbar.addAction(action)
 
 
-
         # # ---- got_deail_updates
         # action          = QAction(  "have_updatable_edits", self )
         # a_function      = functools.partial(  self.go_active_sub_window_func,
@@ -300,25 +298,25 @@ class StuffdbMainWindow( QMainWindow ):
         # action.triggered.connect( a_function )
         # toolbar.addAction(action)
 
-        # ---- hide in menu
-        action          = QAction(   "break...", self )
-        # a_function      = functools.partial(  AppGlobal.key_gen.get_next_key,
-        #                                       "channel"     )
-        action.triggered.connect( breakpoint )
-        toolbar.addAction(action)
+        # # ---- hide in menu
+        # action          = QAction(   "break...", self )
+        # # a_function      = functools.partial(  AppGlobal.key_gen.get_next_key,
+        # #                                       "channel"     )
+        # action.triggered.connect( breakpoint )
+        # toolbar.addAction(action)
 
-        # ---- "add_to_log"
-        action          = QAction( "add_to_log", self )
-        connect_to      = app_logging.add_to_log
-        action.triggered.connect( connect_to )
-        toolbar.addAction( action )
+        # # ---- "add_to_log"
+        # action          = QAction( "add_to_log", self )
+        # connect_to      = app_logging.add_to_log
+        # action.triggered.connect( connect_to )
+        # toolbar.addAction( action )
 
-        # ---- DocInspect
-        action          = QAction( "doc_wat_inspect", self )
-        connect_to      = functools.partial(  self.go_active_sub_window_func,
-                                              "doc_wat_inspect"     )
-        action.triggered.connect( connect_to )
-        toolbar.addAction( action )
+        # # ---- DocInspect
+        # action          = QAction( "doc_wat_inspect", self )
+        # connect_to      = functools.partial(  self.go_active_sub_window_func,
+        #                                       "doc_wat_inspect"     )
+        # action.triggered.connect( connect_to )
+        # toolbar.addAction( action )
 
         # ---- left ofve debug
 
@@ -369,7 +367,7 @@ class StuffdbMainWindow( QMainWindow ):
         # ---- File
         a_menu          = menubar.addMenu( "File" )
 
-        action     = QAction( "Save", self )
+        action          = QAction( "Save", self )
         # connect_to      = functools.partial( AppGlobal.os_open_txt_file,
         #                                      AppGlobal.parameters.pylogging_fn  )
         action.triggered.connect( self.not_implemented )
@@ -498,6 +496,20 @@ class StuffdbMainWindow( QMainWindow ):
 
         a_menu.addSeparator()
 
+        open_action     = QAction( "Open Test Data Sync", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                 window_class   = DbSyncTestSubWindow,
+                                                 instance_ix    = instance_ix )
+        open_action.triggered.connect( connect_to )
+        a_menu.addAction( open_action )
+
+        # ---- "Open Log"
+        open_action     = QAction( "Open Log", self )
+        connect_to      = functools.partial( AppGlobal.os_open_txt_file,
+                                             AppGlobal.parameters.pylogging_fn  )
+        open_action.triggered.connect( connect_to )
+        a_menu.addAction( open_action )
+
         # #---------------
         # open_action     = QAction( "Define table channel", self )
         # connect_to      = functools.partial( AppGlobal.stuff_db_db.define_table_channel,
@@ -512,7 +524,7 @@ class StuffdbMainWindow( QMainWindow ):
         # open_action.triggered.connect( connect_to )
         # a_menu.addAction( open_action )
 
-        # ---- window menu
+        # ---- Window menu
         window_menu        = menubar.addMenu( "Windows" )
         self.window_menu   = window_menu
 
@@ -860,6 +872,7 @@ class StuffdbMainWindow( QMainWindow ):
         # Clean exit from Qt
         QCoreApplication.quit()
 
+    #-------------------------------------
     def cleanup( self ):
         """
         Perform cleanup operations

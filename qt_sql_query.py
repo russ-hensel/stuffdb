@@ -17,17 +17,12 @@ import logging
 
 
 # ------- local imports
-# from   app_global import AppGlobal
-# import app_global
-# import string_util
-#import file_writers
-#import pseudo_column
-#import sql_writers
+
 import string_utils  as string_util
 
 
 # ----------------------------------------
-class QueryBuilder(    ):
+class QueryBuilder( ):
     """
     build a query, currently for a single table
 
@@ -72,6 +67,9 @@ class QueryBuilder(    ):
         self.sql_data                = None     # see:
         self.sql_order_by            = None     # see:
         self.inner_join              = ""       # defaults to falsy
+        self.column_addition         = ""       # for things like comutations
+
+
 
         self.reset( )
 
@@ -112,8 +110,9 @@ class QueryBuilder(    ):
         # ---- not interface, generally
 
    # ----------------------------------------------
-    def col_list_to_sql( self, col_list, use_table_name = True     ):
+    def col_list_to_sql( self, col_list, use_table_name = True, include_add = True     ):
         """
+        used by main sql and group by with includ_add = False
         return
              string like: (  col_aaa, col_bbb, col_ccc, col_ddd, col_eee, col_fff  )    "
          """
@@ -128,11 +127,18 @@ class QueryBuilder(    ):
 
         sql_columns = ( f"{sql_columns}{prefix}{self.column_list[-1]}  " )
 
+        if include_add:
+            col_add         = self.column_addition.strip()
+
+            if col_add != "":
+                sql_columns += "," + col_add   # need another comma
+
         return sql_columns
 
    # ----------------------------------------------
-    def prepare_and_bind( self,      ):
+    def prepare_and_bind( self, ):
         """
+        prepare, binds, executes
         Args:
 
         Returns:
@@ -146,20 +152,21 @@ class QueryBuilder(    ):
 
         for i_bind_tuple in self.bind_list:
             # msg   = f"prepare_and_bind {i_bind_tuple = }"
-            self.qt_query.bindValue(  *i_bind_tuple )
+            self.qt_query.bindValue( *i_bind_tuple )
 
         debug_msg   = ( f"QueryBuilder.prepare_and_bind {sql = }")
         logging.log( self.log_level,  debug_msg, )
 
         msg   =   ( self.qt_query.executedQuery()   ) # qt_query passed in
-        logging.log( self.log_level,  debug_msg, )
+        logging.log( self.log_level, debug_msg, )
 
    # ----------------------------------------------
     def get_sql( self,      ):
         """
         gets the final select sql
             features not complete may be extended
-
+        return
+            string of sql
         """
         sql_columns          = self.col_list_to_sql( self.column_list )
         self._sql            = f"SELECT {sql_columns}  FROM {self.table_name}  "
@@ -172,7 +179,7 @@ class QueryBuilder(    ):
         sql_for_debug        = self._sql
 
         if self.group_by_c_list:
-            group_columns    = self.col_list_to_sql( self.group_by_c_list )
+            group_columns    = self.col_list_to_sql( self.group_by_c_list, include_add = False  )
             self._sql        =  f"{self._sql} \n    GROUP BY { group_columns }"
 
         if self.sql_having:
@@ -221,7 +228,7 @@ class QueryBuilder(    ):
 
    # ----------- where methods
    # ----------------------------------------------
-    def add_to_where( self,    add_where, bind_tuple_list,   ):
+    def add_to_where( self,    add_where, bind_tuple_list, ):
         """
         assumes logic is AND
         add on to where clause ok if starts at 0.  assumes and between clauses
@@ -232,17 +239,21 @@ class QueryBuilder(    ):
 
             bind_tuple_list,    a list of tuples  [  ( )... ]
                 first component of tuple is  name of the bind variable as a string
-                second component of tuple is  value of bind var, of appropriate type
+                second component of tuple is value of bind var, of appropriate type
+                or of type as a string ??
 
         """
         if self.sql_where == "":
             self.sql_where  = "WHERE "
+
         else:
             self.sql_where += " AND  "
 
         self.sql_where   += add_where
 
         self.bind_list   += bind_tuple_list
+
+        pass   # debug
 
         # if add_where is not None:
         #     self.sql_where   +=  add_where

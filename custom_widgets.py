@@ -35,38 +35,34 @@ from   unidecode import unidecode
 
 # ---- Qt
 
-from qtpy.QtCore import Qt
-from qtpy.QtCore import QDate, QDateTime, QTime, QPoint
-
-from qtpy.QtGui  import ( QTextCursor,
-                         QTextDocument,
-                         QAction, )
+from qtpy.QtGui  import ( QCursor,
+                          QTextCursor,
+                          QTextDocument,
+                          QAction, )
 
 
 from qtpy.QtCore import ( QAbstractTableModel,
+                          QTime,
+                          QPoint,
                           QDate,
                           QDateTime,
                           Qt,
                           Slot,
                           Signal, )
 
-from qtpy.QtGui import (QCursor,
-                         QTextCursor)
-
-from qtpy.QtSql import (QSqlRecord)
+from qtpy.QtSql import ( QSqlRecord )
 
 # from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
                              QApplication,
+                             QCheckBox,
                              QComboBox,
                              QDateEdit,
                              QLineEdit,
                              QMenu,
                              QPushButton,
                              QTextEdit)
-
-
 
 # ---- imports local -- then constants
 import string_utils
@@ -1817,9 +1813,9 @@ class TextEditExtMixin(  ):
             logging.error( msg )
             return 0
 
-# ---- Edits are also for criteria
+# ---- Edits for froms and criteria
 # ---------------------------------
-class CQEditBase(   ):
+class CQEditBase():
     """
     second parent for QT edit child controls
 
@@ -1828,6 +1824,12 @@ class CQEditBase(   ):
     get rid of is_changed ??
                 prior_data
                 events for above
+
+    if self.field_name in [ "name", "title" ]:
+        breakpoint()
+        pass
+
+
     """
     def __init__( self,
                  parent                 = None        ,
@@ -1850,8 +1852,8 @@ class CQEditBase(   ):
             # 1/0
         # can be used as interface
         self.field_name             = field_name
+        self._is_keep_prior_enabled = None   # set later or not
 
-        self.is_keep_prior_enabled  = is_keep_prior_enabled
 
         # ---- keep for now but may be dead
         self.null_surogate          = None
@@ -1867,8 +1869,11 @@ class CQEditBase(   ):
 
         self.cnv_str_to_str_strip   = None    # replacable function for stripping
 
-        # next noet here as only appropriate for some edits
+        # next note here as only appropriate for some edits
         # self.returnPressed.connect( self.on_return_pressed )
+
+
+
 
     # ---- dict oriented ----------------
     #----------------
@@ -1878,7 +1883,7 @@ class CQEditBase(   ):
         from edit to a dict with conversion
         """
         data   = self.get_raw_data( )
-        data   = self.edit_to_dict_cnv( data,  )
+        data   = self.edit_to_dict_cnv( data, )
         a_dict[ self.field_name ] = data
 
     #----------------
@@ -1984,6 +1989,21 @@ class CQEditBase(   ):
 
         a_dict[ self.field_name ] = data
 
+    #--------------------------------
+    def inspect( self, a_dict ):
+        """
+        invoke the wat_inspector for debug
+        """
+        # msg   = ( f"CQEditBase {self.field_name} {self.get_raw_data()}")
+        # logging.debug( msg )
+        # make this ascii
+        a_widget    = self
+        wat_inspector.go(
+            msg                   = "inspect this widget = a_widget",
+            # inspect_me     = self.people_model,
+            a_locals             = locals(),
+            a_globals          = globals(), )
+
     # ---- low level no conversion get/set
     #----------------------------
     def get_raw_data( self, ):
@@ -2042,7 +2062,7 @@ class CQEditBase(   ):
         raise NotImplementedError( msg )
 
     # -----------------------
-    def set_prior( self   ):
+    def set_prior( self ):
         """
         can be replaced with pretty much anything that does
         self.set_prepped_data( data ) or pass at the end
@@ -2055,7 +2075,7 @@ class CQEditBase(   ):
         raise NotImplementedError( msg )
 
     # -----------------------
-    def set_value( self, a_value  ):
+    def set_value( self, a_value ):
         """
         complete this code:
             set_data_to_default    = partial( set_data_to_default, "" )
@@ -2076,13 +2096,16 @@ class CQEditBase(   ):
         # debug_msg   = ( f"do_ct_value {self.field_name}")
         # logging.log( LOG_LEVEL,  debug_msg, )
 
-
     # -----------------------
     def set_pass( self, ):
         """
         set to prior by passing
         """
         pass
+        # if self.field_name in [ "name", "title" ]:
+        #     print( f"set_pass {self.field_name = } {self.is_keep_prior_enabled = }  {self.contextMenuPolicy() = }" )
+        #     breakpoint()
+        #     pass
 
     # ---- validate  implementations -----------------------
     #-----------------------------
@@ -2218,19 +2241,70 @@ class CQEditBase(   ):
         """ chat code, modified a bit
             may be dead code
         """
+        if self.field_name in [ "name", "title" ]:
+            breakpoint()
+            pass
+
+
         if event.button() == Qt.RightButton:
-            self.show_context_menu(event.globalPos())
+            self.show_context_menu( event.globalPos() )
         # else:
         #     # Call the parent class method for other events
         #     super(QLineEdit, self.line_edit).mousePressEvent(event)
 
-    # ---- replaceable functions
+    # ---- override functions ===============================
+    # extract from below when pass
+    #----------------------------
+    def set_custom_context_menu( self, ):
+        """
+        replacable, this makes sure does not execpt out
+        what it says
+            call in the init of the final widget ?
+        """
+        pass
+
+        # if self.field_name in [ "name", "title" ]:
+        #     print( f" {self.field_name = } {self.is_keep_prior_enabled = }  {self.contextMenuPolicy() = }" )
+        #     breakpoint()
+        #     pass
+
+
+    #----------------------------
+    def cnv_float_to_str( self, data  ):
+        """
+        convert dictionary data to a new data type
+        here new = old string to string
+        seems same as str_to_int
+        """
+        if data is None:
+            converted_data      = ""
+
+        else:
+            converted_data      = str( data )
+
+        return converted_data
+
+    #----------------------------
+    def cnv_str_to_float( self, data ):
+        """
+        read
+        may need null management adj
+        could strip ??
+        """
+        if data in [ None, ""]:
+            converted_data      = None
+
+        else:
+            converted_data      = float( data )
+
+        return converted_data
+
     #----------------------------
     def cnv_str_to_str( self, data ):
         """
         perhaps the easiest conversion
         """
-        if self.cnv_str_to_str_strip:
+        if self.cnv_str_to_str_strip:  # better !! different conversion
             data    = self.cnv_str_to_str_strip( data )
 
         return data
@@ -2430,10 +2504,10 @@ class CQLineEdit( QLineEdit, CQEditBase ):
     read it
     custom_widgets.CQLineEdit
     """
-    def __init__(self,
+    def __init__( self,
                  parent                 = None,
                  field_name             = None,
-                 is_keep_prior_enabled  = False):
+                 is_keep_prior_enabled  = False ):
         """
         read it
         in   -- into the widget
@@ -2441,27 +2515,26 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         """
         #super(   ).__init__(   )   # seems to go to CQEditBase ???
 
-        QLineEdit.__init__( self, None  )
+        QLineEdit.__init__( self, None )
 
         CQEditBase.__init__( self,
                  parent                 = parent,
                  field_name             = field_name,
                  is_keep_prior_enabled  = is_keep_prior_enabled )
 
+        # if self.field_name in [ "name", "title" ]: zz
+        #     print( f" {self.field_name = } {is_keep_prior_enabled = }  {self.contextMenuPolicy() = }" )
+        #     breakpoint()
+        #     pass
+
         # ---- keep for now but may be dead
         self.null_surogate          = None
             # find a value to use as null surrogate
             # can be used in interface, not sure if this should be "" or None
 
-        # ---- set functions by default
-        #a_partial           = partial( self.do_ct_value, "do_ct_value!!" )
-        a_partial               = partial( self.set_value, a_value = "" )
-        self.set_clear          = a_partial
-        self.set_default        = a_partial
-        if self.is_keep_prior_enabled:
-            self.set_prior      = self.set_pass
-        else:
-            self.set_prior      = a_partial
+        # ---- set replacable functions inc default
+
+        self.set_copy_prior( is_keep_prior_enabled )
 
         #self.is_field_valid     = # default is all pass
 
@@ -2550,11 +2623,14 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         what it says
             call in the init of the final widget ?
         """
-        # self.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
-        self.setContextMenuPolicy( Qt.CustomContextMenu)  # 5 6 compat
+        self.setContextMenuPolicy( Qt.CustomContextMenu )
 
         self.customContextMenuRequested.connect( self.show_context_menu )
 
+        # if self.field_name in [ "name", "title" ]: zz
+        #     print( f" {self.field_name = } {self.is_keep_prior_enabled = }  {self.contextMenuPolicy() = }" )
+        #     breakpoint()
+        #     pass
 
     #----------------------------
     def show_context_menu(self, pos):
@@ -2562,7 +2638,7 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         widget      = self
 
         # Undo
-        undo_action = QAction("Undo", self)
+        undo_action = QAction( "Undo", self )
         undo_action.triggered.connect(self.undo)
         undo_action.setEnabled(self.isUndoAvailable())
         menu.addAction(undo_action)
@@ -2612,6 +2688,11 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         paste_action.triggered.connect( widget.insert_date )
         # paste_action.setEnabled( can_paste )
 
+        # ---- inspect for debug
+        paste_action = menu.addAction( "Inspect" )
+        paste_action.triggered.connect( widget.inspect )
+        # paste_action.setEnabled( can_paste )
+
 
         menu.exec( widget.mapToGlobal( pos) )
 
@@ -2619,11 +2700,37 @@ class CQLineEdit( QLineEdit, CQEditBase ):
     def insert_date( self, ):
         """'
         what it says
+            or paste date
         """
         dt_now     = datetime.now()
         text       = dt_now.strftime("%Y-%m-%d") + " "
-        self.insert( text  )
+        self.insert( text )
 
+    #----------------------------
+    def set_copy_prior( self, enable ):
+        """'
+        what it says
+
+        """
+        if self.field_name in [ "name", "title" ]:
+            msg   = ( f"line edit set_copy_prior {self.field_name = } {enable = } "
+                      f"{self._is_keep_prior_enabled = }"
+                      f"  {self.contextMenuPolicy() = }" )
+            print( msg )
+            #breakpoint()
+            pass
+
+        a_partial               = partial( self.set_value, a_value = "" )
+        self.set_clear          = a_partial
+        self.set_default        = a_partial
+
+        if enable:
+            self.set_prior      = self.set_pass
+
+        else:
+            self.set_prior      = a_partial
+
+        self._is_keep_prior_enabled  = enable
 
     # ---- crud cycle -------------------------------
     # # -----------------------
@@ -2711,6 +2818,139 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         # more    = CQEditBase.__str__( self, )
         # a_str   = f"{a_str}\n{more}"
         return a_str
+
+#-------------------------------
+class CQCheckBox( QCheckBox, CQEditBase ):
+    """
+    read it
+    custom_widgets.CQComboBoxEdit
+        from the line edit
+        lets see what we can get rid of
+        start with non editable
+
+    try         self.setEditable(True)
+    """
+    def __init__(self,
+                 parent                 = None,
+                 field_name             = None,
+                 is_keep_prior_enabled  = False):
+
+        """
+        read it
+        in   -- into the widget
+        out  -- out to the record
+        """
+        #super(   ).__init__(   )   # seems to go to CQEditBase ???
+
+        QLineEdit.__init__( self, None  )     # need arg ?
+
+        CQEditBase.__init__( self,
+                        parent             = None,
+                        field_name         = field_name,
+                               )
+
+        # self.setEditable(True)  # !! may need to be at top debug make ...
+        self.default_typexxx          = "string"          # deprecate
+        #self.default_value         = "default-value"     # deprecate
+        self.prior_value           = ""  # something of a valid type
+        #self.textEdited.connect(self.on_text_changed )  #  text is sent new_text
+        #self.textChanged.connect(self.on_text_changed)
+            #-----------------------------
+        self.null_surogatexxx          = ""
+        # ---- set functions
+        #a_partial           = partial( self.do_ct_value, "do_ct_value!!" )
+        a_partial           = partial( self.set_value, "" )
+        self.set_default    = a_partial
+
+        self.set_prior      = self.set_pass
+        #self.validate       = self.validate_all_ok
+
+        # in out conversion need same for dict
+        self.rec_to_edit_cnv    =  self.cnv_str_to_str
+        self.edit_to_rec_cnv    =  self.cnv_str_to_str
+
+        self.setPlaceholderText( self.field_name )   # can we set on combo
+
+    # ---- required implementations
+    #----------------------------
+    def set_preped_data( self, a_string,   is_changed = None ):
+        """
+        specialize for this edit
+        what about prior value
+
+        a prepped data is data in the format for the edit and
+        formatted and ready for the edit.
+
+        arg
+            is_changed     None      leave is_changed as it was
+                           True        is_changed set to True
+                           False        is_changed set to False
+                           other       undefined behavior
+        mutates
+
+            changes contents of edit
+            may change self.is_changed
+            self.prior_value  -- so far unchanged, this is probably wrong
+
+        """
+        return
+        # needs implementation
+        # # next !! debug
+        # if a_string == None:
+        #     a_string   = self.null_surogate
+        #     msg        = f"line edit using null_surrogate for {self.field_name}"
+
+        #     logging.debug( msg )
+        # elif not isinstance( a_string, str ):
+        #     self_field_name   = self.field_name
+        #     msg = f"set_prepped_data error a_string, not a string {self.field_name = }  return for now inspect then break"
+        #     logging.debug( msg )
+        #     return
+        #     wat_inspector.go(
+        #         msg            = msg,
+        #         # inspect_me     = self.people_model,
+        #         a_locals       = locals(),
+        #         a_globals      = globals(), )
+        #     breakpoint()
+
+        # # self.setText( a_string  )   #
+        # self.setCurrentText( a_string )
+        #     # with prior there ? depending on is_changed ??
+        # self.prior_value  = a_string
+        # if is_changed is not None:
+        #     self.is_changed = is_changed
+
+    #----------------------------
+    def get_raw_data( self, ):
+        """'
+        make get edit data in future
+        final step from set_data should always be a int for
+        this edit
+        """
+        data  =  self.isChecked()
+
+        if data:
+            data  = 1
+
+        else:
+            data  = 0
+        return data
+
+    # --------------------------
+    def setPlaceholderText( self, ignoered ):
+        """so we can call without harm why not put in base and override """
+        pass
+
+    # --------------------------
+    def returnPressed( self ):
+        """so we can call without harm """
+        pass
+
+     #-------------------------- import string_utils
+    def __str__( self ):
+        """universal __str__ """
+        return string_utils.obj_to_str( self )
+
 
 #-------------------------------
 class CQComboBox( QComboBox, CQEditBase ):
@@ -2910,15 +3150,15 @@ class CQComboBox( QComboBox, CQEditBase ):
         # a_str   = f"{a_str}\n{more}"
         return a_str
 
-
+#-----------------------------------------------
 class CQHistoryComboBox( QComboBox, CQEditBase ):
     """
     Claud got me started
     A QComboBox subclass that allows text entry and maintains a history of entered text.
     The history is presented as dropdown options when the user clicks the dropdown arrow.
+            used in
 
     """
-
     textSubmitted = Signal(str)  # Signal emitted when text is submitted
 
     def __init__(self,
@@ -2952,13 +3192,13 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         # super().__init__(parent)
 
         # Enable editing
-        self.setEditable(True)
+        self.setEditable( True )
 
         # Set insert policy to not add duplicates automatically
         # self.setInsertPolicy(QComboBox.NoInsert)
         self.setInsertPolicy( QComboBox.NoInsert )
         # Store maximum history size
-        self.max_history = 10
+        self.max_history = 50
 
         # Connect signals
         self.lineEdit().returnPressed.connect(self.add_current_text_to_history)
@@ -2968,7 +3208,7 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         self.prior_value           = ""  # something of a valid type
         #self.textEdited.connect(self.on_text_changed )  #  text is sent new_text
         #self.textChanged.connect(self.on_text_changed)
-            #-----------------------------
+        #-----------------------------
         self.null_surogatexxx          = ""
         # ---- set functions
         #a_partial           = partial( self.do_ct_value, "do_ct_value!!" )
@@ -3015,20 +3255,16 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         # Emit signal with the submitted text
         self.textSubmitted.emit(text)
 
+    #-----------------------------------
     def keyPressEvent(self, event):
         """
         Handle key press events to add text to history when Enter is pressed.
         """
-        #if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
-        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:   # 5 6 compat
-
-
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
             #self.add_current_text_to_history()
             self.call_on_return_pressed()
 
-        # Pass the event to the parent class
         super().keyPressEvent(event)
-
 
     #----------------------------
     def add_items( self, a_list ):
@@ -3189,7 +3425,6 @@ class CQDictComboBox( QComboBox, CQEditBase ):
 
         self.index_valid     = False   # false while in process of building
 
-
         # the dict and its various supplementary dicts
         self.dict_data     = {}
 
@@ -3203,22 +3438,7 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         self.key_missing        = None    # set to a key while wating for it to be added
         self.history_sync       = None
 
-        # self.dict_data       = {}   # pointer to one in mdi
-
-        # # others do this it might work for us with None
-        # a_partial           = partial( self.do_ct_value, None )
-        # self.ct_default     = a_partial
-        # self.ct_prior       = self.do_ct_prior
-        # may instead index to 0 or ...
-        a_partial               = partial( self.set_value, a_value = "" )
-        self.set_clear          = a_partial
-        self.set_default        = a_partial
-
-        if self.is_keep_prior_enabled:
-            self.set_prior      = self.set_pass
-
-        else:
-            self.set_prior      = a_partial
+        self.set_copy_prior( is_keep_prior_enabled )
 
         self.db_value       = None
             # value from the db, used in debugging
@@ -3231,6 +3451,32 @@ class CQDictComboBox( QComboBox, CQEditBase ):
             # needs to be set, necessary but coupling loose
         self.widget_ext      = None  # set it or forget it it will not work
             # set it where
+
+    #----------------------------
+    def set_copy_prior( self, enable ):
+        """'
+        what it says
+
+        """
+        if self.field_name in [ "name", "title" ]:
+            msg   = ( f"dict_combo set_copy_prior {self.field_name = } {enable = } "
+                      f"{self._is_keep_prior_enabled = }"
+                      f"  {self.contextMenuPolicy() = }" )
+            print( msg )
+            breakpoint()
+            pass
+
+        a_partial               = partial( self.set_value, a_value = "" )
+        self.set_clear          = a_partial
+        self.set_default        = a_partial
+
+        if enable:
+            self.set_prior      = self.set_pass
+
+        else:
+            self.set_prior      = a_partial
+
+        self._is_keep_prior_enabled  = enable
 
     #----------------------------
     def rec_to_dict_edit( self, record, format = None ):
@@ -3366,10 +3612,10 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         """
         create the history sync then call this
         # or other way around connect_widget
+            probably replaced in some way by update_sync
         """
         #self.history_sync history_sync.HISTORY_SYNC
         a_history_sync.connect( self )
-
 
     #----------------------------
     @Slot( )
@@ -3526,28 +3772,10 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         TextEditExtMixin.__init__( self, )
 
         # ---- set functions
-
-        # think about how to get to parametes with minimun coupling
-        # monkey patch into module on first import
-        note_default_text  = AppGlobal.parameters.note_default_text
-
-        a_partial               = partial( self.set_value, note_default_text )
-        self.set_clear          = a_partial
-        self.set_default        = a_partial
-
-        # special is_prior_text_enabled tor text '
-
-        self.is_prior_text_enabled   = False
-            #
-        self.prior_text      = ""
-
-        if self.is_keep_prior_enabled:
-            self.set_prior      = self.set_pass
-        else:
-            self.set_prior      = a_partial
+        self.set_copy_prior( is_keep_prior_enabled )
 
         self.null_surogate  = ""
-        self.tab_width      = 4                         # also for interface
+        self.tab_width      = 4     # also for interface
 
         # ---- in out conversion
         # in out conversion
@@ -3572,9 +3800,46 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
 
         # self.set_custom_context_menu()
 
+    #----------------------------
+    def set_copy_prior( self, enable ):
+        """'
+        what it says
+
+        """
+        # if self.field_name in [ "name", "title" ]:
+        #     msg   = ( f"TextEdit set_copy_prior {self.field_name = } {enable = } "
+        #               f"{self._is_keep_prior_enabled = }"
+        #               f"  {self.contextMenuPolicy() = }" )
+        #     print( msg )
+        #     breakpoint()
+        #     pass
+
+        # think about how to get to parametes with minimun coupling
+        # monkey patch into module on first import
+        note_default_text       = AppGlobal.parameters.note_default_text
+
+        a_partial               = partial( self.set_value, note_default_text )
+        self.set_clear          = a_partial
+        self.set_default        = a_partial
+
+        # special is_prior_text_enabled tor text '
+        # not sure what is but is required probably need anal. and cleanup
+        self.is_prior_text_enabled   = False
+
+        self.prior_text         = ""
+
+        if enable:
+            self.set_prior      = self.set_pass
+
+        else:
+            self.set_prior      = a_partial
+
+        self._is_keep_prior_enabled  = enable
+
+    #----------------------------
     def keyPressEvent_delete_me (self, event):
         """
-        capture all the key presses
+        capture all the key presses -- for debug !!
         """
         breakpoint()
 
@@ -3749,20 +4014,7 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         #     breakpoint( )
 
         # ---- set functions
-        # a_partial           = partial( self.do_ct_value, "do_ct_value!!" )
-        # self.ct_default     = a_partial
-        today                   = QDate.currentDate()
-        a_partial               = partial( self.set_value, today ) # invalid date
-        #self.ct_default     = a_partial
-
-        self.set_clear          = a_partial
-        self.set_default        = a_partial
-
-        if self.is_keep_prior_enabled:
-            self.set_prior      = self.set_pass
-
-        else:
-            self.set_prior      = a_partial
+        self.set_copy_prior( is_keep_prior_enabled )
 
         # ---- in out conversion
         self.rec_to_edit_cnv    = self.cnv_int_to_qdate
@@ -3772,14 +4024,40 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         self.edit_to_dict_cnv   = self.cnv_qdate_to_int
 
 
-        #self.default_type          = "today"   # need begin of day, end of day ??
-        #self.default_value         = None     # if used make a qdate
         self.config_calender_popup( True )
         # prior value, prior_type
         self.is_editable            = True  #  --- by the user   may be built in
                                         # will nee a configure for it
 
         self.setDisplayFormat( QT_DATE_FORMAT )
+
+    #----------------------------
+    def set_copy_prior( self, enable ):
+        """'
+        what it says
+
+        """
+        if self.field_name in [ "name", "title" ]:
+            msg   = ( f"date edit set_copy_prior {self.field_name = } "
+                      f"{enable = } {self._is_keep_prior_enabled = } "
+                      f"{self.contextMenuPolicy() = }" )
+            print( msg )
+            #breakpoint()
+            pass
+
+        today                   = QDate.currentDate()
+        a_partial               = partial( self.set_value, today ) # invalid date
+
+        self.set_clear          = a_partial
+        self.set_default        = a_partial
+
+        if enable:
+            self.set_prior      = self.set_pass
+
+        else:
+            self.set_prior      = a_partial
+
+        self._is_keep_prior_enabled  = enable
 
     # --------------------------
     def setPlaceholderText( self, ignoered ):

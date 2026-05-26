@@ -64,7 +64,8 @@ def build_it( a_data_dict_all ):
                                              col_head_text      = "Name",
                                              col_head_width     = 40,
                                              col_head_order     = 10,
-                                             form_col_span      = 4,)
+                                             form_col_span      = 4,
+                                             topic_column_order = 10,)
     a_table_dict.add_column( a_column_dict )
 
     # ---- plant_id_old
@@ -122,7 +123,8 @@ def build_it( a_data_dict_all ):
                                              is_keep_prior_enabled  = True,
                                              is_key_word            = True,
                                              max_len                = None,
-                                             default_func           = None , )
+                                             default_func           = None ,
+                                             topic_column_order     = 20,)
 
     a_table_dict.add_column( a_column_dict )
 

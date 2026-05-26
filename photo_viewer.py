@@ -15,17 +15,16 @@ if __name__ == "__main__":
 # --------------------
 
 #import sys
-from qtpy.QtWidgets import ( QGraphicsView, QGraphicsScene, QGraphicsPixmapItem
+from qtpy.QtWidgets import ( QGraphicsView,
+                            QGraphicsScene,
+                            QGraphicsPixmapItem,
+                            QMenu,
                                 )
 
 from qtpy.QtGui import QPixmap, QPainter
 
 from qtpy.QtCore import Qt, QRectF
 
-# ----QtWidgets
-from qtpy.QtWidgets import (
-    QMenu,
-    )
 
 # ------------------------------------------------
 class PhotoViewer( QGraphicsView ):
@@ -77,26 +76,34 @@ class PhotoViewer( QGraphicsView ):
     # -----------------------------
     def photo_1(self):
         self.display_file( "/mnt/WIN_D/PhotoDB/02/102-0253_img.jpg" )
+
     # -----------------------------
     def photo_2(self):
         self.display_file( "/mnt/WIN_D/PhotoDB/02/102_motor2.jpg" )
 
+    # -----------------------------
     def zoom_in(self):
         self.scale(1.2, 1.2)
         #p#rint("Zoomed In")
+
     # -----------------------------
     def zoom_out(self):
         self.scale(0.8, 0.8)
         #rint("Zoomed Out")
 
+    # -----------------------------
     def reset_zoom(self):
         self.resetTransform()
         #rint("Zoom Reset")
 
+    # -----------------------------
     def fit_in_view(self):
-        self.fitInView(self.scene.sceneRect(), Qt.KeepAspectRatio)
+        pass
+        self.fitInView( self.scene.sceneRect(), Qt.KeepAspectRatio )
         #rint("Fit in View")
+        pass
 
+    # -----------------------------
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self.fit_in_view()

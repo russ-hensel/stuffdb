@@ -30,9 +30,6 @@ from   subprocess import Popen
 
 
 
-
-
-
 # ---- end imports
 
 TXT_DEFAULTS    = [  "xed",   "gedit ",  "l3afpad",  "leafpad"   "nvim", "vim", "nano", "xedit", ]

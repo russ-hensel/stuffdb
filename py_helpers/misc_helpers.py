@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 module of helpers for >>py to extend functionality beyond just stuffdb.py ...
+
+
+
 """
 
 
@@ -15,8 +18,9 @@ module of helpers for >>py to extend functionality beyond just stuffdb.py ...
 #-------------------------------
 
 
-from PyQt5.QtWidgets import (  QMessageBox, )
+from qtpy.QtWidgets import (  QMessageBox, )
 
+# -----------------------------------------
 def confirm_continue( msg ):
 
     msg_box    = QMessageBox()
@@ -35,7 +39,7 @@ def confirm_continue( msg ):
 
 import sys
 
-
+# -----------------------------------------
 def  print_sys_path(   ):
     """
 
@@ -46,7 +50,7 @@ def  print_sys_path(   ):
 
         print( f"{i_path}" )
 
-
+# -----------------------------------------
 def  insert_path_if_missing( a_path_name ):
     """
 
@@ -59,6 +63,8 @@ def  insert_path_if_missing( a_path_name ):
         print( "inserted" )
     else:
         print( "not needed no inserted" )
+
+# -----------------------------------------
 def  insert_if_missing( a_path_name ):
     """
 
@@ -75,6 +81,7 @@ def  insert_if_missing( a_path_name ):
     # if a_path_name
     # sys.path.insert( 1, f"./py_helpers" )   # for installation off dev machines
 
+# -----------------------------------------
 def  list_to_toc( a_list ):
     """
     see notes >>search list_to_toc

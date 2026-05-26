@@ -16,7 +16,7 @@ import data_dict_all
 #print( data_dict_all.data_dict_all )
 
 
-def build_it( a_data_dict_all ):
+def build_it( a_schema_dict ):
     """
 
     """
@@ -42,8 +42,8 @@ def build_it( a_data_dict_all ):
     )
 """
     # ---- help_info -------------------------------
-    a_table_dict   = data_dict_all.TableDict(  "help_info" )
-    a_data_dict_all.add_table ( a_table_dict )
+    a_table_dict   = data_dict_all.TableDict( "help_info" )
+    a_schema_dict.add_table ( a_table_dict )
 
     # ---- id
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",
@@ -144,7 +144,8 @@ def build_it( a_data_dict_all ):
                                              col_head_width     = 40,
                                              col_head_order     = 38,
                                              display_order      = 12,
-                                             form_col_span      = 4,)
+                                             form_col_span      = 4,
+                                             topic_column_order = 20,)
     a_table_dict.add_column( a_column_dict )
 
     # ---- add_ts   --- may not exist ?? -- was missing fixed
@@ -236,7 +237,8 @@ def build_it( a_data_dict_all ):
                                              col_head_width     = 60,
                                              col_head_order     = 5,
                                              display_order    = 10,
-                                             form_col_span      = 4,)
+                                             form_col_span      = 4,
+                                             topic_column_order = 10, )
 
     a_table_dict.add_column( a_column_dict )
 
@@ -258,7 +260,7 @@ def build_it( a_data_dict_all ):
 
     # ---- help_text ---------------------
     a_table_dict   = data_dict_all.TableDict(  "help_text" )
-    a_data_dict_all.add_table ( a_table_dict )
+    a_schema_dict.add_table ( a_table_dict )
 
     fk_info        =  (  "CONSTRAINT fk_help_text_help_info "
                          "\n       FOREIGN KEY (id)  "
@@ -313,7 +315,7 @@ def build_it( a_data_dict_all ):
 
     # ---- help_key_word -------------------------------
     a_table_dict   = data_dict_all.TableDict(  "help_key_word" )
-    a_data_dict_all.add_table ( a_table_dict )
+    a_schema_dict.add_table ( a_table_dict )
 
     # ---- id
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",

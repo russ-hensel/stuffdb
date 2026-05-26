@@ -19,39 +19,9 @@ Purpose:
 
 # --------------------
 if __name__ == "__main__":
-    #----- run the full app
-    import main
-    main.main()
+    #----- run the full app #   import main   for next line
+    import main   # noqa  stops auto removal by pycln
 # --------------------
-
-
-# import sys
-# import webbrowser
-# from   subprocess import Popen
-# from   pathlib    import Path
-# import os
-# import psutil
-# #from   tkinter    import messagebox
-# import logging
-
-
-# import sys
-
-# next change used by russ in development
-#sys.path.insert( 1, "../rshlib" )
-# sys.path.insert( 1,  "/media/sf_0000/python00/python3/_projects/rshlib" )
-# sys.path.insert( 1, r"D:\Russ\0000\python00\python3\_projects\rshlib"   )
-
-# print( "Note: main.py may have changed the system path in a way not needed by your installation" )
-
-# def main( ):
-#     import clip_board
-#     clip_board.main()
-
-# # --------------------
-# if __name__ == "__main__":
-#     # #----- run the full app
-#     main( )
 
 
 
@@ -72,6 +42,15 @@ class AppGlobal( app_global_abc.AppGlobalABC ):
     double_buttons      = None      # populated by ...
     do_transforms       = None      # populated by ...
     snippeter           = None      # populated by ...  !! dup name or what
+
+    # stuffdb.py
+    # AppGlobal.controller   = self
+    # AppGlobal.fatal_error   = None
+    # AppGlobal.parameters    = self.parameters
+
+    # a_qsql_db_access        = qsql_db_access.QsqlDbAccess( STUFFDB_CONNECTION_NAME )
+    # AppGlobal.qsql_db_access  = a_qsql_db_access
+         # AppGlobal.qsql_db_access.db
 
 
     # ----------------------------------------------

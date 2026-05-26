@@ -9,7 +9,7 @@ aggerate across all modules was data_dict
 
     big change is it does not build itself.
 
-access
+access -- wrong
 import data_dict
 data_dict.build_it()
 something    = data_dict.DATA_DICT.function( a_table_name )
@@ -20,57 +20,28 @@ help for tab_custom_update_manager may be of assist
 
 """
 
+# # -------------------- does not work from sub dir
+# if __name__ == "__main__":
+#     #----- run the full app
+#     import main  # noqa  stops auto removal by pycln
+#     pass
+# # --------------------
+
 import adjust_path
 import logging
+import importlib
+
 
 import string_utils as string_util
+import string_utils
 #import custom_widgets
 
 # ---- end imports
 
 __VERSION__   = "not maintained"
 
-DATA_DICT     = None  # created on import is instance of DataDict()
+SCHEMA        = None  # created on import is instance of DataDict()
 SKIP          = "THIS IS A VALUE INDICATING A SKIP"
-
-# ---- defaults  --- use if dict entry is None
-default_values                              = {}   # key   = var/use with use often not ind
-
-default_values[ "max_len" ]                 = None     # none means no output of a value
-
-# keep synced
-default_values[ "detail_edit_class" ]       = "cw.CQLineEdit"
-default_values[ "form_edit" ]               = "cw.CQLineEdit"
-
-default_values[ "is_key_word" ]             = None      #     = True,
-default_values[ "edit_to_rec" ]             = None
-default_values[ "is_keep_prior_enabled" ]   = SKIP
-default_values[ "form_read_only" ]          = SKIP
-
-
-default_values[ "rec_to_edit_cnv" ]         = SKIP
-default_values[ "dict_to_edit_cnv" ]        = SKIP
-
-
-default_values[ "edit_to_rec_cnv" ]         = SKIP
-default_values[ "edit_to_dict_cnv" ]        = SKIP
-default_values[ "set_editable" ]            = SKIP
-
-# cw.CQLineEdit
-
-def get_value( *, field_name  = None, atribute = None, current_value = None ):
-    """
-    when value is None get a default
-        default may be SKIP
-
-    """
-    if current_value is not None:
-        return current_value
-
-    value    = default_values[ atribute ]
-
-    return value
-
 
 # ---- defaults None is changed to
 
@@ -82,6 +53,94 @@ COLUMN_SPAN   = 2   # this should be for normal fields 1 is smallest
 # ---- default on input
 
 COLUMN_ORDER  = 100
+
+# ---- defaults  --- use if dict entry is None  -- these are defaults
+# now none to none is automatic
+default_values                              = {}   # key   = var/use with use often not ind
+
+default_values[ "max_len" ]                 = None     # none means no output of a value
+
+# keep synced to modules defaults......
+
+default_values[ "detail_edit_class" ]       = "cw.CQLineEdit"
+default_values[ "form_edit" ]               = "cw.CQLineEdit"
+
+default_values[ "is_key_word" ]             = None      #     = change to False
+default_values[ "edit_to_rec" ]             = None
+default_values[ "is_keep_prior_enabled" ]   = SKIP
+default_values[ "form_read_only" ]          = SKIP
+
+default_values[ "rec_to_edit_cnv" ]         = SKIP  # skip means let the widget default internally
+default_values[ "dict_to_edit_cnv" ]        = SKIP
+
+
+default_values[ "edit_to_rec_cnv" ]         = SKIP
+default_values[ "edit_to_dict_cnv" ]        = SKIP
+default_values[ "set_editable" ]            = SKIP
+
+
+# --- new fix
+default_values[ "col_head_width" ]          = -1
+
+default_values[ "col_head_order" ]          = -1
+
+
+default_values[ "topic_column_order" ]      = -1
+
+default_values[ "form_col_span" ]           = -1
+
+DEFAULT_VALUES                              = default_values
+
+# # --------------------------------
+# def get_value( *, field_name  = None, attribute = None, current_value = None ):
+#     """
+#     depricate and remove
+#     field_name not currently used
+#     when value is None get a default
+#         default may be SKIP
+
+#     """
+#     1/0
+#     if current_value is not None:
+#         return current_value
+
+#     value    = default_values[ attribute ]
+
+#     return value
+
+# --------------------------------
+def get_column_valuexxx( column, attribute ):
+    """
+    None may be turned into something else
+    replaces get_value  -- attribute as string
+    """
+    raw_value   = getattr( column, attribute )
+
+    # !! should not need these
+    if raw_value == "True":
+        msg    = f"get_column_value {column.field_name} return True"
+        print( msg )
+        return True
+
+    if raw_value == "False":
+        msg    = f"get_column_value {column.field_name} return False"
+        print( msg )
+        return False
+
+    if raw_value is not None:
+        msg    = f"get_column_value {column.field_name} return raw valiue {raw_value}"
+        print( msg )
+        return raw_value
+
+    # if here is None, use get and default to None if other value not used
+    # value       = default_values[ attribute ]
+    value       = default_values.get( attribute, None )
+
+    msg    = f"get_column_value {column.field_name} return valiue {value}"
+    print( msg )
+    return value
+
+
 
 # print( "    path now:" )
 # for i_path in sys.path:
@@ -191,7 +250,7 @@ def make_name_to_ix_dictxxxx( table_name, verbose = False ):
         print( msg )
 
     #header_dict     = { }   # nexted dict see below
-    a_table             = DATA_DICT.get_table( table_name )
+    a_table             = SCHEMA.get_table( table_name )
     name_to_ix_dict     = a_table.make_name_to_ix_dict()
 
     if verbose:
@@ -202,10 +261,11 @@ def make_name_to_ix_dictxxxx( table_name, verbose = False ):
             ix      += 1
 
 # -------------------------------------------
-def rpt_sub_tab_columns_orderxxxx( table_name, verbose = False ):
+def rpt_sub_tab_columns_order( table_name, verbose = False ):
     """
     Code gen or runtime for sub tab list columns
         for the secondary tables
+        in use april 2026
 
     """
     if verbose:
@@ -214,7 +274,7 @@ def rpt_sub_tab_columns_orderxxxx( table_name, verbose = False ):
         print( msg )
 
     header_dict     = { }   # nexted dict see below
-    a_table         = DATA_DICT.get_table( table_name )
+    a_table         = SCHEMA.get_table( table_name )
     columns         = a_table.get_list_columns_sql_order()
 
     for ix, i_column in enumerate( columns ):
@@ -229,7 +289,7 @@ def rpt_sub_tab_columns_orderxxxx( table_name, verbose = False ):
         i_default_func  = i_column.default_func
         i_is_topic      = i_column.is_topic
         col_head_text      = i_column.col_head_text
-        col_head_width     = i_column.col_head_width
+        col_head_width     = i_column.col_head_width  #  ( )
         col_head_order      = i_column.col_head_order
 
         a_dict   = {  }
@@ -246,7 +306,6 @@ def rpt_sub_tab_columns_orderxxxx( table_name, verbose = False ):
 
     return header_dict
 
-
 # ----------------------------------------
 class SchemaDict(   ):
     """
@@ -255,15 +314,36 @@ class SchemaDict(   ):
     db_schema_name   .... may be many instances of the schema
     db_name
     """
-    def __init__(self, db_schema_name ):
+    def __init__(self, db_schema_name, module_list = [] ):
         self.db_schema_name     = db_schema_name
         self.table_dicts        = {}
+        self.import_modules( module_list )
+        global SCHEMA
 
+        if SCHEMA:
+            1/0
+
+        SCHEMA  = self
+
+    # --------------------------------
+    def import_modules(self, module_list  ):
+        """
+        the usual
+            consider protection against a second import of the same
+            module
+            module list
+        """
+        for i_module in module_list:
+            a_module = importlib.import_module( i_module )
+            a_module.build_it( self )
+
+
+    # --------------------------------
     def add_table(self, a_table  ):
         """
         the usual
         """
-        self.table_dicts[a_table.table_name ] = a_table
+        self.table_dicts[ a_table.table_name ] = a_table
 
     # --------------------------------
     def get_table( self, a_table_name ):
@@ -316,7 +396,7 @@ class SchemaDict(   ):
             columns for a history tab to move data from a record to a history table
             see history_tab record_to_table
         """
-        error_msg      = ( f"get_list_columns deprecated use TableDict {a_table_name}" )
+        error_msg      = ( f"get_list_columns deprecated but should run ??use TableDict {a_table_name}" )
         logging.error( error_msg )
         a_table      = self.table_dicts.get( a_table_name  )
         if a_table is None:
@@ -482,6 +562,37 @@ class TableDict(  ):
         # breakpoint()
         return key_word_column_list
 
+    #------------------------------------------------
+    def get_columns_for_detail(self,    ):
+        """
+        redo get_detail_columns for automatic generation of forms from data dict
+        """
+        column_list    = self.columns
+        column_list.sort( key = lambda i_column: i_column.display_order )
+
+
+
+        # for ix_column, i_column in enumerate( self.columns ):
+
+        #     i_name              = i_column.column_name
+
+        #     i_detail_edit_class = i_column.detail_edit_class
+
+        #     if i_name == "id": # skip the id column
+        #         continue
+
+        #     if i_detail_edit_class == "skip":
+        #         continue
+
+        #     if i_detail_edit_class is None:
+        #         # looks like it set to cause an error -- track down where used
+        #         i_detail_edit_class          = "cw.CQLineEdit is this right in data dict"
+        #         i_column.detail_edit_class   = i_detail_edit_class
+
+        #     column_list.append( i_column )
+
+        return column_list
+
 
     #------------------------------------------------
     def get_detail_columns(self,    ):
@@ -494,7 +605,7 @@ class TableDict(  ):
 
         for ix_column, i_column in enumerate( self.columns ):
 
-            i_name          = i_column.column_name
+            i_name              = i_column.column_name
 
             i_detail_edit_class = i_column.detail_edit_class
 
@@ -514,7 +625,7 @@ class TableDict(  ):
         return column_list
 
     #------------------------------------------------
-    def get_list_columns( self,    ):
+    def get_list_columns( self, ):
         """
         get the columns ( not including id ) in the correct order  --- sorted
         for the history tab, add column heading
@@ -538,7 +649,7 @@ class TableDict(  ):
         return column_list
 
     #------------------------------------------------
-    def get_list_columns_sql_order( self,    ):
+    def get_list_columns_sql_order( self, ):
         """
         this is all the columns, not the column names
         get the columns ( including id ) in the correct order  --- not sorted
@@ -592,12 +703,14 @@ class TableDict(  ):
         return limit_dict
 
     #------------------------------------------------
-    def get_topic_columns( self,    ):
+    def get_topic_columns(self,):
         """
         get the columns ( not including id ) in the correct order
         topic columns
         column    = data_dict.DATA_DICT.get_history_columns( a_table_name )
         !! a comp for part of this
+        return
+            a list of column names, strings
         """
         column_list    = []
 
@@ -610,7 +723,7 @@ class TableDict(  ):
 
         column_list.sort( key = lambda i_column: i_column.topic_column_order )
 
-        column_names    = [i_column.column_name for i_column in column_list ]
+        column_names    = [ i_column.column_name for i_column in column_list ]
 
         return column_names
 
@@ -671,6 +784,7 @@ class TableDict(  ):
     #------------------------------------------------
     def to_build_form( self,    ):
         """
+        revised and runs, may be wrong, but now shorter and clearer
         build form
         use list and join
 
@@ -696,33 +810,36 @@ class TableDict(  ):
 
         for ix_column, i_column in enumerate( column_list ):
 
+            # using getattr now
+            # field_name          = i_column.column_name
 
-            field_name          = i_column.column_name
+            # column_form_edit    = i_column.form_edit
+            # i_is_key_word       = i_column.is_key_word
+            # placeholder_text    = i_column.placeholder_text
 
-            column_form_edit    = i_column.form_edit
-            i_is_key_word       = i_column.is_key_word
-            placeholder_text    = i_column.placeholder_text
+            # topic_column_order      = i_column.topic_column_order
+            # form_col_span           = i_column.form_col_span
+            # is_keep_prior_enabled   = i_column.is_keep_prior_enabled
+            # form_read_only          = i_column.form_read_only
+            # rec_to_edit_cnv         = i_column.rec_to_edit_cnv
+            # dict_to_edit_cnv        = i_column.dict_to_edit_cnv
 
-            topic_column_order      = i_column.topic_column_order
-            form_col_span           = i_column.form_col_span
-            is_keep_prior_enabled   = i_column.is_keep_prior_enabled
-            form_read_only          = i_column.form_read_only
-            rec_to_edit_cnv         = i_column.rec_to_edit_cnv
-            dict_to_edit_cnv        = i_column.dict_to_edit_cnv
-
-            edit_to_rec_cnv         = i_column.edit_to_rec_cnv
-            edit_to_dict_cnv        = i_column.edit_to_dict_cnv
-            form_make_ref           = i_column.form_make_ref
-            set_editable            = i_column.set_editable
-            edit_tool_tip           = i_column.edit_tool_tip
+            # edit_to_rec_cnv         = i_column.edit_to_rec_cnv
+            # edit_to_dict_cnv        = i_column.edit_to_dict_cnv
+            # form_make_ref           = i_column.form_make_ref
+            # set_editable            = i_column.set_editable
+            # edit_tool_tip           = i_column.edit_tool_tip
 
             if  True:
                 #line_list.append(  '' )
                 line_list.append(  '' )
-                line_list.append( f'{indent_1}# ---- {field_name}' )
+                value     = get_column_value( i_column, "column_name" )
+                line_list.append( f'{indent_1}# ---- {value}' )
 
-                # ---- form edit
-                value     = get_value( field_name = field_name, atribute = "form_edit" , current_value =  column_form_edit  )
+
+                # ---- form_edit
+                value     = get_column_value( i_column, "form_edit" )
+
                 if value is not SKIP:
                     line_list.append( f'{indent_1}edit_field                  = {value}(' )
                 # was
@@ -732,69 +849,65 @@ class TableDict(  ):
                 #args  = f'{indent}parent = None, \n            r_field_name = "{i_name}", r_type = "integer", f_type = "string" '
                 args  = "see below"
                 line_list.append( f'{indent_2}parent         = None, ' )
-                line_list.append( f'{indent_2}field_name     = "{field_name}",   ' )
+
+                value     = get_column_value( i_column, "column_name" )
+                line_list.append( f'{indent_2}field_name     = "{value}",   ' )
                 # next defaults to False so only really need if true
+
+                is_keep_prior_enabled     = get_column_value( i_column, "is_keep_prior_enabled" )
                 line_list.append( f'{indent_2}is_keep_prior_enabled     = {is_keep_prior_enabled}, ) ' )
 
                 # ---- form_make_ref create instance with field name
-                # self.id_old_field         = edit_field
+                # in future use form dict do not need instance var
+                value     = get_column_value( i_column, "form_make_ref" )
+                form_make_ref = value
                 if form_make_ref:
-                    line_list.append( f'{indent_1}self.{field_name}_field     = edit_field' )
+                    line_list.append( f'{indent_1}self.{i_column.column_name}_field     = edit_field' )
 
-                # ---- set_editable
-                value     = get_value( field_name       = field_name,
-                                       atribute         = "set_editable" ,
-                                       current_value    =  set_editable  )
+                # # ---- set_editable
+                value     = get_column_value( i_column, "set_editable" )
                 if value is not SKIP:
                     line_list.append( f'{indent_1}edit_field.set_editable        = edit_field.set_editable( {value} )' )
 
-                # ---- rec_to_edit_cnv
-                value     = get_value( field_name       = field_name,
-                                       atribute         = "rec_to_edit_cnv" ,
-                                       current_value    =  rec_to_edit_cnv  )
+                # # ---- rec_to_edit_cnv
+                value     = get_column_value( i_column, "rec_to_edit_cnv" )
                 if value is not SKIP:
                     line_list.append( f'{indent_1}edit_field.rec_to_edit_cnv        = edit_field.{value}' )
 
                 # ---- dict_to_edit_cnv
-                value     = get_value( field_name       = field_name,
-                                       atribute         = "dict_to_edit_cnv" ,
-                                       current_value    =  dict_to_edit_cnv  )
+                value     = get_column_value( i_column, "dict_to_edit_cnv" )
                 if value is not SKIP:
                     line_list.append( f'{indent_1}edit_field.dict_to_edit_cnv       = edit_field.{value}' )
 
                 # ---- edit_to_rec_cnv
-                value     = get_value( field_name       = field_name,
-                                       atribute         = "edit_to_rec_cnv" ,
-                                       current_value    =  edit_to_rec_cnv  )
+                value     = get_column_value( i_column, "edit_to_rec_cnv" )
                 if value is not SKIP:
                     line_list.append( f'{indent_1}edit_field.edit_to_rec_cnv        = edit_field.{value}' )
 
                 # ---- edit_to_dict_cnv
-                value     = get_value( field_name       = field_name,
-                                       atribute         = "edit_to_dict_cnv" ,
-                                       current_value    =  edit_to_dict_cnv  )
+                value     = get_column_value( i_column, "edit_to_dict_cnv" )
                 if value is not SKIP:
                     line_list.append( f'{indent_1}edit_field.edit_to_dict_cnv       = edit_field.{value}' )
 
                 # ---- form read only
-                value     = get_value( field_name            = field_name,
-                                      atribute          = "form_read_only" ,
-                                      current_value     =  form_read_only  )
+                value     = get_column_value( i_column, "form_read_only" )
                 if value is not SKIP:
                     line_list.append( f'{indent_1}edit_field.setReadOnly( {value} ) ' )
 
                 #line_list.append( f'{indent_1}self.{i_name}_field     = edit_field' )
                 # ---- is_keep_prior_enabled  this is too late to do it myst be in init if true
-                value     = get_value( field_name            = field_name,
-                                      atribute          = "is_keep_prior_enabled" ,
-                                      current_value     =  is_keep_prior_enabled  )
+                value     = get_column_value( i_column, "is_keep_prior_enabled" )
                 if value is not SKIP:
                     line_list.append( f'{indent_1}edit_field.is_keep_prior_enabled        = {value}' )
 
-                if topic_column_order >=0:
-                    line_list.append( f'{indent_1}self.topic_edits.append( (edit_field, {topic_column_order} ) ) ' )
+                # ---- problem here !! ??
+                value     = get_column_value( i_column, "is_keep_prior_enabled" )
+                if value >= 0:
+                    line_list.append( f'{indent_1}self.topic_edits.append( (edit_field, {value} ) ) ' )
 
-                line_list.append( f'{indent_1}edit_field.setPlaceholderText( "{placeholder_text}" ) ' )
+                # ---- placeholder_text
+                value     = get_column_value( i_column, "placeholder_text" )
+                line_list.append( f'{indent_1}edit_field.setPlaceholderText( "{value}" ) ' )
 
                 # # ---- rec_to_edit rec
                 # if i_column.rec_to_edit:  # if not none the default
@@ -805,10 +918,16 @@ class TableDict(  ):
                 #         #edit_field.setPlaceholderText( "add_ts" )
 
                 # ---- key word
-                line_list.append( f'{indent_1}self.data_manager.add_field( edit_field, is_key_word = {i_is_key_word} ) ' )
+                value     = get_column_value( i_column, "is_key_word" )
+                line_list.append( f'{indent_1}self.data_manager.add_field( edit_field, is_key_word = {value} ) ' )
 
+
+                # ---- form_col_span
                 # perhaps next is for is_topic
                 #line_list.append( f'{indent_1}self.data_manager.add_field( edit_field, is_key_word = {i_is_key_word} ) ' )
+                value     = get_column_value( i_column, "form_col_span" )
+                form_col_span = value
+                # fix in get_column value
                 if form_col_span is None:
                     form_col_span = COLUMN_SPAN
 
@@ -821,143 +940,18 @@ class TableDict(  ):
         a_str       = "\n".join( line_list )
 
         return a_str
-    #------------------------------------------------
-    def to_build_form_old( self,    ):
-        """
-        build form
-        use list and join
-
-        _build_fields( self, layout ):
-
-        """
-        line_list       = []
-        #rint( name_list )
-        indent_1        = 8 * " "
-        indent_2        = 40 * " "  + indent_1
-
-        #line_list.append(  " ---- still needs review/test ....... " )
-        what            = f"TableDict.to_build_form {__VERSION__} for {self.table_name}"
-
-        line_list.append( f"\n        # ---- code_gen: {what} -- begin table entries ----------------------- " )
-
-        #line_list.append(  f'    # ---- {self.table_name} ---------------------------------------------' )
-
-        column_list           = self.columns[ : ] # make copy
-        column_list.sort( key = lambda i_column: i_column.display_order   )
-
-
-        for ix_column, i_column in enumerate( column_list ):
-            i_type          = i_column.db_type
-            i_db_type       = i_column.db_type
-            i_name          = i_column.column_name
-            i_my_type       = i_column.column_name       # work in progress or error
-            i_display_type  = i_column.display_type
-            i_form_edit     = i_column.form_edit
-            i_is_key_word   = i_column.is_key_word
-            i_placeholder   = i_column.placeholder_text
-            i_default_func      = i_column.default_func
-            i_is_topic              = i_column.is_topic   # phasing out
-            topic_column_order      = i_column.topic_column_order
-            form_col_span           = i_column.form_col_span
-            is_keep_prior_enabled   = i_column.is_keep_prior_enabled
-            # self.edit_to_rec            = edit_to_rec    # string name of function
-            # self.rec_to_edit            = rec_to_edit
-
-            if i_name in [ "id", "id_old" ]:
-                pass
-                #print( str( i_column ))
-                #breakpoint()
-
-            #problem with db_type should perhaps be edit_input_type or similar for now tweak
-            # i_db_type
-            # if  i_db_type   == "INTEGER":
-            #     i_db_type   = "integer"
-
-            # else:
-            #     i_db_type   = "string"
-
-            # if i_my_type == "skip":   # maybe use order < 0
-            #     line_list.append( f'# skip{i_name} ')
-
-            if  True:
-                #line_list.append(  '' )
-                line_list.append(  '' )
-                line_list.append( f'{indent_1}# ---- {i_name}' )
-
-                # ---- form edit
-                value     = get_value( atribute = "form_edit" , current_value =  i_column.form_edit  )
-                if value is not None:
-                    line_list.append( f'{indent_1}edit_field                  = {value}(' )
-                # was
-                # line_list.append( f'{indent_1}edit_field                  = cw.{i_form_edit}(' )
-
-                #line_list.append( f'{indent_2}# qdates make these non editable' )
-                #args  = f'{indent}parent = None, \n            r_field_name = "{i_name}", r_type = "integer", f_type = "string" '
-                args  = "see below"
-                line_list.append( f'{indent_2}parent         = None, ' )
-                line_list.append( f'{indent_2}field_name     = "{i_name}", ' )
-                line_list.append( f'{indent_2}db_type        = "{i_db_type}",  ' )
-                line_list.append( f'{indent_2}display_type   = "{i_display_type}", ' )
-                line_list.append( f'{indent_2} ) ' )
-
-                # self.id_old_field         = edit_field
-                line_list.append( f'{indent_1}self.{i_name}_field     = edit_field' )
-
-                if i_name in [ "id", "id_old" ]:
-                    line_list.append( f'{indent_1}edit_field.setReadOnly( True ) ' )
-                elif False:  # check for editable
-                    pass
-
-                if is_keep_prior_enabled:
-                    line_list.append( f'{indent_1}edit_field.is_keep_prior_enabled        = True' )
-
-                if topic_column_order >=0 :
-                    line_list.append( f'{indent_1}self.topic_edits.append( (edit_field, {topic_column_order} ) ) ' )
-
-                line_list.append( f'{indent_1}edit_field.setPlaceholderText( "{i_placeholder}" ) ' )
-
-                # ---- edit_to rec
-                value     = get_value( atribute = "edit_to_rec" , current_value =  i_column.edit_to_rec  )
-                if value is not None:
-                    line_list.append( f'{indent_1}edit_field.edit_to_rec                  = edit_field.{value}' )
-
-                # if i_column.edit_to_rec:  # if not none the default
-                #     line_list.append( f'{indent_1}edit_field.edit_to_rec     = edit_field.{i_column.edit_to_rec}   ' )
-
-
-                # ---- rec_to_edit rec
-                if i_column.rec_to_edit:  # if not none the default
-                    line_list.append( f'{indent_1}edit_field.rec_to_edit     = edit_field.{i_column.rec_to_edit}   ' )
-
-
-                line_list.append( f'{indent_1}# still validator / default func  {i_default_func} ' )
-                        #edit_field.setPlaceholderText( "add_ts" )
-                line_list.append( f'{indent_1}self.data_manager.add_field( edit_field, is_key_word = {i_is_key_word} ) ' )
-
-                # perhaps next is for is_topic
-                #line_list.append( f'{indent_1}self.data_manager.add_field( edit_field, is_key_word = {i_is_key_word} ) ' )
-                if form_col_span is None:
-                    form_col_span = COLUMN_SPAN
-
-                line_list.append( f'{indent_1}layout.addWidget( edit_field, columnspan = {form_col_span} ) ' )
-
-                if i_column.form_read_only:  # perhaps None
-                    line_list.append( f'{indent_1}edit_field.setReadOnly( True )' )
-
-       # edit_field.setReadOnly( True )
-
-                # self.form_read_only         = form_read_only
-
-        a_str       = "\n".join( line_list )
-        return a_str
 
     #------------------------------------------------
-    def to_upgrade_selfxxx(self,    ):
+    def to_upgrade_self_test( self, ):
         """
         upgrade the current dict to a better version of itself
         see rebuild_dict.py
         """
         #1/0   # now a down grade
+
+        indent_b   = " " * 20
+
+
         a_str       = ''
         a_str       = f'{a_str}\n                              '
         a_str       = f'{a_str}\n    # ---- {self.table_name} ---------------------------------------------'
@@ -970,28 +964,41 @@ class TableDict(  ):
             #for i_name, i_type, i_dtype in zip( name_list, db_type_list, display_type_list ):
             #print( i_name )
             a_str      = f'{a_str}\n\n    # ---- { i_column.column_name } {ix_column} '
-            a_str      = f'{a_str}\n    a_column_dict = data_dict.ColumnDict(    column_name       = "{i_column.column_name}", '
+            a_str      = f'{a_str}\n    a_column_dict = data_dict.ColumnDict( "   column_name       = "{i_column.column_name}", '
+
+            # ---- db_type
+            item       = i_column.column_name
+            if item is not None:
+                a_str      = f'{a_str}\n               column_name      = "{item}", '
+
+
             a_str      = f'{a_str}\n                                             db_type           = "{i_column.db_type}", '
+
+            # ---- db_type
+            item       = i_column.db_type
+            if item is not None:
+                a_str      = f'{a_str}\n               db_type          = "{item}", '
+
 
             # ---- detail_edit_class
             item       = i_column.detail_edit_class
             if item is not None:
-                a_str      = f'{a_str}\n                                             detail_edit_class = "{item}", '
+                a_str      = f'{a_str}\n                detail_edit_class = "{item}", '
 
             # ---- form_edit
             item       = i_column.form_edit
             if item is not None:
-                a_str      = f'{a_str}\n                                             form_edit   = "{item}", '
+                a_str      = f'{a_str}\n                form_edit          = "{item}", '
 
             # ---- rec_to_edit_cnv
             item       = i_column.rec_to_edit_cnv
             if item is not None:
-                a_str      = f'{a_str}\n                                             rec_to_edit_cnv   = "{item}", '
+                a_str      = f'{a_str}\n                rec_to_edit_cnv   = "{item}", '
 
             # ---- dict_to_edit_cnv
             item       = i_column.dict_to_edit_cnv
             if item is not None:
-                a_str      = f'{a_str}\n                                             dict_to_edit_cnv  = "{item}", '
+                a_str      = f'{a_str}\n                dict_to_edit_cnv  = "{item}", '
 
 
             # ---- edit_to_rec_cnv
@@ -1052,7 +1059,6 @@ class TableDict(  ):
             if item is not None:
                 a_str      = f'{a_str}\n                                             is_keep_prior_enabled    = {item}, '
 
-
             # ---- is_key_word
             item       = i_column.is_key_word
             if item is not None and item is not False:
@@ -1076,14 +1082,14 @@ class TableDict(  ):
                 a_str      = f'{a_str}\n                                             col_head_order    = {item}, '
 
 
-            # ---- close )
+            # ---- close
             a_str      = f'{a_str} )  '
-
 
             #a_str      = f'{a_str}\n                                             default        = "{i_column.default}   )'
 
             a_str      = f'{a_str}\n    a_table_dict.add_column( a_column_dict )'
 
+        print( a_str )
 
         return a_str
 
@@ -1091,7 +1097,8 @@ class TableDict(  ):
     def to_sql_create( self, ):
         """
         what it says, read
-
+        return
+            single long string
         """
         sql      = f"CREATE TABLE  {self.table_name}    ("
 
@@ -1317,7 +1324,7 @@ class ColumnDict(  ):
                  is_key_word            = False,
                  placeholder_text       = None,   # will be defaulted
                  create_self            = None,   # create a self .reference -- better put in transaction
-                 is_topic               = None,   # part of get topic
+                 is_topic               = None,   # part of get topic  --- do not use, use topic_column_order
                  #in_history         = None,   # to maintain the history list
                  #column_head        = None,   # to label the columns
                  detail_edit_class      = None,   # default to custom_edit.CQLineEdit(   "skip" to skip it
@@ -1332,7 +1339,7 @@ class ColumnDict(  ):
                  form_col_span          = None,    # defaulted later
                  form_read_only         = None,    # what it says on detail edit fields None defaults to False
                  form_make_ref          = False,   # when code generating create a self. reference
-                 rec_to_edit_cnv        = None,
+                 rec_to_edit_cnv        = None,    # the widget will do its own default we decode to SKIP
                  edit_to_rec_cnv        = None,
                  edit_to_dict_cnv       = None,
                  dict_to_edit_cnv       = None,
@@ -1343,7 +1350,7 @@ class ColumnDict(  ):
                  primay_key_ix          = None,       # None not part of prirmy key  index from zero
                  use_index              = None,     # None no index
                  is_keep_prior_enabled  = False,
-                 initial_value          = None,      # may mean nyll or not
+                 initial_value          = None,      # may mean null or not
 
                  foreign_key_info       = None,     #
 
@@ -1432,63 +1439,166 @@ class ColumnDict(  ):
 
         self.col_head_width     =  col_head_width
 
-        self.foreign_key_info    = foreign_key_info
+        self.foreign_key_info   = foreign_key_info
+
+    # --------------------------------
+    def get_column_value( self, attribute ):
+        """
+        NOT FOR WIDGETS OR FUNCTIONS
+
+        value is the value to be used, a lazy default
+        replaces get_value  -- attribute as string
+        !! sort of a mess - short term, rethink
+
+        ?? break into different functions for different types
+        reunite in future ??
+
+        return string, number, or SKIP
+        """
+        # if attribute  == "":
+        #     breakpoint()
+
+        # check on self or field_edit ....
+        if self.column_name in [ "name", "title" ] and attribute == "is_keep_prior_enabled":
+            # msg   = ( f"get_column_value {self.column_name = } "
+            #           f"{attribute = }" )
+
+            # print( msg )
+            # breakpoint()
+            pass   # for breakpoint !!
+
+        value           = getattr( self, attribute )
+        if value is None:
+            value   = DEFAULT_VALUES.get( attribute, None )
+                # may still be none
+        # kluge !! fix for now
+        if value == -1:
+            value = 1
+
+        # # remove module if present !! later should not be needed
+        # if isinstance( raw_value,  str, ):
+        #     splits      = raw_value.split( "." )
+        #     raw_value   = splits[ -1 ] #
+        #     # sort of assumes no valid strings, is this right ??
+        #     raw_value   = DEFAULT_VALUES.get( attribute, None )
+        #     value       = raw_value
 
 
+        # if raw_value is not None:
+        #     msg    = f"get_column_value** {self.column_name = } {attribute = } return raw_value {raw_value} "
+        #     print( msg )
+        #     return raw_value
+
+        # # if here is None, use get and default to None if other value not used
+        # # value       = default_values[ attribute ]
+
+
+        # # remove module if present !! later should not be needed
+        # if isinstance( value,  str, ):
+        #     splits  = value.split( "." )
+        #     value   = splits[ -1 ] #
+
+        # msg    = f"get_column_value {self.column_name = } {attribute = } return value {value} "
+        # print( msg )
+
+        return value
+
+    # # --------------------------------
+    # def get_column_widget( self, attribute ):
+    #     """
+    #     always resoves to a widget as string, no module
+    #     never None
+
+    #     """
+
+    #     if attribute  == "":
+    #         breakpoint()
+
+    #     value       = getattr( self, attribute )
+
+    #     # remove module remove later
+    #     splits      = value.split( "." )
+    #     value       = splits[ -1 ] #
+    #     # sort of assumes no valid strings, is this right ??
+    #     raw_value   = DEFAULT_VALUES.get( attribute, None )
+    #     value       = raw_value
+
+
+    #     if raw_value is not None:
+    #         msg    = f"get_column_value** {self.column_name = } {attribute = } return raw_value {raw_value} "
+    #         print( msg )
+    #         return raw_value
+
+    #     # if here is None, use get and default to None if other value not used
+    #     # value       = default_values[ attribute ]
+
+
+    #     # remove module if present !! later should not be needed
+    #     if isinstance( value,  str, ):
+    #         splits  = value.split( "." )
+    #         value   = splits[ -1 ] #
+
+    #     msg    = f"get_column_value*** {self.column_name = } {attribute = } return value {value} "
+    #     print( msg )
+
+    #     return value
+
+
+    # --------------------------------
+    def get_column_widget_class( self, attribute ):
+        """
+        # gets a string, name of class, no module
+        # remove module if present !! later should not be needed
+        """
+        value    = getattr( self, attribute )
+        if value is None:
+            value   = DEFAULT_VALUES.get( attribute, None )
+
+        splits      = value.split( "." )
+        value       = splits[ -1 ] #
+
+        # always a string, class name
+
+        return value
+
+    # --------------------------------
+    def get_column_function( self, attribute ):
+        """
+        value is the value to be used, a lazy default
+        replaces get_value  -- attribute as string
+        !! sort of a mess - short term, rethink
+
+        functions are strings, looked up in base_document
+        but this could return a string
+        """
+        # if attribute  == "":
+        #     breakpoint()
+
+        value       = getattr( self, attribute )
+        if value is None:
+            value       = DEFAULT_VALUES.get( attribute, None )
+                # a string name of function or SKIP
+        return value
+
+    # --------------------------------
     def __str__( self, ):
-        """ """
-        a_str   = ""
-        a_str   = f"\n\n>>>>>>>>>>* ColumnDict {self.column_name} *<<<<<<<<<<<<"
-        a_str   = string_util.to_columns( a_str, ["col_head_order",
-                                           f"{self.col_head_order}" ] )
-        a_str   = string_util.to_columns( a_str, ["col_head_text",
-                                           f"{self.col_head_text}" ] )
-        a_str   = string_util.to_columns( a_str, ["col_head_width",
-                                           f"{self.col_head_width}" ] )
-        a_str   = string_util.to_columns( a_str, ["column_name",
-                                           f"{self.column_name}" ] )
-        a_str   = string_util.to_columns( a_str, ["db_type",
-                                           f"{self.db_type}" ] )
-        a_str   = string_util.to_columns( a_str, ["default_func",
-                                           f"{self.default_func}" ] )
-        a_str   = string_util.to_columns( a_str, ["detail_edit_class",
-                                           f"{self.detail_edit_class}" ] )
-        a_str   = string_util.to_columns( a_str, ["display_order",
-                                           f"{self.display_order}" ] )
-        a_str   = string_util.to_columns( a_str, ["display_type",
-                                           f"{self.display_type}" ] )
-        a_str   = string_util.to_columns( a_str, ["edit_in_type",
-                                           f"{self.edit_in_type}" ] )
-        a_str   = string_util.to_columns( a_str, ["edit_to_rec",
-                                           f"{self.edit_to_rec}" ] )
-        a_str   = string_util.to_columns( a_str, ["form_col_span",
-                                           f"{self.form_col_span}" ] )
-        a_str   = string_util.to_columns( a_str, ["form_edit",
-                                           f"{self.form_edit}" ] )
-        a_str   = string_util.to_columns( a_str, ["is_key_word",
-                                           f"{self.is_key_word}" ] )
-        a_str   = string_util.to_columns( a_str, ["is_topic",
-                                           f"{self.is_topic}" ] )
-        a_str   = string_util.to_columns( a_str, ["max_len",
-                                           f"{self.max_len}" ] )
-        a_str   = string_util.to_columns( a_str, ["placeholder_text",
-                                           f"{self.placeholder_text}" ] )
-        a_str   = string_util.to_columns( a_str, ["rec_to_edit",
-                                           f"{self.rec_to_edit}" ] )
-        a_str   = string_util.to_columns( a_str, ["topic_column_order",
-                                           f"{self.topic_column_order}" ] )
-        a_str   = string_util.to_columns( a_str, ["validate",
-                                           f"{self.validate}" ] )
-        return a_str
+        """universal __str__ """
+        return string_utils.obj_to_str( self )
 
 
+
+# ---------------------------------
 def test():
-    msg  = """
-    not sure this is worth much -- consider delete but better may be find_dict_modules.py
-    look for the test in  own .p
-    """
-    a_data_dict   = SchemaDict(   "stuffdb" )
-    a_table_dict  = TableDict(  "help_text" )
+
+    print( "data_dict_all.test()")
+    a_schema_dict   = SchemaDict( "stuffdb" )
+    a_schema_dict.import_modules( [ "data_dict_help",
+                                    "data_dict_stuff"])
+
+    msg     = f"{a_schema_dict}"
+    print( msg )
+
+    a_table_dict    = TableDict(  "help_text" )
 
     a_column_dict = ColumnDict(    column_name    = "id",
                                    db_type        = "INTEGER",
@@ -1514,9 +1624,16 @@ def test():
                                    default_func= None, )
 
     a_table_dict.add_column( a_column_dict )
-    a_data_dict.add_table( a_table_dict )
+    a_schema_dict.add_table( a_table_dict )
 
+    print( SCHEMA )
+
+    msg  = """
+    not sure this is worth much -- consider delete but better may be find_dict_modules.py
+    look for the test in  own .p
+    """
     print( msg )
+    print( "data_dict_all.test() end ")
 
 # --------------------
 if __name__ == "__main__":

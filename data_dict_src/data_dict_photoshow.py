@@ -65,34 +65,35 @@ def build_it( a_data_dict_all ):
 
     # ---- name
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "name",
-                                             db_type        = "VARCHAR(50)",
-                                             display_type   = "string",
-                                             display_order  = 10,
-                                             max_len            = None,
-                                             default_func       = None,
-                                             is_key_word        = True,
-                                             col_head_text      = "Name",
-                                             col_head_width     = 50,
-                                             is_topic           = True,
-                                             col_head_order     = 1,
-                                             form_col_span      = 4,
-                                            )
+                                                 db_type        = "VARCHAR(50)",
+                                                 display_type   = "string",
+                                                 display_order  = 10,
+                                                 is_keep_prior_enabled = True,
+                                                 max_len            = None,
+                                                 default_func       = None,
+                                                 is_key_word        = True,
+                                                 col_head_text      = "Name",
+                                                 col_head_width     = 50,
+                                                 is_topic           = True,
+                                                 col_head_order     = 1,
+                                                 form_col_span      = 4,
+                                                 topic_column_order = 10,)
 
     a_table_dict.add_column( a_column_dict )
 
     # ---- cmnt
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "cmnt",
-                                             db_type        = "VARCHAR(100)",
-                                             display_type   = "string",
-                                             display_order  = 20,
-                                             max_len        = None,
-                                             default_func   = None,
-                                             is_key_word    = True,
-                                             col_head_text      = "Comment",
-                                             col_head_width     = 50,
-                                             col_head_order     = 1,
-                                             form_col_span       = 4,
-                                            )
+                                                 db_type        = "VARCHAR(100)",
+                                                 display_type   = "string",
+                                                 display_order  = 20,
+                                                 max_len        = None,
+                                                 default_func   = None,
+                                                 is_key_word    = True,
+                                                 col_head_text      = "Comment",
+                                                 col_head_width     = 50,
+                                                 col_head_order     = 1,
+                                                 form_col_span       = 4,
+                                                 )
     a_table_dict.add_column( a_column_dict )
 
     # ---- start_date
@@ -173,7 +174,7 @@ def build_it( a_data_dict_all ):
                                              col_head_text      = "Key Words",
                                              col_head_width     = 50,
                                              col_head_order     = 1,
-                                             )
+                                             topic_column_order = 20,)
     a_table_dict.add_column( a_column_dict )
 
     # ---- web_site_dir
@@ -205,6 +206,8 @@ def build_it( a_data_dict_all ):
     a_table_dict.add_column( a_column_dict )
 
 
+
+    # ---- id_old
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "id_old",
                                              db_type        = "VARCHAR(15)",
                                              form_read_only  = True,

@@ -31,7 +31,7 @@ if __name__ == "__main__":   # for testing
     pass
 
 
-import  data_dict
+import  data_dict_all
 
 # ---- end imports
 
@@ -71,9 +71,8 @@ class TopicForTable():
 
 
         """
-        # data_dict.build_it() should have been built by now
         self.db     = db
-        a_table     = data_dict.DATA_DICT.get_table( table_name )
+        a_table     = data_dict_all.SCHEMA.get_table( table_name )
 
         # msg        = a_table.to_sql_create()
         self.table_name     = table_name
@@ -115,33 +114,33 @@ class TopicForTable():
 
         return topic_string
 
-# --------------------
-if __name__ == "__main__":
+# # --------------------
+# if __name__ == "__main__":
 
-    import stuff_util_sql as su
+#     import stuff_util_sql as su
 
-    # ---- get ready
-    db        = su.create_connection( use_temp = True  )
-    data_dict.build_it()
-
-
-    # ---- with TopicForTable
-    a_tft     = TopicForTable( db, "stuff"  )
+#     # ---- get ready
+#     db        = su.create_connection( use_temp = True  )
+#     data_dict.build_it()
 
 
-    a_id      = 3096 # kabota
-    topic_string           = a_tft.get_topic_string( a_id )
-    # topic_list      = [ i_value for i_value in topic.values()]
-    # topic_string    = " ".join( topic_list )
-    # print( topic )
-    print( topic_string )
+#     # ---- with TopicForTable
+#     a_tft     = TopicForTable( db, "stuff"  )
 
-    # ---- with a topic dict
-    a_topic_dict    = TopicDict( db )
-    topic_string    = a_topic_dict.get_topic_string( "stuff", a_id )
-    print( topic_string )
 
-    topic_string    = a_topic_dict.get_topic_string( "stuff", a_id )
-    print( topic_string )
+#     a_id      = 3096 # kabota
+#     topic_string           = a_tft.get_topic_string( a_id )
+#     # topic_list      = [ i_value for i_value in topic.values()]
+#     # topic_string    = " ".join( topic_list )
+#     # print( topic )
+#     print( topic_string )
+
+#     # ---- with a topic dict
+#     a_topic_dict    = TopicDict( db )
+#     topic_string    = a_topic_dict.get_topic_string( "stuff", a_id )
+#     print( topic_string )
+
+#     topic_string    = a_topic_dict.get_topic_string( "stuff", a_id )
+#     print( topic_string )
 
 # ---- eof

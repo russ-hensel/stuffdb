@@ -42,7 +42,7 @@ import key_words
 import planting_document_edit
 import qt_sql_query
 import logging
-import data_dict
+import data_dict_all
 import gui_qt_ext
 from   app_global import AppGlobal
 
@@ -957,7 +957,7 @@ class PlantingEventSubTab( base_document_tabs.SubTabWithEditBase ):
 
         global EVENT_FIELD_DICT   # where when is used ??
         if EVENT_FIELD_DICT is None:
-            EVENT_FIELD_DICT   = data_dict.rpt_sub_tab_columns_order( self.table_name, verbose = False  )
+            EVENT_FIELD_DICT   = data_dict_all.rpt_sub_tab_columns_order( self.table_name, verbose = False  )
 
         self.field_dict     = EVENT_FIELD_DICT  # order is ix  key is field_name then a dict
 

@@ -58,10 +58,10 @@ def build_it( a_data_dict_all ):
 
     # ---- name
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "name",
-                                             db_type        = "VARCHAR(150)",
-                                             display_type   = "string",
-                                             max_len        = None,
-                                             default_func   = None,
+                                             db_type            = "VARCHAR(150)",
+                                             display_type       = "string",
+                                             max_len            = None,
+                                             default_func       = None,
                                              is_key_word        = True,
                                              form_make_ref      = True,
                                              is_keep_prior_enabled = True,
@@ -69,7 +69,8 @@ def build_it( a_data_dict_all ):
                                              col_head_width     = 40,
                                              col_head_order     = 10,
                                              display_order      = 10,
-                                             form_col_span      = 4,  )
+                                             form_col_span      = 4,
+                                             topic_column_order = 10,)
 
     a_table_dict.add_column( a_column_dict )
 
@@ -85,7 +86,8 @@ def build_it( a_data_dict_all ):
                                              col_head_width     = 40,
                                              col_head_order     = 15,
                                              display_order      = 35,
-                                             form_col_span      = 4,  )
+                                             form_col_span      = 4,
+                                             topic_column_order = 20, )
 
     a_table_dict.add_column( a_column_dict )
 
@@ -98,7 +100,7 @@ def build_it( a_data_dict_all ):
                                              is_key_word        = True,
                                              is_keep_prior_enabled = True,
                                              col_head_text      = "Descr.",
-                                             col_head_width     = 40,
+                                             col_head_width     = 10,
                                              col_head_order     = 20,
                                              display_order      = 30,
                                              form_col_span      = 4,  )
@@ -146,7 +148,7 @@ def build_it( a_data_dict_all ):
                                              display_order      = 200,
                                              form_read_only     = True,
 
-                                             #form_col_span      = 2,
+                                             form_col_span      = 2,
                                               )
     a_table_dict.add_column( a_column_dict )
 
@@ -171,7 +173,7 @@ def build_it( a_data_dict_all ):
                                              db_type        = "VARCHAR(250)",
                                              display_type   = "string",
                                              max_len        = None,
-                                             default_func= None,
+                                             default_func   = None,
                                              display_order      = 38,
                                              form_col_span      = 4,
 
@@ -188,21 +190,24 @@ def build_it( a_data_dict_all ):
 
     # ---- dt_item
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "dt_item",
-                                              db_type        = "INTEGER",
-                                              display_type   = "timestamp",
-                                              form_col_span      = 1,
+                                              db_type           = "INTEGER",
+                                              display_type      = "timestamp",
+                                              form_col_span      = 2,
 
                                              rec_to_edit_cnv      = "cnv_int_to_qdate",
                                              dict_to_edit_cnv     = "cnv_int_to_qdate",
                                              edit_to_rec_cnv      = "cnv_qdate_to_int",
                                              edit_to_dict_cnv     = "cnv_qdate_to_int",
 
-                                             detail_edit_class  = "custom_widgets.CQDateEdit",
-                                             form_edit          = "custom_widgets.CQDateEdit",
+                                             detail_edit_class  = "cw.CQDateEdit",
+                                             form_edit          = "cw.CQDateEdit",
 
+                                             col_head_text      = "Date",
+                                             col_head_width     = 15,
+                                             col_head_order     = 50,
 
-                                              max_len        = None,
-                                              default_func= None,   )
+                                              max_len           = None,
+                                              default_func      = None,   )
     a_table_dict.add_column( a_column_dict )
 
     # ---- c_name
@@ -222,11 +227,12 @@ def build_it( a_data_dict_all ):
                                              is_key_word    = True,
                                              is_keep_prior_enabled = True,
                                              col_head_text      = "Title",
-                                             col_head_width     = 40,
+                                             col_head_width     = 20,
                                              col_head_order     = 12,
                                              display_order      = 25,
                                              form_col_span      = 4,
-                                             form_make_ref   = True)
+                                             form_make_ref      = True,
+                                             topic_column_order = 30,)
     a_table_dict.add_column( a_column_dict )
 
     # ---- tag
@@ -251,9 +257,14 @@ def build_it( a_data_dict_all ):
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
+
+                                             col_head_text      = "File Name",
+                                             col_head_width     = 30,
+                                             col_head_order     = 100,
+
                                              display_order      = 42,
                                              form_col_span      = 4,
-                                             form_make_ref   = True )
+                                             form_make_ref      = True )
     a_table_dict.add_column( a_column_dict )
 
     # ---- sub_dir
@@ -264,8 +275,8 @@ def build_it( a_data_dict_all ):
                                              default_func   = None,
                                              display_order         = 40,
                                              is_keep_prior_enabled = True,
-                                             form_col_span      = 2,
-                                             form_make_ref   = True )
+                                             form_col_span      = 1,
+                                             form_make_ref      = True )
     a_table_dict.add_column( a_column_dict )
 
     # ---- photo_url
@@ -303,7 +314,7 @@ def build_it( a_data_dict_all ):
                                              db_type        = "DECIMAL(52)",
                                              display_type   = "skip",
                                              max_len        = None,
-                                             default_func= None,
+                                             default_func   = None,
                                              display_order      = 94,
                                              # form_col_span      = 2,
                                              )
@@ -322,13 +333,119 @@ def build_it( a_data_dict_all ):
 
     # ---- copyright
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "copyright",
-                                             db_type        = "VARCHAR(50)",
-                                             display_type   = "string",
-                                             max_len        = None,
-                                             default_func= None,   )
+                                             db_type            = "VARCHAR(50)",
+                                             display_type       = "string",
+                                             max_len            = None,
+                                             default_func       = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    #print( a_table_dict )
+    if True:
+        # ---- EXIF ============================================
+        # ---- exif_ts
+        a_column_dict = data_dict_all.ColumnDict(    column_name    = "exif_ts",
+                                                  db_type           = "INTEGER",
+                                                  display_type      = "timestamp",
+                                                  #form_col_span      = 1,
+
+                                                 rec_to_edit_cnv      = "cnv_int_to_qdate",
+                                                 dict_to_edit_cnv     = "cnv_int_to_qdate",
+                                                 edit_to_rec_cnv      = "cnv_qdate_to_int",
+                                                 edit_to_dict_cnv     = "cnv_qdate_to_int",
+
+                                                 detail_edit_class  = "cw.CQDateEdit",
+                                                 form_edit          = "cw.CQDateEdit",
+                                                 form_read_only       = True,
+
+                                                 col_head_text      = "Exif Date",
+                                                 # col_head_width     = 15,
+                                                 # col_head_order     = 150,
+                                                 form_col_span      = 2,
+                                                  max_len           = None,
+                                                  default_func      = None,   )
+        a_table_dict.add_column( a_column_dict )
+
+        # ---- exif_lat
+        a_column_dict = data_dict_all.ColumnDict(    column_name    = "exif_lat",
+                                                  db_type           = "INTEGER",
+                                                  display_type      = "float",
+                                                  form_col_span      = 2,
+                                                  form_read_only       = True,
+
+                                                 #rec_to_edit_cnv      = "cnv_int_to_qdate",
+                                                 rec_to_edit_cnv      = "cnv_float_to_str",
+
+                                                 #dict_to_edit_cnv     = "cnv_int_to_qdate",
+                                                 dict_to_edit_cnv     = "cnv_float_to_str",
+
+                                                 #edit_to_rec_cnv      = "cnv_qdate_to_int",
+                                                 edit_to_rec_cnv      = "cnv_str_to_float",
+
+                                                 #edit_to_dict_cnv     = "cnv_qdate_to_int",
+                                                 edit_to_dict_cnv     = "cnv_str_to_float",
+
+                                                 # detail_edit_class  = "custom_widgets.CQDateEdit",
+                                                 # form_edit          = "custom_widgets.CQDateEdit",
+
+                                                 col_head_text      = "Exif lat",
+                                                 # col_head_width     = 15,
+                                                 # col_head_order     = 150,
+
+                                                  max_len           = None,
+                                                  default_func      = None,   )
+        a_table_dict.add_column( a_column_dict )
+
+        # ---- exif_lat
+        a_column_dict = data_dict_all.ColumnDict(    column_name    = "exif_lon",
+                                                  db_type           = "INTEGER",
+                                                  display_type      = "float",
+                                                  form_col_span      = 2,
+                                                  form_read_only       = True,
+
+                                                 #rec_to_edit_cnv      = "cnv_int_to_qdate",
+                                                 rec_to_edit_cnv      = "cnv_float_to_str",
+
+                                                 #dict_to_edit_cnv     = "cnv_int_to_qdate",
+                                                 dict_to_edit_cnv     = "cnv_float_to_str",
+
+                                                 #edit_to_rec_cnv      = "cnv_qdate_to_int",
+                                                 edit_to_rec_cnv      = "cnv_str_to_float",
+
+                                                 #edit_to_dict_cnv     = "cnv_qdate_to_int",
+                                                 edit_to_dict_cnv     = "cnv_str_to_float",
+
+                                                 # detail_edit_class  = "custom_widgets.CQDateEdit",
+                                                 # form_edit          = "custom_widgets.CQDateEdit",
+
+                                                 col_head_text      = "Exif lat",
+                                                 # col_head_width     = 15,
+                                                 # col_head_order     = 150,
+
+                                                  max_len           = None,
+                                                  default_func      = None,   )
+        a_table_dict.add_column( a_column_dict )
+
+
+        # ---- exif_make
+        a_column_dict = data_dict_all.ColumnDict(    column_name    = "exif_make",
+                                                 db_type        = "VARCHAR(25)",
+                                                 display_type   = "string",
+                                                 form_read_only       = True,
+                                                 max_len        = None,
+                                                 default_func   = None,
+                                                 form_col_span      = 2,)
+        a_table_dict.add_column( a_column_dict )
+
+        # ---- exif_model
+        a_column_dict = data_dict_all.ColumnDict(    column_name    = "exif_model",
+                                                     db_type        = "VARCHAR(25)",
+                                                     display_type   = "string",
+                                                     form_read_only       = True,
+                                                     max_len        = None,
+                                                     default_func   = None,
+                                                     form_col_span      = 2,)
+        a_table_dict.add_column( a_column_dict )
+
+        #print( a_table_dict )
 
     # ---- photo_text not in earlier stuff  ---------------------
     a_table_dict   = data_dict_all.TableDict(  "photo_text" )

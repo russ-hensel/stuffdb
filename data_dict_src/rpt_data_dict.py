@@ -279,8 +279,6 @@ def rpt_list_columns_sql_order( table_name ):
     print( data )
 
 
-
-
 # -------------------------------------------
 def rpt_list_column_names_sql_order( table_name ):
     """

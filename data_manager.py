@@ -7,19 +7,17 @@ make manager for a model with fields
     --->>>  detail_data_manager
 """
 
-# --------------------
-if __name__ == "__main__":
-    #----- run the full app
-    import main
-    main.main()
+# # --------------------
+# if __name__ == "__main__":
+#     #----- run the full app
+#     import main
+#     main.main()
 
 import time
 import logging
 
 # --------------------
 # ---- import
-
-
 
 
 from qtpy.QtSql import QSqlRecord
@@ -32,9 +30,9 @@ import string_utils
 from   app_global import AppGlobal
 
 logger              = logging.getLogger( )
-LOG_LEVEL           =  5 # level for more debug    higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
+LOG_LEVEL           =  115 # level for more debug    higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
 
-# may also be defined in base doc or somewher else this should be reconciled  data_manager.RECORD_NULL
+# may also be defined in base doc or somewhere else this should be reconciled  data_manager.RECORD_NULL
 RECORD_NULL         = 0
 RECORD_FETCHED      = 1
 RECORD_NEW          = 2
@@ -93,8 +91,8 @@ class DataManager(   ):
             self.data_manager..next_key_function = some_function( table_name )
 
         """
-        self.model                  = model   # what kind of modeql QSqlTableModel
-            # all set uup with db connect
+        self.model                  = model   # what kind of model QSqlTableModel
+            # all set up with db connect
 
         self.next_key_function      = None
             # should take table_name  self.next_key_function( self.table_name )
@@ -103,16 +101,16 @@ class DataManager(   ):
 
         self.current_id             = None  # None only if we do not have an id
         self.current_record         = None  # valid .... when for history
-                                            # want after record from criterial list and
+                                            # want after record from criteria list and
                                             # want to update on save
 
         self.record_state           = RECORD_NULL
         self.history_tab            = None      # set to get history updates
-                                                # may not be implemented or imcoplete
+                                                # may not be implemented or incomplete
 
         # key word is up there in parent
         self.key_word_table_name    = ""        # set in init of child ??
-        self.id_field               = None      # infered below
+        self.id_field               = None      # inferred below
         self.field_list             = []        # all field involved in the update
             # see add_field
         self.key_word_field_list    = []        # list of edits containing key words
@@ -121,7 +119,7 @@ class DataManager(   ):
 
         self.topic_field_list       = []           # list of edits containing topic info
 
-            # check that childred do not also implement this  ?? should this be here?
+            # check that children do not also implement this  ?? should this be here?
         self.enable_send_topic_update    = False
 
     # ------------------------
@@ -129,11 +127,15 @@ class DataManager(   ):
         """
         should this be in data manager or back in detail_tab
         """
+
         if field_name is None:
             print( "mark_as_copy field name is None ")
             return
+
+        i_field   = None
         for i_field in self.field_list:
             #rint( i_field.field_name )
+
             if  i_field.field_name == field_name:
                 # assume for now is a line edit with insert or append method
                 break
@@ -172,6 +174,7 @@ class DataManager(   ):
             data dict, note may be code generated not dynamic !! change to dd implementation
         a field on the form and in the record so to speak
         a field is some class from custom_widgets....
+        might be better as a dict use   .values() in place of list but can lookup widget
         """
         self.field_list.append( edit_field )
         if edit_field.field_name == "id":
@@ -215,7 +218,8 @@ class DataManager(   ):
             if i_field.is_changed:
                 have_updates   = True
             if log_it:
-                msg       = ( f"have_updatable_edits for {i_field.field_name} {i_field.is_changed = }" )
+                msg       = ( f"have_updatable_edits for {i_field.field_name} "
+                              f"{i_field.is_changed = }" )
                 logging.info( msg )
 
         self.model_record_info()
@@ -234,7 +238,7 @@ class DataManager(   ):
         dm.new_record( next_key = None, option = "nop" )
 
         """
-        msg      = ( f"DataManager new_record    {self.table_name}  should we create the record here ??")
+        msg      = ( f"DataManager new_record >>{self.table_name = }<<  should we create the record here ??")
         logging.debug( msg )
 
         if next_key is None:
@@ -245,7 +249,7 @@ class DataManager(   ):
         self.clear_fields( option   = option  )
         self.record_state           = RECORD_NEW
 
-        # think we need to use custon_widget
+        # think we need to use custom_widget
         #self.id_field.setText( str( next_key ) )
         self.id_field.set_preped_data( str( next_key ),  )
 
@@ -260,11 +264,11 @@ class DataManager(   ):
         logging.debug( msg )
 
     # ---------------------------
-    def select_record( self, id_value  ):
+    def select_record( self, id_value ):
         """
-        from russ crud  works
-        move to photo_detail and modify
-        then promote
+
+
+
         promoted   seems ok to be here
         """
         record   = None
@@ -308,21 +312,25 @@ class DataManager(   ):
             # if self.key_word_table_name:
             #     self.key_word_obj.string_to_new(( self.get_kw_string()) )
 
+        # rest continue on to key word update
         elif  self.record_state   == RECORD_NEW:
             self.update_new_record()
+
             if self.key_word_table_name:
                 self.key_word_obj.string_to_new(( self.get_kw_string()) )
                     # probably key_words.KeyWords
 
         elif  self.record_state   == RECORD_FETCHED:
             self.update_record_fetched()
+
             if self.key_word_table_name:
                 self.key_word_obj.string_to_new(( self.get_kw_string()) )
 
         elif  self.record_state   == RECORD_DELETE:
             self.delete_record_update()
+
             if self.key_word_table_name:
-                 self.key_word_obj.delete_all( self.current_id )
+                self.key_word_obj.delete_all( self.current_id )
 
         else:
             msg     = ( f"update_db wtf  {self.record_state = } " )
@@ -349,7 +357,7 @@ class DataManager(   ):
         what are the fields
         key words done in update_db
         when i had problems with update i had several versions of this
-            now in Ver 63: I will delted them look in old versions if you
+            now in Ver 63: I will deleted them look in old versions if you
             want that code
         """
         self.update_record_fetched_v3( )
@@ -363,10 +371,11 @@ class DataManager(   ):
         v3   adding another select -- this seems wrong -- if work look for other options
         this seems to work so go with it for now
         """
-        debug_msg    = ( f"update_record_fetched  {self.record_state  = }"   )
+        debug_msg    = ( f"update_record_fetched_v3  {self.record_state  = }"   )
         logging.log( LOG_LEVEL,  debug_msg, )
 
-        model    = self.model      # QSqlTableModel(
+        model       = self.model      # QSqlTableModel(
+
         if not self.record_state  == RECORD_FETCHED:
             msg   = ( "update_record_fetched_v3 bad_state, return  "
                       f"{self.record_state  = } {self.table_name = }")
@@ -374,20 +383,24 @@ class DataManager(   ):
             return
 
         id_value = self.id_field.text()
+
         if id_value:
             # msg    = ( "update_record_fetched_v3 ")
             # logging.debug( msg )
             #model.setFilter(f"id = {id_value}")
             #model.select()
-            if model.rowCount() > 0:
 
+            if model.rowCount() > 0:
                 record = model.record( 0 )
-                self.field_to_record(  record )
-                model.setRecord( 0, record)  # model.setRecord(0, record) chat says required
+                self.field_to_record( record )
+                model.setRecord( 0, record )  # chat says required
                 #model.submitAll()
                 ok   = self.model_submit_all( model,
-                             f"DataManager.update_record_fetched_v1 {id_value = } {self.table_name = } ")
+                              "DataManager.update_record_fetched_v1 "
+                             f"{id_value = } {self.table_name = } ")
                 model.select()
+                self.current_record     = model.record( 0 ) # refresh the value
+
             else:
                 msg   = ( f"update_record_fetched_v3 for {id_value} got 0 records " )
                 logging.error( msg )
@@ -398,22 +411,21 @@ class DataManager(   ):
             logging.error( msg )
             1/0   # pretty poor
 
-
     # ---------------------------
     def update_new_record( self ):
         """
         ver3 the one the worked others in a backup or earlier than v66
         like v2 but a bit different on filters
         here lets        when i had problems with update i had several versions of this
-                    now in Ver 63: I will delted them look in old versions if you
+                    now in Ver 63: I will deleted them look in old versions if you
                     want that code
             change the filter
             add the record
             modify the record
-            add modle_debug to model_submit_all
+            add model_debug to model_submit_all
 
             when i had problems with update i had several versions of this
-                now in Ver 63: I will delted them look in old versions if you
+                now in Ver 63: I will deleted them look in old versions if you
                 want that code
         """
         debug_msg       = ( f"document_manager update_new_record_v3"
@@ -431,7 +443,7 @@ class DataManager(   ):
 
         debug_msg    = info_about.INFO_ABOUT.find_info_for(
                         model,
-                        msg             = "update_new_record_v3 after filter to empty",
+                        msg             = "update_new_record",
                         max_len         = None,
                         xin             = "",
                         print_it        = False,
@@ -443,20 +455,20 @@ class DataManager(   ):
 
         self.field_to_record( record )
 
-        # ERROr just for debugging
+        # Error just for debugging
         #record.setValue( "add_kw", "data_for_add_kw" )
 
-        debug_msg       = "update_new_record_v3 prior to insertRecord {model.rowCount() = } "
+        debug_msg       = f"update_new_record prior to insertRecord {model.rowCount() = } "
         logging.log( LOG_LEVEL,  debug_msg, )
         # seems key to modify record first then insert -- may want to look into someroe r
         # but seems like that was what id did in ver 1
         model.insertRecord( model.rowCount(), record )  # QSqlTableModel
 
-        debug_msg       = "update_new_record_v3 post to insertRecord {model.rowCount() = } "
+        debug_msg       = f"update_new_record_post to insertRecord {model.rowCount() = } "
         logging.log( LOG_LEVEL,  debug_msg, )
 
         ok              = self.model_submit_all( model,
-                            ( f"DataManager.update_new_record_v3 "
+                            ( f"DataManager.update_new_record "
                               f" { self.current_id = } {self.table_name = }"
                               f" {self.record_state = }" ) )
 
@@ -468,7 +480,7 @@ class DataManager(   ):
         msg          = "update_new_record_v3 at very end "
         debug_msg    = ( f"\n{msg}" )
         logging.log( LOG_LEVEL,  debug_msg, )
-
+        self.current_record     = model.record( 0 ) # refresh the value
 
         if self.history_tab is not None:
             self.history_tab.record_to_table( record )
@@ -489,8 +501,8 @@ def delete_record_by_id(model, id_value):
         if model.data(index) == id_value:
             # Confirm before deleting
             reply = QMessageBox.question(None, "Confirm Delete",
-                                          f"Are you sure you want to delete record with id {id_value}?",
-                                          QMessageBox.Yes | QMessageBox.No)
+                f"Are you sure you want to delete record with id {id_value}?",
+                QMessageBox.Yes | QMessageBox.No)
             if reply == QMessageBox.Yes:
                 model.removeRow(row)
                 if model.submitAll():
@@ -507,12 +519,13 @@ def delete_record_by_id(model, id_value):
             if model.data(index) == self.current_id:
 
                 model.removeRow(row)
+
                 if model.submitAll():
-                    debug_msg  = ( "Record deleted successfully!" )
+                    debug_msg  = ( "delete_record_update Record deleted " )
                     logging.log( LOG_LEVEL,  debug_msg, )
 
                 else:
-                    debug_msg  = ( f"Failed to delete record:  {model.lastError().text() }" )
+                    debug_msg  = ( f"delete_record_update Failed to delete record:  {model.lastError().text() }" )
                     logging.log( LOG_LEVEL,  debug_msg, )
 
         self.record_state = RECORD_NULL
@@ -540,17 +553,16 @@ def delete_record_by_id(model, id_value):
 
             debug_msg    = info_about.INFO_ABOUT.find_info_for(
                             model,
-                            msg             = f"model prior to submitAll {self.record_state = }",
+                            msg             = f"model_submit_all model prior to submitAll {self.record_state = }",
                             max_len         = None,
                             xin             = "",
                             print_it        = False,
                             sty             = "",
                             include_dir     = False,  )
-            logging.log( LOG_LEVEL,  debug_msg, )
+            logging.log( LOG_LEVEL, debug_msg, )
 
         if model.submitAll():
-            debug_msg = ( f"data_manager   model_submit_all submitAll ok: {msg}")
-            #logging.debug( debug_msg )
+            debug_msg = ( f"data_manager.model_submit_all submitAll ok: {msg}")
             logging.log( LOG_LEVEL,  debug_msg, )
             ok   = True
 
@@ -602,7 +614,7 @@ def delete_record_by_id(model, id_value):
         is_bad   = False
         for i_field in  self.field_list:
             debug_field_name    = i_field.field_name
-            is_bad    = i_field.is_field_valid()
+            is_bad              = i_field.is_field_valid()
             # if is_bad:
             #     break
 
@@ -613,7 +625,7 @@ def delete_record_by_id(model, id_value):
 
     # -------------------------------------
     def get_field_data( self, field_name   ):
-        """ is used or implimented
+        """ is used or implemented
         may want a good search method for now just a linear
         search -- may use some caching
         not tested
@@ -635,8 +647,8 @@ def delete_record_by_id(model, id_value):
     # -------------------------------------
     def get_kw_string( self,   ):
         """
-        get the fields contaning key words
-        and concatinate into one string
+        get the fields containing key words
+        and concatenate into one string
         self.field_list.append( edit_field )
         """
         #rint( "get_kw_string" )
@@ -653,6 +665,7 @@ def delete_record_by_id(model, id_value):
         get the fields defining topic for this record
         and build  into one string
         self.field_list.append( edit_field )
+            had trouble with it where topic_field_list was not built ??
         """
         #rint( "get_topic_string" )
         a_str  = " "
@@ -672,7 +685,7 @@ def delete_record_by_id(model, id_value):
         delete all under this id   current_id
         all not a great word here .....
         """
-        msg    = "in datamanager delete all "
+        msg    = "in DataManager delete all "
         logging.debug( msg )
 
         if not self.record_state == RECORD_FETCHED:
@@ -691,7 +704,7 @@ def delete_record_by_id(model, id_value):
         """
         for i_field in  self.field_list:
 
-            # some debug stuff keep for abit
+            # some debug stuff keep for a bit
             #rint( f"********record_to_field {i_field.field_name}")
             # i_field.set_data_from_record( record )
 
@@ -719,7 +732,7 @@ def delete_record_by_id(model, id_value):
             if ( ( i_field.field_name  == "text_data" ) and
                  ( isinstance( i_field, custom_widgets.CQTextEdit ) ) ):
 
-                debug_msg   = ( f"field_to_record {i_field.field_name = } " )
+                debug_msg   = ( f"!! field_to_record {i_field.field_name = } " )
                 logging.log( LOG_LEVEL,  debug_msg, )
                 if  i_field.is_prior_text_enabled:
                     i_field.cache_current_text()
@@ -727,8 +740,7 @@ def delete_record_by_id(model, id_value):
             if  ( i_field.field_name  == "id_in_old" ):
                 pass   # debug
 
-
-            # use if need breakpooint
+            # use if need breakpoint
             # if LOG_LEVEL >= 10:
             #     debug_msg   = ( f"field_to_record {i_field.field_name = } !! remove " )
             #     logging.log( LOG_LEVEL,  debug_msg, )
@@ -754,31 +766,46 @@ def delete_record_by_id(model, id_value):
 
         move option inside control with argument
         """
-        try:
-            if option == "default":
-                for i_field in self.field_list:
-                    # i_field.clear_data( to_prior = to_prior )
-                    i_field.set_default(  )
+        # try:
+        if option == "default":
 
-            elif option == "prior":
-                for i_field in self.field_list:
-                    debug_msg = ( f"prior {i_field = }")
-                    logging.log( LOG_LEVEL, debug_msg )
-                    i_field.set_prior(  )
-            elif option == "nop":
-                 # do nothing
-                 pass
-        except:
-            if option == "default":
-                for i_field in self.field_list:
-                    # i_field.clear_data( to_prior = to_prior )
-                    i_field.set_default(  )
+            for i_field in self.field_list:
+                # i_field.clear_data( to_prior = to_prior )
+                debug_msg = ( f"clear_fields  default {i_field.field_name = }  {i_field._is_keep_prior_enabled = }  ")
+                logging.log( LOG_LEVEL, debug_msg )
+                i_field.set_default(  )
 
-            elif option == "prior":
-                for i_field in self.field_list:
-                    debug_msg( f"{i_field = }")
-                    logging.log( LOG_LEVEL, debug_msg )
-                    i_field.set_prior(  )
+        elif option == "prior":
+            for i_field in self.field_list:
+
+                # if i_field.field_name in [ "name", "title" ]:
+                #     msg    = ( f"clear_fields !!  prior {i_field.field_name = } {i_field._is_keep_prior_enabled = }  {i_field.contextMenuPolicy() = }" )
+                #     print( msg )
+                #     breakpoint()
+                #     pass
+
+                debug_msg = ( f"clear_fields !!  prior {i_field.field_name = } {i_field._is_keep_prior_enabled = }  {i_field.contextMenuPolicy() = }" )
+                logging.log( LOG_LEVEL, debug_msg )
+                i_field.set_prior(  )
+
+        else:
+            # do nothing
+            debug_msg = ( f"clear_fields else got option {option = }")
+            logging.log( 100, debug_msg )
+            pass
+
+        # except:
+        #     # !! does this make any sense !! think error
+        #     if option == "default":
+        #         for i_field in self.field_list:
+        #             # i_field.clear_data( to_prior = to_prior )
+        #             i_field.set_default(  )
+
+        #     elif option == "prior":
+        #         for i_field in self.field_list:
+        #             debug_msg( f"{i_field = }")
+        #             logging.log( LOG_LEVEL, debug_msg )
+        #             i_field.set_prior(  )
 
     # ------------------------------
     def __str__( self ):
@@ -788,7 +815,6 @@ def delete_record_by_id(model, id_value):
 
         """
         return string_utils.obj_to_str( self )
-
 
 
         # a_str   = ""
@@ -840,4 +866,3 @@ def delete_record_by_id(model, id_value):
         # return a_str
 
 # ---- eof
-

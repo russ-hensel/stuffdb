@@ -28,21 +28,13 @@ import sqlite3
 from   pathlib import Path
 
 
-# from qt_compat import QApplication, QAction, exec_app, qt_version
-
-
-from qtpy.QtWidgets import QMessageBox
-#from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-#from qt_compat import TextAlignmentRole
-
-
 
 from qtpy.QtSql import QSqlDatabase
 
-#from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
-                             QMessageBox)
+                             QMessageBox,
+                             )
 
 LOG_LEVEL   =   10
 
@@ -60,26 +52,20 @@ class QsqlDbAccess(   ):
         usual
         """
         self.connection         = None
-        self.db                 = None   # use as interface
+        self.db                 = None   # use as interface to db
         self.connection_name    = connection_name
         db_type                 = AppGlobal.parameters.db_type
 
         if   db_type == "QSQLITE":
-
             self.init_db_qsqlite()
 
         elif db_type == "POSTG":
             self.init_db_postg()
 
-        #rint( "")
-
-
     # --------------------------------
     def init_db_postg( self, ):
         """
         different init for postgress close to working
-
-
 
         """
         debug_msg   = ( "QsqlDbAccess  init_db_postg()" )
@@ -110,7 +96,7 @@ class QsqlDbAccess(   ):
             logging.error( msg, )
             QMessageBox.critical(
                 None,
-                "databasenot open - Error!", msg
+                "database not open - Error!", msg
                 )
 
         connection_name   = self.db.connectionName()
@@ -148,7 +134,7 @@ class QsqlDbAccess(   ):
             msg      =  (f"cannot write new lockfile {db_lock_file_name = }\n{msg} " )
 
             # too soon for next may have to use a signal for later
-           # QMessageBox.information( AppGlobal.main_window, "Error",  msg )
+            # QMessageBox.information( AppGlobal.main_window, "Error",  msg )
             AppGlobal.fatal_error   = msg
             # raise Exception( msg )
 
@@ -162,7 +148,7 @@ class QsqlDbAccess(   ):
             logging.error( msg, )
             QMessageBox.critical(
                 None,
-                "databasenot open - Error!", msg
+                "database not open - Error!", msg
                 )
 
         connection_name   = self.db.connectionName()
@@ -174,7 +160,7 @@ class QsqlDbAccess(   ):
         self.sqlite_conn    = sqlite_conn
 
         # this is a chat lie
-        #assert sqlite_conn == self.db.nativeHandle(), "Connections are not the same!"
+        #assert SQLite_conn == self.db.nativeHandle(), "Connections are not the same!"
 
         # Set the trace callback
         #sqlite_conn.set_trace_callback(log_sql_callback)
@@ -346,7 +332,7 @@ class QsqlDbAccess(   ):
             return
 
         if AppGlobal.fatal_error:
-            msg     = (f"Fatal error so lock file not delted")
+            msg     = (f"remove_lock_file Fatal error so lock file not deleted")
             print( msg )
             return
 
@@ -354,19 +340,19 @@ class QsqlDbAccess(   ):
 
         try:
             file_path.unlink()
-            msg     = (f"Successfully deleted: {file_path}")
+            msg     = (f"remove_lock_file Successfully deleted: {file_path}")
             print( msg )
 
         except FileNotFoundError:
-            msg     = (f"File not found: {file_path}")
+            msg     = (f"remove_lock_file File not found: {file_path}")
             print( msg )
 
         except PermissionError:
-            msg     = (f"Permission denied: {file_path}")
+            msg     = (f"remove_lock_file Permission denied: {file_path}")
             print( msg )
 
         except Exception as e:
-            msg     = (f"Error deleting {file_path}: {e}")
+            msg     = (f"remove_lock_file Error deleting {file_path}: {e}")
             print( msg )
 
     # ---------------------------
@@ -386,7 +372,7 @@ class QsqlDbAccess(   ):
         path        = Path( lock_file_name )
 
         if path.exists():
-            #rint( f"Locfile exists {path}")
+            #rint( f"Lockfile exists {path}")
             return False
 
         # else:
@@ -410,6 +396,3 @@ class QsqlDbAccess(   ):
 
 
 # ---- eof
-
-
-

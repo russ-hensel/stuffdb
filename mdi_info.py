@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 
-
+Unclear wht this does or anything current
 stuff_document_edit.EditStuffEvents( model, keygen, index = None, parent = None)
 
 """
@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
 
 # ----QtWidgets layouts
-from qtpy.QtWidgets import (QDialog,
+from qtpy.QtWidgets import ( QDialog,
                              QFormLayout,
                              QHBoxLayout,
                              QLineEdit,
