@@ -10,7 +10,7 @@ Created on Sat Jun 29 09:56:07 2024
 if __name__ == "__main__":
     #----- run the full app
     import main
-    main.main()
+   #  main.main()
 # --------------------
 
 import logging
@@ -19,17 +19,15 @@ import gui_qt_ext
 #import string_utils
 from app_global import AppGlobal
 
-
 from qtpy.QtWidgets import QMessageBox
 
 from qtpy.QtCore import QModelIndex, Qt
 
-from qtpy.QtSql import (QSqlDatabase,
-                         QSqlQuery,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel)
-
-#from qtpy.QtGui import ( QAction, QActionGroup, )
+from qtpy.QtSql import (
+                            QSqlDatabase,
+                            QSqlQuery,
+                            QSqlRelationalTableModel,
+                            QSqlTableModel)
 
 
 from qtpy.QtWidgets import (
@@ -596,6 +594,13 @@ class PlantDetailTab( base_document_tabs.DetailTabBase  ):
         # ----fields
         self._build_fields( placer )
 
+        # ---- buttons
+        widget        = QPushButton( 'Jump to Planting' )
+        #add_button    = widget
+        #widget.clicked.connect( self.add_record )
+        placer.addWidget( widget )
+
+
         # ---- tab area
         # ---------------
         tab_folder   = QTabWidget()
@@ -644,12 +649,30 @@ class PlantDetailTab( base_document_tabs.DetailTabBase  ):
     #---------------------------------
     def _build_fields( self, layout ):
         """
+        New implementation based on the data dict
+            for older look arount ver090 or so
+            builds the fields that interact with the db
+            mostly based on base documents
+        """
+        self._build_from_dict( layout )
+        self.plant_combo_dict_ext    = combo_dict_ext.PLANT_COMBO_DICT_EXT
+        #kvl_model                  = AppGlobal.mdi_management.get_key_value_list_model( "stuff" )
+        # could check have default values or do in get function better
+        # edit_field                 = self.field_dict[ "id_in" ]
+        # edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
+
+
+        return
+
+        """
         What it says, read
             this is generated code
             tweaks
                 spacing
                 plnat_combo_dict look for code
         """
+
+
         width  = 50
         for ix in range( self.max_col ):  # try to tweak size to make it work
             widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
@@ -1377,41 +1400,41 @@ class PlantPlantingSubTab( base_document_tabs.SubTabBaseOld  ):
         # model.setHeaderData( 0, Qt.Horizontal, "ID")
         # model.setHeaderData( 1, Qt.Horizontal, "YT ID"  )
 
-        # Set up the view
-        view                 = QTableView()
-        model                = self.model
+        view                = QTableView()
+        model               = self.model
         #self.list_view       = view
-        self.view            = view
+        self.view           = view
         view.setModel( self.model )
 
-        view.setEditTriggers( QTableView.NoEditTriggers )  # Disable all edit triggers make non-edit
+        view.setEditTriggers( QTableView.NoEditTriggers )  # make non-edit
         view.setSelectionBehavior( QTableView.SelectRows )
 
         ix_col = -1   # could make loop or even list comp
 
+        # ---- column headings
         # ix_col += 1
         # model.setHeaderData( ix_col, Qt.Horizontal, "ID" )
-        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        # view.setColumnWidth( ix_col, 100)  # width in  pixels
 
         # ix_col += 1
         # model.setHeaderData( ix_col, Qt.Horizontal, "Stuff ID" )
-        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        # view.setColumnWidth( ix_col, 100)
 
         # ix_col += 1
         # model.setHeaderData( ix_col, Qt.Horizontal, "Date" )
-        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        # view.setColumnWidth( ix_col, 100)
 
         # ix_col += 1
         # model.setHeaderData( ix_col, Qt.Horizontal, "$ Amount" )
-        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        # view.setColumnWidth( ix_col, 100)
 
         # ix_col += 1
         # model.setHeaderData( ix_col, Qt.Horizontal, "Comment" )
-        # view.setColumnWidth( ix_col, 300)  # Set  width in  pixels
+        # view.setColumnWidth( ix_col, 300)
 
         # ix_col += 1
         # model.setHeaderData( ix_col, Qt.Horizontal, "Type" )
-        # view.setColumnWidth( ix_col, 100)  # Set  width in  pixels
+        # view.setColumnWidth( ix_col, 100)
 
         # view.setColumnHidden( 1, True )  # view or model
 
@@ -1421,6 +1444,11 @@ class PlantPlantingSubTab( base_document_tabs.SubTabBaseOld  ):
         # view.hideColumn( STUFF_ID_COL )
 
         layout.addWidget( view )
+        # ---- buttons
+        widget        = QPushButton( 'Jump to Planting' )
+        #add_button    = widget
+        widget.clicked.connect( self.jump_to_planting )
+        layout.addWidget( widget )
 
         # ---- buttons gone
         # widget        = QPushButton( 'Add' )
@@ -1470,6 +1498,54 @@ class PlantPlantingSubTab( base_document_tabs.SubTabBaseOld  ):
 
         debug_msg    = ( f"plant_planting subtab select_by_id do we need next  {a_id =}" )
         logging.debug( debug_msg )
+
+    # ------------------------------------------
+    def get_selectd_display_row( self, ):
+        """
+        from some other place -- search on name
+        what it says  --- get_selectd_display_row ??
+
+        not right for multiple selections or none !
+        QTableView TableModel
+        self.model_display  = model
+        self.view_display   = view
+
+        """
+        view            = self.view
+        row             = -1
+        selection_model = view.selectionModel()
+        if selection_model:
+            selected_indexes = selection_model.selectedRows()
+
+            for index in selected_indexes:
+                row     = index.row()  # Get the row number
+                # msg     = ( f"Selected row: {row = }" )
+                # logging.debug(  msg )
+                break
+        else:
+            1/0
+
+        return row
+
+    # -----------------------
+    def jump_to_planting( self, ):
+        """
+        what it says
+
+            QSqlQueryModel
+
+        """
+        i_row      = self.get_selectd_display_row()
+
+        if i_row < 0:
+            return
+
+        model       = self.model
+        record      = model.record( i_row )
+        table_id    = record.value( "id" )
+
+        AppGlobal.mdi_management.open_document_with_id( "planting", table_id )
+
 
     # -----------------------
     def __str__( self ):

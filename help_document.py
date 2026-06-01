@@ -38,7 +38,8 @@ from qtpy.QtWidgets import (
 
 import data_dict_all
 import gui_qt_ext
-import string_utils as string_util
+# import string_utils as string_util
+import string_utils
 from   app_global import AppGlobal
 
 import base_document_tabs
@@ -48,6 +49,7 @@ import key_words
 import parameters
 import qt_sql_query
 import file_writers
+
 
 
 
@@ -281,6 +283,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         self.key_words_widget     = widget   # not this one at least not yet
         widget.setPlaceholderText( "key_words"  )
+        widget.setToolTip( "key_words"  )
         self.critera_widget_list.append( widget )
         #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget )
@@ -330,6 +333,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         # ---- !! TWEAK NEED TO ADD TO DATA DICT
         widget                  = cw.CQHistoryComboBox( field_name = "system" )
+        widget.setToolTip( "system"  )
         self.critera_widget_list.append( widget )
         widget.setMaxVisibleItems( 25 )
         grid_layout.addWidget( widget )
@@ -348,6 +352,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget                  = cw.CQHistoryComboBox( field_name = "table_name" )
         self.critera_widget_list.append( widget )
         widget.setMaxVisibleItems( 25 )
+        widget.setToolTip( "table_name"  )
         grid_layout.addWidget( widget )
         #widget.addItems( SYSTEM_LIST )
         widget.addItem( "<none>" )
@@ -361,6 +366,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         widget                  = cw.CQHistoryComboBox( field_name = "column_name" )
         self.critera_widget_list.append( widget )
+        widget.setToolTip( "xxx"  )
         widget.setMaxVisibleItems( 25 )
         grid_layout.addWidget( widget )
         #widget.addItems( SYSTEM_LIST )
@@ -376,7 +382,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         widget                 = cw.CQComboBox(
                                      field_name = "order_by" )
         self.critera_widget_list.append( widget )
-
+        widget.setToolTip( "xxx"  )
         widget.addItem('title - ignore case')
         widget.addItem('descr')
         widget.addItem('name')
@@ -400,7 +406,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         #self.order_by_dir_widget    = widget
         self.critera_widget_list.append( widget )
         #widget.critera_name    = "order_by_dir"
-
+        widget.setToolTip( "xxx"  )
         widget.addItem('Ascending')
         widget.addItem('Decending')
 
@@ -1215,7 +1221,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         tab_layout.addLayout( button_layout )
 
         text_layout     = QVBoxLayout()
-        tab_layout.addLayout( text_layout, stretch=2 )
+        tab_layout.addLayout( text_layout, stretch = 2 )
             # 2 started exp
             # 3 did not seem to make a difference
             # 6 did not change much
@@ -1225,7 +1231,8 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
                                     parent         = None,
                                     field_name     = "text_data",
                                                   )
-        text_edit_widget    = edit_field
+        text_edit_widget    = edit_field   # edit_field is reused
+        edit_field.set_custom_context_menu_text() # special for text
 
         # ---- search text
         search_layout       = QHBoxLayout()
@@ -1254,14 +1261,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
         data_manager    = self.text_data_manager
 
-        # moved higher
-        # # ---- TextEdit   needs to be defined at beginning with exte4nsion object
-        # edit_field          = cw.CQTextEdit(
-        #                             parent         = None,
-        #                             field_name     = "text_data",
-        #                                           )
-        # text_edit_widget    = edit_field
-        font                = QFont( * parameters.PARAMETERS.text_edit_font ) # ("Arial", 12)
+        font            = QFont( * parameters.PARAMETERS.text_edit_font ) # ("Arial", 12)
         edit_field.setFont(font)
         edit_field.is_prior_text_enabled  = True
         self.text_data_field = edit_field    # may be used for editing
@@ -1283,7 +1283,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         data_manager.add_field( widget, )
 
         button_layout.addWidget( widget, )
-        self.stop_garbage_collect = widget
+        self.stop_garbage_collect = widget  # what it says
 
         # ---- >> Go
         label       = ">> Go ..."
@@ -1293,7 +1293,6 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         button_layout.addWidget ( widget, )
 
         # snippet_manager may need reference here
-
         self.snippet_managers = []
         for ix in range( 0, AppGlobal.parameters.num_help_snippets  ):
             a_snippet_manager    = base_document_tabs.SnippetManager( edit_field )
@@ -1313,7 +1312,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget, )
 
-        # ---- pins n
+        # ---- history and pins n
         history_tab     = self.parent_window.history_tab
         # timing is off for this -- so do at run time
 
@@ -1452,24 +1451,10 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         file_writer.write_item_text( text_field )
         file_writer.write_footer( None )
 
-    # -----------------------
+    #--------------------------
     def __str__( self ):
-        """
-        the usual
-        """
-
-        a_str   = ""
-        a_str   = "\n>>>>>>>>>>* HelpDetailTab *<<<<<<<<<<<<"
-
-        a_str   = string_util.to_columns( a_str, ["key_word_table_name",
-                                           f"{self.key_word_table_name}" ] )
-
-        a_str   = string_util.to_columns( a_str, ["detail_notebook",
-                                           f"{self.detail_notebook}" ] )
-        a_str   = string_util.to_columns( a_str, ["enable_send_topic_update",
-                                           f"{self.enable_send_topic_update}" ] )
-
-        return a_str
+        """universal __str__ """
+        return string_utils.obj_to_str( self )
 
 # ----------------------------------------
 class HelpHistorylTab( base_document_tabs.HistoryTabBase  ):

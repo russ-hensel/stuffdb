@@ -89,10 +89,10 @@ def create_connection( use_temp = True  ):
 
 
 
-def  end_connectionxxx(   ):
-    #global  DB_CONNECTION
-    DB_CONNECTION.close( )
-    DB_CONNECTION = None
+# def  end_connectionxxx(   ):
+#     #global  DB_CONNECTION
+#     DB_CONNECTION.close( )
+#     DB_CONNECTION = None
 
 # ----------------------------------
 def run_sql_select( db, sql, max  = 100 ):

@@ -21,7 +21,7 @@ def build_it( a_data_dict_all ):
     # ---- id
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",
                                              db_type        = "INTEGER",
-
+                                             form_col_span      = 1,
                                              form_read_only       = True,
                                              rec_to_edit_cnv      = "cnv_int_to_str",
                                              dict_to_edit_cnv     = "cnv_int_to_str",
@@ -35,7 +35,7 @@ def build_it( a_data_dict_all ):
                                              col_head_text      = "ID",
                                              col_head_width     = 10,
                                              col_head_order     = 0,
-                                             form_col_span      = 1,
+
                                                )
 
     a_table_dict.add_column( a_column_dict )
@@ -95,8 +95,8 @@ def build_it( a_data_dict_all ):
                                              display_type   = "string",
                                              display_order  = 34,
                                              form_col_span      = 4,
-                                             max_len        = None,
-                                             default_func   = None,
+                                             max_len            = None,
+                                             default_func       = None,
                                              is_key_word            = True,
                                              is_keep_prior_enabled  = True,
                                              col_head_text          = "Key Words",

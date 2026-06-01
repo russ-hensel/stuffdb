@@ -9,6 +9,12 @@ Created on Tue Jul 30 15:34:13 2024
 
 
 import adjust.path
+
+
+!! add doc here and in notes
+
+
+
 """
 # ---- imports
 

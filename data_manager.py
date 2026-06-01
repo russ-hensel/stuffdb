@@ -170,7 +170,7 @@ class DataManager(   ):
                   is_key_word = False,
                   is_topic    = False ):
         """
-        who call me?  build fields, may not need arguments, could read from
+        who calls me?  build fields, may not need arguments, could read from
             data dict, note may be code generated not dynamic !! change to dd implementation
         a field on the form and in the record so to speak
         a field is some class from custom_widgets....
@@ -673,7 +673,7 @@ def delete_record_by_id(model, id_value):
             a_str = "DataManager.get_topic_string i_edit in self.topic_field_list is falsy"
 
         for i_edit in self.topic_field_list:
-            a_str    = a_str + " " + i_edit.get_raw_data()
+            a_str    = a_str + " " + str( i_edit.get_raw_data() )
 
         msg     = f"get_topic_string {a_str =  } {self.table_name = }"
         logging.debug( msg )
@@ -751,6 +751,14 @@ def delete_record_by_id(model, id_value):
 
             # i_field.get_data_for_record( record, self.record_state  )
             i_field.edit_to_rec( record, )  # format is hidden
+
+    # ------------------------
+    def form_complete( self, ):
+        """
+        look at topics...
+        """
+        debug_msg = ( "form_complete !!  now what}" )
+        logging.log( LOG_LEVEL, debug_msg )
 
     # ------------------------
     def clear_fields( self, option ):

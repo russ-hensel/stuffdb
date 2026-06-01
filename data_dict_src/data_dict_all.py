@@ -32,7 +32,7 @@ import logging
 import importlib
 
 
-import string_utils as string_util
+# import string_utils as string_util
 import string_utils
 #import custom_widgets
 
@@ -41,7 +41,7 @@ import string_utils
 __VERSION__   = "not maintained"
 
 SCHEMA        = None  # created on import is instance of DataDict()
-SKIP          = "THIS IS A VALUE INDICATING A SKIP"
+SKIP          = "!!SKIP**"
 
 # ---- defaults None is changed to
 
@@ -90,6 +90,100 @@ default_values[ "topic_column_order" ]      = -1
 default_values[ "form_col_span" ]           = -1
 
 DEFAULT_VALUES                              = default_values
+
+
+COL_ATTRIBUTES_ALPHA   = [
+                            "column_name",
+                            "col_head_order",
+                            "col_head_text",
+                            "col_head_width",
+                            "create_self",
+                            "db_type",
+                            "default_func",
+                            "detail_edit_class",
+                            "dict_to_edit_cnv",
+                            "display_order",
+                            "edit_in_type",
+                            "edit_to_dict_cnv",
+                            "edit_to_rec",
+                            "edit_to_rec_cnv",
+                            "edit_tool_tip",
+                            "foreign_key_info",
+                            "form_col_span",
+                            "form_edit",
+                            "form_make_ref",
+                            "form_read_only",
+                            "initial_value",
+                            "is_keep_prior_enabled",
+                            "is_key_word",
+                            "is_topic",
+                            "max_len",
+                            "placeholder_text",
+                            "primay_key_ix",
+                            "rec_to_edit",
+                            "rec_to_edit_cnv",
+                            "set_editable",
+                            "topic_column_order",
+                            "use_index",
+                            "validate",
+                               ]
+
+COL_ATTRIBUTES_ALPHA   = [
+                            "column_name",
+
+                            "form_col_span",
+                            "form_edit",
+                            "form_make_ref",          # probably drop use dict
+                            "form_read_only",
+
+                            "display_order",
+
+                            "initial_value",          # is used or replaced by partials
+                            "is_keep_prior_enabled",
+                            "is_key_word",
+
+                            "edit_tool_tip",
+                            "placeholder_text",
+
+                            "validate",
+
+                            "col_head_order",
+                            "col_head_text",
+                            "col_head_width",
+
+                            "create_self",           # ??
+
+
+                            "db_type",
+                            "default_func",         # is used ??
+
+                            "detail_edit_class",
+                            "dict_to_edit_cnv",
+
+                            "edit_in_type",
+
+                            "edit_to_rec_cnv",
+                            "edit_to_dict_cnv",
+
+                            "rec_to_edit",
+                            "rec_to_edit_cnv",
+
+                            "edit_to_rec",         # what
+
+                            "is_topic",             # phase out for topic_column_order
+                            "topic_column_order",
+
+                            "max_len",
+
+                            "primay_key_ix",
+
+                            "set_editable",
+
+                            "foreign_key_info",
+                            "use_index",
+
+                               ]
+
 
 # # --------------------------------
 # def get_value( *, field_name  = None, attribute = None, current_value = None ):
@@ -439,6 +533,11 @@ class SchemaDict(   ):
 class TableDict(  ):
     """
     hold the schema, mostly a list of ColumnDicts for a table
+    get a column by field name
+            ix_column = a_table_dict.name_to_ix_dict[ "field_name" ]
+            column    = a_table_dict.columns[ ix_column ]
+
+
     """
     def __init__(self, table_name ):
         """
@@ -593,13 +692,13 @@ class TableDict(  ):
 
         return column_list
 
-
     #------------------------------------------------
     def get_detail_columns(self,    ):
         """
         get the columns ( not including id )
         for the detail tab, add field_label??
         looks like translation is bad idea
+            returns the ColumnDict's' that are not id or skip
         """
         column_list    = []
 
@@ -695,25 +794,28 @@ class TableDict(  ):
         limit_dict     = {}
         for i_column in column_list :
             db_type     = i_column.db_type
+
             if db_type.startswith( "VARCHAR" ):
                 db_len     = db_type[ 8:  ]
                 db_len     = db_len[   :-1]
                 db_len     = int( db_len )
                 limit_dict[i_column.column_name ] = db_len
+
         return limit_dict
 
     #------------------------------------------------
-    def get_topic_columns(self,):
+    def get_topic_columns( self,):
         """
         get the columns ( not including id ) in the correct order
         topic columns
         column    = data_dict.DATA_DICT.get_history_columns( a_table_name )
         !! a comp for part of this
         return
-            a list of column names, strings
+            a list of column names, strings  -- in order
         """
         column_list    = []
 
+        # !! make comp
         for ix_column, i_column in enumerate( self.columns ):
 
             if  i_column.topic_column_order < 0:
@@ -1042,8 +1144,6 @@ class TableDict(  ):
             if item is not None and item > -1:
                 a_str      = f'{a_str}\n                                             topic_column_order = {item}, '
 
-
-
             # ---- form_col_span
             item       = i_column.form_col_span
             if item is not None:
@@ -1291,7 +1391,6 @@ class TableDict(  ):
             # a_str   =  f"{a_str}\n     {i_column}  "
         return a_str
 
-
 # ----------------------------------------
 class ColumnDict(  ):
     """
@@ -1387,6 +1486,7 @@ class ColumnDict(  ):
         self.edit_to_dict_cnv       = edit_to_dict_cnv
         self.dict_to_edit_cnv       = dict_to_edit_cnv
         self.form_make_ref          = form_make_ref
+        self.use_index              = use_index
         # # ---- edit_to_rec....
         # if edit_to_rec is None and rec_to_edit is None:
         #     if  db_type  == "INTEGER":
@@ -1440,6 +1540,57 @@ class ColumnDict(  ):
         self.col_head_width     =  col_head_width
 
         self.foreign_key_info   = foreign_key_info
+
+    # --------------------------------
+    def get_column_value_as_string( self,   ):
+        """
+
+        """
+        indent           = "    "
+        # attribute_list   = [
+        #                     "column_name",
+        #                     "col_head_order",
+        #                     "col_head_text",
+        #                     "col_head_width",
+        #                     "create_self",
+        #                     "db_type",
+        #                     "default_func",
+        #                     "detail_edit_class",
+        #                     "dict_to_edit_cnv",
+        #                     "display_order",
+        #                     "edit_in_type",
+        #                     "edit_to_dict_cnv",
+        #                     "edit_to_rec",
+        #                     "edit_to_rec_cnv",
+        #                     "edit_tool_tip",
+        #                     "foreign_key_info",
+        #                     "form_col_span",
+        #                     "form_edit",
+        #                     "form_make_ref",
+        #                     "form_read_only",
+        #                     "initial_value",
+        #                     "is_keep_prior_enabled",
+        #                     "is_key_word",
+        #                     "is_topic",
+        #                     "max_len",
+        #                     "placeholder_text",
+        #                     "primay_key_ix",
+        #                     "rec_to_edit",
+        #                     "rec_to_edit_cnv",
+        #                     "set_editable",
+        #                     "topic_column_order",
+        #                     "use_index",
+        #                     "validate",
+        #                        ]
+
+        a_str    = "Attribute List get_column_value_as_string\n"
+        for i_attr in COL_ATTRIBUTES_ALPHA:
+            raw_attr  = str( getattr( self, i_attr ) )
+            value     = str( self.get_column_value( i_attr ) )
+            a_str     = f"{a_str}\n{indent}{i_attr:<20} attr = {raw_attr:<20} get_value = {str(value):<20}"
+
+
+        return a_str
 
     # --------------------------------
     def get_column_value( self, attribute ):
@@ -1584,8 +1735,6 @@ class ColumnDict(  ):
     def __str__( self, ):
         """universal __str__ """
         return string_utils.obj_to_str( self )
-
-
 
 # ---------------------------------
 def test():

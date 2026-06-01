@@ -507,11 +507,38 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
 
     # -------------------------------------
     def _build_fields( self, layout ):
+
+        """
+        New implementation based on the data dict
+            for older look arount ver090 or so
+            builds the fields that interact with the db
+            mostly based on base documents
+            see doc string in base_document
+        """
+        self._build_from_dict( layout )
+
+        #self.plant_combo_dict_ext    = combo_dict_ext.PLANT_COMBO_DICT_EXT
+        #kvl_model                  = AppGlobal.mdi_management.get_key_value_list_model( "stuff" )
+        # could check have default values or do in get function better
+        # edit_field                 = self.field_dict[ "id_in" ]
+        # edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
+
+
+        return
+
+
         """
         place fields into tab_layout, a sub layout is ok
         tweaks
                spacer code at top
                watch for ddl but may not be any yet
+
+
+        What it says, read
+            this is generated code
+            tweaks
+                spacing
+                plnat_combo_dict look for code
         """
         width  = 50
         for ix in range( self.max_col ):  # try to tweak size to make it work

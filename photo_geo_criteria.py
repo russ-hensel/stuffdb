@@ -25,6 +25,8 @@ from qtpy.QtCore import QDateTime
 
 from qtpy.QtWidgets import ( QComboBox,
                              QDateTimeEdit,
+                             QPushButton,
+                             QLabel,
                              QDialog,
                              QDialogButtonBox,
                              QFormLayout,
@@ -33,17 +35,21 @@ from qtpy.QtWidgets import ( QComboBox,
                              QVBoxLayout)
 
 # ---- imports local
-import custom_widgets as cw
+import  custom_widgets as cw
+from    app_global  import AppGlobal
+import  photo_plus_ext
+
+# ---- end imports
 
 logger          = logging.getLogger( )
 
 # for custom logging level at module
 LOG_LEVEL  = 20   # higher is more
 
-# ---- end imports
 
 
 
+#--------------------------------
 class PhotoGeoCriteria( QDialog ):
     """
     edit now for lat long  ... in process
@@ -61,7 +67,6 @@ class PhotoGeoCriteria( QDialog ):
         includes the building of the form which is not
         done in planting_event
 
-
         """
         super().__init__(parent)
         self.setWindowTitle("Add New Event" if edit_data is None else "Edit Event")
@@ -73,6 +78,8 @@ class PhotoGeoCriteria( QDialog ):
         layout      = form_layout
 
         self.widget_field_dict      = {}  # widgets with key as field name
+
+        self.distance_from          = photo_plus_ext.DistanceFrom( "origin", 0, 0 )
 
 
         # ---- lat lon ====================================
@@ -113,7 +120,6 @@ class PhotoGeoCriteria( QDialog ):
                                                 field_name = field_name )
         self.widget_field_dict[ field_name ] = widget
 
-
         # cnv do not !! seem to be used, perhaps they should see dict to.....
         widget.rec_to_edit_cnv      = widget.cnv_float_to_str
         widget.dict_to_edit_cnv     = widget.cnv_float_to_str
@@ -148,9 +154,62 @@ class PhotoGeoCriteria( QDialog ):
         # self.critera_widget_list.append( widget )
         # grid_layout.addWidget( widget )
 
+        # ---- .... "south_long"
+        field_name              = "south_long"
+        widget                  = cw.CQLineEdit(
+                                                field_name = field_name )
+        self.widget_field_dict[ field_name ] = widget
+
+        # cnv do not !! seem to be used, perhaps they should see dict to.....
+        widget.rec_to_edit_cnv      = widget.cnv_float_to_str
+        widget.dict_to_edit_cnv     = widget.cnv_float_to_str
+        widget.edit_to_rec_cnv      = widget.cnv_str_to_float
+        widget.edit_to_dict_cnv     = widget.cnv_str_to_float
+
+        layout.addRow( field_name, widget )
+
+        # ---- .... "north_long"
+        field_name              = "north_long"
+        widget                  = cw.CQLineEdit(
+                                                field_name = field_name )
+        self.widget_field_dict[ field_name ] = widget
+
+        # cnv do not !! seem to be used, perhaps they should see dict to.....
+        widget.rec_to_edit_cnv      = widget.cnv_float_to_str
+        widget.dict_to_edit_cnv     = widget.cnv_float_to_str
+        widget.edit_to_rec_cnv      = widget.cnv_str_to_float
+        widget.edit_to_dict_cnv     = widget.cnv_str_to_float
+
+        layout.addRow( field_name, widget )
+
+        # ---- location by name
+        widget                  = QComboBox(  )
+        self.location_widget    = widget
+        values                  = AppGlobal.parameters.dict_lat_lon.keys()
+        widget.addItems( values )
+
+       #self.widget_field_dict[ field_name ] = widget
+
+        layout.addRow( widget )
 
 
+        # ---- .... size
+        widget                  = QLabel( "Size Km:")
+        layout.addRow( widget )
+       #self.widget_field_dict[ field_name ] = widget
 
+        #field_name              = "west_lat"
+        widget                  = QLineEdit(  )
+        self.size_widget        = widget
+        layout.addRow( widget )
+
+        # ---- apply
+        widget                  = QPushButton( "Apply"  )
+        widget.clicked.connect( self.get_lat_long   )
+        #self.size_widget        = widget
+       #self.widget_field_dict[ field_name ] = widget
+
+        layout.addRow( widget )
 
         # # ID field
         # widget       = QLineEdit()
@@ -232,6 +291,40 @@ class PhotoGeoCriteria( QDialog ):
         main_layout.addWidget(button_box)
 
         self.setLayout( main_layout )
+
+    # --------------
+    def get_lat_long( self ):
+        """
+
+        """
+        key         = self.location_widget.currentText()
+        lat, long   = AppGlobal.parameters.dict_lat_lon[ key ]
+        print( lat, long )
+
+        delta_km        = self.size_widget.text( ).strip()
+        try:
+            delta_km    = float( delta_km )
+
+        except:
+            delta_km    = 100
+            self.size_widget.setText( str( delta_km ) )
+
+        print( delta_km )
+
+        distance_from = self.distance_from
+        distance_from.reset( key, lat, long, )
+
+        lat_west, lat_east    = distance_from.shift_latitude( delta_km/2 )
+        print( lat_west, lat_east )
+
+        lon_south, north_long   = distance_from.shift_longitude( delta_km/2 )
+        print( lon_south, north_long )
+
+        widget     = self.widget_field_dict[ "north_long" ]
+        # do more formatting, make a funcution called with field_name and float
+        widget.setText( str( north_long ) )
+
+
 
     # --------------
     def get_form_data(self):

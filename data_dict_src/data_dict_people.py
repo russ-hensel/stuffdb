@@ -24,6 +24,7 @@ def build_it( a_data_dict_all ):
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",
                                              db_type        = "INTEGER",
                                              display_type   = "integer",
+                                             form_col_span      = 1,
                                              max_len        = None,
                                              default_func   = None,   )
 
@@ -170,7 +171,7 @@ def build_it( a_data_dict_all ):
                                              col_head_order     = 5,
                                              is_topic           = True,
                                              topic_column_order = 2,
-                                             form_col_span      = 4, )
+                                             form_col_span      = 3, )
 
     a_table_dict.add_column( a_column_dict )
 
@@ -187,7 +188,7 @@ def build_it( a_data_dict_all ):
                                              col_head_order     = 4,
                                              is_topic           = True,
                                              topic_column_order = 1,
-                                             form_col_span      = 4, )
+                                             form_col_span      = 3, )
 
     a_table_dict.add_column( a_column_dict )
 
@@ -197,7 +198,9 @@ def build_it( a_data_dict_all ):
                                              db_type        = "VARCHAR(35)",
                                              display_type   = "string",
                                              max_len        = None,
-                                             default_func   = None,   )
+                                             default_func   = None,
+                                             form_col_span   = 3,
+                                             )
     a_table_dict.add_column( a_column_dict )
 
     # ---- st_adr_2
@@ -206,7 +209,8 @@ def build_it( a_data_dict_all ):
                                              db_type        = "VARCHAR(35)",
                                              display_type   = "string",
                                              max_len        = None,
-                                             default_func   = None,   )
+                                             default_func   = None,
+                                             form_col_span   = 3, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- st_adr_3
@@ -215,7 +219,8 @@ def build_it( a_data_dict_all ):
                                              db_type        = "VARCHAR(35)",
                                              display_type   = "string",
                                              max_len        = None,
-                                             default_func   = None,   )
+                                             default_func   = None,
+                                             form_col_span   = 3, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- city

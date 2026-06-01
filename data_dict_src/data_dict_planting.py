@@ -86,6 +86,8 @@ def build_it( a_data_dict_all ):
                                              edit_to_rec_cnv      = "cnv_str_to_int",
                                              edit_to_dict_cnv     = "cnv_str_to_int",
 
+                                             detail_edit_class    = "cw_2.CQModelComboBox",
+                                             form_edit            = "cw_2.CQModelComboBox",
 
                                              display_type   = "string",
                                              max_len        = None,

@@ -394,15 +394,9 @@ class CQModelComboBox( QComboBox, cw.CQEditBase ):
         # self.ct_default     = a_partial
         # self.ct_prior       = self.do_ct_prior
         # may instead index to 0 or ...
-        a_partial               = partial( self.set_value, a_value = "" )
-        self.set_clear          = a_partial
-        self.set_default        = a_partial
 
-        if self.is_keep_prior_enabled:
-            self.set_prior      = self.set_pass
 
-        else:
-            self.set_prior      = a_partial
+        self.set_copy_prior( is_keep_prior_enabled )
 
         self.db_value           = None
             # value from the db, used in debugging
@@ -410,6 +404,32 @@ class CQModelComboBox( QComboBox, cw.CQEditBase ):
         # these should be the only functions we need -- !! check holdovers
         self.rec_to_edit        = self.rec_to_dict_edit
         self.edit_to_rec        = self.dict_edit_to_rec
+
+    #----------------------------
+    def set_copy_prior( self, enable ):
+        """'
+        what it says
+
+        """
+        # if self.field_name in [ "name", "title" ]:
+        #     msg   = ( f"line edit set_copy_prior {self.field_name = } {enable = } "
+        #               f"{self._is_keep_prior_enabled = }"
+        #               f"  {self.contextMenuPolicy() = }" )
+        #     print( msg )
+        #     #breakpoint()
+        #     pass
+
+        a_partial               = partial( self.set_value, a_value = "" )
+        self.set_clear          = a_partial
+        self.set_default        = a_partial
+
+        if enable:
+            self.set_prior      = self.set_pass
+
+        else:
+            self.set_prior      = a_partial
+
+        self._is_keep_prior_enabled  = enable
 
     #----------------------------
     def rec_to_dict_edit( self, record, format = None ):

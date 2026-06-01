@@ -172,19 +172,19 @@ def build_it( a_schema_dict ):
 
     # ---- descr
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "descr",
-                                             display_order  = 22,
-                                             form_col_span      = 4,
-                                             db_type        = "VARCHAR(50)",
-                                             display_type   = "string",
-                                             max_len        = None,
+                                             display_order      = 22,
+                                             form_col_span      = 2,
+                                             db_type            = "VARCHAR(50)",
+                                             display_type       = "string",
+                                             max_len            = None,
                                              default_func           =  None,
                                              is_keep_prior_enabled  = True,
                                              is_key_word        = True,
                                              is_topic           = True,
-                                             topic_column_order = 2,
+                                             topic_column_order = 100,
                                              col_head_text      = "Description",
                                              col_head_width     = 20,
-                                             col_head_order     = 3, )
+                                             col_head_order     = 100, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- type
@@ -344,7 +344,7 @@ def build_it( a_schema_dict ):
                                              default_func       = None,
                                              col_head_text      = "Comment",
                                              col_head_width     = 20,
-                                             col_head_order     = 2, )
+                                             col_head_order     = 6, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- status
@@ -358,13 +358,13 @@ def build_it( a_schema_dict ):
 
     # ---- id_in_old
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "id_in_old",
-                                             db_type        = "VARCHAR(15)",
-                                             display_type   = "string",
-                                             display_order  =  30,
-                                             max_len        = None,
-                                             default_func   = None,
+                                             db_type            = "VARCHAR(15)",
+                                             display_type       = "string",
+                                             display_order      =  30,
+                                             max_len            = None,
+                                             default_func       = None,
                                              col_head_text      = "In ID Old",
-                                             col_head_width     = 20,
+                                             col_head_width     = 10,
                                              col_head_order     = 30, )
     a_table_dict.add_column( a_column_dict )
 
@@ -373,9 +373,12 @@ def build_it( a_schema_dict ):
                                              display_order          = 31,
                                              form_col_span          = 1,
                                              db_type                = "INTEGER",
+
+                                             detail_edit_class  = "cw_2.CQModelComboBox",
+                                             form_edit          = "cw_2.CQModelComboBox",
                                              form_read_only       = True,
                                              col_head_text      = "In ID",
-                                             col_head_width     = 20,
+                                             col_head_width     = 10,
                                              col_head_order     = 25,
                                              rec_to_edit_cnv      = "cnv_int_to_str",
                                              dict_to_edit_cnv     = "cnv_int_to_str",
@@ -469,7 +472,7 @@ def build_it( a_schema_dict ):
                                              topic_column_order = 1,
                                              default_func       = None,
                                              col_head_text      = "Name",
-                                             col_head_width     = 20,
+                                             col_head_width     = 40,
                                              col_head_order     = 5, )
     a_table_dict.add_column( a_column_dict )
 

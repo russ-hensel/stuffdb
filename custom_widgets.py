@@ -822,13 +822,13 @@ class TextEditExtMixin(  ):
                 text_edit.ensureCursorVisible()
 
     #----------------------------
-    def set_custom_context_menu( self, ):
+    def set_custom_context_menu_text( self, ):
         """
         what it says
             call in the init of the final widget ?
         """
-        #self.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
-        self.setContextMenuPolicy( Qt.CustomContextMenu )   # 5 6 compat
+
+        self.setContextMenuPolicy( Qt.CustomContextMenu )
 
         self.customContextMenuRequested.connect( self.show_context_menu )
 
@@ -1873,8 +1873,6 @@ class CQEditBase():
         # self.returnPressed.connect( self.on_return_pressed )
 
 
-
-
     # ---- dict oriented ----------------
     #----------------
     def edit_to_dict( self, a_dict, format = None ):
@@ -2712,13 +2710,13 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         what it says
 
         """
-        if self.field_name in [ "name", "title" ]:
-            msg   = ( f"line edit set_copy_prior {self.field_name = } {enable = } "
-                      f"{self._is_keep_prior_enabled = }"
-                      f"  {self.contextMenuPolicy() = }" )
-            print( msg )
-            #breakpoint()
-            pass
+        # if self.field_name in [ "name", "title" ]:
+        #     msg   = ( f"line edit set_copy_prior {self.field_name = } {enable = } "
+        #               f"{self._is_keep_prior_enabled = }"
+        #               f"  {self.contextMenuPolicy() = }" )
+        #     print( msg )
+        #     #breakpoint()
+        #     pass
 
         a_partial               = partial( self.set_value, a_value = "" )
         self.set_clear          = a_partial

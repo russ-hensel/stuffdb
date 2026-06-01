@@ -635,7 +635,7 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
             tweaks are:
                 ---  spacers
         """
-        self._build_fields_test( layout )
+        self._build_from_dict( layout )
 
         self.id_field           = self.field_dict[ "id" ]
         self.cmnt_field         = self.field_dict[ "cmnt" ]

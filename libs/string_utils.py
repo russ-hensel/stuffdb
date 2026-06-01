@@ -441,12 +441,22 @@ class ColumnFormater( ):
                              }
         return a_default_spec
 
+    # ----------------------------------------
+    def return_line( self, column_tuple  ):
+        """
+        what it says, read
+        data formatted and returned
+        """
+        for i_col_data,  i_column_spec  in zip( column_tuple, self.column_specs ):
+            str_line  = ( f"{i_col_data}   format with  {i_column_spec}" )
+
+        return str_line
 
     # ----------------------------------------
     def add_line( self, column_tuple  ):
         """
         what it says, read
-
+        data accumulated in object
         """
         pass
         self.column_data.append( column_tuple )
@@ -460,7 +470,6 @@ class ColumnFormater( ):
         """
         self.column_specs.append( column_spec )
 
-
     # ----------------------------------------
     def get_result( self,  ):
         """
@@ -471,7 +480,7 @@ class ColumnFormater( ):
         for i_line in self.column_data:
             str_line   = ""
             for i_col_data,  i_column_spec  in zip( i_line, self.column_specs ):
-                str_line  = ( f"{str_line} {i_col_data}   format with  {i_column_spec}" )
+                str_line  = ( f"{str_line}{i_col_data}   format with  {i_column_spec}" )
 
         a_str   = f"\n{a_str} {str_line}"
 
@@ -795,6 +804,7 @@ class TestClass():
     def __str__( self ):
         return obj_to_str( self )
 
+# --------------------
 def test_obj_to_str():
     """
 

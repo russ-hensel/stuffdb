@@ -3,7 +3,6 @@
 
 """
     parameters    for  stuffdb
-
         parameters.PARAMETERS.
 
 """
@@ -46,7 +45,7 @@ class Parameters( ):
     manages parameter values: use it like an ini file but it is code
     """
     # -------
-    # ---- this what you should set choose_mode ...
+    # ---- >>>>>>>>> This what you should set choose_mode ...
     def choose_mode( self ):
         """
         typically choose one mode in the body of this method
@@ -66,7 +65,7 @@ class Parameters( ):
 
         #self.mode_new_user()
         #self.mode_data_sync()
-        #self.mode_data_sync_b()
+        self.mode_data_sync_b()
         #self.mode_picture_test()
 
         #self.mode_data_sync_full_path()
@@ -75,7 +74,7 @@ class Parameters( ):
         #self.mode_data_sync_b()
         #self.mode_github()
 
-        self.mode_github()
+        #self.mode_github()
         #self.mode_postgres()
 
         # self.mode_mh_2025_hd()
@@ -308,22 +307,21 @@ class Parameters( ):
         use production db -- primary
         """
         self.mode               = "mode_github"
+        print( self.mode + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n")
 
         # # ---- type and location of the db file
         # self.db_type            = "QSQLITE"
         #     # the type of database, so far we only support SQLite
 
         self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/theprof/stuffdb.db"
-        # /mnt/m_toshiba_silver/for_github/stuffdb/data/new_user.db
         self.db_file_name       = "./data/helpdb_from_scratch.db"
+        self.db_file_name       = self.project_root  + "/data_sync/stuffdb.db"
+        self.db_lock_file_name  = self.project_root  + "/data_sync/lock_db.txt"
 
-        # for dir remote from real source, real db
-        self.db_file_name       = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db"
-        self.db_lock_file_name  = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/lock_db.txt"
+        # the real syncb
+        self.db_lock_file_name  ="/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync_b/lock_db.txt",
+        self.db_file_name       ="/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync_b/stuffdb.db"
 
-
-        # self.db_file_name       = self.project_root  + "/data_sync/stuffdb.db"
-        # self.db_lock_file_name  = self.project_root  + "/data_sync/lock_db.txt"
               # if present then db is locked else none
         # self.logging_level      = logging.DEBUG   # ERROR
 
@@ -905,6 +903,45 @@ class Parameters( ):
                            ]
 
         # ---- add a sort for the systems
+
+        # ---- locations
+        values_lat_lon    = {}
+
+        values_lat_lon["Australia,      Sydney"]            = (-33.8688,  151.2093 )
+        values_lat_lon["Brazil,         Rio de Janeiro"]    = (-22.9068,  -43.1729 )
+        values_lat_lon["Canada,         Toronto"]           = ( 43.6532,  -79.3832 )
+        values_lat_lon["China,          Beijing"]           = ( 39.9042,  116.4074 )
+        values_lat_lon["France,         Paris "]            = ( 48.8566,    2.3522 )
+        values_lat_lon["India,          Mumbai"]            = ( 19.076,    72.8777 )
+        values_lat_lon["Japan,          Tokyo "]            = ( 35.6895,  139.6917 )
+        values_lat_lon["South Africa,   Johannesburg"]      = (-26.2041,   28.0473 )
+        values_lat_lon["United Kingdom, London"]            = ( 51.5074,   -0.1278 )
+        values_lat_lon["USA,     AZ     Phoenix"]           = ( 33.4484, -112.074  )
+        values_lat_lon["USA,     CA     Los Angeles"]       = ( 34.0522, -118.2437 )
+        values_lat_lon["USA,     CA     San Diego"]         = ( 32.7157, -117.1611 )
+        values_lat_lon["USA,     CA     San Jose"]          = ( 37.3382, -121.8863 )
+        values_lat_lon["USA,     CA     San Francisco"]     = ( 37.7749, -122.4194 )
+        values_lat_lon["USA,     CO     Denver "]           = ( 39.7392, -104.9903 )
+        values_lat_lon["USA,     FL     Jacksonville"]      = ( 30.3322,  -81.6557 )
+        values_lat_lon["USA,     IL     Chicago "]          = ( 41.8781,  -87.6298 )
+        values_lat_lon["USA,     IN     Indianapolis"]      = ( 39.7684,  -86.158  )
+        values_lat_lon["USA,     NC     Charlotte"]         = ( 35.2271,  -80.8431 )
+        values_lat_lon["USA,     NY     New York City"]     = ( 40.7128,  -74.006  )
+        values_lat_lon["USA,     OH     Columbus"]          = ( 39.9612,  -82.999  )
+        values_lat_lon["USA,     MA     Boston"]            = ( 42.3611,  -71.057  )
+        values_lat_lon["USA,     PA     Philadelphia"]      = ( 39.9526,  -75.1652 )
+        values_lat_lon["USA,     TX     Houston  "]         = ( 29.7604,  -95.3698 )
+        values_lat_lon["USA,     TX     San Antonio"]       = ( 29.4241,  -98.4936 )
+        values_lat_lon["USA,     TX     Dallas "]           = ( 32.7767,  -96.797  )
+        values_lat_lon["USA,     TX     Austin"]            = ( 30.25,    -97.75   )
+        values_lat_lon["USA,     TX     Fort Worth"]        = ( 32.7555,  -97.3308 )
+        values_lat_lon["USA,     TX     El Paso "]          = ( 31.7619, -106.485  )
+        values_lat_lon["USA,     WA     Seattle"]           = ( 47.6062,  -122.332 )
+
+
+        self.dict_lat_lon    = values_lat_lon
+
+
 
     #--------------------------
     def mode_from_command_line( self ):

@@ -1,0 +1,20 @@
+2026-05-31 09:56:44,549 - CRITICAL - Root logger is set up. Modules can now log using logging.getLogger().
+2026-05-31 09:56:44,549 - INFO - config_logger call was: logging.info
+2026-05-31 09:56:44,550 - DEBUG - QsqlDbAccess  init_db_qsqlite()
+2026-05-31 09:56:44,550 - DEBUG - connection_name = 'stuffdb_main_connection_name'
+2026-05-31 09:56:44,551 - DEBUG - log_sql_callback PRAGMA synchronous = NORMAL;
+2026-05-31 09:56:44,551 - DEBUG - log_sql_callback PRAGMA optimize;
+2026-05-31 09:56:44,664 - Notice - 
+2026-05-31 09:56:44,664 - Notice - ============================
+2026-05-31 09:56:44,664 - Notice - 
+2026-05-31 09:56:44,664 - Notice - Application: Stuff DB in QT Ver .091: 2026-05-26.01 in mode mode_data_sync_full_pathand version  Ver .091: 2026-05-26.01
+2026-05-31 09:56:44,664 - Notice - 
+2026-05-31 09:56:44,664 - Notice - command line arg + 0  =  main.py)
+2026-05-31 09:56:44,664 - Notice - command line arg + 1  =  mode_data_sync_full_path)
+2026-05-31 09:56:44,664 - Notice - current directory /mnt/m_toshiba_silver/for_github/stuffdb
+2026-05-31 09:56:44,664 - Notice - Time now: 2026-05-31 13:56:44
+2026-05-31 09:56:44,696 - ERROR - get_list_columns deprecated but should run ??use TableDict help_info
+2026-05-31 09:56:44,700 - ERROR - get_list_columns deprecated but should run ??use TableDict help_info
+2026-05-31 09:56:44,701 - ERROR - get_list_columns deprecated but should run ??use TableDict help_info
+2026-05-31 09:56:44,702 - DEBUG - get_topic_string a_str =  'DataManager.get_topic_string i_edit in self.topic_field_list is falsy' self.table_name = 'help_info'
+2026-05-31 09:56:44,703 - DEBUG - set_size_pos now returned out --------------------------------------  

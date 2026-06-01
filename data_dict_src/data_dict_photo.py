@@ -69,8 +69,8 @@ def build_it( a_data_dict_all ):
                                              col_head_width     = 40,
                                              col_head_order     = 10,
                                              display_order      = 10,
-                                             form_col_span      = 4,
-                                             topic_column_order = 10,)
+                                             form_col_span      = 6,
+                                             topic_column_order = 10, )
 
     a_table_dict.add_column( a_column_dict )
 
@@ -91,7 +91,7 @@ def build_it( a_data_dict_all ):
 
     a_table_dict.add_column( a_column_dict )
 
-    # ---- descr
+    # ---- descr -- not much used, but is used may 2026
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "descr",
                                              db_type        = "VARCHAR(240)",
                                              display_type   = "string",
@@ -218,7 +218,7 @@ def build_it( a_data_dict_all ):
                                              default_func= None,   )
     a_table_dict.add_column( a_column_dict )
 
-    # ---- title
+    # ---- title  -- cannot find any use, so depricate
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "title",
                                              db_type        = "VARCHAR(35)",
                                              display_type   = "string",
@@ -226,11 +226,11 @@ def build_it( a_data_dict_all ):
                                              default_func   = None,
                                              is_key_word    = True,
                                              is_keep_prior_enabled = True,
-                                             col_head_text      = "Title",
-                                             col_head_width     = 20,
-                                             col_head_order     = 12,
+                                             #col_head_text      = "Title",
+                                             #col_head_width     = 20,
+                                             #col_head_order     = 12,
                                              display_order      = 25,
-                                             form_col_span      = 4,
+                                             form_col_span      = 1,
                                              form_make_ref      = True,
                                              topic_column_order = 30,)
     a_table_dict.add_column( a_column_dict )
@@ -626,4 +626,3 @@ def build_it( a_data_dict_all ):
 #     build_it()
 
 # # ---- eof
-

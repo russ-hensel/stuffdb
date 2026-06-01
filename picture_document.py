@@ -31,61 +31,45 @@ import time
 from   pathlib import Path
 
 
-from qtpy.QtCore   import (    QDate,
-                               QDateTime,
-                               QTime,
-                               QModelIndex,
-                               QCoreApplication,
-                               Qt,
-                               Slot,
-                               QObject,
-                               Signal )
+from qtpy.QtCore   import (
+                                QDateTime,
+                                QTime,
+                                QCoreApplication,
+                                Qt,
+                                Slot,
+                                QModelIndex,
+                                QSortFilterProxyModel,
+                                QTimer,
+                            )
+
+
+from qtpy.QtSql import (
+                            QSqlDatabase,
+                            QSqlQuery,
+                            QSqlQueryModel,
+                            QSqlRelation,
+                            QSqlRelationalTableModel,
+                            QSqlTableModel,
+                        )
 
 
 from qtpy.QtWidgets import (
-                             QApplication,
-                             QMessageBox,
-                             QListWidget,
-                             QListWidgetItem,
-                               )
-
-from qtpy.QtCore import ( QModelIndex,
-                          QSortFilterProxyModel,
-                          Qt,
-                          QTimer)
-
-from qtpy.QtGui import ( QIntValidator)
-
-
-from qtpy.QtSql import ( QSqlDatabase,
-                         QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlRelation,
-                         QSqlRelationalTableModel,
-                         QSqlTableModel )
-
-
-from qtpy.QtWidgets import (
-                                QApplication,
-                                QMessageBox,
-                                QListWidget,
-                                QListWidgetItem,
-                                QDialog,
-                                QFileDialog,
-                                QHBoxLayout,
-                                QLabel,
-                                QLineEdit,
-                                QMessageBox,
-                                QPushButton,
-                                QSizePolicy,
-                                QSpacerItem,
-                                QTableView,
-                                QTabWidget,
-                                QTextEdit,
-                                QVBoxLayout,
-                                QWidget
-
-                                    )
+                            QListWidget,
+                            QApplication,
+                            QComboBox,
+                            QDialog,
+                            QFileDialog,
+                            QGroupBox,
+                            QLineEdit,
+                            QHBoxLayout,
+                            QLabel,
+                            QMessageBox,
+                            QPushButton,
+                            QTableView,
+                            QTabWidget,
+                            QVBoxLayout,
+                            QWidget,
+                            )
 
 # ---- imports local
 import base_document_tabs
@@ -108,6 +92,7 @@ import update_sync
 import string_utils
 import album_document
 import photo_geo_criteria
+import photo_plus_ext
 #from   album_document  import AlbumDocument
 # ---- end imports
 
@@ -188,7 +173,6 @@ class DupDialog( QDialog ):
         """
         super().__init__( )
 
-
         self._is_paused     = False
         self._is_halted     = False
 
@@ -246,7 +230,6 @@ class DupDialog( QDialog ):
             # print( )
 
             full_file_name   = model.data( model.index( row, 0) )
-            pass
             file_found   = self.select_from_keeps( full_file_name )
             if file_found:
                 ix_found    += 1
@@ -485,7 +468,7 @@ class PictureDocument( base_document_tabs.DocumentBase ):
 
     # ---- sub window interactions ---------------------------------------
     # --------------------------
-    def delete_record( self,   ):
+    def delete_record( self, ):
         """
         also know as update -- update detail tab and text...
         looks promotable
@@ -523,7 +506,7 @@ class PictureDocument( base_document_tabs.DocumentBase ):
         self.criteria_tab.criteria_select()
 
     # ---------------------------------------
-    def display_picture( self, file_name  ):
+    def display_picture( self, file_name ):
         """
         what it says, mostly focused on the detail tab
         may be promotable
@@ -532,7 +515,7 @@ class PictureDocument( base_document_tabs.DocumentBase ):
         self.picture_tab.display_file( file_name )
 
     #-------------------------------------
-    def i_am_hsw(self):
+    def i_am_hsw( self ):
         """
         make sure call is to here for testing
         """
@@ -554,10 +537,801 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         the usual
         """
         super().__init__( parent_window )
+        self.tab_name       = "PictureCriteriaTab"
+        self.distance_from  = photo_plus_ext.DistanceFrom( "origin", 0, 0 )
+
+    # ------------------------------------------
+    def _build_tab( self, ):
+        """
+        what it says, read
+
+        need to have instance var for put_criteria
+        """
+        page        = self
+        layout      = QVBoxLayout( page )
+                # can we fold in to next
+
+        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        layout.addLayout( grid_layout )
+
+        self._build_top_widgets_grid( grid_layout )
+
+        self._build_id_widgets( layout )
+        self._build_other_widgets( layout )
+        self._build_date_widgets( layout )
+        self._build_geo_widgets( layout )
+        self._build_sort_widgets( layout )
+
+        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        layout.addLayout( grid_layout )
+
+        # self.add_date_widgets( placer, row_labels = ( "dt_item", "dt_enter") )
+
+        # self.add_buttons( placer )
+
+        # # ---- push controls up page, may need adjustment
+        # width    = 350
+        # widget   = QSpacerItem( width, 100, QSizePolicy.Expanding, QSizePolicy.Minimum )
+        # grid_layout.new_row()
+        # # grid_layout.addWidget( widget )
+        # grid_layout.addItem( widget, grid_layout.ix_row, grid_layout.ix_col    )  # row column
+
+        # ---- function_on_return( self )
+        for i_widget in self.critera_widget_list:
+            # add value changed to custom edits widget.textChanged.connect
+            i_widget.function_on_changed    = ( lambda: self.criteria_changed( True ) )
+            i_widget.function_on_return     = self.criteria_select
+            #i_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
+        #self.id_field.setFocus()  # seems not to work try
+        QTimer.singleShot( 0, self.key_words_widget.setFocus )
+
+    # ------------------------------------------
+    def _build_id_widgets( self, layout ):
+        """
+        what it says, read
+
+        layout a vbox we create a grid in a groupbox
+        """
+        groupbox   = QGroupBox( "ID criteria" )   # version with title
+        layout.addWidget( groupbox )
+        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        groupbox.setLayout( grid_layout )
+        layout.addLayout( grid_layout )
+
+        # ----id
+        widget                = QLabel( "ID" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit(
+                                                field_name = "table_id"   )
+        self.id_field           = widget
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "table_id" ] = widget
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
+
+        # ----id_old
+        widget                = QLabel( "ID Old*" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit(
+                                                field_name = "id_old"   )
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "id_old" ] = widget
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
+
+    # ------------------------------------------
+    def _build_date_widgets( self, layout ):
+        """
+        what it says, read
+
+        layout a vbox we create a grid in a groupbox
+        """
+        groupbox   = QGroupBox( "Date Criteria" )   # version with title
+        layout.addWidget( groupbox )
+        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        groupbox.setLayout( grid_layout )
+        layout.addLayout( grid_layout )
+
+        # ---- dates
+        grid_layout.new_row()
+        widget  = QLabel( "Use Dates" )
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQCheckBox(
+                                                field_name = "use_dates" )
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "use_dates" ] = widget
+        grid_layout.addWidget( widget )
+
+        # ---- .... begin_date
+        widget                      = cw.CQDateEdit(
+                                                field_name = "begin_date" )
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "begin_date" ] = widget
+        grid_layout.addWidget( widget )
+
+        # ---- .... end_date
+        widget                      = cw.CQDateEdit(
+                                                field_name = "end_date" )
+
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "end_date" ] = widget
+        grid_layout.addWidget( widget )
+
+    # ------------------------------------------
+    def _build_other_widgets( self, layout ):
+        """
+        what it says, read
+
+        layout a vbox, we create a grid in a groupbox
+        """
+        groupbox   = QGroupBox( "Misc Criteria" )   # version with title
+        layout.addWidget( groupbox )
+        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        groupbox.setLayout( grid_layout )
+        layout.addLayout( grid_layout )
+
+        # ----
+        # ----key words
+        widget                = QLabel( "Key Words" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        field_name = "key_words"
+        widget                  = cw.CQLineEdit(
+                                                field_name = "key_words"   )
+        self.key_words_field    = widget
+        self.key_words_widget   = widget   # seems dup but see base
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "key_words" ] = widget
+        grid_layout.addWidget( widget, columnspan = 3 )
+
+        # ---- name like
+        grid_layout.new_row()
+        widget  = QLabel( "Name (like)" )
+        grid_layout.addWidget( widget )
+
+        field_name = "name"
+        widget                  = cw.CQLineEdit(
+                                                field_name = "name"   )
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "name" ] = widget
+        grid_layout.addWidget( widget )
+
+        # ---- title like
+        grid_layout.new_row()
+        widget  = QLabel( "Title (like)" )
+        grid_layout.addWidget( widget )
+
+        field_name  = "title"
+        widget      = cw.CQLineEdit(
+                                                field_name = field_name   )
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ field_name ] = widget
+        grid_layout.addWidget( widget )
+
+        # ---- Album
+        grid_layout.new_row()
+        widget  = QLabel( "In Album" )
+        grid_layout.addWidget( widget )
+
+        field_name              = "in_album"
+        widget                  = cw.CQDictComboBox(
+                                     field_name = field_name )
+        self.critera_widget_dict[ field_name ] = widget
+        self.in_album_widget    = widget
+        history_sync             = AppGlobal.mdi_management.get_history_sync( "album" )
+        widget.connect_to_history_sync( history_sync )  # or other way around connect_widget
+        history_sync.add_item( None, "<none>" ) # need a none element
+        self.critera_widget_list.append( widget )
+
+        grid_layout.addWidget( widget )
+
+        # ---- with file
+        grid_layout.new_row()
+        widget  = QLabel( "With file?" )
+        grid_layout.addWidget( widget )
+
+        field_name  = "file_name_empty"
+        widget      = cw.CQComboBox(
+                                field_name = field_name )
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ field_name ] = widget
+        widget.addItem('Any')
+        widget.addItem('Yes')
+        widget.addItem('No')
+
+        a_partial           = partial( widget.set_value, "Any" )
+        widget.set_default  = a_partial
+
+        grid_layout.addWidget( widget )
+
+        # ---- exif_make
+        grid_layout.new_row()
+        widget  = QLabel( "camera_make" )
+        grid_layout.addWidget( widget )
+
+        field_name  = "exif_make"
+        widget      = cw.CQComboBox(
+                                                field_name = field_name )
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ field_name ] = widget
+
+        widget.setMaxVisibleItems( 25 )
+        grid_layout.addWidget( widget )
+        widget.addItems( PARAMETERS.exif_make_list )
+
+        a_partial           = partial( widget.set_value, "<Any>" )
+        widget.set_default  = a_partial
+
+        # ---- exif_model
+        grid_layout.new_row()
+        widget  = QLabel( "camera_model" )
+        grid_layout.addWidget( widget )
+
+        field_name  = "exif_model"
+        widget      = cw.CQComboBox(
+                                                field_name = field_name )
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ field_name ] = widget
+        widget.setMaxVisibleItems( 25 )
+        grid_layout.addWidget( widget )
+        widget.addItems( PARAMETERS.exif_model_list )
+
+        a_partial           = partial( widget.set_value, "<Any>" )
+        widget.set_default  = a_partial
+
+        # ---- file name like
+        grid_layout.new_row()
+        widget  = QLabel( "File Name Like" )
+        grid_layout.addWidget( widget )
+
+        field_name              = "file_name_like"
+        widget                  = cw.CQLineEdit(
+                                                field_name = field_name )
+        self.critera_widget_dict[ field_name ] = widget
+        self.critera_widget_list.append( widget )
+        grid_layout.addWidget( widget )
+
+    # ------------------------------------------
+    def _build_geo_widgets( self, layout ):
+        """
+        what it says, read
+
+        layout a vbox we create a grid in a groupbox
+        """
+        groupbox   = QGroupBox( "Geo criteria" )   # version with title
+        layout.addWidget( groupbox )
+        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        groupbox.setLayout( grid_layout )
+        layout.addLayout( grid_layout )
+
+        # ---- lat lon ====================================
+        grid_layout.new_row()
+        widget  = QLabel( "Use Lat., Long." )
+        grid_layout.addWidget( widget )
+
+        field_name              = "use_lat_long"
+        widget                  = cw.CQCheckBox(
+                                                field_name = field_name )
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ field_name ] = widget
+        grid_layout.addWidget( widget )
+
+        # widget        = QPushButton( 'More Lat Long' )
+        # widget.clicked.connect( self.edit_more_photo_geo )
+        # grid_layout.addWidget( widget )
+
+        # ---- .... west lat !! need a clear function
+
+        field_name  = "west_lat"
+        widget      = cw.CQLineEdit(
+                                  field_name = field_name )
+        self.critera_widget_dict[ field_name ] = widget
+        widget.setToolTip( "West Lat" )
+        # cnv do not !! seem to be used, perhaps they should see dict to.....
+        widget.rec_to_edit_cnv      = widget.cnv_float_to_str
+        widget.dict_to_edit_cnv     = widget.cnv_float_to_str
+        widget.edit_to_rec_cnv      = widget.cnv_str_to_float
+        widget.edit_to_dict_cnv     = widget.cnv_str_to_float
+        a_partial                   = partial( widget.set_value, a_value = "-5.9" )
+        widget.set_clear            = a_partial
+        widget.set_default          = a_partial
+
+        self.critera_widget_list.append( widget )
+        grid_layout.addWidget( widget )
+
+        # ---- .... east_lat
+        field_name = "east_lat"
+        widget                      = cw.CQLineEdit(
+                                  field_name = field_name )
+        self.critera_widget_dict[ field_name ] = widget
+        widget.setToolTip( "east_lat"  )
+        widget.rec_to_edit_cnv      = widget.cnv_float_to_str
+        widget.dict_to_edit_cnv     = widget.cnv_float_to_str
+        widget.edit_to_rec_cnv      = widget.cnv_str_to_float
+        widget.edit_to_dict_cnv     = widget.cnv_str_to_float
+        a_partial                   = partial( widget.set_value, a_value = "1.5" )
+        widget.set_clear            = a_partial
+        widget.set_default          = a_partial
+
+        self.critera_widget_list.append( widget )
+        grid_layout.addWidget( widget )
+
+        # ---- .... south_long
+        field_name  = "south_long"
+        widget      = cw.CQLineEdit(
+                                  field_name = field_name )
+        self.critera_widget_dict[ field_name ] = widget
+        widget.setToolTip( "xxx"  )
+        widget.rec_to_edit_cnv      = widget.cnv_float_to_str
+        widget.dict_to_edit_cnv     = widget.cnv_float_to_str
+        widget.edit_to_rec_cnv      = widget.cnv_str_to_float
+        widget.edit_to_dict_cnv     = widget.cnv_str_to_float
+        a_partial                   = partial( widget.set_value, a_value = "50" )
+        widget.set_clear            = a_partial
+        widget.set_default          = a_partial
+
+        self.critera_widget_list.append( widget )
+        grid_layout.addWidget( widget )
+
+        # ---- .... north_long
+        field_name = "north_long"
+        widget                      = cw.CQLineEdit(
+                                  field_name = field_name )
+        self.critera_widget_dict[ field_name ] = widget
+        widget.rec_to_edit_cnv      = widget.cnv_float_to_str
+        widget.dict_to_edit_cnv     = widget.cnv_float_to_str
+        widget.edit_to_rec_cnv      = widget.cnv_str_to_float
+        widget.edit_to_dict_cnv     = widget.cnv_str_to_float
+        a_partial                   = partial( widget.set_value, a_value = "56" )
+        widget.set_clear            = a_partial
+        widget.set_default          = a_partial
+
+        self.critera_widget_list.append( widget )
+        grid_layout.addWidget( widget )
+
+        # ---- location by name
+        field_name      = "location_widget"
+        widget          = QComboBox(  )
+        self.critera_widget_dict[ field_name ] = widget
+        values          = AppGlobal.parameters.dict_lat_lon.keys()
+        widget.addItems( values )
+
+        grid_layout.addWidget( widget )
+
+        # ---- .... size
+
+        widget          = QLabel( "Size Km:")
+        grid_layout.addWidget( widget )
+       #self.widget_field_dict[ field_name ] = widget
+
+        field_name              = "size_km"
+        widget                  = QLineEdit(  )
+        self.critera_widget_dict[ field_name ] = widget
+        grid_layout.addWidget( widget )
+
+        # ---- apply
+        widget            = QPushButton( "Apply"  )
+        widget.clicked.connect( self.get_lat_long )
+        #self.size_widget        = widget
+       #self.widget_field_dict[ field_name ] = widget
+
+        grid_layout.addWidget( widget )
+
+    # ------------------------------------------
+    def _build_sort_widgets( self, layout ):
+        """
+        what it says, read
+
+        layout a vbox we create a grid in a groupbox
+        """
+        groupbox   = QGroupBox( "Sort Order" )
+        layout.addWidget( groupbox )
+        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        groupbox.setLayout( grid_layout )
+        layout.addLayout( grid_layout )
+
+        # ---- Order by
+        grid_layout.new_row()
+        widget  = QLabel( "Order by" )
+        grid_layout.addWidget( widget )
+
+        field_name  = "order_by"
+        widget      = cw.CQComboBox(
+                                  field_name = field_name )
+        self.critera_widget_dict[ field_name ] = widget
+        self.critera_widget_list.append( widget )
+        widget.addItem('id')
+        widget.addItem('id_old')
+        widget.addItem('dt_item')
+        widget.addItem('dt_enter')
+        widget.addItem('title - ignore case')
+        grid_layout.addWidget( widget )
+
+        # ---- Order by Direction
+        widget  = QLabel( "Direction" )
+        grid_layout.addWidget( widget )
+
+        field_name  = "order_by_dir"
+        widget      = cw.CQComboBox(
+                                  field_name = field_name )
+        self.critera_widget_dict[ field_name ] = widget
+        self.critera_widget_list.append( widget )
+
+        widget.addItem('Ascending')
+        widget.addItem('Descending')
+
+        #widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
+        #grid_layout.new_row()  # because seems to be missing
+        grid_layout.addWidget( widget )
+
+        # ---- criteria changed should be in parent
+        grid_layout.new_row()
+        widget  = QLabel( "criteria_changed_widget" )
+        self.criteria_changed_widget  = widget
+        grid_layout.addWidget( widget )
+
+    # --------------
+    def get_lat_long( self ):
+        """
+
+        """
+
+        size_widget = self.critera_widget_dict[ "size_km" ]
+        loc_widget  = self.critera_widget_dict[ "location_widget" ]
+        key         = loc_widget.currentText()
+        lat, long   = AppGlobal.parameters.dict_lat_lon[ key ]
+
+        print( lat, long )
+
+        delta_km        = size_widget.text( ).strip()
+
+        try:
+            delta_km    = float( delta_km )
+
+        except:
+            delta_km    = 100
+            size_widget.setText( str( delta_km ) )
+
+        print( delta_km )
+
+        distance_from = self.distance_from
+        distance_from.reset( key, lat, long, )
+
+        west_lat, east_lat    = distance_from.shift_latitude( delta_km/2 )
+        print( west_lat, east_lat )
+        self.critera_widget_dict[ "west_lat" ].setText( str( west_lat ) )
+        self.critera_widget_dict[ "east_lat" ].setText( str( east_lat ) )
+
+        south_long, north_long   = distance_from.shift_longitude( delta_km/2 )
+        print( south_long, north_long )
+        self.critera_widget_dict[ "south_long" ].setText( str( south_long ) )
+        self.critera_widget_dict[ "north_long" ].setText( str( north_long ) )
+
+       # widget     = self.widget_field_dict[ "north_long" ]
+       # widget     = self.critera_widget_list.append( widget )
+        # do more formatting, make a funcution called with field_name and float
+        #widget.setText( str( north_long ) )
+
+    # -------------
+    def criteria_select( self, ):
+        """
+        do the select
+        """
+        start_dt            = time.time()
+        parent_document     = self.parent_window
+        model               = parent_document.list_tab.list_model
+
+        # ---- try this to clear
+        model.setFilter( "id = -99" )
+        model.select()
+
+        query               = QSqlQuery( AppGlobal.qsql_db_access.db )
+        query_builder       = qt_sql_query.QueryBuilder( query, print_it = False, )
+
+        kw_table_name       = "photo_key_words"
+
+        # !! next is too much   !! change to list comp ---
+        columns     = data_dict_all.SCHEMA.get_list_columns( self.parent_window.detail_table_name )
+        #col_head_texts   = [ "seq" ]  # plus one for sequence
+        col_names   = [   ]
+        #col_head_widths  = [ "10"  ]
+        for i_column in columns:
+            col_names.append(        i_column.column_name  )
+            #col_head_texts.append(   i_column.col_head_text  )
+            #col_head_widths.append(  i_column.col_head_width  )
+        column_list                     = col_names
+
+        a_key_word_processor            = key_words.KeyWords( kw_table_name, AppGlobal.qsql_db_access.db )
+        query_builder.table_name        = parent_document.detail_table_name
+        query_builder.column_list       = column_list
+
+        # ---- add criteria
+        criteria_dict                   = self.get_criteria()
+
+        # !! change to bind variables sql inject
+        # ---- id  table_id
+        table_id     = criteria_dict[ "table_id" ].strip().lower()
+        if table_id:
+            add_where       =  f' id = {table_id} '
+            query_builder.add_to_where( add_where, [ ])
+
+        # ---- id_old
+        id_old      = criteria_dict[ "id_old" ].strip().lower()
+        if id_old:
+            add_where       =  f' id_old = "{id_old}" '
+            query_builder.add_to_where( add_where, [ ])
+
+        # ---- key words
+        criteria_key_words      = criteria_dict[ "key_words" ]
+        criteria_key_words      = a_key_word_processor.string_to_key_words( criteria_key_words )
+        key_word_count          = len( criteria_key_words )
+
+        criteria_key_words      = ", ".join( [ f'"{i_word}"' for i_word in criteria_key_words ] )
+        criteria_key_words      = f'( {criteria_key_words} ) '    # ( "one", "two" )
+
+        if key_word_count > 0:
+            query_builder.group_by_c_list   = column_list
+            query_builder.add_to_inner_join( " INNER JOIN photo_key_word "
+                                             " ON photo.id = photo_key_word.id  " )
+            query_builder.sql_having        = f" count(*) = {key_word_count} "
+
+            query_builder.add_to_where( f" key_word IN {criteria_key_words}", [] )
+
+        # ---- title like
+        title                          = criteria_dict[ "title" ].strip().lower()
+        if title:
+            add_where       = "lower( title )  like :title"   # :is name of bind var below
+            query_builder.add_to_where( add_where, [(  ":title",
+                                                     f"%{title}%" ) ])
+
+        # ---- name like
+        name                          = criteria_dict[ "name" ].strip().lower()
+        if name:
+            add_where       = "lower( name )  like :name"   # :is name of bind var below
+            query_builder.add_to_where( add_where, [(  ":name",
+                                                     f"%{name}%" ) ])
+
+        # ---- use_dates
+        use_dates           = criteria_dict[ "use_dates" ]
+
+        if use_dates:
+            noon_time       = QTime( 12, 0, 0)  # !! tweak this
+            begin_date      = criteria_dict[ "begin_date" ]  # to ts in next
+            qdatetime       = QDateTime( begin_date, noon_time )
+            begin_date      = qdatetime.toSecsSinceEpoch()
+
+            noon_time       = QTime( 12, 0, 0)  # !! tweak this
+            end_date        = criteria_dict[ "end_date" ]  # to ts in next
+            qdatetime       = QDateTime( end_date, noon_time )
+            end_date        = qdatetime.toSecsSinceEpoch()
+
+            # ?? not so nice COALESCE a selectable... non seleceted
+            query_builder.column_addition = ( "COALESCE(dt_item, exif_ts) "
+                                               "AS effective_date" )
+
+            # if works modify for bind variables
+            add_where       = f" effective_date >= {begin_date} AND effective_date <= {end_date} "
+            query_builder.add_to_where( add_where, [ ])
+
+            # ---- !! work out what to do with order by perahsp in order by pare
+            """
+            perhaps always have effective date
+            SELECT
+                id,
+                name,
+                dt_item,
+                exif_ts,
+                COALESCE(dt_item, exif_ts) AS effective_date
+            FROM photo
+            WHERE effective_date >= {begin_date} AND effective_date <= {end_date}
+            ORDER BY effective_date
+            """
+
+        # ---- file name null  or empty -- note misname
+        file_name_empty     = criteria_dict[ "file_name_empty" ].strip().lower()
+
+        if file_name_empty == "yes":
+            add_where       =  ' file IS NOT NULL and  file != "" '
+            query_builder.add_to_where( add_where, [ ])
+
+        if file_name_empty == "no":
+            add_where       = ' file IS NULL or  file = "" '
+            query_builder.add_to_where( add_where, [ ])
+
+        # ---- file_name_like
+        file_name_like             = criteria_dict[ "file_name_like" ].strip().lower()
+
+        if file_name_like:
+            add_where       = "lower( file )  like :file_name_like"   # :is name of bind var below
+            query_builder.add_to_where( add_where, [(  ":file_name_like",
+                                                     f"%{file_name_like}%" ) ])
+
+        # ---- exif_make
+        exif_make             = criteria_dict[ "exif_make" ].strip()
+
+        if exif_make != "<Any>":
+            add_where       = "exif_make = :exif_make"   # :is name of bind var below
+            query_builder.add_to_where( add_where, [(  ":exif_make",
+                                                        exif_make ) ])
+        # ---- exif_model
+        exif_model             = criteria_dict[ "exif_model" ].strip()
+
+        if exif_model != "<Any>":
+            add_where       = "exif_model = :exif_model"   # :is name of bind var below
+            query_builder.add_to_where( add_where, [(  ":exif_model",
+                                                        exif_model ) ])
+
+        # ---- album
+        album_id             = criteria_dict[ "in_album" ]
+
+        if album_id:
+            query_builder.add_to_inner_join( " INNER JOIN photo_in_show "
+                                             " ON photo.id = photo_in_show.photo_id  " )
+
+            add_where       = " photo_in_show.photo_show_id = :album_id "
+            query_builder.add_to_where( add_where, [(  ":album_id",
+                                                      f"{album_id}" ) ])
+
+        # ---- use_lat_long
+        use_lat_lon         = criteria_dict[ "use_lat_long" ]
+
+        if use_lat_lon:
+            lat_long        = criteria_dict[ "west_lat" ]
+            lat_long        = base_document_tabs.str_to_float( lat_long )
+            west_lat        = lat_long
+
+            lat_long        = criteria_dict[ "east_lat" ]
+            lat_long        = base_document_tabs.str_to_float( lat_long )
+            east_lat        = lat_long
+
+            lat_long        = criteria_dict[ "south_long" ]
+            lat_long        = base_document_tabs.str_to_float( lat_long )
+            south_long      = lat_long
+
+            lat_long        = criteria_dict[ "north_long" ]
+            lat_long        = base_document_tabs.str_to_float( lat_long )
+            north_long      = lat_long
+
+        else:
+            west_lat        = None
+            east_lat        = None
+            south_long      = None
+            north_long      = None
+
+        # ---- next whole series of add where   make method ??
+        if west_lat is not None:
+            add_where       = ' exif_lat >= :west_lat '
+            query_builder.add_to_where( add_where, [ ( ":west_lat",
+                                                        west_lat  ) ]  )
+
+        if east_lat is not None:
+            add_where       = ' exif_lat <= :east_lat '
+            query_builder.add_to_where( add_where, [ ( ":east_lat",
+                                                        east_lat  ) ]  )
+
+        if south_long is not None:
+            add_where       = ' exif_lon >= :south_long '
+            query_builder.add_to_where( add_where, [ ( ":south_long",
+                                                        south_long  ) ]  )
+
+        if north_long is not None:
+            add_where       = ' exif_lon <= :north_long '
+            query_builder.add_to_where( add_where, [ ( ":north_long",
+                                                        north_long  ) ]  )
+
+        # ---- dates above not here
+
+
+        # ---- order by
+        order_by   = criteria_dict[ "order_by" ]
+
+        plus_order_by_dt_item  = True
+
+        #dt_item  does not seem to exist  -- but this may be error
+        # may need to convert to use table name or not
+        if   order_by == "title - ignore case":
+            column_name = "lower(title)"
+
+        elif order_by == "id":
+            column_name = "photo.id"
+
+        elif order_by == "id_old":
+            column_name = "id_old"
+
+        elif   order_by == "dt_enter":
+            column_name = "dt_enter"
+
+        elif order_by == "dt_item":
+            column_name = "dt_item"
+            plus_order_by_dt_item  = False
+
+        else:   # !! might better handle this
+            column_name = "dt_item"   # check if exists  dt_item
+
+        # ---- "order_by_dir"
+        order_by_dir   = criteria_dict[ "order_by_dir" ].lower( )
+
+        if "asc" in order_by_dir:
+            literal   = "ASC"
+
+        else:
+            literal   = "DESC"
+
+        query_builder.add_to_order_by( column_name, literal, )
+
+        if plus_order_by_dt_item:
+            query_builder.add_to_order_by( "dt_item", "ASC", )
+
+        query_builder.prepare_and_bind()
+
+        msg      = f"{query_builder = }"
+        logging.debug( msg )
+
+        is_ok  = AppGlobal.qsql_db_access.query_exec_model( query,
+                                                  model,
+                                                  msg = "PictureDocument criteria_select" )
+
+        msg       = ( f"StuffTextTab_criteria_select   {query.executedQuery() = }" )
+        logging.debug( msg )
+
+        parent_document.main_notebook.setCurrentIndex( parent_document.list_tab_index )
+        self.critera_is_changed = False
+
+        end_dt     = time.time()   #          start_dt     = time.time()
+        msg        = (f"criteria_select time = {end_dt - start_dt } sec")
+        logging.info( msg )
+
+    # ----------------------------------
+    def edit_more_photo_geo( self ):
+        """
+        Open dialog to edit .....
+        """
+        # selected_data = self.get_selected_row_data()
+
+        # if selected_data is None:
+        #     return
+
+        # row, data = selected_data
+
+        data   = None
+        dialog = photo_geo_criteria.PhotoGeoCriteria( self, edit_data = data )
+            # self the parent tab
+
+        #model       = self.model
+
+        exec        = QDialog.exec
+
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            form_data = dialog.get_form_data()
+
+            # # Update the row with the new data
+            # model.setData( model.index(row, 0), form_data["id"],        Qt.EditRole )
+            # model.setData( model.index(row, 2), form_data["stuff_id"],  Qt.EditRole )
+            # model.setData( model.index(row, 4), form_data["event_dt"],  Qt.EditRole )
+            # model.setData( model.index(row, 5), form_data["dlr"],       Qt.EditRole )
+            # model.setData( model.index(row, 6), form_data["cmnt"],      Qt.EditRole )
+            # model.setData( model.index(row, 7), form_data["type"],      Qt.EditRole )
+
+# ----------------------------------------
+class PictureCriteriaTabBak( base_document_tabs.CriteriaTabBase, ):
+    """
+    criteria for list selection
+    """
+    def __init__(self, parent_window ):
+        """
+        the usual
+        """
+        super().__init__( parent_window )
         self.tab_name   = "PictureCriteriaTab"
 
     # ------------------------------------------
-    def _build_tab( self,   ):
+    def _build_tab( self, ):
         """
         what it says, read
 
@@ -738,10 +1512,10 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget.clicked.connect( self.edit_more_photo_geo )
         grid_layout.addWidget( widget )
 
-
         # ---- .... west lat !! need a clear function
         widget                      = cw.CQLineEdit(
                                                 field_name = "west_lat" )
+        widget.setToolTip( "west_lat"  )
         # cnv do not !! seem to be used, perhaps they should see dict to.....
         widget.rec_to_edit_cnv      = widget.cnv_float_to_str
         widget.dict_to_edit_cnv     = widget.cnv_float_to_str
@@ -757,7 +1531,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         # ---- .... east_lat
         widget                      = cw.CQLineEdit(
                                                 field_name = "east_lat" )
-
+        widget.setToolTip( "east_lat"  )
         widget.rec_to_edit_cnv      = widget.cnv_float_to_str
         widget.dict_to_edit_cnv     = widget.cnv_float_to_str
         widget.edit_to_rec_cnv      = widget.cnv_str_to_float
@@ -772,7 +1546,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         # ---- .... south_long
         widget                      = cw.CQLineEdit(
                                                 field_name = "south_long" )
-
+        widget.setToolTip( "xxx"  )
         widget.rec_to_edit_cnv      = widget.cnv_float_to_str
         widget.dict_to_edit_cnv     = widget.cnv_float_to_str
         widget.edit_to_rec_cnv      = widget.cnv_str_to_float
@@ -837,9 +1611,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
 
 
-
-
-
         # self.add_date_widgets( placer, row_labels = ( "dt_item", "dt_enter") )
 
         # self.add_buttons( placer )
@@ -861,8 +1632,12 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         #self.id_field.setFocus()  # seems not to work try
         QTimer.singleShot( 0, self.key_words_widget.setFocus )
 
+
+
+
+
     # -------------
-    def criteria_select( self,     ):
+    def criteria_select( self, ):
         """
         do the select
         """
@@ -911,17 +1686,17 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             query_builder.add_to_where( add_where, [ ])
 
         # ---- key words
-        criteria_key_words              = criteria_dict[ "key_words" ]
-        criteria_key_words              = a_key_word_processor.string_to_key_words( criteria_key_words )
-        key_word_count                  = len( criteria_key_words )
+        criteria_key_words      = criteria_dict[ "key_words" ]
+        criteria_key_words      = a_key_word_processor.string_to_key_words( criteria_key_words )
+        key_word_count          = len( criteria_key_words )
 
-        criteria_key_words              = ", ".join( [ f'"{i_word}"' for i_word in criteria_key_words ] )
-        criteria_key_words              = f'( {criteria_key_words} ) '    # ( "one", "two" )
+        criteria_key_words      = ", ".join( [ f'"{i_word}"' for i_word in criteria_key_words ] )
+        criteria_key_words      = f'( {criteria_key_words} ) '    # ( "one", "two" )
 
         if key_word_count > 0:
             query_builder.group_by_c_list   = column_list
-            #query_builder.sql_inner_join    = " photo_key_word  ON photo.id = photo_key_word.id "
-            query_builder.add_to_inner_join( " INNER JOIN photo_key_word  ON photo.id = photo_key_word.id  " )
+            query_builder.add_to_inner_join( " INNER JOIN photo_key_word "
+                                             " ON photo.id = photo_key_word.id  " )
             query_builder.sql_having        = f" count(*) = {key_word_count} "
 
             query_builder.add_to_where( f" key_word IN {criteria_key_words}", [] )
@@ -957,13 +1732,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             # ?? not so nice COALESCE a selectable... non seleceted
             query_builder.column_addition = ( "COALESCE(dt_item, exif_ts) "
                                                "AS effective_date" )
-
-
-            # # !! old remove later
-            # add_where       = "exif_ts >=  :begin_date or dt_item >= :begin_date"   # :is name of bind var below
-            # query_builder.add_to_where( add_where, [(  ":begin_date",
-            #                                              begin_date ) ])
-
 
             # if works modify for bind variables
             add_where       = f" effective_date >= {begin_date} AND effective_date <= {end_date} "
@@ -1021,7 +1789,8 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         album_id             = criteria_dict[ "in_album" ]
 
         if album_id:
-            query_builder.add_to_inner_join( " INNER JOIN photo_in_show ON photo.id = photo_in_show.photo_id  " )
+            query_builder.add_to_inner_join( " INNER JOIN photo_in_show "
+                                             " ON photo.id = photo_in_show.photo_id  " )
 
             add_where       = " photo_in_show.photo_show_id = :album_id "
             query_builder.add_to_where( add_where, [(  ":album_id",
@@ -1054,45 +1823,28 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             north_long      = None
 
         # ---- next whole series of add where   make method ??
-        if west_lat != None:
+        if west_lat is not None:
             add_where       = ' exif_lat >= :west_lat '
             query_builder.add_to_where( add_where, [ ( ":west_lat",
                                                         west_lat  ) ]  )
 
-        if east_lat != None:
+        if east_lat is not None:
             add_where       = ' exif_lat <= :east_lat '
             query_builder.add_to_where( add_where, [ ( ":east_lat",
                                                         east_lat  ) ]  )
 
-        if south_long != None:
+        if south_long is not None:
             add_where       = ' exif_lon >= :south_long '
             query_builder.add_to_where( add_where, [ ( ":south_long",
                                                         south_long  ) ]  )
 
-        if north_long != None:
+        if north_long is not None:
             add_where       = ' exif_lon <= :north_long '
             query_builder.add_to_where( add_where, [ ( ":north_long",
                                                         north_long  ) ]  )
 
         # ---- dates above not here
 
-
-
-
-        msg       = ( "only have one date so far and names are a bit of a dyslexia mess")
-        logging.info( msg )
-
-        # start_date_edit   = criteria_dict[ "start_edit_date" ]
-        # # rint( f"{start_date_edit}")
-        # if start_date_edit:
-        #     add_where         = " dt_enter >= :start_date_edit"
-        #     query_builder.add_to_where( add_where, [ ( ":start_date_edit", start_date_edit ) ])
-
-        # end_date_edit   = criteria_dict[ "end_edit_date" ]
-        # if end_date_edit:
-        #     # rint( f"{start_date_edit}")
-        #     add_where         = " dt_enter >= :end_date_edit"
-        #     query_builder.add_to_where( add_where, [ ( ":end_date_edit", end_date_edit ) ])
 
         # ---- order by
         order_by   = criteria_dict[ "order_by" ]
@@ -1215,7 +1967,7 @@ class PictureListTab( base_document_tabs.ListTabBase  ):
         view.setItemDelegateForColumn( ix_col, delegate )
 
 # ----------------------------------------
-class PictureDetailTab( base_document_tabs.DetailTabBase   ):
+class PictureDetailTab( base_document_tabs.DetailTabBase ):
     """
     Usual detail tab, here for the PictureDocument
     """
@@ -1294,12 +2046,12 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
 
         # ---- buttons
         widget  = QPushButton( "Add To Album" )
-        widget.clicked.connect(self.add_to_show)
+        widget.clicked.connect( self.add_to_show )
         field_layout.addWidget( widget)
 
         # ---- .... "Clip FileName"
         widget  = QPushButton( "Clip FileName" )
-        widget.clicked.connect(self.clip_filename)
+        widget.clicked.connect( self.clip_filename )
         field_layout.addWidget( widget)
 
         # ---- Shell
@@ -1335,12 +2087,12 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         edit_field.set_clear    = a_partial
 
         """
-        self._build_fields_test( layout )
+        self._build_from_dict( layout )
+
         # ---- !! temp fix untill all use field_dict
         self.file_field         = self.field_dict[ "file" ]
-
-        self.sub_dir_field       = self.field_dict[ "sub_dir" ]
-        edit_field               = self.field_dict[ "sub_dir" ]
+        self.sub_dir_field      = self.field_dict[ "sub_dir" ]
+        edit_field              = self.field_dict[ "sub_dir" ]
 
         self.id_field           = self.field_dict[ "id" ]
 
@@ -1349,314 +2101,8 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         edit_field.set_clear    = a_partial
         edit_field.set_default  = a_partial
 
-
-
+        # see version 90 and lower for code_gen approach
         return
-
-        # ----- ======================================================================
-
-        width    = 200
-
-        for ix in range( layout.col_max ):  # layout.col_max
-            widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
-            layout.addItem( widget, 0, ix  )  # row column
-
-        # ---- code_gen: TableDict.to_build_form not maintained for photo -- begin table entries -----------------------
-
-        # ---- id
-        edit_field                      = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
-        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
-        edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
-        edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
-        self.id_field                     = edit_field
-        edit_field.setReadOnly( True )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "id" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 1 )
-
-        # ---- id_old
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id_old",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.setReadOnly( True )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "id_old" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 1 )
-
-        # ---- name
-        edit_field                  = cw.CQHistoryComboBox(
-                                                parent         = None,
-                                                field_name     = "name",
-                                                is_keep_prior_enabled = True, )
-
-        edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "name" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- title custom hand edited
-        edit_field                  = cw.CQHistoryComboBox(
-                                                parent         = None,
-                                                field_name     = "title",
-                                                is_keep_prior_enabled        = True   )
-
-        edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "title" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- descr
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "descr",
-                                                is_keep_prior_enabled     = True, )
-        edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "descr" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- add_kw
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "add_kw",
-                                                is_keep_prior_enabled     = True, )
-        edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "add_kw" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- cmnt
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "cmnt",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "cmnt" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- sub_dir
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "sub_dir",
-                                                is_keep_prior_enabled     = True, )
-        self.sub_dir_field     = edit_field
-        edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "sub_dir" )
-
-        # tweak, could be modified to put at end
-        a_partial               = partial( edit_field.set_value, PARAMETERS.picture_db_sub  )
-        # should not need both but for debugging
-        edit_field.set_clear    = a_partial
-        edit_field.set_default  = a_partial
-
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- file
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "file",
-                                                is_keep_prior_enabled     = False, )
-        self.file_field     = edit_field
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "file" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- camera
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "camera",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "camera" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- lens
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "lens",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "lens" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- f_stop
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "f_stop",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "f_stop" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- shutter
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "shutter",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "shutter" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- type
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "type",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "type" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- series
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "series",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "series" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- author
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "author",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "author" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- format
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "format",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "format" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- inv_id
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "inv_id",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "inv_id" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- status
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "status",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "status" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- c_name
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "c_name",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "c_name" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- tag
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "tag",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "tag" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- old_inv_id
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "old_inv_id",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "old_inv_id" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- photo_url
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "photo_url",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "photo_url" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- copyright
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "copyright",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "copyright" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- dt_enter
-        edit_field                  = cw.CQDateEdit(
-                                                parent         = None,
-                                                field_name     = "dt_enter",
-                                                is_keep_prior_enabled     = False, )
-        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_qdate
-        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_qdate
-        edit_field.edit_to_rec_cnv        = edit_field.cnv_qdate_to_int
-        edit_field.edit_to_dict_cnv       = edit_field.cnv_qdate_to_int
-        edit_field.setReadOnly( True )
-        edit_field.is_keep_prior_enabled        = False
-        edit_field.setPlaceholderText( "dt_enter" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- dt_enter started 2026 feb
-        edit_field                  = cw.CQDateEdit(
-                                                parent         = None,
-                                                field_name     = "dt_item",
-                                                is_keep_prior_enabled     = True, )
-        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_qdate
-        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_qdate
-        edit_field.edit_to_rec_cnv        = edit_field.cnv_qdate_to_int
-        edit_field.edit_to_dict_cnv       = edit_field.cnv_qdate_to_int
-        edit_field.setReadOnly( False )
-        edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "dt_enter" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-
-    #---------------------------------
-    def _build_fields_old( self, layout ):
-        """
-        deleted ver078
-        """
 
     # ---------------------------
     def select_record( self, id_value  ):
@@ -1789,7 +2235,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
 
         """
         self.is_this_method_ever_called()
-        self.clear_fields()  # needs option
+        self.clear_fields()  # needs option !!
 
         # ---- ??redef add_ts
         a_ts   = str( time.time() ) + "sec"
@@ -1840,7 +2286,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase   ):
         QApplication.clipboard().setText( file_name )
 
 # ==================================
-class PictureTextTab( base_document_tabs.TextTabBase   ):
+class PictureTextTab( base_document_tabs.TextTabBase ):
     """ """
     def __init__(self, parent_window  ):
         """
@@ -1898,7 +2344,9 @@ class PictureBrowseSubTab( QWidget ):
 
         # ---- timedateformatting
         date_column         = 1
-        delegate            = base_document_tabs.TableModelDateTimeDelegate( date_column = date_column, parent = self )
+        delegate            = base_document_tabs.TableModelDateTimeDelegate(
+                                     date_column = date_column,
+                                     parent = self  )
         table_view.setItemDelegateForColumn( date_column, delegate )
 
         table_view.clicked.connect( self.on_row_clicked )
@@ -1964,8 +2412,13 @@ class PictureBrowseSubTab( QWidget ):
         file_dialog.setFileMode( QFileDialog.ExistingFiles ) #multiple file selection
         # Define name filters (case insensitive)
         name_filters = [
-            "Common Graphics (*.jpg *.jpeg *.png *.gif *.bmp *.tiff *.tif *.webp *.svg *.ico *.JPG *.JPEG *.PNG *.GIF *.BMP *.TIFF *.TIF *.WEBP *.SVG *.ICO)",
-            "Common Media (*.mp4 *.avi *.mov *.wmv *.flv *.webm *.mkv *.m4v *.mp3 *.wav *.flac *.aac *.ogg *.wma *.MP4 *.AVI *.MOV *.WMV *.FLV *.WEBM *.MKV *.M4V *.MP3 *.WAV *.FLAC *.AAC *.OGG *.WMA)",
+           ( "Common Graphics (*.jpg *.jpeg *.png *.gif *.bmp *.tiff"
+              " *.tif *.webp *.svg *.ico *.JPG *.JPEG *.PNG *.GIF *.BMP *.TIFF *.TIF *.WEBP *.SVG *.ICO)" ),
+
+            ( "Common Media (*.mp4 *.avi *.mov *.wmv *.flv *.webm *.mkv *.m4v "
+               "*.mp3 *.wav *.flac *.aac *.ogg *.wma *.MP4 *.AVI *.MOV *.WMV "
+               "*.FLV *.WEBM *.MKV *.M4V *.MP3 *.WAV *.FLAC *.AAC *.OGG *.WMA)" ),
+
             "JPEG Images (*.jpg *.jpeg *.JPG *.JPEG)",
             "All Files (*)"
              ]
@@ -2041,8 +2494,10 @@ class PictureBrowseSubTab( QWidget ):
 
         # ---- picture_db_sub exists
         picture_db_sub      = detail_tab.sub_dir_field.get_raw_data().strip( )
+
         if picture_db_sub.startswith( "/" ): # remove leading /
             picture_db_sub  = picture_db_sub[ 1: ]
+
         picture_db_root     = PARAMETERS.picture_db_root
         picture_dir_path    = Path().joinpath( picture_db_root, picture_db_sub  )
 
@@ -2051,7 +2506,6 @@ class PictureBrowseSubTab( QWidget ):
         if record_state == data_manager.RECORD_NULL:
             msg     = "For this to work you need an item in your Picture Document (with no filename)."
             raise app_exceptions.ReturnToGui( msg )
-
 
         if not picture_dir_path.exists( ):  # may want to apply other places
             msg       = ( f"The current directory values are not valid (building picture_dir_path)\n"
@@ -2148,7 +2602,7 @@ class PictureBrowseSubTab( QWidget ):
 
 
     # --------------------------------------
-    def move_all_old( self,  ):
+    def move_all_old( self, ):
         """
         move all picture files to new picture documents
             want to change this to require
@@ -2214,7 +2668,7 @@ class PictureBrowseSubTab( QWidget ):
         logging.debug( msg )
 
     # --------------------------------------
-    def move_to_pic( self, index: QModelIndex):
+    def move_to_pic( self, index: QModelIndex ):
         """
         consider a full rename to current standards
         move picture file to correct directory and
@@ -2375,7 +2829,7 @@ class PictureBrowseSubTab( QWidget ):
         return
 
     # --------------------------------------
-    def on_row_clicked( self, index: QModelIndex):
+    def on_row_clicked( self, index: QModelIndex ):
         """
 
         """
@@ -2470,7 +2924,7 @@ class PictureBrowseSubTab( QWidget ):
         #rint("PicturePictureTab Fit in View")
 
     #-------------------------------------
-    def set_column_width(self):
+    def set_column_width( self ):
         """
         fighting with this put where search headers
         work in version 64
@@ -2727,8 +3181,9 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         msg       = ( "look at build model this may be a big mix up !!")
         logging.info( msg )
 
-        # ---- model  self.model      ---- gets subjects but for background as we need join to photo_subject
-        #      get good display of inf see
+        # ---- model  self.model
+            # gets subjects but for background as we need join to photo_subject
+            # get good display of inf see
         model           = QSqlTableModel( self, self.db )
         #model          = qt_with_logging.QSqlTableModelWithLogging(  self, self.db    )
 
@@ -2736,7 +3191,8 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
 
         model.setTable( self.table_name )
         self.model_ituple   = ( 3, 5 ) # to index table, table_id check with table
-        model_indexer       = table_model.ModelIndexer( model, self.model_ituple  ) # to index table, table_id )
+        model_indexer       = table_model.ModelIndexer( model, self.model_ituple  )
+              # to index table, table_id )
         self.model_indexer  = model_indexer
         model.setEditStrategy( QSqlTableModel.OnManualSubmit )
 
@@ -2763,7 +3219,8 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
                                 "planting" ]:
             return
 
-        msg    = f"update_sync_pre {sender = } {type_of_change =} {table_name = } \n     {table_id = } {record_or_dict = } "
+        msg    = ( f"update_sync_pre {sender = } {type_of_change =} {table_name = }"
+                   f" \n     {table_id = } {record_or_dict = } " )
         logging.debug( msg )
 
         if record_or_dict is None:  # seems to happen
@@ -2807,7 +3264,6 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
 
         self.hide_used_in_view( self.view_history, in_use_list )
         self.hide_used_in_view( self.view_other,   in_use_list )
-        pass
 
     #-------------------------------------
     def hide_used_in_view( self, view, in_use_list ):
@@ -2853,7 +3309,8 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         """
         model   = self.model_other
 
-        msg     = ( f"topics_changed {topic_dict = } !! may need change so we do not reload the whole thing " )
+        msg     = ( f"topics_changed {topic_dict = } !! "
+                     "may need change so we do not reload the whole thing " )
         logging.debug( msg )
 
         model.clear_data()
@@ -2913,7 +3370,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         #model              = qt_with_logging.QSqlTableModelWithLogging(  self, self.db    )
         print( "delete_all note that rows will still be visible unless do something to refresh ")
         model  = self.model
-        ia_qt.q_sql_table_model( model )
+        # ia_qt.q_sql_table_model( model ) # inof about drop use
         # Loop through the rows in reverse order and delete them
         for row in range( model.rowCount() - 1, -1, -1 ):
             model.removeRow(row)
@@ -2948,9 +3405,6 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
 
         return first_row
 
-
-
-
     # ------------------------------------------
     def delete_record (self):
         """
@@ -2961,11 +3415,8 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         need an are you sure
         return None
         """
-
         # msg   = "delete_record ... not implemented"
         # QMessageBox.warning( self, "Sorry", msg )
-
-
 
         # Confirm before deleting -- look for other code with colored buttons
         # might get some data from it the topic or info for user
@@ -3094,7 +3545,8 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
 
                 return
 
-            msg  = ( "add_from_selected about to add a row, but probably should be rebuilt {row = } probably inside loop")
+            msg  = (  "add_from_selected about to add a row, but probably "
+                     f"should be rebuilt {i_row = } probably inside loop")
             logging.debug( msg )
 
             index       = model_selected.index( i_row, 0 )  # table  =at 0 ??
@@ -3266,7 +3718,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
 
                 # Optionally, retrieve data from each selected row
                 row_data = [self.model.data( self.model.index(row, col),
-                            DisplayRole ) for col in range(self.model.columnCount())]
+                            DisplayRole ) for col in range( self.model.columnCount())]
 
                 msg       = (f"get_selected_row Row data: {row_data}")
                 logging.debug( msg )
@@ -3328,6 +3780,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         column_count        = model.columnCount()
         ix_table_column     = 3
         ix_table_id_column  = 5
+        #table_name          = "unknown should not happen"
         for row in range( row_count ):
             #row_data = [] # what is this for  -- think dead
 
@@ -3671,7 +4124,8 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
             we could get the info, topic_string here
         """
         #print( "got topic update " )  #"{args} {kwargs}")
-        msg       = ( f"got topic update {table = } {table_id = } {info = } update_subjects next not but populate_model_other")
+        msg       = ( f"got topic update {table = } {table_id = } "
+                      f"{info = } update_subjects next not but populate_model_other")
         logging.info( msg )
 
         self.populate_model_other()
@@ -3779,7 +4233,6 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         if model_display_row == -1:
 
             #rint( f"add_to_model_all_subjects model_display found key {key = } in row {key_row}")
-            pass
 
         #else:
             # self.view_all_subjects.setModel(  self.model_all_subjects )
@@ -3829,7 +4282,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         if i_row < 0:
             return
 
-        model             = self.model_display
+        model       = self.model_display
 
         index       = model.index( i_row, 0 )  # table  =at 0 ??
         table       = model.data( index )

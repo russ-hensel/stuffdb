@@ -5,15 +5,13 @@ Created on Thu Jan  2 11:50:38 2025
 
 @author: russ
 
-
+next may be used delete with care
 DB_NAME:        stuffdb
 
 
 """
 # ---- tof
 import data_dict_all
-
-#print( data_dict_all.data_dict_all )
 
 
 def build_it( a_schema_dict ):
@@ -25,7 +23,6 @@ def build_it( a_schema_dict ):
     sql = """
 
     CREATE TABLE  help_info (
-
 
     	system        		VARCHAR(15),     string
     	key_words     		VARCHAR(70),     string
@@ -216,12 +213,13 @@ def build_it( a_schema_dict ):
 
     # ---- java_package
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "java_package",
-                                             db_type        = "VARCHAR(150)",
-                                             display_type   = "string",
+                                             placeholder_text   = "java_package placeholder_text",
+                                             db_type            = "VARCHAR(150)",
+                                             display_type       = "string",
                                              is_keep_prior_enabled = True,
-                                             max_len        = None,
-                                             default_func   = None,
-                                             display_order  = 30, )
+                                             max_len            = None,
+                                             default_func       = None,
+                                             display_order      = 30, )
 
     a_table_dict.add_column( a_column_dict )
 

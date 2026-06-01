@@ -533,6 +533,53 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
     #---------------------------------
     def _build_fields( self, layout ):
         """
+        New implementation based on the data dict
+            for doc string see base_document_tabs
+            for older look arount ver090 or so
+            builds the fields that interact with the db
+            mostly based on base documents
+        """
+        self._build_from_dict( layout )
+
+        # ---- was plant_id  by hand ---------------
+
+        kvl_model     = AppGlobal.mdi_management.get_key_value_list_model( "plant" )
+        edit_field                 = self.field_dict[ "plant_id" ]
+        edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
+
+
+        # edit_field                 = cw_2.CQModelComboBox(
+        #                              field_name = "plant_id" )
+        # # could check have default values or do in get function better
+        # edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
+        # self.data_manager.add_field( edit_field, is_key_word = False )
+        # layout.addWidget( edit_field, columnspan = 2 )
+
+        #self.plant_combo_dict_ext    = combo_dict_ext.PLANT_COMBO_DICT_EXT
+        #kvl_model                  = AppGlobal.mdi_management.get_key_value_list_model( "stuff" )
+        # could check have default values or do in get function better
+        # edit_field                 = self.field_dict[ "id_in" ]
+        # edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
+
+
+        return
+
+        # ---- dead
+        """
+        What it says, read
+            this is generated code
+            tweaks
+                spacing
+                plnat_combo_dict look for code
+        """
+
+
+
+
+
+
+
+        """
         What it says, read
             this is generated code except
             tweaks
@@ -541,6 +588,15 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
                     plant_id  by hand id_in_old ---------------
 
         """
+
+
+
+
+
+
+
+
+
         width  = 50
         for ix in range( self.max_col ):  # try to tweak size to make it work
             widget   = QSpacerItem( width,

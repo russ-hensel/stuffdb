@@ -9,8 +9,7 @@ this is the code for the StuffDocument
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
-    import main
-    pass
+    import main   # noqa  stops auto removal by pycln
 
 # --------------------
 
@@ -502,7 +501,7 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self.critera_is_changed = False
 
 # ----------------------------------------
-class StuffListTab( base_document_tabs.ListTabBase  ):
+class StuffListTab( base_document_tabs.ListTabBase ):
 
     def __init__(self, parent_window ):
 
@@ -512,12 +511,12 @@ class StuffListTab( base_document_tabs.ListTabBase  ):
         self._build_gui()
 
 # ----------------------------------------
-class StuffDetailTab( base_document_tabs.DetailTabBase  ):
+class StuffDetailTab( base_document_tabs.DetailTabBase ):
     """
     for the stuff and associated tables
     """
     #--------------------------------------------
-    def __init__(self, parent_window  ):
+    def __init__( self, parent_window ):
         """
         the usual
         """
@@ -600,7 +599,6 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
 
         self.fetch_detail_row_by_id( a_id )
 
-
     #---------------------------------
     def _build_fields( self, layout ):
         """
@@ -614,7 +612,19 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
                 see tweak for in_id old
 
                 need add_topic = True for some
+
+                for manual build see ver < 091
         """
+        self._build_from_dict( layout )
+
+        kvl_model                  = AppGlobal.mdi_management.get_key_value_list_model( "stuff" )
+        # could check have default values or do in get function better
+        edit_field                 = self.field_dict[ "id_in" ]
+        edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
+
+        return
+
+
         width  = 50
         for ix in range( self.max_col ):  # try to tweak size to make it work
             widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -990,7 +1000,7 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         layout.addWidget( edit_field, columnspan = 1 )
 
     # ---------------------------
-    def select_record( self, id_value  ):
+    def select_record( self, id_value ):
         """
         extension for the ddl
         read it
@@ -1004,7 +1014,8 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         # self.stuff_combo_dict_ext.get_info_from_record(
         #                 self.data_manager.current_id,
         #                 self.data_manager.current_record  )
-        model       = self.in_id_widget.kvl_model
+        #model       = self.in_id_widget.kvl_model # new way below
+        model       = self.field_dict[ "id_in" ].kvl_model
         a_id        = self.data_manager.current_id
         model.row_for_key( a_id )
 
@@ -1019,7 +1030,6 @@ class StuffDetailTab( base_document_tabs.DetailTabBase  ):
         """
         debug_msg    = ( f"{self.tab_name}get_picture_file_name to be implemented" )
         logging.log( LOG_LEVEL, debug_msg, )
-        return
 
     # -----------------------
     def __str__( self ):
@@ -1069,7 +1079,7 @@ class StuffTextTab( base_document_tabs.TextTabBase  ):
     """
     """
     #--------------------------------------
-    def __init__(self, parent_window  ):
+    def __init__( self, parent_window  ):
         """
         Args:
             parent_window (TYPE): DESCRIPTION.
@@ -1084,7 +1094,7 @@ class StuffTextTab( base_document_tabs.TextTabBase  ):
 class StuffHistoryTab( base_document_tabs.HistoryTabBase   ):
     """
     """
-    def __init__(self, parent_window ):
+    def __init__( self, parent_window ):
         """
         """
         super().__init__( parent_window )
@@ -1105,7 +1115,8 @@ class EventSqlTableModel( QSqlTableModel ):
         #self.non_editable_columns = { 0, 1, }  # Columns ..doe it have to be in init or is synamic ..
         self.non_editable_columns = { 99 }
 
-    def flags(self, index: QModelIndex):
+    # ----------------------------
+    def flags( self, index: QModelIndex ):
         """
         from chat, not really used as for non edit
         """
@@ -1117,7 +1128,7 @@ class EventSqlTableModel( QSqlTableModel ):
         return flags
 
     # ----------------------------
-    def data(self, index: QModelIndex, role = Qt.DisplayRole ):
+    def data( self, index: QModelIndex, role = Qt.DisplayRole ):
         """
         for special formatting
         and alignment
@@ -1133,9 +1144,12 @@ class EventSqlTableModel( QSqlTableModel ):
         if False:
             pass
         # Check role first
+
         elif role == Qt.DisplayRole:
+
             if col == 4:  # match to code in veiw seems to be timestamp
                 value = super().data(index, Qt.EditRole )
+
                 if value =="":  # seems to sometimes happen
                     value = None
                 if value is not None:
@@ -1152,6 +1166,7 @@ class EventSqlTableModel( QSqlTableModel ):
 
         elif role == Qt.EditRole:
             # Return raw value for editing/database sync
+
             if col == 2:
                 return super().data(index, Qt.EditRole)
 
@@ -1159,10 +1174,13 @@ class EventSqlTableModel( QSqlTableModel ):
         elif role == Qt.TextAlignmentRole:   # 5 6 compat
             # Handle alignment for all columns
             # 5 6 compat changes, old cod like return Qt.AlignLeft | Qt.AlignVCenter
+
             if col == 0:  # id
                 return Qt.AlignLeft | Qt.AlignVCenter
+
             elif col == 1:  # stuff_id
                 return Qt.AlignCenter | Qt.AlignVCenter
+
             elif col == 2:  # event_dt
                 return Qt.AlignRight | Qt.AlignVCenter
 
@@ -1185,7 +1203,7 @@ class EventSqlTableModel( QSqlTableModel ):
 # ----------------------------------------
 class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
 
-    def __init__(self, parent_window ):
+    def __init__( self, parent_window ):
         """
 
         """
@@ -1226,7 +1244,6 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
 
         view.setEditTriggers(QTableView.NoEditTriggers)  # Disable all edit triggers make non-edit
         # view.setEditTriggers( NoEditTriggers )  # 5 6 compat
-
 
            # now do not need stuff in EventSql.....
 
@@ -1288,15 +1305,15 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
         button_layout.addWidget( widget )
 
         #
-        widget        = QPushButton('Edit')
+        widget        = QPushButton( 'Edit' )
         #add_button    = widget
         widget.clicked.connect(self.edit_selected_event )
         button_layout.addWidget( widget )
 
         #
-        widget        = QPushButton('Delete')
+        widget        = QPushButton( 'Delete' )
         #add_button    = widget
-        widget.clicked.connect(self.delete_record)
+        widget.clicked.connect( self.delete_record )
         button_layout.addWidget( widget )
 
     # ---------------------------------
@@ -1305,7 +1322,6 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
         the usual model build
         """
         model              = EventSqlTableModel( self, self.db )
-        #model              = QSqlTableModel(  self, self.db    )
         self.model         = model
 
         model.setTable( self.list_table_name )
@@ -1355,7 +1371,7 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
 
     #---------------- restart here model view dialog name
     #  ---- chat functions
-    def add_new_event(self):
+    def add_new_event( self ):
         """Open dialog to add a new event and insert it into the model."""
         #dialog = StuffEventDialog(self)
         dialog      = stuff_document_edit.EditStuffEvents( self )  # QDialog
@@ -1369,10 +1385,10 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
         #     exec = QDialog.exec_
         #     Accepted = QDialog.Accepted
 
-        exec      = QDialog.exec
-        Accepted  = QDialog.DialogCode.Accepted
+        #exec      = QDialog.exec
 
-        if  dialog.exec() ==  Accepted:
+
+        if  dialog.exec() ==   QDialog.DialogCode.Accepted:
             form_data   = dialog.get_form_data()
 
             # Create a new record
@@ -1387,7 +1403,6 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
             old_non_editable                = model.non_editable_columns
             model.non_editable_columns  = { 99 } # beyond all columns
 
-            debug_id  = self.current_id
             # model.setData( model.index(row, 1), form_data["stuff_id"])
             model.setData( model.index(row, IX_EVENT_STUFF_ID ), self.current_id )
 
@@ -1440,14 +1455,10 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
         if selected_data is None:
             return
 
-        row, data = selected_data
-
-        dialog = stuff_document_edit.EditStuffEvents( self, edit_data = data )
+        row, data   = selected_data
+        dialog      = stuff_document_edit.EditStuffEvents( self, edit_data = data )
             # self the parent tab
-
         model       = self.model
-
-        exec        = QDialog.exec
 
         if dialog.exec() == QDialog.DialogCode.Accepted:
             form_data = dialog.get_form_data()
@@ -1462,7 +1473,9 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
 
     # ----------------------------------
     def delete_selected_event(self):
-        """Delete the currently selected event."""
+        """
+        Delete the currently selected event.
+        """
         selected_data = self.get_selected_row_data()
         if selected_data is None:
             return
@@ -1470,21 +1483,19 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
         row, data = selected_data
 
         # Confirm deletion with the user
-        reply = QMessageBox.question(self, "Confirm Deletion",
-                                    f"Are you sure you want to delete the selected event (ID: {data['id']})?",
-                                    QMessageBox.Yes | QMessageBox.No)
+        reply = QMessageBox.question( self, "Confirm Deletion",
+            f"Are you sure you want to delete the selected event (ID: {data['id']})?",
+            QMessageBox.Yes | QMessageBox.No)
 
         if reply == QMessageBox.Yes:
-            # Remove the row from the model
             self.model.removeRow(row)
 
     #-------------------------------
-    def submit_changes(self):
+    def submit_changes( self ):
         """Submit all changes to the database.
 
         !! this looks promotable -- check
         """
-
         model  = self.model
 
         # print( f"Edit strategy:  {model.editStrategy()= } ")

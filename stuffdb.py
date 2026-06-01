@@ -22,7 +22,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver .090: 2026-05-21.01"
+__version__   = "Ver .091: 2026-05-26.01"
 
 # ---- imports
 import datetime
@@ -34,7 +34,6 @@ import time
 import traceback
 
 from   qtpy.QtCore import ( QTimer, )
-
 
 from qtpy import QtWidgets
 
