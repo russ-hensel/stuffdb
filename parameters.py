@@ -64,8 +64,8 @@ class Parameters( ):
         get here"""
 
         #self.mode_new_user()
-        #self.mode_data_sync()
-        self.mode_data_sync_b()
+        self.mode_data_sync()
+        #self.mode_data_sync_b()
         #self.mode_picture_test()
 
         #self.mode_data_sync_full_path()
@@ -119,9 +119,9 @@ class Parameters( ):
         self.picture_db_sub     = "/76"
         self.picture_db_sub     = "/72"
         self.picture_db_sub     = "/26"
-        self.picture_db_sub     = "/23"
-        self.picture_db_sub     = "/25"
-        self.picture_db_sub     = "/10"
+        # self.picture_db_sub     = "/23"
+        # self.picture_db_sub     = "/25"
+        # self.picture_db_sub     = "/10"
 
         self.logging_level      = logging.DEBUG  # ERROR DEBUG
 
@@ -904,9 +904,10 @@ class Parameters( ):
 
         # ---- add a sort for the systems
 
-        # ---- locations
+        # ---- locations  lat long
         values_lat_lon    = {}
 
+        values_lat_lon["Picked from the Map"]               = (-0.,  0. )  # may be changed
         values_lat_lon["Australia,      Sydney"]            = (-33.8688,  151.2093 )
         values_lat_lon["Brazil,         Rio de Janeiro"]    = (-22.9068,  -43.1729 )
         values_lat_lon["Canada,         Toronto"]           = ( 43.6532,  -79.3832 )
@@ -926,22 +927,23 @@ class Parameters( ):
         values_lat_lon["USA,     IL     Chicago "]          = ( 41.8781,  -87.6298 )
         values_lat_lon["USA,     IN     Indianapolis"]      = ( 39.7684,  -86.158  )
         values_lat_lon["USA,     NC     Charlotte"]         = ( 35.2271,  -80.8431 )
-        values_lat_lon["USA,     NY     New York City"]     = ( 40.7128,  -74.006  )
-        values_lat_lon["USA,     OH     Columbus"]          = ( 39.9612,  -82.999  )
-        values_lat_lon["USA,     MA     Boston"]            = ( 42.3611,  -71.057  )
-        values_lat_lon["USA,     PA     Philadelphia"]      = ( 39.9526,  -75.1652 )
-        values_lat_lon["USA,     TX     Houston  "]         = ( 29.7604,  -95.3698 )
-        values_lat_lon["USA,     TX     San Antonio"]       = ( 29.4241,  -98.4936 )
-        values_lat_lon["USA,     TX     Dallas "]           = ( 32.7767,  -96.797  )
-        values_lat_lon["USA,     TX     Austin"]            = ( 30.25,    -97.75   )
-        values_lat_lon["USA,     TX     Fort Worth"]        = ( 32.7555,  -97.3308 )
-        values_lat_lon["USA,     TX     El Paso "]          = ( 31.7619, -106.485  )
-        values_lat_lon["USA,     WA     Seattle"]           = ( 47.6062,  -122.332 )
+        values_lat_lon["USA,     NY     New York City"]     = ( 40.7128,    -74.006  )
+        values_lat_lon["USA,     OH     Columbus"]          = ( 39.9612,    -82.999  )
+        values_lat_lon["USA,     MA     Boston"]            = ( 42.3611,    -71.057  )
+        values_lat_lon["USA,     MA     Dartmouth"]         = ( 41.610195,  -70.995316  )
+        values_lat_lon["USA,     ME     Kittery Point"]     = ( 43.0835606, -70.6997797  )
+        values_lat_lon["USA,     PA     Philadelphia"]      = ( 39.9526,    -75.1652 )
+        values_lat_lon["USA,     TX     Houston  "]         = ( 29.7604,    -95.3698 )
+        values_lat_lon["USA,     TX     San Antonio"]       = ( 29.4241,    -98.4936 )
+        values_lat_lon["USA,     TX     Dallas "]           = ( 32.7767,    -96.797  )
+        values_lat_lon["USA,     TX     Austin"]            = ( 30.25,      -97.75   )
+        values_lat_lon["USA,     TX     Fort Worth"]        = ( 32.7555,    -97.3308 )
+        values_lat_lon["USA,     TX     El Paso "]          = ( 31.7619,    -106.485 )
+        values_lat_lon["USA,     WA     Seattle"]           = ( 47.6062,    -122.332 )
 
 
         self.dict_lat_lon    = values_lat_lon
-
-
+        self.default_loc     = "USA,     MA     Boston"  # must be key into above
 
     #--------------------------
     def mode_from_command_line( self ):

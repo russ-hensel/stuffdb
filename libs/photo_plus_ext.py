@@ -1015,7 +1015,7 @@ class DistanceFrom():
         """
         # Geodesic calculation fails at the poles due to undefined bearing.
         if abs( self.from_lat ) == 90.0:
-            return None
+            return ( 0., 0., )
 
         start_point = Point( self.from_lat, self.from_long )
 
@@ -1050,7 +1050,6 @@ class DistanceFrom():
         elif new_lat < -90:
             new_lat = -180 - new_lat
             new_lat += 180
-
 
         new_south_lat = new_lat
 

@@ -60,6 +60,8 @@ def build_it( a_data_dict_all ):
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "name",
                                              db_type            = "VARCHAR(150)",
                                              display_type       = "string",
+                                             detail_edit_class  = "cw.CQHistoryComboBox",
+                                             form_edit          = "cw.CQHistoryComboBox",
                                              max_len            = None,
                                              default_func       = None,
                                              is_key_word        = True,
@@ -340,7 +342,7 @@ def build_it( a_data_dict_all ):
     a_table_dict.add_column( a_column_dict )
 
     if True:
-        # ---- EXIF ============================================
+        # ---- EXIF ....................
         # ---- exif_ts
         a_column_dict = data_dict_all.ColumnDict(    column_name    = "exif_ts",
                                                   db_type           = "INTEGER",

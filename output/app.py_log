@@ -1,20 +1,79 @@
-2026-05-31 09:56:44,549 - CRITICAL - Root logger is set up. Modules can now log using logging.getLogger().
-2026-05-31 09:56:44,549 - INFO - config_logger call was: logging.info
-2026-05-31 09:56:44,550 - DEBUG - QsqlDbAccess  init_db_qsqlite()
-2026-05-31 09:56:44,550 - DEBUG - connection_name = 'stuffdb_main_connection_name'
-2026-05-31 09:56:44,551 - DEBUG - log_sql_callback PRAGMA synchronous = NORMAL;
-2026-05-31 09:56:44,551 - DEBUG - log_sql_callback PRAGMA optimize;
-2026-05-31 09:56:44,664 - Notice - 
-2026-05-31 09:56:44,664 - Notice - ============================
-2026-05-31 09:56:44,664 - Notice - 
-2026-05-31 09:56:44,664 - Notice - Application: Stuff DB in QT Ver .091: 2026-05-26.01 in mode mode_data_sync_full_pathand version  Ver .091: 2026-05-26.01
-2026-05-31 09:56:44,664 - Notice - 
-2026-05-31 09:56:44,664 - Notice - command line arg + 0  =  main.py)
-2026-05-31 09:56:44,664 - Notice - command line arg + 1  =  mode_data_sync_full_path)
-2026-05-31 09:56:44,664 - Notice - current directory /mnt/m_toshiba_silver/for_github/stuffdb
-2026-05-31 09:56:44,664 - Notice - Time now: 2026-05-31 13:56:44
-2026-05-31 09:56:44,696 - ERROR - get_list_columns deprecated but should run ??use TableDict help_info
-2026-05-31 09:56:44,700 - ERROR - get_list_columns deprecated but should run ??use TableDict help_info
-2026-05-31 09:56:44,701 - ERROR - get_list_columns deprecated but should run ??use TableDict help_info
-2026-05-31 09:56:44,702 - DEBUG - get_topic_string a_str =  'DataManager.get_topic_string i_edit in self.topic_field_list is falsy' self.table_name = 'help_info'
-2026-05-31 09:56:44,703 - DEBUG - set_size_pos now returned out --------------------------------------  
+2026-06-02 07:40:53,065 - CRITICAL - Root logger is set up. Modules can now log using logging.getLogger().
+2026-06-02 07:40:53,065 - INFO - config_logger call was: logging.info
+2026-06-02 07:40:53,065 - DEBUG - QsqlDbAccess  init_db_qsqlite()
+2026-06-02 07:40:53,066 - DEBUG - connection_name = 'stuffdb_main_connection_name'
+2026-06-02 07:40:53,068 - DEBUG - log_sql_callback PRAGMA synchronous = NORMAL;
+2026-06-02 07:40:53,068 - DEBUG - log_sql_callback PRAGMA optimize;
+2026-06-02 07:40:53,177 - Notice - 
+2026-06-02 07:40:53,177 - Notice - ============================
+2026-06-02 07:40:53,177 - Notice - 
+2026-06-02 07:40:53,177 - Notice - Application: Stuff DB in QT Ver .091: 2026-05-26.01 in mode mode_data_sync_full_pathand version  Ver .091: 2026-05-26.01
+2026-06-02 07:40:53,177 - Notice - 
+2026-06-02 07:40:53,177 - Notice - command line arg + 0  =  main.py)
+2026-06-02 07:40:53,177 - Notice - command line arg + 1  =  mode_data_sync_full_path)
+2026-06-02 07:40:53,177 - Notice - current directory /mnt/m_toshiba_silver/for_github/stuffdb
+2026-06-02 07:40:53,177 - Notice - Time now: 2026-06-02 11:40:53
+2026-06-02 07:40:53,213 - ERROR - get_list_columns deprecated but should run ??use TableDict help_info
+2026-06-02 07:40:53,217 - ERROR - get_list_columns deprecated but should run ??use TableDict help_info
+2026-06-02 07:40:53,218 - ERROR - get_list_columns deprecated but should run ??use TableDict help_info
+2026-06-02 07:40:53,219 - DEBUG - get_topic_string a_str =  'DataManager.get_topic_string i_edit in self.topic_field_list is falsy' self.table_name = 'help_info'
+2026-06-02 07:40:53,219 - DEBUG - set_size_pos now returned out --------------------------------------  
+2026-06-02 07:41:20,210 - DEBUG - build_tab build criteria change put in as marker 
+2026-06-02 07:41:20,211 - INFO - build_tab build criteria change put in as marker 
+2026-06-02 07:41:20,211 - ERROR - get_list_columns deprecated but should run ??use TableDict people
+2026-06-02 07:41:20,213 - Level 115 - form_complete !!  now what}
+2026-06-02 07:41:20,214 - DEBUG - in SubTabBase  tab appends to a window list is this correct?? -- maybe 
+2026-06-02 07:41:20,214 - DEBUG - in SubTabBase  tab appends to a window list is this correct?? -- maybe 
+2026-06-02 07:41:20,215 - DEBUG - PictureViewer Failed to load image pixmap is null
+2026-06-02 07:41:20,215 - DEBUG - PictureViewer display_file error     file_name = '/home/russ/Pictures/picture_2024-06-14_10-19-01.jpg' file_exists = False
+2026-06-02 07:41:20,233 - ERROR - get_list_columns deprecated but should run ??use TableDict people
+2026-06-02 07:41:20,234 - ERROR - get_list_columns deprecated but should run ??use TableDict people
+2026-06-02 07:41:20,238 - DEBUG - get_topic_string a_str =  '                 PyQt5.QtCore.QDate(2000, 1, 1)   PyQt5.QtCore.QDate(2000, 1, 1)           ' self.table_name = 'people'
+2026-06-02 07:41:20,239 - DEBUG - set_size_pos now returned out --------------------------------------  
+2026-06-02 07:41:25,509 - ERROR - get_list_columns deprecated but should run ??use TableDict people
+2026-06-02 07:41:25,510 - DEBUG - query_builder = <qt_sql_query.QueryBuilder object at 0x79e723ff7770>
+2026-06-02 07:41:25,512 - INFO - SELECT   people.id,  people.f_name,  people.l_name,  people.c_name, people.add_kw    FROM people  
+   INNER JOIN people_key_word  ON people.id = people_key_word.id  
+    WHERE  key_word IN ( "rus", "me" )   
+    GROUP BY   people.id,  people.f_name,  people.l_name,  people.c_name, people.add_kw  
+    HAVING  count(*) = 2  
+     ORDER BY  l_name ASC  
+2026-06-02 07:41:25,512 - ERROR - get_list_columns deprecated but should run ??use TableDict people
+2026-06-02 07:41:25,513 - DEBUG - query_builder = <qt_sql_query.QueryBuilder object at 0x79e723a63b10>
+2026-06-02 07:41:25,514 - INFO - SELECT   people.id,  people.f_name,  people.l_name,  people.c_name, people.add_kw    FROM people  
+   INNER JOIN people_key_word  ON people.id = people_key_word.id  
+    WHERE  key_word IN ( "rus", "me" )   
+    GROUP BY   people.id,  people.f_name,  people.l_name,  people.c_name, people.add_kw  
+    HAVING  count(*) = 2  
+     ORDER BY  l_name ASC  
+2026-06-02 07:41:26,744 - DEBUG - update_db record null no action, return people
+2026-06-02 07:41:26,744 - INFO - stuff_container_update emit next
+2026-06-02 07:41:26,744 - DEBUG - midi_management update_sync_pre sender = <people_document.PeopleDetailTab object at 0x79e723aa0200> type_of_change ='update' table_name = 'people' 
+     table_id = 21591512 record_or_dict = None 
+2026-06-02 07:41:26,744 - INFO - stuff_container_update emit next
+2026-06-02 07:41:26,745 - DEBUG - update_db record null no action, return people_text
+2026-06-02 07:41:26,745 - INFO - stuff_container_update emit next
+2026-06-02 07:41:26,745 - DEBUG - midi_management update_sync_pre sender = <people_document.PeopleTextTab object at 0x79e723aa35c0> type_of_change ='update' table_name = 'people_text' 
+     table_id = 21591512 record_or_dict = None 
+2026-06-02 07:41:26,745 - INFO - stuff_container_update emit next
+2026-06-02 07:41:26,745 - DEBUG - base document select_record  first validate, then save, wait for except then go on ?? 
+2026-06-02 07:41:26,777 - DEBUG - get_topic_string a_str =  '  1283 RH.231  Russ me myself McKesson Russell S. Hensel 43 Tremlett St.   Boston MA 02124   PyQt5.QtCore.QDate(1900, 1, 1) What no comments Active PyQt5.QtCore.QDate(1900, 1, 1) Self!          ' self.table_name = 'people'
+2026-06-02 07:41:26,778 - ERROR - base_document.... send_topic_update needs fixing !! just re-enabled 
+2026-06-02 07:41:26,778 - DEBUG -  DetailTabBase.send_topic_update   self.tab_name = 'PeopleDetailTab'   self.enable_send_topic_update = True 
+2026-06-02 07:41:26,778 - INFO - send_topic_update emit next
+2026-06-02 07:41:26,778 - INFO - stuff_container_update emit next
+2026-06-02 07:41:26,778 - DEBUG - midi_management update_sync_pre sender = <people_document.PeopleDetailTab object at 0x79e723aa0200> type_of_change ='select' table_name = 'people' 
+     table_id = 1283 record_or_dict = <PyQt5.QtSql.QSqlRecord object at 0x79e723a4c910> 
+2026-06-02 07:41:26,778 - INFO - stuff_container_update emit next
+2026-06-02 07:41:26,778 - DEBUG - set_prepped_data error a_string, not a string self.field_name = 'id'  return for now inspect then break
+2026-06-02 07:41:26,778 - ERROR - base_document.... send_topic_update needs fixing !! just re-enabled 
+2026-06-02 07:41:26,778 - DEBUG -  DetailTabBase.send_topic_update   self.tab_name = 'PeopleTextTab'   self.enable_send_topic_update = False 
+2026-06-02 07:41:26,778 - INFO - stuff_container_update emit next
+2026-06-02 07:41:26,778 - DEBUG - midi_management update_sync_pre sender = <people_document.PeopleTextTab object at 0x79e723aa35c0> type_of_change ='select' table_name = 'people_text' 
+     table_id = 1283 record_or_dict = <PyQt5.QtSql.QSqlRecord object at 0x79e723a4cb40> 
+2026-06-02 07:41:26,778 - INFO - stuff_container_update emit next
+2026-06-02 07:41:26,778 - INFO - get_picture_file_name to be implemented
+2026-06-02 07:41:26,781 - DEBUG - PictureViewer Failed to load image pixmap is null
+2026-06-02 07:41:26,781 - DEBUG - PictureViewer display_file error     file_name = '' file_exists = False
+2026-06-02 07:41:26,784 - INFO - select_record time = 0.03842496871948242 sec
+2026-06-02 07:41:28,196 - DEBUG - get_topic_string a_str =  '  1283 RH.231  Russ me myself McKesson Russell S. Hensel 43 Tremlett St.   Boston MA 02124   PyQt5.QtCore.QDate(1900, 1, 1) What no comments Active PyQt5.QtCore.QDate(1900, 1, 1) Self!          ' self.table_name = 'people'

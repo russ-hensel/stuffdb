@@ -301,6 +301,33 @@ class PlantCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget, columnspan = 3 )
 
+
+        # ----id
+        widget                = QLabel( "ID" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit(
+                                                field_name = "table_id"   )
+        self.id_field           = widget
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "table_id" ] = widget
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
+
+        # ----id_old
+        widget                = QLabel( "ID Old*" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit(
+                                                field_name = "id_old"   )
+        self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "id_old" ] = widget
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
+
+
+
         # ----name
         widget                = QLabel( "Name" )
         grid_layout.new_row()
@@ -501,6 +528,20 @@ class PlantCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             query_builder.sql_having        = f" count(*) = {key_word_count} "
 
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )
+
+        # !! change to bind variables sql inject
+        # ---- id  table_id
+        table_id     = criteria_dict[ "table_id" ].strip().lower()
+        if table_id:
+            add_where       =  f' id = {table_id} '
+            query_builder.add_to_where( add_where, [ ])
+
+        # ---- id_old
+        id_old      = criteria_dict[ "id_old" ].strip().lower()
+        if id_old:
+            add_where       =  f' id_old = "{id_old}" '
+            query_builder.add_to_where( add_where, [ ])
+
 
         # ---- name like
         name                          = criteria_dict[ "name" ].strip().lower()

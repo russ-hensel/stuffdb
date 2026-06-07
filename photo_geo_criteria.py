@@ -47,10 +47,41 @@ logger          = logging.getLogger( )
 LOG_LEVEL  = 20   # higher is more
 
 
+#--------------------------------
+class PhotoGeoCriteriaOld( QDialog ):
+    """
+    edit now for lat long  ... in process
+
+    was....
+    Dialog for adding or editing a record in the stuff_event table.
+    my first tweak before custom edits
+    see also the planting_eent  verstion which uses custom edits
+    perhaps this should as well
+
+    """
+    #--------------------------------
+    def __init__(self, parent=None, edit_data=None ):
+        """
+        includes the building of the form which is not
+        done in planting_event
+
+        """
+        super().__init__(parent)
+        self.setWindowTitle("Add New Event" if edit_data is None else "Edit Event")
+        if parent is None:
+            1/0 # need parent which is the tab where the model is
+
+        # Create form layout and fields
+        form_layout = QFormLayout()
+        layout      = form_layout
+
+        self.widget_field_dict      = {}  # widgets with key as field name
+
+        self.distance_from          = photo_plus_ext.DistanceFrom( "origin", 0, 0 )
 
 
 #--------------------------------
-class PhotoGeoCriteria( QDialog ):
+class PhotoGeoCriteriaOld( QDialog ):
     """
     edit now for lat long  ... in process
 
@@ -323,8 +354,6 @@ class PhotoGeoCriteria( QDialog ):
         widget     = self.widget_field_dict[ "north_long" ]
         # do more formatting, make a funcution called with field_name and float
         widget.setText( str( north_long ) )
-
-
 
     # --------------
     def get_form_data(self):

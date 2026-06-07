@@ -1243,8 +1243,6 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
         view.setModel( self.model )
 
         view.setEditTriggers(QTableView.NoEditTriggers)  # Disable all edit triggers make non-edit
-        # view.setEditTriggers( NoEditTriggers )  # 5 6 compat
-
            # now do not need stuff in EventSql.....
 
         view.setSelectionBehavior( QTableView.SelectRows )

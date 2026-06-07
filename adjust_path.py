@@ -87,7 +87,9 @@ sys.path.insert( 1, f"{src_root}/rshlib/utils" )
 sys.path.insert( 1, f"{src_root}/rshlib/rshlib_qt" )
 sys.path.insert( 1, f"{src_root}/rshlib" )
 sys.path.insert( 1, f"{src_root}/rshlib/app_services" )
-sys.path.insert( 1, f"{src_root}/rshlib/rshlib/utils" )
+# sys.path.insert( 1, f"{src_root}/rshlib/utils" )
+sys.path.insert( 1, f"{src_root}/rshlib/photo_geo" )
+
 
 sys.path.insert( 1, "./HTML" )
 sys.path.insert( 1, f"{src_root}/stuffdb/libs" )
