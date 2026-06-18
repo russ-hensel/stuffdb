@@ -592,13 +592,11 @@ class BasicsTab( QWidget ):
         layout.addWidget( widget )
 
         widget              = QPushButton( "create sql" )
-        self.q_pbutton_1    = widget
         connect_to          = self.create_sql
         widget.clicked.connect(  connect_to   )
         layout.addWidget( widget )
 
         widget              = QPushButton( "create sql pg" )
-        self.q_pbutton_1    = widget
         connect_to          = self.create_sql_pg
         widget.clicked.connect(  connect_to   )
         layout.addWidget( widget )
@@ -901,13 +899,11 @@ class SchemaTab( QWidget ):
 
         # ---- Go
         widget              = QPushButton( "Go...." )
-        self.q_pbutton_1    = widget
         connect_to          = self.go
         widget.clicked.connect( connect_to )
         layout.addWidget( widget )
 
         # widget              = QPushButton( "create sql pg" )
-        # self.q_pbutton_1    = widget
         # # connect_to          = self.create_sql_pg
         # # widget.clicked.connect(  connect_to   )
         # layout.addWidget( widget )
@@ -1120,7 +1116,6 @@ class KeyWordTab( QWidget ):
         layout.addWidget( widget )
 
         widget              = QPushButton( "key_word_dups" )
-        self.q_pbutton_1    = widget
         connect_to          = self.key_word_dups
         widget.clicked.connect(  connect_to   )
         layout.addWidget( widget )
@@ -1299,7 +1294,6 @@ class RecordMatchTab( QWidget ):
         layout.addWidget( widget )
 
         widget              = QPushButton( "Missing Text" )
-        self.q_pbutton_1    = widget
         connect_to          = self.find_missing_text
         widget.clicked.connect(  connect_to   )
         layout.addWidget( widget )
@@ -2751,6 +2745,7 @@ class StuffTypeSubTab( QWidget ):
     #----------------
     def go_update_system( self, ):
         """
+        !! ??
         """
         return
         find_system         =  self.target_system_1.text()
@@ -3094,12 +3089,10 @@ class OutputTab( QWidget ):
         layout.addLayout( row_layout, )
 
         widget          = QPushButton( "Top" )
-        #connect_to             = self.pb_1_clicked
         widget.clicked.connect( self.top )
         row_layout.addWidget( widget )
 
         widget          = QPushButton( "Bottom" )
-        # connect_to             = self.pb_1_clicked
         widget.clicked.connect( self.bot )
         row_layout.addWidget( widget )
 

@@ -116,9 +116,9 @@ class Parameters( ):
         self.db_lock_file_name  = "./data_sync/lock_db.txt"     # if present then db is locked else none
         self.picture_db_root    = "/mnt/8ball1/first6_root/photos/photos_db"
         self.picture_db_sub     = "/73"
-        self.picture_db_sub     = "/76"
-        self.picture_db_sub     = "/72"
-        self.picture_db_sub     = "/26"
+       # self.picture_db_sub     = "/76"
+       # self.picture_db_sub     = "/72"
+       # self.picture_db_sub     = "/26"
         # self.picture_db_sub     = "/23"
         # self.picture_db_sub     = "/25"
         # self.picture_db_sub     = "/10"
@@ -141,7 +141,6 @@ class Parameters( ):
 
         self.icon              = "./misc/db_green_on_black.png"
         self.icon              = "./misc/db_red_on_black.png"
-
 
     # -------
     def mode_picture_test( self ):
@@ -166,6 +165,9 @@ class Parameters( ):
         self.icon               =  "./misc/db_green_on_black.png"
         self.icon               =  "./misc/db_red_on_black.png"
         self.icon               =  "./misc/red_tube.png"
+
+        self.logging_level          = logging.DEBUG
+
 
     # -------
     def mode_ramdisk( self ):
@@ -598,7 +600,7 @@ class Parameters( ):
 
         self.logging_level          = logging.DEBUG         # may be very verbose
         self.logging_level          = logging.INFO
-        self.logging_level          = logging.DEBUG
+        self.logging_level          = logging.ERROR
             # logging level used by app logger
 
         self.logger_id          = "stuffdb"
@@ -624,7 +626,13 @@ class Parameters( ):
         self.output_dir             = "./output"
             # ISSUES WITH ./ SO USE FULL PATH FOR HOW -- RESOLVE IT LATER
             # the directory used for most output
+            # perhaps change to path and resolve
 
+        # ---- default_kmz_fn
+        self.default_kmz_fn         = "./output/default_kmz_fn.kmz"
+            # may not be using
+
+        # ---- picture_editor
         self.picture_editor         = "gimp-2.10"
             # the editor that will be envoked when you edit a picture
 
@@ -820,6 +828,11 @@ class Parameters( ):
         >>idle_file   ./libs/example_file_in_libs.py
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
+
+        # ---- slideshow
+        self.picture_sleep      = 3  # time between pictures in units of seconds
+        self.picture_ran_bias   = 20  # ampount move ahead ??
+        self.picture_ran_width  = 30  # make bigger thant bias
 
         # ---- ..... venv setup --- shell lines to get into venv
         self.venv_setup_dict                   = {}

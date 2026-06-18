@@ -14,12 +14,7 @@ so this needs to be in a global place, lets put in midi management ??
 
 # ---- imports
 
-#from qt_compat import QApplication, QAction, exec_app, qt_version
-# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-# from qt_compat import TextAlignmentRole
-
-#from qtpy.QtWidgets import   QToolBar, QMessageBox
-
+import logging
 from qtpy.QtSql import QSqlQuery
 
 from collections import defaultdict
@@ -37,7 +32,7 @@ import  data_dict_all
 
 class TopicDict():
 
-
+    # --------------------
     def __init__( self, db,   ):
         """
         this caches what is in the data dict
@@ -47,21 +42,21 @@ class TopicDict():
         self.db                      = db
         self.topic_for_table_dict    = defaultdict( lambda: None )
 
+    # --------------------
     def get_topic_string( self, table_name, a_id ):
         """
         what it says, read
 
         """
         a_topic_for_table     = self.topic_for_table_dict[ table_name ]
+
         if not a_topic_for_table:
             a_topic_for_table     = TopicForTable( self.db, table_name )
             self.topic_for_table_dict[ table_name ] = a_topic_for_table
 
-
         topic_string = a_topic_for_table.get_topic_string( a_id )
 
         return topic_string
-
 
 #-------------------------------
 class TopicForTable():
@@ -84,7 +79,7 @@ class TopicForTable():
         column_str      = ", ".join( self.topic_columns )
         self.sql        = f"SELECT {column_str} FROM {self.table_name} WHERE id = :id"
 
-
+    #-------------------------------
     def get_topic_string( self, a_id ):
         """
         in a python object
@@ -93,14 +88,14 @@ class TopicForTable():
         """
         query   = QSqlQuery( self.db )
         if not query.prepare( self.sql ):
-            raise RuntimeError(f"Failed to prepare query: {query.lastError().text()}")
+            raise RuntimeError(f"TopicForTable Failed to prepare query: {query.lastError().text()}")
 
         # Bind the id value
         query.bindValue(":id", a_id)
 
         # Execute
         if not query.exec():
-            raise RuntimeError(f"Query execution failed: {query.lastError().text()}")
+            raise RuntimeError(f"TopicForTable Query execution failed: {query.lastError().text()}")
 
         # Fetch result
         if not query.next():
@@ -111,6 +106,9 @@ class TopicForTable():
         for ix, col in enumerate( self.topic_columns ):
             values[col]  = query.value(ix)
         topic_string   = " ".join( values.values() )
+
+        msg     = f"TopicForTable get_topic_string {values =  }"
+        logging.debug( msg )
 
         return topic_string
 

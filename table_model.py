@@ -15,8 +15,6 @@ replace with
       subject_table_model.py
 
 
-
-
 """
 # ---- tof
 # # --------------------
@@ -27,32 +25,13 @@ replace with
 # # --------------------
 
 
-# ---- begin pyqt from import_qt.py
 
-#from   functools import partial
-#import collections
-
-#import  gui_qt_ext
-import   string_utils as string_util
-
-
-# from qt_compat import QApplication, QAction, exec_app, qt_version
-
-# from qt_compat import Qt, DisplayRole, EditRole, CheckStateRole
-# from qt_compat import Horizontal, Vertical
-
-
-# ---- QtCore
-from qtpy.QtCore import (QAbstractTableModel,
+from   qtpy.QtCore import (QAbstractTableModel,
                           Qt)
 
-# ---- QtSql
-
-#from PyQt.QtGui import ( QAction, QActionGroup, )
-
-
-
+#
 # ---- imports local
+import string_utils as string_util
 
 
 # -----------------------
@@ -78,11 +57,14 @@ def model_dump(  model, msg = "model dump msg" ):
             index   = model.index(row, column)
             # Get the data for the current index
             data    = model.data( index )
-            row_data.append(data)
-            if   column == 2:
-                table_name = data
-            elif column == 1:
-                table_id = data
+            row_data.append( data )
+
+            # # next is debug perhaps
+            # if   column == 2:
+            #     table_name = data
+
+            # elif column == 1:
+            #     table_id = data
 
         print(f"Row {row}: {row_data}")
     print( "model_dump end")
@@ -101,7 +83,7 @@ class ModelIndexer( object ):
         Usual init see class doc string
             model can be an abstracttablemodel  a TableModel, but what about sql thing
             index_tuple   [0] column_with table_name [1] column with table_id
-        so index dict is  key  ( table, table_id )   value is row with the deat
+        so index dict is  key  ( table, table_id )   value is row with the data
         might want to not default index tuple
         """
         self.model          = model
@@ -148,7 +130,8 @@ class ModelIndexer( object ):
         for i_row in range( row_count ):
             row_data = []
             key      = []
-            # build key using index_tuple, index itslelf is a tuple
+            # build key using index_tuple, index itself is a tuple
+
             for i_column in self.index_tuple:
                 index   = model.index( i_row, i_column )
 
@@ -195,7 +178,6 @@ class TableModel( QAbstractTableModel ):
         self.ix_id       = 1
         self.ix_topic    = 2
 
-
         """
         model.indexer.index_tuple = ( 0, 1 )
         """
@@ -223,14 +205,12 @@ class TableModel( QAbstractTableModel ):
         return len(self._data)
 
     #--------------------------
-    def columnCount(self, index=None):
-        """but should be fixed at 3 """
+    def columnCount(self, index = None):
+        """
+        but should be fixed at 3?? or not
+        """
         return len(self._headers)
 
-# # In qt_compat.py
-# DisplayRole = Qt.ItemDataRole.DisplayRole if qt_version == 6 else Qt.DisplayRole
-# EditRole    = Qt.ItemDataRole.EditRole    if qt_version == 6 else Qt.EditRole
-# CheckStateRole = Qt.ItemDataRole.CheckStateRole if qt_version == 6 else Qt.CheckStateRole
 
     #--------------------------
     def data(self, index, role= Qt.DisplayRole):
@@ -254,13 +234,7 @@ class TableModel( QAbstractTableModel ):
         """
         index might be index = model.index(ix_row,  ix_col )  # Row 1, Column 1
 
-        Args:
-            index (TYPE): DESCRIPTION.
-            value (TYPE): DESCRIPTION.
-            role (TYPE, optional): DESCRIPTION. Defaults to Qt.EditRole.
 
-        Returns:
-            bool: DESCRIPTION.
 
         """
         if role == Qt.EditRole:
@@ -268,18 +242,25 @@ class TableModel( QAbstractTableModel ):
             self.dataChanged.emit(index, index, [ Qt.DisplayRole ])
                 # Emit dataChanged signal for this index
             return True
+
         return False
 
     #--------------------------
     def headerData(self, section, orientation, role = Qt.DisplayRole):
+        """
+
+
+        """
         if role == Qt.DisplayRole:
+
             if   orientation == Qt.Horizontal:
                 return self._headers[section]
+
             elif orientation == Qt.Vertical:
                 return str(section + 1)
 
     # ---------------
-    def addRow(self, row_data ):
+    def addRow( self, row_data ):
         """
         read
         see tab_table_model_for example
@@ -306,6 +287,7 @@ class TableModel( QAbstractTableModel ):
         if ix_row == -1:
             #self.add_to_model( model, table_name, table_id, row_data  )
             self.addRow( row_data )
+
         else:
             # self.update_model( model, ix_row, table_name, table_id, row_data  )
             self.update_row( ix_row, row_data )
@@ -323,11 +305,11 @@ class TableModel( QAbstractTableModel ):
         self.dataChanged.emit(start_index, end_index)
 
     #--------------------------
-    def removeRow(self, row_index):
+    def removeRow(self, row_index ):
         """
         what it says, read
         """
-        self.beginRemoveRows(self.createIndex(row_index, 0).parent(), row_index, row_index)
+        self.beginRemoveRows( self.createIndex(row_index, 0).parent(), row_index, row_index)
         self._data.pop(row_index)
         self.endRemoveRows()
 
@@ -359,7 +341,6 @@ class TableModel( QAbstractTableModel ):
         if self.indexer: # more efficient to fix index but
             self.indexer.is_valid  = False
 
-
     #-------------------------------------
     def find( self, table_name, table_id, ):
         """
@@ -382,6 +363,3 @@ class TableModel( QAbstractTableModel ):
         return ix_row_fnd
 
 # ---- eof
-
-
-

@@ -85,7 +85,7 @@ logger              = logging.getLogger( )
 SCAN_LINES          = 100
 
 #does order matter
-REPLACE_LIST        = [    ( "*>url ",   ">>url " ),   # note deliberate spacemay neee tab as well?
+REPLACE_LIST        = [    ( "*>url ",   ">>url " ),   # note deliberate space may need tab as well?
                            ( "*>url0 ",  ">>url " ),
                            ( "*>shell ",  ">>shell " ),
                     ]
@@ -214,7 +214,7 @@ def set_rec_data( record, field_name, data   ):
 # -----------------------
 def get_sudo(  ):
     """
-    for the easter egg
+    for the Easter egg
     """
     a_value    =  data.get_data( "simpsons" )
     a_value    = a_value[ :9 ]
@@ -458,7 +458,7 @@ class ShellExe( object ):
     #---------------------------
     def run_code_lines( self, code_lines, ):
         """
-        we may be rsripping multimple times like in caller
+        we may be rsripping multiple times like in caller
         """
 
         code_lines_new     = [i_code_line.strip()
@@ -468,7 +468,7 @@ class ShellExe( object ):
         # works but ugly
         # now combine across \
         code_lines_newer   = []
-        got_bs             = False    # bs is back_slash line contuation
+        got_bs             = False    # bs is back_slash line continuation
         for ix, i_code_line in enumerate( code_lines_new ):
 
             if got_bs:
@@ -876,14 +876,19 @@ class TextEditExtMixin(  ):
         #menu.addSeparator()
 
         # ---- date
-        paste_action = menu.addAction("Paste Date")
+        paste_action = menu.addAction( "Paste Date" )
         paste_action.triggered.connect( widget.paste_date )
-        paste_action.setEnabled(can_paste)
+        paste_action.setEnabled( can_paste )
+
+        # ---- lat long
+        paste_action = menu.addAction( "Paste Lat, Long")
+        paste_action.triggered.connect( widget.paste_lat_long )
+        paste_action.setEnabled( can_paste )
 
         # ---- "Smart Paste"
-        foo_action = menu.addAction("Smart Paste")
-        foo_action.triggered.connect(self.smart_paste_clipboard )
-        foo_action.setEnabled(can_paste)
+        foo_action = menu.addAction( "Smart Paste" )
+        foo_action.triggered.connect( self.smart_paste_clipboard )
+        foo_action.setEnabled( can_paste )
 
         menu.addSeparator()
 
@@ -1152,22 +1157,6 @@ class TextEditExtMixin(  ):
             else:
                 self.stuffdb_app_global.mdi_management.do_db_search( cmd, cmd_args )
 
-
-            #     # msg   = ( f"you need to implement >>search {STUFF_DB  = }  ")
-            #     # logging.debug( msg )
-            #     new_args =  []  # drop after #
-            #     for i_arg in cmd_args:
-            #         if i_arg.startswith( "#" ):
-            #             break
-            #         new_args.append( i_arg )
-            #         key_words   = " ".join( new_args )
-            #     self.search_stuffdb( cmd,do_db_search
-            # " ".join( new_args ))
-            #     #STUFF_DB.main_window.search_me( " ".join( new_args ) )  # cmd_args rest of line
-            # # = None  # may be monkey patched in
-            # #                     # this wold be the app
-            # #                     # STUFF_DB.main_window may be what you want
-            # #                     # go_active_sub_window_func
 
         # ---- find_dn
         elif cmd == "find_dn":
@@ -1449,6 +1438,15 @@ class TextEditExtMixin(  ):
          self.insert_text_at_cursor( text )
 
     #-----------------------------------
+    def paste_lat_long( self, ):
+         """
+         what it says
+             perhaps copied by picture document
+         """
+         text       = str( AppGlobal.lat_long_clip )
+         self.insert_text_at_cursor( text )
+
+    #-----------------------------------
     def copy_all( self, ):
         """
         what it says
@@ -1465,11 +1463,11 @@ class TextEditExtMixin(  ):
         if not cursor.hasSelection():
             return
 
-        # Get selected text
         selected_text = cursor.selectedText()
 
         # Split into lines and remove trailing spaces
-        lines = selected_text.split('\u2029')  # QTextEdit uses Unicode paragraph separator
+        lines = selected_text.split('\u2029')
+            # QTextEdit uses Unicode paragraph separator
 
         if keep_leading:
             trimmed_lines = [line.rstrip() for line in lines]

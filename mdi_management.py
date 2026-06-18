@@ -162,7 +162,8 @@ class SendSignals( QObject ):
     stuff_container_update_signal  = Signal( str, int, dict )
 
     # --------------------------
-    def send_topic_update(self, table, table_id, info):
+    def send_topic_update(self, table, table_id, info ):
+        """ """
         debug_msg   = ( "send_topic_update emit next")
         logging.log( LOG_LEVEL,  debug_msg, )
 
@@ -191,7 +192,8 @@ class MdiManagement( QObject ):
     AppGlobal.mdi_management        = a_mdi_management
     """
     def __init__( self, main_window,   ):
-        """ """
+        """
+        """
         #def __init__(self, parent= main_window ):
         super().__init__( main_window )  # must be called
 
@@ -558,6 +560,7 @@ class MdiManagement( QObject ):
 
         """
         album_docs    = []
+
         for i_doc in  self.window_dict.keys():   # !! better a comp
             if type( i_doc ) == album_document.AlbumDocument:
                 album_docs.append( i_doc )
@@ -651,32 +654,6 @@ class MdiManagement( QObject ):
 
         """
         QMessageBox.information( self, "Info", f"You clicked on {name}")
-
-    # -------------------------
-    def update_stuff_container_movedtostuffdocument( self, update_type, stuff_id, stuff_data):
-        """
-        !! broken has it truely been moved  --- seems to be in combo_dict
-        update should include add, delete, update
-        what it says, read.... more coming maybe
-
-        """
-        #QMessageBox.information(self, "Info", f"You clicked on {name}")
-
-        if update_type == stuff_document.UPDATE:
-            if stuff_id in self.stuff_containers:
-                self.stuff_container[ stuff_id ].update( stuff_id, stuff_data )
-
-            else:
-                self.stuff_containers[ stuff_id ] = StuffContainer( stuff_id, stuff_data )
-
-        else:
-            # delete
-            debug_msg     = ( f"update_stuff_container delete needs imp { stuff_id }   " )
-            logging.error(    debug_msg, )
-
-
-        # now finc all the stuff windows and send them notification
-        # to rebuild dd list for stuff containers
 
     # -------------------------
     @property
@@ -827,8 +804,10 @@ class MdiManagement( QObject ):
         """
         #QMessageBox.information(self, "Info", f"You clicked on {name}")
         if update_type == UPDATE:
+
             if table_id in self.plant_containers:
                 self.plant_containers[ table_id ].update( table_id, table_info )
+
             else:
                 self.plant_containers[ table_id ] = stuff_document.StuffContainer( table_id, table_info )
 
@@ -998,7 +977,7 @@ class TextEditSearch( ):
     a link to custom_widgets -- factored out to decrease coupling of widget to stuffdb
     """
     #----------- init -----------
-    def __init__( self, mdi_management, parameters,   ):
+    def __init__( self, mdi_management, parameters, ):
         """
         Usual init see class doc string
         """
@@ -1013,7 +992,6 @@ class TextEditSearch( ):
     # ----------------------------------
     def parse_search_part( self, criteria, part ):
         """
-
         still needs error check
         mutates
             criteria, hence no return
@@ -1090,7 +1068,7 @@ class TextEditSearch( ):
             # get current window
             target_subwindow    = mdi_area.activeSubWindow() # grok says
 
-        else:  # zz
+        else:
             # breakpoint()
             # determine window type
             window_class        = SEARCH_COMMAND_DICT[ cmd ]
@@ -1106,7 +1084,7 @@ class TextEditSearch( ):
                 msg_box.exec_()
                 return
 
-            target_subwindow    = self.mdi_management.get_a_doc_for_class(  window_class, open = True )
+            target_subwindow    = self.mdi_management.get_a_doc_for_class( window_class, open = True )
 
         # !! bring focus to window
         target_subwindow.search_me( criteria )

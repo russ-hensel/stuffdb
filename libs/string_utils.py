@@ -213,6 +213,21 @@ def is_url( a_string,  ):
         return( is_url_bool, "" )
 
 # ------------------------------------------
+def float_or_none( a_obj, ):
+
+    """
+    convert to float if it works else none
+        is it worth the import for this?
+        string_utils.float_or_none( a_obj, ) # import  string_utils
+    """
+    try:
+        ret     = float( a_obj )
+    except:
+        ret     = None
+
+    return ret
+
+# ------------------------------------------
 def is_filename( a_string,  ):
 #def is_filename( self, a_string,  ):   is_file    file_exists  ?? not sure
     """
@@ -584,6 +599,7 @@ def num_to_string( an_int, dp_places = "not implemented yet" ):
 #-------------------------------
 def delta_time_to_string( a_float ):
     """
+    delta_time in seconds
     use a unit that makes sense
         string_utils.delta_time_to_string( a_float )
 

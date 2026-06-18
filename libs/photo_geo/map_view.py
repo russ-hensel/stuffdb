@@ -1,6 +1,8 @@
 """QGraphicsView subclass that emits lat/lon as the user moves and clicks.
 
-Supports wheel zoom (anchored at cursor) and middle-button drag pan.
+Supports wheel zoom (anchored at cursor) and drag-to-pan with either the
+middle mouse button or the right mouse button.  The right-button context
+menu is suppressed so the drag-release doesn't trigger one.
 """
 from __future__ import annotations
 
@@ -44,6 +46,10 @@ class MapView( QGraphicsView ):
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse )
         self.setResizeAnchor(QGraphicsView.AnchorViewCenter )
         self.setFocusPolicy( Qt.StrongFocus )
+
+        # right-button drag is used for panning, so don't pop a context
+        # menu when the user releases the right button.
+        self.setContextMenuPolicy( Qt.NoContextMenu )
 
         # zoom & pan state
         self._fit_scale: float  = 1.0       # absolute m11 that means "fit"
@@ -117,7 +123,9 @@ class MapView( QGraphicsView ):
 
     #--------------------------------
     def mousePressEvent(self, ev: QMouseEvent) -> None:
-        if ev.button() == Qt.MiddleButton:
+        # Middle OR right button start a pan drag.  Right is the more
+        # natural one-handed option; middle is kept for compatibility.
+        if ev.button() in ( Qt.MiddleButton, Qt.RightButton ):
             self._panning       = True
             self._pan_last      = self._view_pos(ev)
             self.setCursor(Qt.ClosedHandCursor)
@@ -138,7 +146,7 @@ class MapView( QGraphicsView ):
 
     #--------------------------------
     def mouseReleaseEvent(self, ev: QMouseEvent) -> None:
-        if ev.button() == Qt.MiddleButton and self._panning:
+        if ev.button() in ( Qt.MiddleButton, Qt.RightButton ) and self._panning:
             self._panning  = False
             self._pan_last = None
             self.unsetCursor()

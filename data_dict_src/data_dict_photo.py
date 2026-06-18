@@ -396,7 +396,7 @@ def build_it( a_data_dict_all ):
                                                   default_func      = None,   )
         a_table_dict.add_column( a_column_dict )
 
-        # ---- exif_lat
+        # ---- exif_lon
         a_column_dict = data_dict_all.ColumnDict(    column_name    = "exif_lon",
                                                   db_type           = "INTEGER",
                                                   display_type      = "float",

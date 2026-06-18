@@ -25,8 +25,6 @@ import shutil
 from   functools import partial
 from   datetime  import datetime
 import subprocess
-#import sqlite3
-#import sys
 import time
 from   pathlib import Path
 
@@ -700,7 +698,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         groupbox.setLayout( grid_layout )
         layout.addLayout( grid_layout )
 
-
         # ----key words
         widget                = QLabel( "Key Words" )
         grid_layout.new_row()
@@ -749,7 +746,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
                                      field_name = field_name )
         self.critera_widget_dict[ field_name ] = widget
         self.in_album_widget    = widget
-        history_sync             = AppGlobal.mdi_management.get_history_sync( "album" )
+        history_sync            = AppGlobal.mdi_management.get_history_sync( "album" )
         widget.connect_to_history_sync( history_sync )  # or other way around connect_widget
         history_sync.add_item( None, "<none>" ) # need a none element
         self.critera_widget_list.append( widget )
@@ -1334,9 +1331,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         msg        = (f"criteria_select time = {end_dt - start_dt } sec")
         logging.info( msg )
 
-
        # dialog      = stuff_document_edit.EditStuffEvents( self )  # QDialog
-
 
     # ----------------------------------
     def open_lat_long_map( self ):
@@ -1356,10 +1351,13 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         data[ "size"]   = size
 
-        dialog          = lat_long_map.LatLongMap( parent = self, data = data )
+        # CRITERIA
+        dialog          = lat_long_map.LatLongMap( parent = self,
+                                                   data   = data
+                                                   )
 
         if dialog.exec() == QDialog.DialogCode.Accepted:
-            print( data )
+            #rint( data )
 
             # make a constant "Picked from the Map"
             #form_data = dialog.get_form_data()
@@ -1397,11 +1395,19 @@ class PictureListTab( base_document_tabs.ListTabBase  ):
         super().__init__( parent_window )
 
         self.tab_name        = "PictureListTab"
-        self._build_gui()
+        layout               = self._build_gui()
+        layout.new_row()
+
+        # ---- buttons
+        widget  = QPushButton( "Add To SlideShow" )
+        #widget.clicked.connect( self.add_to_show )
+        layout.addWidget( widget)
+
 
     # ----------------------------------------
     def _build_guixxx( self ):
         """
+        may need but look in gui seems ok ??
         tweak for date
         need to match to column ix
         rec_to_edit_cnv        = "cnv_int_to_qdate",
@@ -1500,6 +1506,21 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         widget.clicked.connect( self.clip_filename )
         field_layout.addWidget( widget)
 
+        # ---- .... "Clip Lat Long"
+        widget  = QPushButton( "Clip Lat, Long" )
+        widget.clicked.connect( self.clip_lat_long )
+        field_layout.addWidget( widget)
+
+        # ---- .... "Map"
+        widget  = QPushButton( "Map" )
+        widget.clicked.connect( self.open_lat_long_map )
+        field_layout.addWidget( widget)
+
+        # ---- .... "!!GEarth"
+        widget  = QPushButton( "!!GEarth" )
+        #widget.clicked.connect( self.clip_lat_long )
+        field_layout.addWidget( widget)
+
         # ---- Shell
         widget        = QPushButton( 'Shell')
         widget.clicked.connect( self.shell_file_name )
@@ -1547,6 +1568,9 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         edit_field.set_clear    = a_partial
         edit_field.set_default  = a_partial
 
+        # ---- tweak
+        edit_field              = self.field_dict[ "name" ]
+        edit_field.setMaxVisibleItems( 40 )
         # see version 90 and lower for code_gen approach
         return
 
@@ -1596,6 +1620,47 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         super().update_db()
         self.subject_sub_tab.update_db()
 
+    # ----------------------------------
+    def open_lat_long_map( self ):
+        """
+        Open dialog .....
+            !! look into cnv_dict and get all ?
+        """
+        data        = { }
+        exif_lon    = string_utils.float_or_none( self.field_dict[ "exif_lon" ].text() )
+        exif_lat    = string_utils.float_or_none( self.field_dict[ "exif_lat" ].text() )
+
+        if not ( exif_lon and exif_lat ):
+            return
+
+        data[ "lat" ], data[ "long" ]  = ( exif_lat, exif_lon )
+        data[ "size"]   = 0.
+
+        dialog          = lat_long_map.LatLongMap( parent       = self,
+                                                   data         = data,
+                                                   title        = "Picture taken Here",
+                                                   read_only    = True,
+                                                   )
+
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            pass
+            #rint( data )
+
+            # # make a constant "Picked from the Map"
+            # #form_data = dialog.get_form_data()
+            # lat         = data[ "lat"  ]  # !! make arguments
+            # long        = data[ "long" ]
+            # size        = data[ "size" ]
+
+            # size_widget = self.critera_widget_dict[ "size" ]
+            # size_widget.setText( str( size ) )
+
+            # self.location_dict[ "Picked from the Map" ] = ( lat, long )
+            # field_name  = "location_widget"  # the combo box
+            # widget      = self.critera_widget_dict[ field_name ]
+            # widget.setCurrentIndex( 0 )  # set from map
+            # self.set_lat_long_for_location()
+
     # -----------------------------
     def clip_filename( self, ):
         """
@@ -1604,7 +1669,37 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         file_name    = self.get_picture_file_name()
         q_app        = AppGlobal.q_app
         clipboard    = q_app.clipboard()
-        clipboard.setText(file_name)
+        clipboard.setText( file_name )
+
+    # -----------------------------
+    def clip_lat_long( self, ):
+        """
+        what it says
+            later we will paste
+            file_name = self.file_field.text()
+        """
+        widget       = self.field_dict[ "exif_lon" ]
+        long         = widget.text()
+
+        try:
+            long     = float( long )
+
+        except:
+            long     = 0.0
+
+
+        widget       = self.field_dict[ "exif_lat" ]
+        lat          = widget.text()
+
+        try:
+            lat     = float( lat )
+
+        except:
+            lat     = 0.0
+
+
+        AppGlobal.lat_long_clip   = ( lat, long)
+        print( lat, long )
 
     # -----------------------------
     def add_to_show( self, ):
@@ -1775,7 +1870,7 @@ class PictureBrowseSubTab( QWidget ):
         button_layout       = QVBoxLayout( )
         tab_layout.addLayout( button_layout )
 
-        # Column headers
+        # ---- model and headers
         headers = [ "File Name", "Date", "What" ] # search width
 
         self.model          = table_model.TableModel( headers )
@@ -1853,7 +1948,7 @@ class PictureBrowseSubTab( QWidget ):
         """
         initial_dir     = AppGlobal.parameters.picture_browse
 
-        file_dialog     = QFileDialog(self, "Select Files")
+        file_dialog     = QFileDialog( self, "Select Files" )
 
         file_dialog.setFileMode( QFileDialog.ExistingFiles ) #multiple file selection
         # Define name filters (case insensitive)
@@ -2046,73 +2141,6 @@ class PictureBrowseSubTab( QWidget ):
         # msg         = ( "\n maybe finished return ++++++++++++++++++++++++++++++++++++++++++++")
         # logging.debug( msg )
 
-
-    # --------------------------------------
-    def move_all_old( self, ):
-        """
-        move all picture files to new picture documents
-            want to change this to require
-                see setup
-
-        may want to change to selected rows
-
-        """
-        msg   = ( "move_all begin ^^^^^^^^^^^^^^^^^^^^^^^   call move to pic  but add to album in process  ")
-        logging.debug( msg )
-
-        document        = self.parent_window.parent_window
-        self.document   = document
-
-        detail_tab      = self.parent_window
-
-        try:
-            album_target = self.move_all_setup()
-
-        except app_exceptions.ReturnToGui as an_except:
-            msg       = f"{str( an_except)}"
-            logging.debug( msg )
-            QMessageBox.information( AppGlobal.main_window,
-                                     NOGO, msg )
-            return
-
-        model           = self.model
-        ix_debug        = 0
-
-        on_first_row    = True
-
-        # need wait cursor may want to disable whole window or is it
-
-        with base_document_tabs.CursorContext():
-
-            while True:
-
-                if model.rowCount() == 0:
-                    break
-
-                if on_first_row:  # rest based on add copy
-                    document.update_db()
-                    on_first_row   = False
-
-                else:
-                    # ix_debug +=1
-                    # if ix_debug > 3:
-                    #     msg    = "move_all  hit temp debug limit move_all"
-                    #     logging.debug( msg )
-                    #     break
-                    # need to add a record
-                    document.add_copy()  # document =
-
-                index    = model.get_index_for_row( 0 ) # always get the top row
-                self.move_to_pic( index )   # will send off to move_to_pic
-
-                detail_tab.add_to_show()
-                    # data_in_dict["photo_id"]
-                    # photo_dict    = data_in_dict["photo_id"]
-                    # album_target.add_photo_to_show( photo_dict )
-
-        msg         = ( "\n maybe finished return ++++++++++++++++++++++++++++++++++++++++++++")
-        logging.debug( msg )
-
     # --------------------------------------
     def move_to_pic( self, index: QModelIndex ):
         """
@@ -2201,20 +2229,20 @@ class PictureBrowseSubTab( QWidget ):
         form_sub_dir     = parent_window.sub_dir_field.get_raw_data()
         form_file        = parent_window.file_field.get_raw_data().strip()
 
-        msg    = ( "some_debug -- inspect might be better ")
+        # msg    = ( "some_debug -- inspect might be better ")
 
-        msg    = ( f"{msg}\n    {form_id = }   ")
-        msg    = ( f"{msg}\n    {form_sub_dir = }   ")
-        msg    = ( f"{msg}\n    {form_file = }   ")
+        # msg    = ( f"{msg}\n    {form_id = }   ")
+        # msg    = ( f"{msg}\n    {form_sub_dir = }   ")
+        # msg    = ( f"{msg}\n    {form_file = }   ")
 
-        msg    = ( f"{msg}\n    {db_root = }   ")
-        msg    = ( f"{msg}\n    {db_sub = }  ")
-        msg    = ( f"{msg}\n    {file_name_path_name = }  ")
-        msg    = ( f"{msg}\n    {file_name_path_src =  }  ")
-        msg    = ( f"{msg}\n    {file_name_path_dest = } ")
-        #msg    = ( f"{msg}\n    {path_parent_dest = } ")
+        # msg    = ( f"{msg}\n    {db_root = }   ")
+        # msg    = ( f"{msg}\n    {db_sub = }  ")
+        # msg    = ( f"{msg}\n    {file_name_path_name = }  ")
+        # msg    = ( f"{msg}\n    {file_name_path_src =  }  ")
+        # msg    = ( f"{msg}\n    {file_name_path_dest = } ")
+        # #msg    = ( f"{msg}\n    {path_parent_dest = } ")
 
-        logging.debug( msg )
+        # logging.debug( msg )
 
         if not form_file == "":
             msg       = ( "file is already set, you need a new record")
@@ -2236,7 +2264,7 @@ class PictureBrowseSubTab( QWidget ):
         parent_window.file_field.set_preped_data( str( file_name_path_name ), is_changed = True )
 
         if not file_name_path_src.exists():
-            msg    = "that odd {file_name_path_src} does not exist!!!!!!!!!!!!!!!!"
+            msg    = "move_to_pic that odd {file_name_path_src} does not exist!"
             logging.error( msg )
             return
 
@@ -2250,7 +2278,6 @@ class PictureBrowseSubTab( QWidget ):
                           f"\n    {a_except = }" )
             logging.error( msg )
             raise app_exceptions.ApplicationError( msg )
-            #1/0
 
         model.removeRow( row )
 
@@ -2265,7 +2292,7 @@ class PictureBrowseSubTab( QWidget ):
         logging.error( msg )
 
         msg = ( "move_to_pic need to make display seems ok !! perhaps is ok ")
-        logging.error( msg )
+        logging.debug( msg )
 
         parent_window.display_selected_pic()
         document_window    = parent_window.parent_window
@@ -2393,7 +2420,7 @@ class PictureBrowseSubTab( QWidget ):
             pass
 
 # ----------------------------------------
-class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
+class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
     """
     may need to be qobject as well because of slot
     """
@@ -2630,10 +2657,10 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         # ---- model  self.model
             # gets subjects but for background as we need join to photo_subject
             # get good display of inf see
-        model           = QSqlTableModel( self, self.db )
-        #model          = qt_with_logging.QSqlTableModelWithLogging(  self, self.db    )
+        model               = QSqlTableModel( self, self.db )
+        #model              = qt_with_logging.QSqlTableModelWithLogging(  self, self.db    )
 
-        self.model      = model    # these are the subjects in the db table photo_subject
+        self.model          = model    # these are the subjects in the db table photo_subject
 
         model.setTable( self.table_name )
         self.model_ituple   = ( 3, 5 ) # to index table, table_id check with table
@@ -2770,18 +2797,18 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
 
         #ia_qt.q_abstract_table_model( model, "topics_changed" )
 
-    # ------------------------------------------
-    def on_row_other_dclicked( self, index: QModelIndex):
-        """
-        what it says, read, search  --- should be a double clicked
-        """
-        #model    = self.model_other    # table_model.TableModel( headers)
-        row     = index.row()
+    # # ------------------------------------------
+    # def on_row_other_dclicked( self, index: QModelIndex):
+    #     """
+    #     what it says, read, search  --- should be a double clicked
+    #     """
+    #     #model    = self.model_other    # table_model.TableModel( headers)
+    #     row     = index.row()
 
-        # msg     = ( f"on_row_other_clicked {row = }")
-        # logging.debug( msg )
+    #     # msg     = ( f"on_row_other_clicked {row = }")
+    #     # logging.debug( msg )
 
-        self.add_ix_other( row )
+    #     self.add_ix_other( row )
 
     # -------------------------------------
     def i_am_hsw(self):
@@ -2943,9 +2970,10 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
             # may need hide here
 
     # ------------------------------------------
-    def add_ix_other( self, ix_row_integer ):
+    def add_ix_otherxxxx( self, ix_row_integer ):
         """
         add the ix_integer other model to the subject models
+        may be dead
         """
         model_other     = self.model_other
         data_list       = []
@@ -2960,6 +2988,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         logging.debug( msg )
 
         #self.add_to_model_all_subjects( self.current_id, table, table_id, info )
+        # next function seems not to exist
         self.add_to_model_all_subjects( self.current_id, data_list[0], data_list[1], data_list[2] )
 
     # ------------------------------------------
@@ -3045,11 +3074,11 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         test routine, actually do the add to ...
         what does it need to know  table and table_id can figure out the rest
         """
-        print( f"need to add {table = } {table_id = } need check for dups ")
-        next_key                    = AppGlobal.key_gen.get_next_key(  "photo_subject" )
+        #rint( f"need to add {table = } {table_id = } need check for dups ")
+        next_key        = AppGlobal.key_gen.get_next_key(  "photo_subject" )
         # sequence      = get_max there is not sequence
-        photo_id                    = self.current_id
-        table_id                    = int( table_id )
+        photo_id        = self.current_id
+        table_id        = int( table_id )
 
         # self_model                  = self.model
         # self_model_indexer          = self.model_indexer
@@ -3070,7 +3099,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
         i_name          = new_record.fieldName( 5 ) # 5 table_id
         new_record.setValue( i_name, table_id )
 
-        if model.insertRecord( -1, new_record):
+        if model.insertRecord( -1, new_record ):
             pass
 
         else:
@@ -3674,7 +3703,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase  ):
                 model_display_row = ix_row
                 break
 
-        print( "add_to_model_all_subjects put back dup check if necessary -- no indexer ")
+        #rint( "add_to_model_all_subjects put back dup check if necessary -- no indexer ")
 
         if model_display_row == -1:
 
@@ -3753,6 +3782,7 @@ class AlbumSqlTableModel( QSqlRelationalTableModel ):
     centering, is this a good idea
     what happened to column 1 stuff id
     """
+    # ----------------------------
     def __init__(self, parent=None, db=QSqlDatabase()):
         """ """
         super().__init__(parent, db)
@@ -3760,6 +3790,7 @@ class AlbumSqlTableModel( QSqlRelationalTableModel ):
         #self.non_editable_columns = { 0, 1, }  # Columns ..doe it have to be in init or is dynamic ..
         self.non_editable_columns = { 99 }
 
+    # ----------------------------
     def flags(self, index: QModelIndex):
         """
         from chat, not really used as for non edit
@@ -3824,8 +3855,8 @@ class AlbumSqlTableModel( QSqlRelationalTableModel ):
 class PictureAlbumtSubTab(  QWidget  ):
     """
     list albums that picture belongs to
+    see __init__
     """
-
     def __init__(self, parent_window ):
         """
         shows the albums this picture is in

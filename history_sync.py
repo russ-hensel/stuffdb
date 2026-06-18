@@ -67,10 +67,10 @@ class HistorySync( QObject ):  # QObject my not really be needed
         super().__init__()
         self.ddl_dict    = {}   # dict for the ddl
         self.my_sender   = DictSender()
-        self.sql      = sql
+        self.sql         = sql
 
     #--------------------------
-    def add_item(self, key, value ):
+    def add_item( self, key, value ):
         """
         add item to dict, if value is missing
         do sql to find
@@ -89,33 +89,33 @@ class HistorySync( QObject ):  # QObject my not really be needed
         self.my_sender.emit_post_mutate()
 
     #--------------------------
-    def connect(self, cq_dict_combo_box):
+    def connect( self, cq_dict_combo_box ):
         """
 
         """
         cq_dict_combo_box.history_sync  = self
         cq_dict_combo_box.dict_data     = self.ddl_dict
-        self.my_sender.pre_mutate.connect(  cq_dict_combo_box.pre_mutate )
+        self.my_sender.pre_mutate.connect(  cq_dict_combo_box.pre_mutate  )
         self.my_sender.post_mutate.connect( cq_dict_combo_box.post_mutate )
 
     #--------------------------
-    def topic_select(self, arg_id ):
+    def topic_select( self, arg_id ):
         """
 
         """
-        logger          = logging.getLogger( )
-        query = QSqlQuery( AppGlobal.qsql_db_access.db )
+        logger      = logging.getLogger( )
+        query       = QSqlQuery( AppGlobal.qsql_db_access.db )
 
         query.prepare( self.sql )
         query.bindValue(":arg_id", arg_id )
 
         if not query.exec_():  # Check if execution failed
-            msg = ( f"query_print_tab Error executing query:  {query.lastError().text()}" )
+            msg = ( f"query_print_tab Error executing query: {query.lastError().text()}" )
             logging.error(msg)
 
         topic  = "" # in case query fails
         while query.next():
-            topic     = f"{query.value(0)} {query.value(1)} {query.value(2)}"
+            topic     = f"{query.value(0)} {query.value(1)} {query.value(2)}zzzz"
             break  # only expect 1
 
         return topic

@@ -67,6 +67,14 @@ def file_name_has_extension( file_name, *, ext_list, invert_logic = False ):
 #             return True
 #     return False
 
+# ------------------------------
+def fewer_slashes( file_name, ):
+    """
+    sort of sucks, but for now works
+    """
+    file_name    = file_name.replace( "///", "/" )
+    file_name    = file_name.replace( "//",  "/" )
+    return file_name
 
 # ------------------------------
 def file_name_starts_with( file_name, *, prefix_list ):

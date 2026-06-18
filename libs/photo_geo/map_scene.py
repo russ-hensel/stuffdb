@@ -256,8 +256,8 @@ class MapScene( QGraphicsScene ):
             painter.setFont(font)
             painter.drawText(
                 20, 30,
-                "Placeholder world map - drop an equirectangular PNG into "
-                "assets/world_equirectangular.png",
+                "Placeholder world map - run tools/make_world_map.py to "
+                "produce world_equirectangular.png next to this module.",
             )
         finally:
             painter.end()

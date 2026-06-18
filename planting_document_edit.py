@@ -17,13 +17,10 @@ if __name__ == "__main__":
 
 
 
-
-
-
 from qtpy.QtWidgets import (QDialog,
                              QFormLayout,
                              QDialogButtonBox,
-                             QVBoxLayout)
+                             QVBoxLayout )
 
 # ---- local imports
 # import  tracked_qsql_relational_table_model
@@ -82,6 +79,7 @@ def fix_none_str( obj ):
     """
     if obj is None:
         return "none"
+
     else:
         return str( obj )
 
@@ -143,20 +141,6 @@ class EditPlantingEvent( QDialog ):
             none yet
         !! can we use the field dict to automate this
             will do manually for now
-
-CREATE TABLE  planting_event    (
-     id  INTEGER,
-     id_old  VARCHAR(15),
-     planting_id_old  VARCHAR(15),
-     planting_id  INTEGER,
-     event_dt  INTEGER,
-     dlr  INTEGER,
-     cmnt  VARCHAR(250),
-     type  VARCHAR(15),
-     dt_mo  INTEGER,
-     dt_day  INTEGER,
-     day_of_year  INTEGER
-    )
 
         """
         widget_list         = []
@@ -240,7 +224,6 @@ CREATE TABLE  planting_event    (
         widget.setMaxLength( 50 )
         layout.addRow( "Dollars $", widget )
 
-
     #-----------------------
     def get_form_data( self ):
         """
@@ -254,3 +237,5 @@ CREATE TABLE  planting_event    (
 
 
 #---- eof
+
+

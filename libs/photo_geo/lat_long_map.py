@@ -36,7 +36,9 @@ from qtpy.QtWidgets import ( QComboBox,
 
                              QWidget,
                              QFormLayout,
+                             QHBoxLayout,
                              QLineEdit,
+                             QPushButton,
                              QSpinBox,
                              QVBoxLayout)
 
@@ -59,30 +61,75 @@ class LatLongMap( QDialog ):
 
     """
     #--------------------------------
-    def __init__( self, parent = None, data = None ):
+    def __init__(
+        self,
+        parent          = None,
+        data            = None,
+        image_path      = None,
+        alt_image_path  = None,
+        image_label     = "Map",
+        alt_image_label = "View",
+        title           = "Select a Latitude and Longitude",
+        read_only       = False,
+    ):
         """
         includes the building of the form which is not
         done in planting_event
 
         data mutated and "passed" as a return
+
+        image_path      : primary background PNG (default: world_equirectangular.png
+                          next to this module -- the country-borders "map")
+        alt_image_path  : alternate background PNG (default: world_satellite.png
+                          next to this module -- the "view")
+        image_label     : human-readable name of the primary background; used
+                          in the toggle button text ("Show <image_label>")
+        alt_image_label : human-readable name of the alternate background
+        title           : window-title string; pass something like
+                          "View photo location" together with read_only=True
+                          when using the dialog as a viewer.
+        read_only       : if True, user clicks on the map do NOT drop a new
+                          marker.  Hover still works, the initial point from
+                          ``data`` is still shown, and the toggle / zoom /
+                          pan / shortcut machinery is unchanged.  The OK
+                          button still works -- since lat/long never moves
+                          in this mode, accepting just writes the unchanged
+                          values back.
+
+        Both PNGs must be equirectangular (width = 2 * height); the
+        projection is rebuilt from the actual pixmap dimensions on every
+        swap, so the two images do not need to share a resolution.
         """
         super().__init__( parent )
 
-        self.setWindowTitle("Select a Latitude and Longitude"  )
+        self.setWindowTitle( title )
 
         print( data )
          #   "lat" "long" "place"
 
-        self.data   = data
+        self.data       = data
+        self._read_only = bool( read_only )
 
         if parent is None:
             1/0 # need parent which is the tab where the model is
 
+        # ---- resolve image paths (defaults live next to this module) ----
+        here_dir = Path( __file__ ).resolve().parent
+
+        if image_path is None:
+            image_path     = here_dir / "world_equirectangular.png"
+
+        if alt_image_path is None:
+            alt_image_path = here_dir / "world_satellite.png"
+
+        self._image_path        = Path( image_path ).resolve()
+        self._alt_image_path    = Path( alt_image_path ).resolve()
+        self._image_label       = image_label
+        self._alt_image_label   = alt_image_label
+        self._current_path      = self._image_path
+
         # ---- build gui
-        # !! fix this ... use __file__ ??
-        image_path      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/photo_geo/world_equirectangular.png"
-        image_path      = Path( image_path )
-        self.scene      = MapScene( image_path )
+        self.scene      = MapScene( self._current_path )
         self.view       = MapView( self.scene )     # the main graphic of map
         self.panel      = CoordPanel( self, )       # control panel for it
                 # too early for data
@@ -93,6 +140,17 @@ class LatLongMap( QDialog ):
         layout.setSpacing( 0 )
         layout.addWidget( self.view,  stretch = 1 )
         layout.addWidget( self.panel, stretch = 0 )
+
+        # ---- background toggle row -------------------------------------
+        toggle_row              = QHBoxLayout( )
+        toggle_row.setContentsMargins( 6, 4, 6, 6 )
+        self.toggle_button      = QPushButton( )
+        self.toggle_button.clicked.connect( self._toggle_map )
+        self._update_toggle_label()    # set initial text
+        toggle_row.addStretch( 1 )
+        toggle_row.addWidget( self.toggle_button )
+        toggle_row.addStretch( 1 )
+        layout.addLayout( toggle_row, stretch = 0 )
 
         # self.statusBar().showMessage("Hover over the map, click to lock.")
         #     # may need to be a main window to have this
@@ -107,19 +165,29 @@ class LatLongMap( QDialog ):
         # ---- wiring ---------------------------------------------------
         self.view.coordsHovered.connect( self._on_hover)
         self.view.coordsCleared.connect( self._on_cleared)
-        self.view.coordsPicked .connect( self._on_picked)
+        # Only forward USER clicks to _on_picked when not in read-only mode.
+        # The initial-position _on_picked() call at the end of __init__ is a
+        # direct method call and still runs, so the starting marker shows
+        # either way.
+
+        if not self._read_only:
+            self.view.coordsPicked.connect( self._on_picked )
+
         self.view.zoomChanged  .connect( self._on_zoom_changed)
         self.panel.resetRequested.connect( self._on_reset)
         # self.panel.copied.connect(
         #     lambda txt: self.statusBar().showMessage(f"Copied: {txt}", 3000)
         # )
 
-        # Keyboard shortcuts.
+        # ---- Keyboard shortcuts.
         esc = QShortcut( QKeySequence( Qt.Key_Escape ), self)
         esc.activated.connect ( self.panel.reset )
 
         fit = QShortcut(QKeySequence( "Ctrl+0" ), self )
         fit.activated.connect( self.view.fit_in_view )
+
+        mtog = QShortcut( QKeySequence( "M" ), self )
+        mtog.activated.connect( self._toggle_map )
 
         # ---- load data lat long size
         self._on_picked(
@@ -180,6 +248,56 @@ class LatLongMap( QDialog ):
     def _on_zoom_changed(self, zoom: float) -> None:
         """ """
         self._zoom_label.setText(f"{int(round(zoom * 100))}%")
+
+    # ----------------------------------------
+    def _toggle_map( self ) -> None:
+        """
+        Swap the background pixmap between `image_path` and `alt_image_path`.
+
+        MapScene.reload_pixmap() rebuilds the projection from the new
+        pixmap's actual dimensions, so a swap between images of different
+        resolution still produces correct lat/lon math.  If the user has
+        already locked a lat/lon, the crosshair is replaced at the
+        equivalent pixel of the new image.
+        """
+        if self._current_path == self._image_path:
+            new_path = self._alt_image_path
+        else:
+            new_path = self._image_path
+
+        if not Path( new_path ).is_file():
+            msg = f"_toggle_map: file not found, staying put: {new_path}"
+            logging.warning( msg )
+            self.panel.set_status( f"Missing: {Path( new_path ).name}" )
+            return
+
+        self._current_path = Path( new_path ).resolve()
+        self.scene.reload_pixmap( self._current_path )
+
+        # If the panel was locked at a lat/lon before the swap, put the
+        # crosshair back where it geographically belongs in the new image.
+        if getattr( self.panel, "is_locked", False ):
+            try:
+                lat     = float( self.panel.lat_edit.text() )
+                lon     = float( self.panel.lon_edit.text() )
+                x, y    = self.scene.projection.latlon_to_pixel( lat, lon )
+                self.scene.show_crosshair_at( x, y )
+            except ( ValueError, AttributeError ):
+                pass
+
+        self._update_toggle_label()
+
+    # ----------------------------------------
+    def _update_toggle_label( self ) -> None:
+        """
+        The button always advertises the OTHER background -- the one a
+        click would switch to.
+        """
+        if self._current_path == self._image_path:
+            target = self._alt_image_label
+        else:
+            target = self._image_label
+        self.toggle_button.setText( f"Show {target}" )
 
 
     # --- public API for callers ---------------------------------------------
@@ -246,8 +364,14 @@ class LatLongMap( QDialog ):
         Reload the underlying world map.  If image_path is None, the path
         passed at construction is reused -- a cheap "restore the picture"
         call.  Drawings are kept; call clear_drawings() first to nuke them.
+
+        If image_path is provided, it also becomes the toggle's notion of
+        the "current" image so the Show <other> button keeps making sense.
         """
         self.scene.reload_pixmap( image_path )
+        if image_path is not None:
+            self._current_path = Path( image_path ).resolve()
+            self._update_toggle_label()
 
     # ----------------------------------------
     def ok( self, ) -> None:

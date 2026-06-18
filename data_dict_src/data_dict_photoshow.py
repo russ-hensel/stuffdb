@@ -30,8 +30,6 @@ def build_it( a_data_dict_all ):
                                              edit_to_rec_cnv      = "cnv_str_to_int",
                                              edit_to_dict_cnv     = "cnv_str_to_int",
 
-
-
                                              display_type   = "string",
                                              display_order  = 0,
                                              max_len        = None,
@@ -123,8 +121,6 @@ def build_it( a_data_dict_all ):
                                              dict_to_edit_cnv     = "cnv_int_to_qdate",
                                              edit_to_rec_cnv      = "cnv_qdate_to_int",
                                              edit_to_dict_cnv     = "cnv_qdate_to_int",
-
-
                                              display_type   = "timestamp",
                                              max_len        = None,
                                              default_func   = None,

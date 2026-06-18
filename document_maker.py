@@ -17,25 +17,6 @@ if __name__ == "__main__":
 # ---- imports
 
 
-
-# ---- begin pyqt from import_qt.py
-
-# ---- QtCore
-
-# ----QtWidgets
-
-
-
-
-
-
-# ----QtWidgets Boxs, Dialogs
-
-# ---- QtSql
-
-
-# ---- imports more
-
 #import sqlite3
 #from PyQt5.QtGui import QIntValidator
 

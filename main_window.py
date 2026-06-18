@@ -9,7 +9,6 @@ main window -- container for the mdi
 if __name__ == "__main__":
     #----- run the full app
     import main  # noqa  stops auto removal by pycln
-    pass
 # --------------------
 
 # ---- imports
@@ -52,7 +51,7 @@ import mdi_management
 import parameters
 import stuffdb
 import combo_dict_ext
-import app_logging
+#import app_logging
 import gui_qt_ext
 
 # mover limited might be better !!
@@ -66,7 +65,7 @@ from   picture_document   import PictureDocument
 
 from   db_management_subwindow   import DbManagementSubWindow
 from   db_sync_test_subwindow    import DbSyncTestSubWindow
-
+from   slideshow_subwindow       import SlideShowSubWindow
 
 # ------------------------------------------
 class StuffdbMainWindow( QMainWindow ):
@@ -477,6 +476,15 @@ class StuffdbMainWindow( QMainWindow ):
         action          = QAction( "DB Maint", self )
         connect_to      = functools.partial( self.add_subwindow,
                                                  window_class   = DbManagementSubWindow,
+                                                 instance_ix    = instance_ix )
+        action.triggered.connect( connect_to )
+        a_menu.addAction( action )
+
+        # ---- "Slideshow"
+        instance_ix     = 1 # only allows one to be open at a time
+        action          = QAction( "Slideshow", self )
+        connect_to      = functools.partial( self.add_subwindow,
+                                                 window_class   = SlideShowSubWindow,
                                                  instance_ix    = instance_ix )
         action.triggered.connect( connect_to )
         a_menu.addAction( action )

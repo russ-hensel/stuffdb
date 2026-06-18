@@ -42,6 +42,8 @@ class AppGlobal( app_global_abc.AppGlobalABC ):
     double_buttons      = None      # populated by ...
     do_transforms       = None      # populated by ...
     snippeter           = None      # populated by ...  !! dup name or what
+    lat_long_clip       = ( 0., 0. )  # lat long clipboard
+        # see picture_document
 
     # stuffdb.py
     # AppGlobal.controller   = self

@@ -1090,21 +1090,6 @@ class PlantDetailTab( base_document_tabs.DetailTabBase  ):
                         self.data_manager.current_id,
                         self.data_manager.current_record  )
 
-    # ----------------------------
-    def fetch_detail_row_promoted( self, id = None ):
-        """
-        Args:
-            id can be external or as chat has it fetched
-
-        Returns:
-            None.
-        !! could be promoted ... most has been
-        """
-        #id      = self.id_field.text()
-        ##self.detail_table_id    = id
-        #rint( f"PlantDocumentDetaiTab fetch_row { id=}")
-        self.fetch_detail_row_by_id( id )
-
     # -----------------------------
     def copy_prior_row( self, next_key ):
         """

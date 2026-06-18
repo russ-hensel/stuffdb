@@ -19,8 +19,8 @@ import logging
 # --------------------
 # ---- import
 
-
-from qtpy.QtSql import QSqlRecord
+from qtpy.QtCore import QDate
+from qtpy.QtSql  import QSqlRecord
 
 import custom_widgets
 import key_words
@@ -30,7 +30,7 @@ import string_utils
 from   app_global import AppGlobal
 
 logger              = logging.getLogger( )
-LOG_LEVEL           =  115 # level for more debug    higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
+LOG_LEVEL           = 115 # level for more debug    higher is more debugging    logging.log( LOG_LEVEL,  debug_msg, )
 
 # may also be defined in base doc or somewhere else this should be reconciled  data_manager.RECORD_NULL
 RECORD_NULL         = 0
@@ -79,7 +79,6 @@ class DataManager(   ):
 
     gets its db connection from the model
 
-
     debug
         self.table_name
     """
@@ -120,14 +119,13 @@ class DataManager(   ):
         self.topic_field_list       = []           # list of edits containing topic info
 
             # check that children do not also implement this  ?? should this be here?
-        self.enable_send_topic_update    = False
+        self.enable_send_topic_update    = False   # cannot find use ?
 
     # ------------------------
     def mark_as_copy( self, field_name ):
         """
         should this be in data manager or back in detail_tab
         """
-
         if field_name is None:
             print( "mark_as_copy field name is None ")
             return
@@ -305,7 +303,7 @@ class DataManager(   ):
         """
         perf_start   = time.perf_counter()
 
-        if   self.record_state   == RECORD_NULL:
+        if   self.record_state == RECORD_NULL:
             msg      = ( f"update_db record null no action, return {self.table_name}")
             logging.debug( msg )
             return
@@ -313,20 +311,20 @@ class DataManager(   ):
             #     self.key_word_obj.string_to_new(( self.get_kw_string()) )
 
         # rest continue on to key word update
-        elif  self.record_state   == RECORD_NEW:
+        elif  self.record_state == RECORD_NEW:
             self.update_new_record()
 
             if self.key_word_table_name:
                 self.key_word_obj.string_to_new(( self.get_kw_string()) )
                     # probably key_words.KeyWords
 
-        elif  self.record_state   == RECORD_FETCHED:
+        elif  self.record_state == RECORD_FETCHED:
             self.update_record_fetched()
 
             if self.key_word_table_name:
                 self.key_word_obj.string_to_new(( self.get_kw_string()) )
 
-        elif  self.record_state   == RECORD_DELETE:
+        elif  self.record_state == RECORD_DELETE:
             self.delete_record_update()
 
             if self.key_word_table_name:
@@ -669,13 +667,27 @@ def delete_record_by_id(model, id_value):
         """
         #rint( "get_topic_string" )
         a_str  = " "
+
         if not self.topic_field_list:
             a_str = "DataManager.get_topic_string i_edit in self.topic_field_list is falsy"
 
         for i_edit in self.topic_field_list:
-            a_str    = a_str + " " + str( i_edit.get_raw_data() )
+            raw_data    = i_edit.get_raw_data()
 
-        msg     = f"get_topic_string {a_str =  } {self.table_name = }"
+
+            if  isinstance( raw_data, QDate ):
+                next_str    =  raw_data.toString("yyyy-MM-dd")
+
+            # probably do not need this keep for a bit as a placeholder
+            elif isinstance( raw_data, str ) or isinstance( raw_data, int ):
+                next_str    = str( raw_data  )
+
+            else:
+                next_str    = str( raw_data  )
+
+            a_str       = a_str + " " + next_str
+
+        msg     = f"DataManager get_topic_string {a_str =  } {self.table_name = }"
         logging.debug( msg )
         return a_str
 

@@ -76,7 +76,7 @@ class HelpDocument( base_document_tabs.DocumentBase ):
         self.help_filename      = "help_doc.txt"
         self.subwindow_name     = "Notes Window"
         self.add_history_to_data_manager = True
-        self.copy_record_field  = "title"       # in descendent name a field for the
+        self.copy_record_field  = "title"       # in descendant name a field for the
                                                 # copy_record
         self._build_gui()
         self.__init_2__()
@@ -316,7 +316,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         # ---- grid_layout.new_row()
         grid_layout.new_row()
 
-        # ---- title likd
+        # ---- title like
         widget  = QLabel( "Title (like)" )
         grid_layout.addWidget( widget )
 
@@ -405,10 +405,10 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
                                           field_name = "order_by_dir" )
         #self.order_by_dir_widget    = widget
         self.critera_widget_list.append( widget )
-        #widget.critera_name    = "order_by_dir"
+        #widget.criteria_name    = "order_by_dir"
         widget.setToolTip( "xxx"  )
         widget.addItem('Ascending')
-        widget.addItem('Decending')
+        widget.addItem('Descending')
 
         #widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
         #grid_layout.new_row()  # because seems to be missing
@@ -502,7 +502,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         layout.addLayout( grid_layout )
 
         # changes layout but still jumps
-        # # stabalize with spacres ??
+        # # stabilize with spacers ??
         # for ix in range( col_max ):  # layout.col_max
         #     widget   = QSpacerItem( 50, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
         #     grid_layout.addItem( widget, 0, ix  )
@@ -551,7 +551,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         # ---- grid_layout.new_row()
         grid_layout.new_row()
 
-        # ---- title likd
+        # ---- title like
         widget  = QLabel( "Title (like)" )
         grid_layout.addWidget( widget )
 
@@ -609,10 +609,10 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
                                           field_name = "order_by_dir" )
         #self.order_by_dir_widget    = widget
         self.critera_widget_list.append( widget )
-        #widget.critera_name    = "order_by_dir"
+        #widget.criteria_name    = "order_by_dir"
 
         widget.addItem('Ascending')
-        widget.addItem('Decending')
+        widget.addItem('Descending')
 
         #widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
         #grid_layout.new_row()  # because seems to be missing
@@ -665,7 +665,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
     #---------------------------------------
     def _stabilize_layout(self):
         """
-        another stablization attempt
+        another stabilization attempt
         from chat, do not think it is used
         """
         print( "_stabilize_layout" )
@@ -819,7 +819,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         elif order_by == "id_old":
             column_name = "help_info.id_old"
 
-        else:   # !! might better handel this
+        else:   # !! might better handle this
             print( "order by issue, getting default column ")
             column_name = "help_info.title"
 
@@ -883,7 +883,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
 
         self.key_words_widget.set_data( key_words )
 
-        # mayb this maybe not
+        # maybe this maybe not
         #self.criteria_select_if()    # may need to select is changed
         self.criteria_select()
 
@@ -930,7 +930,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         Returns:
             none
         """
-        # post init will have buildt up db manager for detail bu
+        # post init will have built up db manager for detail bu
         # not for text ( unless in different page, lets do this here )
 
         text_model                   = QSqlTableModel(
@@ -1226,7 +1226,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
             # 3 did not seem to make a difference
             # 6 did not change much
 
-        # ---- TextEdit   needs to be defined at beginning with exte4nsion object
+        # ---- TextEdit   needs to be defined at beginning with extension object
         edit_field          = cw.CQTextEdit(
                                     parent         = None,
                                     field_name     = "text_data",
@@ -1334,7 +1334,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
  #-------------------------------------
     def build_snippet_gui( self, snippet_manager, layout, ix ):
         """
-        !! may hve been promoted look
+        !! may have been promoted look
         """
         # ---- snippets n
         # snippet_manager        = base_document_tabs.SnippetManager( edit_field )
@@ -1469,6 +1469,3 @@ class HelpHistorylTab( base_document_tabs.HistoryTabBase  ):
         self.tab_name            = "HelpHistorylTab"
 
 # ---- eof ------------------------------
-
-
-

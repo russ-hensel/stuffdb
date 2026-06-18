@@ -2,7 +2,7 @@
 """
 
 THIS IS A RESTORE FROM GITHUB, REPACINGING NEW_BROKEN
-
+IN RSHLIB DOES THIS DO ANYTHING
 
 Purpose:
     part of my ( rsh ) library of reusable code

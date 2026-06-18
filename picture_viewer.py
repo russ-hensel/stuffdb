@@ -3,19 +3,18 @@
 """
 Created on Sat Jul 13 15:31:33 2024
 
-@author: chat
 
-photo_viewer.PhotoViewer()
 
-I have a QGraphicsView
-I would like the graphics in it to fill the layout area.
-I would like some code to do this:
+came from
+photo_viewer.Photo-----Viewer()
+
+
 
 """
 # ---- tof
 # --------------------
 if __name__ == "__main__":
-    pass
+    import main  # noqa  stops auto removal by pycln
 # --------------------
 # ---- import
 import logging
@@ -23,12 +22,10 @@ import os
 
 
 
-
 from qtpy.QtCore import QRectF, Qt
 from qtpy.QtGui  import QPainter, QPixmap
-# ----QtWidgets
 
-#from PyQt.QtGui import ( QAction, QActionGroup, )
+
 
 from qtpy.QtWidgets import (
                              QApplication,

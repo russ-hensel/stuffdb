@@ -172,7 +172,7 @@ def build_pic_filename( *, file_name, sub_dir ):
     full_file_name  = full_file_name.replace( "///", "/" )
         # just in case we have dups !! this is crude
     full_file_name  = full_file_name.replace( "//", "/" )
-        # just in case we have dups
+        # just in case we have dups  make this a string util and better
 
     # debug_msg       = f"build_pic_filename full_file_name build_pic_filename {full_file_name = }"
     # logging.debug( debug_msg )
@@ -1433,8 +1433,16 @@ class DetailTabBase( QWidget ):
 
             # ---- form_read_only
             atr   = i_column.get_column_value( "form_read_only" )
-            if atr != data_dict_all.SKIP:
-                widget.form_read_only           = atr
+
+            if field_name in [ "id" ]:
+                pass # for debug
+
+            if atr != data_dict_all.SKIP and atr is not False: # not the right way, rework defaults
+                #widget.form_read_only           = atr so wrong !! next worse
+                try:
+                    widget.setReadOnly( True )
+                except:
+                    pass
 
             # ---- is_keep_prior_enabled -- this may not take effect function wrong
             atr   = i_column.get_column_value( "is_keep_prior_enabled" )
@@ -1701,7 +1709,7 @@ class DetailTabBase( QWidget ):
     def prior_next_picture( self, delta ):
         """
         largely for the Album Picture Tab to navigate from
-        this tab  -- promote??
+        this tab
         """
         if self.pictures_tab:
             return self.pictures_tab.prior_next( delta )
@@ -1772,9 +1780,9 @@ class ListTabBase( DetailTabBase ):
 
         # a_notebook.addTab( page, 'Channels ' )
         placer          = gui_qt_ext.PlaceInGrid(
-            central_widget=page,
-            a_max=0,
-            by_rows=False  )
+            central_widget = page,
+            a_max          = 0,
+            by_rows        = False  )
 
         # ---- Set up the model
         model_class         = QSqlTableModel
@@ -1798,8 +1806,7 @@ class ListTabBase( DetailTabBase ):
         view.setSelectionBehavior( QTableView.SelectRows )
         view.setModel( model )
 
-
-        placer.place(  view )
+        placer.place( view )
         view.clicked.connect( self.parent_window.on_list_clicked )
 
         # # ------- old, try new
@@ -1842,7 +1849,7 @@ class ListTabBase( DetailTabBase ):
         # for ix_col, i_width in enumerate( col_head_widths ):
         #     #rint( f" {ix_col = } { i_width = }")
         #     view.setColumnWidth( ix_col, i_width * WIDTH_MULP )
-
+        return placer   # or some layout
 
     #-------------------------------
     def delete_row_by_id ( self, id_to_delete ):
@@ -2264,7 +2271,6 @@ class CriteriaTabBase( QWidget ):
         """
         parent_window    = self.parent_window
         parent_window.update_db()
-
 
         # tab_widget.setCurrentIndex( tab_index )
         tab_index     = parent_window.criteria_tab_index
@@ -3883,8 +3889,11 @@ class StuffdbPictureTab( DetailTabBase ):
 
         detail_topic        = detail_tab.data_manager.get_topic_string()
 
-        if picture_sub_tab:
-            pic_topic       = picture_sub_tab.get_picture_topic( )
+        pic_topic           = "No pic_topic - broken"
+
+        print( "error in get_topic on picture document fix me base document ")
+        # if picture_sub_tab:
+        #     pic_topic       = picture_sub_tab.get_picture_topic( )
 
         topic               = detail_topic + ": " + pic_topic
         self.topic_widget.setText( topic )
