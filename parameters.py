@@ -65,7 +65,8 @@ class Parameters( ):
 
         #self.mode_new_user()
         self.mode_data_sync()
-        #self.mode_data_sync_b()
+        self.mode_data_sync_b()
+        #self.mode_millhouse_b()
         #self.mode_picture_test()
 
         #self.mode_data_sync_full_path()
@@ -88,6 +89,30 @@ class Parameters( ):
         #self.mode_helpdb_from_scratch()
         # self.mode_russ_2025_ram()
         #self.mode_github()
+
+    # -------
+    def mode_millhouse( self ):
+        """
+
+        """
+        self.mode               = "mode_millhouse"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+        self.db_file_name       = "./data_sync/stuffdb.db"
+        self.db_lock_file_name  = "./data_sync/lock_db.txt"
+
+    # -------
+    def mode_millhouse_b( self ):
+        """
+
+        """
+        self.mode               = "mode_millhouse_b"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+        self.db_file_name       = "./data_sync_b/stuffdb.db"
+        self.db_lock_file_name  = "./data_sync_b/lock_db.txt"
 
     # -------
     def mode_new_user( self ):
@@ -115,13 +140,22 @@ class Parameters( ):
 
         self.db_lock_file_name  = "./data_sync/lock_db.txt"     # if present then db is locked else none
         self.picture_db_root    = "/mnt/8ball1/first6_root/photos/photos_db"
-        self.picture_db_sub     = "/73"
-       # self.picture_db_sub     = "/76"
-       # self.picture_db_sub     = "/72"
-       # self.picture_db_sub     = "/26"
-        # self.picture_db_sub     = "/23"
-        # self.picture_db_sub     = "/25"
-        # self.picture_db_sub     = "/10"
+
+       #  self.picture_db_sub     = "/73"
+       # # self.picture_db_sub     = "/76"
+       # # self.picture_db_sub     = "/72"
+        self.picture_db_sub     = "/10"
+        # self.picture_db_sub     = "/11"
+       # # self.picture_db_sub     = "/26"
+       #  self.picture_db_sub     = "/21"
+       #  self.picture_db_sub     = "/22"
+       #  #self.picture_db_sub     = "/23"
+       #  # self.picture_db_sub     = "/25"
+
+       #  #self.picture_db_sub     = "/26"
+       #  #self.picture_db_sub     = "/25"
+
+
 
         self.logging_level      = logging.DEBUG  # ERROR DEBUG
 
@@ -135,9 +169,13 @@ class Parameters( ):
         """
         self.mode              = "mode_data_sync_b"
         self.db_file_name      = "./data_sync_b/stuffdb.db"      #  = "sample.db"   =  ":memory:"
-        self.db_lock_file_name = "./data_sync_b/lock_db.txt"     # if present then db is locked else none
+        self.db_lock_file_name = "./data_sync_b/lock_db.txt"     # if present then db is locked else None
+        self.db_lock_file_name =  None
 
+        self.picture_db_sub     = "/delete"
         self.logging_level      = logging.DEBUG   # ERROR DEBUG
+
+        self.picture_browse     = "/mnt/8ball1/first6_root/temp_picture_test/temp_picture_src"
 
         self.icon              = "./misc/db_green_on_black.png"
         self.icon              = "./misc/db_red_on_black.png"
@@ -367,18 +405,21 @@ class Parameters( ):
 
         # ----  ["millhouse", "millhouse-mint" ]
         elif computer_id in ["millhouse", "millhouse-mint" ]:
-            self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
+            #self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
             #self.win_geometry   = '1300x600+20+20'
 
             # type and location of the db file
-            self.db_type            = "QSQLITE"
-            self.db_file_name       = "./data/russ2025/russ2025.db"
-            self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
-            self.db_file_name       = "./data/russ2025/russ2025.db"
-            self.db_file_name       = "./data/millhouse/millhouse.db"
-            self.db_file_name       = "./data/millhouse/stuffdb.db"
+            # self.db_type            = "QSQLITE"
+            # self.db_file_name       = "./data/russ2025/russ2025.db"
+            # self.db_file_name       = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/russ2025/russ2025.db"
+            # self.db_file_name       = "./data/russ2025/russ2025.db"
+            # self.db_file_name       = "./data/millhouse/millhouse.db"
+            # self.db_file_name       = "./data/millhouse/stuffdb.db"
+
+            self.num_help_snippets  = 2
 
             self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"  # real thing
+            self.picture_db_root    = "/home/russ/sync_with_fattony/PhotoDB"
             self.picture_db_root    = "/home/russ/sync_with_fattony/PhotoDB"
             ## self.picture_db_root    = "/mnt/WIN_D/russ/0000/python00/python3/_projects/stuffdb/data/test_photo/test_add_to_db"
 
@@ -395,7 +436,7 @@ class Parameters( ):
             self.icon               =  "./misc/db_green_on_black.png"
             #self.icon               =  "./misc/db_red_on_black.png"
 
-        elif computer_id == "millhouse-mint":
+        elif computer_id == "millhouse-mintxxx":
             #self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
             #self.win_geometry   = '1300x600+20+20'
 
@@ -589,6 +630,18 @@ class Parameters( ):
         self.text_edit_font     = ( "Arial", 12 )
             # font used in the QTextEdit -- most large text fields
 
+        # ---- document colors
+        self.note_color         = "yellow"   # or None
+        self.plant_color        = "lime"   # or None
+        self.planting_color     = "green"   # or None
+        self.stuff_color        = "blue"   # or None
+        self.person_color       = "yellow"   # or None
+
+        self.album_color        = "yellow"   # or None
+        self.picture_color      = "aqua"   # or None
+        self.album_color        = "blue"   # or None
+        self.stuff_color        = "gray"   # or None
+
         # ---- logging
         self.pylogging_fn       = "./output/app.py_log"
             # file name for the python logging
@@ -772,12 +825,14 @@ class Parameters( ):
         self.get_sudo      = True
             # check code for use
 
-        # -------- Dividers  just dividers for text notes
+        # ---- Dividers  just dividers for text notes
         template_name          = "Dividers"
         template_text          = (
         """
         ============ note_about_what  ============
-
+        I am a programmer using python with Qt.
+        I am using  xxxx
+        Please tell me about xxxxxx
 
         .................
 
@@ -919,8 +974,9 @@ class Parameters( ):
 
         # ---- locations  lat long
         values_lat_lon    = {}
-
-        values_lat_lon["Picked from the Map"]               = (-0.,  0. )  # may be changed
+        # leave first two as is -- or I will fix in code later
+        values_lat_lon["Picked from the Map"]               = (-0.,  0. )  # may be changed but will need code change
+        values_lat_lon["Picked from a Photo"]               = (-0.,  0. )  # may be changed but will need code change
         values_lat_lon["Australia,      Sydney"]            = (-33.8688,  151.2093 )
         values_lat_lon["Brazil,         Rio de Janeiro"]    = (-22.9068,  -43.1729 )
         values_lat_lon["Canada,         Toronto"]           = ( 43.6532,  -79.3832 )
@@ -1060,9 +1116,10 @@ class Parameters( ):
         # new_indented    = "\n    "   # but it nice to have some whitespace to see ...
         a_str = "\n "
         a_str   = f"{a_str}>>>>>>>>>>* Parameters (some) *<<<<<<<<<<<<"
-        a_str   = string_utils.to_columns( a_str, ["mode",       f"{self.mode}" ] )
-        a_str   = string_utils.to_columns( a_str, ["computer_id", f"{self.running_on.computer_id}" ] )
+        a_str   = string_utils.to_columns( a_str, ["mode",         f"{self.mode}" ] )
 
+        a_str   = string_utils.to_columns( a_str, ["computer_id",  f"{self.running_on.computer_id}" ] )
+        a_str   = string_utils.to_columns( a_str, ["computername", f"{self.computername}" ] )
 
 
         a_str   = string_utils.to_columns( a_str, ["db_type",
@@ -1093,7 +1150,8 @@ class Parameters( ):
         a_str   = string_utils.to_columns( a_str, ["qtpy_present",
                                             f"{self.qtpy_present}" ] )
 
-
+        a_str   = string_utils.to_columns( a_str, ["num_help_snippets",
+                                            f"{self.num_help_snippets}" ] )
 
 
         a_str   = string_utils.to_columns( a_str, ["logger_id", f"{self.logger_id}" ] )
@@ -1122,7 +1180,7 @@ class Parameters( ):
         a_str   = string_utils.to_columns( a_str, ["icon", f"{self.icon}" ] )
 
 
-        a_str   = string_utils.to_columns( a_str, ["computername", f"{self.computername}" ] )
+
         a_str   = string_utils.to_columns( a_str, ["our_os", f"{self.our_os}" ] )
         a_str   = string_utils.to_columns( a_str, ["py_path", f"{self.py_path}" ] )
         a_str   = string_utils.to_columns( a_str, ["set_default_path_here", f"{self.set_default_path_here}" ] )

@@ -28,7 +28,6 @@ import datetime
 from pathlib import Path
 
 
-
 from qtpy.QtSql import (QSqlQuery)
 
 
@@ -45,10 +44,7 @@ import parameters
 # import data_dict
 # import check_fix
 
-# #import gui_qt_ext
-# import info_about
-#import key_words
-#import string_util
+
 # import text_edit_ext
 #import table_model
 #import wat_inspector
@@ -62,25 +58,6 @@ from app_global     import AppGlobal
 
 # ---- import end
 
-
-
-def  clean_path_partxxx( path_part ):
-    """
-    consider add to some lib ??
-    """
-
-    # ---- crude but i hope effective
-    if path_part:
-        path_part    = path_part.replace( "\\", "/" )
-    else:
-        path_part    = ""
-
-    path_part    = path_part.replace( "///", "/" )
-    path_part    = path_part.replace( "//",  "/" )
-    path_part    = path_part.removeprefix( "/" )
-    path_part    = path_part.removesuffix( "/" )
-
-    return path_part
 
 
 # ----------------------------------------
@@ -164,7 +141,6 @@ class DbFileInfo(   ):
             # no can do
             self._file_exists = False
             return None
-
 
         file_path           = Path( full_file_name )
         self._file_path     = file_path
@@ -251,7 +227,6 @@ class DbFileInfo(   ):
             # no can do
             return None, "file name is none"
 
-
         file_path           = Path( file_name )
         self._file_path     = file_path
 
@@ -309,7 +284,6 @@ class DbDupFiles(   ):
         self.db_con       = AppGlobal.qsql_db_access.db
         self.parameters   = AppGlobal.parameters
 
-
         # query       = QSqlQuery(db)
         #sql         =   ( "SELECT id,  sub_dir, file  FROM photo "
                          # " WHERE  file = :file_path_name " )
@@ -340,7 +314,7 @@ class DbDupFiles(   ):
         sql         =   ( "SELECT id,  sub_dir, file  FROM photo "
                          " WHERE  file = :file_path_name " )
 
-        matching_files = []
+        matching_files = []  # a list of DbFileInfo s
 
         if not query.prepare(sql):  # do we need to prep and bind ove and over
             msg     = ( f"find_if_dups: Prepare failed: {query.lastError().text()}" )
@@ -358,12 +332,10 @@ class DbDupFiles(   ):
             a_id                = query.value(0)
             sub_dir             = query.value(1)
             file                = query.value(2)
-            a_db_file_info      = DbFileInfo( a_id, sub_dir, file)
+            a_db_file_info      = DbFileInfo( a_id, sub_dir, file )
             matching_files.append( a_db_file_info )
 
-
         return matching_files
-
 
     # -------------------------
     def find_file_missing( self,   ):

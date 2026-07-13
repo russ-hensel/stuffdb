@@ -17,10 +17,12 @@ if __name__ == "__main__":
 
 
 
-from qtpy.QtWidgets import (QDialog,
+from qtpy.QtWidgets import (
+                             QDialog,
                              QFormLayout,
                              QDialogButtonBox,
-                             QVBoxLayout )
+                             QVBoxLayout
+                             )
 
 # ---- local imports
 # import  tracked_qsql_relational_table_model

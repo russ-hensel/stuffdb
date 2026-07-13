@@ -130,8 +130,8 @@ class QsqlDbAccess(   ):
             #msg       = f"cannot write new lockfile {db_lock_file_name = }"
             with open( db_lock_file_name, "r" ) as a_file:
                 file_as_list = a_file.readlines()
-            msg       = "\n".join( file_as_list )
-            msg      =  (f"cannot write new lockfile {db_lock_file_name = }\n{msg} " )
+            msg         = "\n".join( file_as_list )
+            msg         =  (f"cannot write new lockfile {db_lock_file_name = }\n{msg} " )
 
             # too soon for next may have to use a signal for later
             # QMessageBox.information( AppGlobal.main_window, "Error",  msg )

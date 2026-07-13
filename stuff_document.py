@@ -18,25 +18,33 @@ import logging
 from   datetime import datetime
 
 
-from qtpy.QtCore import QModelIndex, Qt
+from qtpy.QtCore import (
+                            QModelIndex,
+                            Qt,
+                            QTimer,
+                            )
 
-from qtpy.QtSql import (QSqlDatabase,
+from qtpy.QtSql import (
+                         QSqlDatabase,
                          QSqlQuery,
-                         QSqlTableModel)
+                         QSqlTableModel
+                         )
 
 
 from qtpy.QtWidgets import (
                              QDialog,
                              QHBoxLayout,
                              QLabel,
+                             QGroupBox,
                              QMessageBox,
                              QPushButton,
                              QSizePolicy,
                              QSpacerItem,
                              QTableView,
                              QTabWidget,
-                             QVBoxLayout)
-#OnManualSubmit
+                             QVBoxLayout
+                             )
+
 # ---- imports local
 import base_document_tabs
 import custom_widgets   as cw
@@ -50,7 +58,6 @@ import data_dict_all
 import gui_qt_ext
 import info_about
 import string_utils as string_util
-
 
 from app_global import AppGlobal
 
@@ -89,6 +96,7 @@ class StuffDocument( base_document_tabs.DocumentBase ):
             # used in text tab base
         self.help_filename          = "stuff_doc.txt"
         self.subwindow_name         = "StuffDocument"
+        self.document_color         = AppGlobal.parameters.stuff_color
 
         self._build_gui()
         self.__init_2__()
@@ -140,7 +148,6 @@ class StuffDocument( base_document_tabs.DocumentBase ):
 
         ix                         += 1
         self.detail_text_index      = ix  # phase out !!
-        self.text_tab_indexxxx         = ix
         self.text_tab               = StuffTextTab( self )
         main_notebook.addTab( self.text_tab, "Text" )
 
@@ -222,135 +229,147 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         """
         what it says, read
 
+        need to have instance var for put_criteria
         """
-        page            = self
-        layout           = QHBoxLayout( page )
+        page        = self
+        layout      = QVBoxLayout( page ) # or try grid with new_row !!
                 # can we fold in to next
 
+        # grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        # layout.addLayout( grid_layout )
+
+        self._build_top_widgets_grid( layout )
+        self._build_other_widgets( layout )
+        # self._build_date_widgets( layout )
+        # self._build_geo_widgets( layout )
+        self._build_id_widgets( layout )
+
+        sort_list     =  [
+                         'id',
+                         'id_old',
+                         'dt_item',
+                         'dt_enter',
+                         'title - ignore case',
+                         ]
+
+        self._build_sort_widgets( layout, sort_list )
+
+        #self.id_field.setFocus()  # seems not to work try
+        key_words_widget   = self.critera_widget_dict[ "key_words" ]
+        QTimer.singleShot( 0, key_words_widget.setFocus )
+
+    # ------------------------------------------
+    def _build_other_widgets( self, layout ):
+        """
+        what it says, read
+
+        layout a vbox, we create a grid in a groupbox
+        """
+        groupbox   = QGroupBox( "Misc Criteria:" )
+        groupbox.setMaximumWidth( self.groupbox_width )
+        layout.addWidget( groupbox )
         grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        groupbox.setLayout( grid_layout )
         layout.addLayout( grid_layout )
 
-        self._build_top_widgets_grid( grid_layout )
-
         # ----key words
-        widget                = QLabel( "Key Words" )
+        widget                  = QLabel( "Key Words" )
         grid_layout.new_row()
         grid_layout.addWidget( widget )
 
-        widget                  = cw.CQLineEdit( field_name  = "key_words", )
-        self.critera_widget_list.append( widget )
-        self.key_words_widget   = widget  # is needed for paste
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        field_name  = "key_words"
+        widget      = cw.CQHistoryComboBox( field_name = field_name )
+        self.critera_widget_dict[ field_name ] = widget
         grid_layout.addWidget( widget, columnspan = 3 )
 
-        # ----id
-        widget                = QLabel( "ID" )
+        # ---- name like
+        grid_layout.new_row()
+        widget      = QLabel( "Name (like)" )
+        grid_layout.addWidget( widget )
+
+        field_name  = "name"
+        widget      = cw.CQHistoryComboBox( field_name = field_name )
+        self.critera_widget_dict[ field_name ] = widget
+        grid_layout.addWidget( widget )
+
+        # ---- title like
+        grid_layout.new_row()
+        widget  = QLabel( "Title (like)" )
+        grid_layout.addWidget( widget )
+
+        field_name  = "title"
+        widget      = cw.CQLineEdit( field_name = field_name   )
+        self.critera_widget_dict[ field_name ] = widget
+        grid_layout.addWidget( widget )
+
+        # ---- id_in for test -- look like never finished, look at album in pictures
+        field_name  = "id_in"
+        widget      = QLabel( "id_in" )
         grid_layout.new_row()
         grid_layout.addWidget( widget )
 
-        widget                  = cw.CQLineEdit( field_name  = "table_id", )
-        self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed( True ) )
-        grid_layout.addWidget( widget )    # columnspan = 3 )
-
-        # ----id_old
-        widget              = QLabel( "ID Old" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget              = cw.CQLineEdit( field_name  = "id_old", )
-        self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget )    # columnspan = 3 )
-
-        # ----descr
-        widget                = QLabel( "descr" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit( field_name  = "descr", )
-        self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget, columnspan = 3 )
-
-        # ----name
-        widget                = QLabel( "name" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit( field_name  = "name", )
-        self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget, columnspan = 3 )
-
-        # ---- id_in for test
-        widget  = QLabel( "id_in" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                 = cw.CQComboBox( field_name  = "id_in",  )
-        self.critera_widget_list.append( widget )
+        widget      = cw.CQComboBox( field_name  = field_name, )
+        self.critera_widget_dict[ field_name ] = widget
 
         widget.addItem('<none>')
         widget.addItem('')
         widget.addItem( "not_null" )
         grid_layout.addWidget( widget )
 
-        # ---- Order by  CQComboBox
-        widget  = QLabel( "Order by" )
+    # ------------------------------------------
+    def _build_date_widgets( self, layout ):
+        """
+        what it says, read
+
+        layout a vbox we create a grid in a groupbox
+        """
+        col_max             = 10
+        groupbox            = QGroupBox( "Date Criteria:" )
+        groupbox.setMaximumWidth( self.groupbox_width )
+        groupbox.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
+        layout.addWidget( groupbox )
+        grid_layout         = gui_qt_ext.CQGridLayout( col_max = col_max )
+        groupbox.setLayout( grid_layout )
+        layout.addLayout( grid_layout )
+
+        # # ---- spacers  or not
+        # for ix in range( col_max ):
+        #     widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
+        #         # width, height
+        #     grid_layout.addItem( widget )
+
+        # grid_layout.new_row()
+
+        # ---- dates --- look at pictures and perhap generalize
         grid_layout.new_row()
+        widget  = QLabel( "Use Dates" )
         grid_layout.addWidget( widget )
 
-        widget                 = cw.CQComboBox( field_name  = "order_by",  )
-        self.critera_widget_list.append( widget )
-
-        widget.addItem('descr')
-        widget.addItem('name')
-        widget.addItem("name - ignore case")
-        widget.addItem('id')
-        widget.addItem('id_old')
-        # widget.addItem('Title??')
-
-        debug_msg    = ( f"{self.tab_name} build_tab build criteria change put in as marker ")
-        logging.log( LOG_LEVEL,  debug_msg, )
-
-        widget.currentIndexChanged.connect( lambda: self.criteria_changed( True ) )
+        widget                  = cw.CQCheckBox(
+                                                field_name = "use_dates" )
+        #self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "use_dates" ] = widget
         grid_layout.addWidget( widget )
 
-        # ---- Order by Direction
-        #placer.new_row()
-        widget  = QLabel( "Direction" )
+        # ---- .... begin_date
+        widget                      = cw.CQDateEdit(
+                                                field_name = "begin_date" )
+        #self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "begin_date" ] = widget
+        widget.userDateChanged.connect( self.on_user_date_changed )
         grid_layout.addWidget( widget )
 
-        widget                     = cw.CQComboBox(
-                                         field_name  = "order_by_dir",  )
-        self.critera_widget_list.append( widget )
+        # ---- .... end_date
+        widget                      = cw.CQDateEdit(
+                                                field_name = "end_date" )
 
-        widget.addItem('Ascending')
-        widget.addItem('Decending')
-
-        debug_msg   = ( f"{self.tab_name} build_tab build criteria change put in as marker ")
-        logging.log( LOG_LEVEL, debug_msg, )
-
-        widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
+        #self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "end_date" ] = widget
         grid_layout.addWidget( widget )
 
-        # ---- criteria changed should be in parent
-        widget  = QLabel( "criteria_changed_widget" )
-        self.criteria_changed_widget  = widget
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
+        # next not to a grid
+        #grid_layout.addStretch(1)
 
-        # # ---- function_on_return( self )
-        # for i_widget in self.critera_widget_list:
-        #     # ---- new  only really changes some edits
-        #     i_widget.on_return_pressed     = self.criteria_select
-
-        # ---- function_on_return( self )
-        for i_widget in self.critera_widget_list:
-            # ---- new  only really changes some edits
-            i_widget.on_value_changed       = lambda: self.criteria_changed( True )
-            i_widget.on_return_pressed      = self.criteria_select
 
     # -------------
     def criteria_select( self,     ):
@@ -385,23 +404,25 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         query_builder.column_list       = column_list
 
         # ---- add criteria
-        criteria_dict                   = self.get_criteria()
+        #criteria_dict                   = self.get_criteria()
+        criteria_value_dict             = self.get_criteria_value_dict()
 
         # !! change to bind variables sql inject
         # ---- id  table_id
-        table_id     = criteria_dict[ "table_id" ].strip().lower()
+        #table_id     = criteria_dict[ "table_id" ].strip().lower()
+        table_id     = criteria_value_dict[ "table_id" ].strip().lower()
         if table_id:
             add_where       =  f' id = {table_id} '
             query_builder.add_to_where( add_where, [ ])
 
         # ---- id_old
-        id_old     = criteria_dict[ "id_old" ].strip().lower()
+        id_old     = criteria_value_dict[ "id_old" ].strip().lower()
         if id_old:
             add_where       =  f' id_old = "{id_old}" '
             query_builder.add_to_where( add_where, [ ])
 
         # ---- key words
-        criteria_key_words      = criteria_dict[ "key_words" ]
+        criteria_key_words      = criteria_value_dict[ "key_words" ]
         criteria_key_words      = a_key_word_processor.string_to_key_words( criteria_key_words )
         key_word_count          = len(  criteria_key_words )
 
@@ -416,44 +437,44 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
             query_builder.add_to_where( f" key_word IN {criteria_key_words}" , [] )
 
-        # ---- descr
-        descr               = criteria_dict[ "descr" ].strip().lower()
-        if descr:
-            add_where       = "lower( descr )  like :descr"   # :is name of bind var below
-            query_builder.add_to_where( add_where, [(  ":descr",
-                                                     f"%{descr}%" ) ])
+        # # ---- descr ?? add back
+        # descr               = criteria_value_dict[ "descr" ].strip().lower()
+        # if descr:
+        #     add_where       = "lower( descr )  like :descr"   # :is name of bind var below
+        #     query_builder.add_to_where( add_where, [(  ":descr",
+        #                                             f"%{descr}%" ) ])
 
         # ---- name
-        stuff_name          = criteria_dict[ "name" ].strip().lower()
+        stuff_name          = criteria_value_dict[ "name" ].strip().lower()
         if stuff_name:
             add_where       = "lower( name )  like :stuff_name"   # :is name of bind var below
             query_builder.add_to_where( add_where, [(  ":stuff_name",
                                                       f"%{stuff_name}%" ) ])
 
         # ---- id_in
-        id_in           = criteria_dict[ "id_in" ].strip().lower()
+        id_in           = criteria_value_dict[ "id_in" ].strip().lower()
         if id_in == "not_null":
             add_where       = "stuff.id_in IS NOT NULL"   # :is name of bind var below
             query_builder.add_to_where( add_where, [ ])
 
 
         # ---- order by
-        order_by   = criteria_dict[ "order_by" ]
+        order_by   = criteria_value_dict[ "order_by" ]
 
-        if   order_by == "descr":
-            column_name = "descr"
+        if   order_by == "descrxxx":
+            column_name = "descrxxx"
         elif order_by == "name":
             column_name = "name"
         elif order_by == "name - ignore case":
             column_name = "lower(name)"
         elif order_by == "id":
-            column_name = "id"
+            column_name = "stuff.id"
         elif order_by == "id_old":
-            column_name = "id_old"
+            column_name = "stuff.id_old"
         else:   # !! might better handel this
-            column_name = "descr"
+            column_name = "name"
 
-        order_by_dir   = criteria_dict[ "order_by_dir" ].lower( )
+        order_by_dir   = criteria_value_dict[ "order_by_dir" ].lower( )
 
         loc        = f"{self.__class__.__name__}.{inspect.currentframe().f_code.co_name} "
         debug_msg  = f"{loc} >>> {column_name = }  {order_by_dir = }"
@@ -461,6 +482,7 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         if "asc" in order_by_dir:
             literal   = "ASC"
+
         else:
             literal   = "DESC"
 
@@ -1494,7 +1516,6 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
 
         !! this looks promotable -- check
         """
-        model  = self.model
 
         # print( f"Edit strategy:  {model.editStrategy()= } ")
         # print(f"submit_changes Primary key:  {model.primaryKey() =}" )
@@ -1542,4 +1563,10 @@ class StuffPictureListSubTab( base_document_tabs.PictureListSubTabBase ):
         self.pictures_for_table  = "stuff"
 
 
-# ---- eof ------------------------------
+# ---- eof
+
+
+
+
+
+

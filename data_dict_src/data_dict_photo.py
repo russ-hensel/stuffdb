@@ -271,10 +271,15 @@ def build_it( a_data_dict_all ):
 
     # ---- sub_dir
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "sub_dir",
-                                             db_type        = "VARCHAR(25)",
-                                             display_type   = "string",
-                                             max_len        = None,
-                                             default_func   = None,
+                                             db_type            = "VARCHAR(25)",
+                                             display_type       = "string",
+                                             max_len            = None,
+                                             default_func       = None,
+
+                                             col_head_text      = "Sub Dir",
+                                             col_head_width     = 7,
+                                             col_head_order     = 95,
+
                                              display_order         = 40,
                                              is_keep_prior_enabled = True,
                                              form_col_span      = 1,

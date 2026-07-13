@@ -12,17 +12,15 @@
 
 """
 the "true" main for the stuffdb, but launch from main.py
-
 """
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
     import main # noqa  stops auto removal by pycln
-    pass
 # --------------------
 
 # ---- version
-__version__   = "Ver .092: 2026-06-12.01"
+__version__   = "Ver .093: 2026-07-12.01"
 
 # ---- imports
 import datetime
@@ -32,6 +30,17 @@ import os
 import sys
 import time
 import traceback
+
+
+  # Important: QtWebEngineWidgets must be imported before your QApplication is created (a PyQt/Qt requirement — it
+  # errors otherwise: "QtWebEngineWidgets must be imported... before a QCoreApplication instance is created"). So
+  # import map_popup (or the qtpy.QtWebEngineWidgets import it pulls in) needs to happen near the top of
+  # main.py/stuffdb.py, before QApplication(...) runs. I've added that as a comment in the smoke test above — check
+  # where your QApplication gets constructed and make sure map_popup (or any module importing it) is imported before
+  # that line, or wire it in early like your other core imports.
+
+  # Usage:
+
 
 from   qtpy.QtCore import ( QTimer, )
 

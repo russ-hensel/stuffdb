@@ -10,8 +10,7 @@ Most of the code for the Picture Document
 # --------------------
 if __name__ == "__main__":
     #----- run the full app
-    import main   # noqa  stops auto removal by pycln
-
+    import main  # noqa  stops auto removal by pycln
 # --------------------
 
 # ---- imports
@@ -19,82 +18,80 @@ if __name__ == "__main__":
 #from   functools import partial
 #import collections
 
+import itertools
 import logging
 import os
 import shutil
-from   functools import partial
-from   datetime  import datetime
 import subprocess
 import time
-from   pathlib import Path
+from datetime import datetime
+from functools import partial
+from pathlib import Path
 
-
-from qtpy.QtCore   import (
-                                QDateTime,
-                                QTime,
-                                QCoreApplication,
-                                Qt,
-                                Slot,
-                                QModelIndex,
-                                QSortFilterProxyModel,
-                                QTimer,
-                            )
-
-
-from qtpy.QtSql import (
-                            QSqlDatabase,
-                            QSqlQuery,
-                            QSqlQueryModel,
-                            QSqlRelation,
-                            QSqlRelationalTableModel,
-                            QSqlTableModel,
-                        )
-
-
-from qtpy.QtWidgets import (
-                            QListWidget,
-                            QApplication,
+import app_exceptions
+import data_dict_all
+import gui_qt_ext
+import lat_long_map
+#import photo_geo_criteria
+import photo_plus_ext
+import string_utils
+import wat_inspector
+from qtpy.QtCore import (QCoreApplication,
+                         QDateTime,
+                         QModelIndex,
+                         QSortFilterProxyModel,
+                         Qt,
+                         QTime,
+                         QTimer,
+                         Slot)
+from qtpy.QtSql import (QSqlDatabase,
+                        QSqlQuery,
+                        QSqlQueryModel,
+                        QSqlRelationalTableModel,
+                        QSqlTableModel)
+from qtpy.QtWidgets import (QApplication,
                             QComboBox,
                             QDialog,
                             QFileDialog,
                             QGroupBox,
-                            QLineEdit,
                             QHBoxLayout,
-                            QSizePolicy,
-                            QSpacerItem,
                             QLabel,
+                            QLineEdit,
+                            QListWidget,
                             QMessageBox,
                             QPushButton,
+                            QSizePolicy,
+                            QSpacerItem,
                             QTableView,
+                            QTableWidget,
+                            QTableWidgetItem,
                             QTabWidget,
                             QVBoxLayout,
-                            QWidget,
-                            )
+                            QWidget)
 
+import album_document
 # ---- imports local
 import base_document_tabs
 import custom_widgets as cw
+import data_manager
+import exif_extract_to_ui
 #import file_browse
 import key_words
+import map_popup
 import parameters
 # import  ia_qt
 import picture_viewer
 import qsql_utils
 import qt_sql_query
+import slideshow_subwindow
 import table_model
-import app_exceptions
-import data_dict_all
-import gui_qt_ext
-import wat_inspector
-from   app_global import AppGlobal
-import data_manager
 import update_sync
-import string_utils
-import album_document
-import photo_geo_criteria
-import photo_plus_ext
-import lat_long_map
+from app_global import AppGlobal
+
 #from   album_document  import AlbumDocument
+
+
+
 # ---- end imports
 
 LOG_LEVEL   = 30    # higher is more
@@ -102,9 +99,11 @@ logger      = logging.getLogger( )
 PARAMETERS  = parameters.PARAMETERS
 NOGO        =  "That is a No Go"
 
-
 # ------------
 class CounterIterator:
+    """
+    see init
+    """
     def __init__(self, *, photo_browse_sub_tab ):
         """
         what would be out of loop locals are set up here as self.
@@ -162,8 +161,7 @@ class CounterIterator:
 
         raise StopIteration
 
-
-# -------------------------. The Progress Dialog (Using Linear Loop logic)
+# -------------------------.
 class DupDialog( QDialog ):
 
     def __init__( self, model, view  ):
@@ -171,46 +169,69 @@ class DupDialog( QDialog ):
         TableModel
         QTableView
         !! add message label , change to a table for more info
+
         """
         super().__init__( )
 
-        self._is_paused     = False
-        self._is_halted     = False
+        # ---- gui
+        self.setWindowTitle( "Duplicates" )
+        self.setFixedSize( 1600, 800 )  # change based on a parameter
 
-        self.setWindowTitle( "DupDialog" )
-        self.setFixedSize( 700, 400 )
+        self.model      = model  # argument to function
+        self.view       = view
 
-        self.model          = model
+        layout          = QVBoxLayout( self )
 
-        # # UI Setup
-        layout = QVBoxLayout( self )
-        # self.status_label = QLabel("Ready to start...", self)
-        # self.layout.addWidget( self.status_label )
-
-        # self.btn_layout = QHBoxLayout()
-        # self.pause_btn = QPushButton("Pause")
-        # self.halt_btn = QPushButton("Halt")
-
-        # self.btn_layout.addWidget(self.pause_btn)
-        # self.btn_layout.addWidget(self.halt_btn)
-        # self.layout.addLayout(self.btn_layout)
-
-        # self.pause_btn.clicked.connect(self.toggle_pause)
-        # self.halt_btn.clicked.connect(self.halt_process)
-
-        # ---- QListWidget -- maybe a table so we can delete dups from list
-        widget                  = QListWidget()
-        self.dup_list_widget    = widget
+        # ---- QTableWidget
+        widget                  = QTableWidget( 0, 3 )  # row, column ??third arg parent
+        self.dup_table_widget   = widget
+        #widget.itemClicked.connect( self.list_clicked )
+        widget.cellClicked.connect( self.on_row_clicked )
         widget.setGeometry( 50, 50, 200, 200 )
+        widget.setEditTriggers( QTableWidget.NoEditTriggers )
+
+        widget.setHorizontalHeaderLabels( [ "DB Id", "DB File Name", "Dup File Name"] )
+        self.id_col     = 0
+        self.dup_fn     = 2
+        self.db_fn      = 1
+
+        widget.setColumnWidth( self.id_col, 60 )
+        widget.setColumnWidth( self.db_fn,  700 )
+        widget.setColumnWidth( self.dup_fn, 700 )
+
         layout.addWidget( widget )
 
+        # ---- used as a status display
         widget              = QLabel( "found what" )
         self.label_widget   = widget
         layout.addWidget( widget )
 
+        viewer_layout       = QHBoxLayout( )
+        layout.addLayout( viewer_layout )
+
+        # ---- viewers
+        widget                  = picture_viewer.PictureViewer( parent = self )
+        self.dup_file_viewer    = widget
+        viewer_layout.addWidget( widget )
+
+        widget                  = picture_viewer.PictureViewer( parent = self )
+        self.db_file_viewer     = widget
+        viewer_layout.addWidget( widget )
+
+        button_layout           = QHBoxLayout( )
+        layout.addLayout( button_layout )
+
+        widget                  = QPushButton( "Drop from List" )
+        widget.clicked.connect( self.drop_file )
+        button_layout.addWidget( widget )
+
+        widget                  = QPushButton( "Delete File" )
+        widget.clicked.connect( self.delete_file )
+        button_layout.addWidget( widget )
+
         widget                  = QPushButton( "Close" )
         widget.clicked.connect( self.accept )
-        layout.addWidget( widget )
+        button_layout.addWidget( widget )
 
         self.dup_loop()
 
@@ -220,35 +241,37 @@ class DupDialog( QDialog ):
         loop thru rows in model looking for duplicates
 
         """
-        ix_found = 0
-        model    = self.model
+        ix_found    = 0
+        model       = self.model
+        dup_table   = self.dup_table_widget
+
         for row in range( model.rowCount( QModelIndex()) ):
-            # for col in range( model.columnCount(QModelIndex()) ):
-            #     value = model.data(model.index( row, col ))
 
-            #     print( value, end = "")
-            #     #self.select_from_keeps(  )
-            # print( )
+            test_file_name  = model.data( model.index( row, 0 ) )
+            db_file_list    = self.select_from_keeps( test_file_name )
 
-            full_file_name   = model.data( model.index( row, 0) )
-            file_found   = self.select_from_keeps( full_file_name )
-            if file_found:
+            for photo_id, db_file_name in db_file_list:
                 ix_found    += 1
-                self.dup_list_widget.addItem( full_file_name )
+                row         =  dup_table.rowCount()
+                dup_table.insertRow( row )
+                dup_table.setItem( row, self.id_col, QTableWidgetItem( str(photo_id ) ) )
+                dup_table.setItem( row, self.db_fn,  QTableWidgetItem( db_file_name   ) )
+                dup_table.setItem( row, self.dup_fn, QTableWidgetItem( test_file_name ) )
+                    # for list, different for qtablewidget
 
-        msg   = ( f"Duplicates found = {ix_found = }")
+        msg   = ( f"Duplicates found = {dup_table.rowCount()}")
         self.label_widget.setText( msg )
 
     # ----------------------------------------------
-    def select_from_keeps( self, full_file_name  ):
+    def select_from_keeps( self, test_file_name ):
         """
         see if file in db
 
         """
-        file_name  = Path( full_file_name ).name
+        file_name   = Path( test_file_name ).name
         file_found  = False
 
-        sql         = ( "SELECT file, sub_dir "
+        sql         = ( "SELECT id, file, sub_dir "
                        " FROM photo "
                        " WHERE file = :file_name" )
 
@@ -257,19 +280,164 @@ class DupDialog( QDialog ):
         query.bindValue( ':file_name', file_name )
 
         if not query.exec(   ):
-            error = query.lastError()
-            print( f"Database error: {error.text()}" )
+            error   = query.lastError()
+            msg     =( f"Database error: {error.text()}" )
+            logging.error( msg )
+
             return file_found
 
-        file_found  = False
+        db_file_list  = []
+
         while query.next():
-            file_found       = True
-            select_file_name = query.value( 0 )
-            msg              = ( f"duplicate found {select_file_name =}")
+            photo_id         = query.value( 0 )
+            select_file_name = query.value( 1 )
+            sub_dir          = query.value( 2 )
+
+            msg              = ( f"select_from_keeps duplicate found {photo_id = } {sub_dir =} {select_file_name =}")
             logging.debug( msg )
 
-        return file_found
+            # ---- construct full file name as string
+            path            = AppGlobal.parameters.picture_db_root
+            sub_dir         = sub_dir.replace( "/", "" ).replace( "\\", "" )
+            full_file_name  = str( Path( path ) / sub_dir / select_file_name )
 
+            msg              = ( f"select_from_keeps {full_file_name =}  ")
+            logging.debug( msg )
+
+            db_file_list.append( ( photo_id, full_file_name ) )
+
+        return db_file_list
+
+    # -------------------------------------
+    def get_selected_rows( self, table ):
+        """ """
+        table               = self.dup_table_widget
+        selection_model     = table.selectionModel()
+
+        if selection_model.hasSelection():
+
+            selected_rows = [index.row() for index in selection_model.selectedRows()]
+            #return sorted( selected_rows )
+            return selected_rows
+
+        return []
+
+    # ----------------------------------------------
+    def delete_file( self, ):
+        """
+        will drop the file ( self.drop_file() ) and additionaly remove the file named in the
+        self.dup_fn column from the file system
+
+        """
+        widget          = self.dup_table_widget
+        selected_rows   = self.get_selected_rows( widget )
+
+        if not selected_rows:
+            msg   = ( "delete_file: no row selected in dup_table_widget" )
+            logging.debug( msg )
+            return
+
+        row             = selected_rows[0]
+        item            = widget.item( row, self.dup_fn )
+        file_name       = item.text()
+
+        try:
+            os.remove( file_name )
+
+        except Exception as a_except:
+            msg       = ( f"Exception delete_file os.remove "
+                          f"\n    {file_name = }"
+                          f"\n    {a_except = }" )
+            logging.error( msg )
+            raise app_exceptions.ApplicationError( msg )
+
+        self.drop_file()
+
+    # ----------------------------------------------
+    def drop_file( self, ):
+        """
+        remove the file selected on_row_clicked from this QTableWidget and
+        go back to          self.model and self.view
+        and drop the corresponding row there a well, note that this
+        QTableWidget and the model/view both have the file name that
+        can bue used with the match up
+
+        """
+        widget          = self.dup_table_widget
+        selected_rows   = self.get_selected_rows( widget )
+
+        if not selected_rows:
+            msg   = ( "drop_file: no row selected in dup_table_widget" )
+            logging.debug( msg )
+            return
+
+        row             = selected_rows[0]
+        item            = widget.item( row, self.dup_fn )
+        file_name       = item.text()
+
+        # ---- drop from this QTableWidget
+        widget.removeRow( row )
+
+        # ---- drop the matching row from self.model, self.view follows since
+        #      it is a QSortFilterProxyModel on top of self.model
+        model           = self.model
+
+        for ix_row in range( model.rowCount() ):
+            if model.data( model.index( ix_row, 0 ) ) == file_name:
+                model.removeRow( ix_row )
+                break
+
+        # ---- select the row closest to the one just dropped, or show
+        #      fnf in both viewers if the list is now empty
+        row_count       = widget.rowCount()
+
+        if row_count == 0:
+            self.dup_file_viewer.display_file_fnf()
+            self.db_file_viewer.display_file_fnf()
+
+        else:
+            next_row    = row if row < row_count else row_count - 1
+            self.on_row_clicked( next_row, self.dup_fn )
+
+        msg   = ( f"drop_file dropped {file_name = }" )
+        logging.debug( msg )
+        self.label_widget.setText( msg )
+
+    # ----------------------------------------------
+    def on_row_clicked( self, row, col ):
+        """
+        self.table_widget.selectRow( row_index )
+        self.table_widget.show()
+
+        """
+        debug_msg   = ( f"on_row_clicked  {row  = }"   )
+        logging.debug( debug_msg )
+
+        widget      = self.dup_table_widget
+
+        # not doing selected rows
+        # ... code delted
+
+        widget.selectRow( row )
+        widget.show()
+
+        col         = self.dup_fn
+        item        = widget.item( row, col )
+
+        if item:
+            print(f"Cell clicked: Row {row}, Column {col}, Data: {item.text()}")
+
+        file_name   = item.text()
+        self.dup_file_viewer.display_file( file_name )
+
+        col         = self.db_fn
+        item        = widget.item( row, col )
+
+        if item:
+            print(f"Cell clicked: self.db_fn Row {row}, Column {col}, Data: {item.text()}")
+
+        file_name   = item.text()
+        self.db_file_viewer.display_file( file_name )
 
 # -------------------------. The Progress Dialog (Using Linear Loop logic)
 class ProgressDialog( QDialog ):
@@ -388,6 +556,7 @@ class PictureDocument( base_document_tabs.DocumentBase ):
         self.text_table_name    = "photo_text"  # text tables always id and text_data
         self.help_filename      = "picture_doc.txt"
         self.subwindow_name     = "PictureDocument"
+        self.document_color     = AppGlobal.parameters.picture_color
 
         self._build_gui()
         self.__init_2__()
@@ -537,15 +706,23 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         """
         the usual
         """
-        self.parameters     = AppGlobal.parameters
-        self.location_dict  = self.parameters.dict_lat_lon
+        self.parameters         = AppGlobal.parameters
+        self.location_dict      = self.parameters.dict_lat_lon
+        self.groupbox_width     = 900
 
         super().__init__( parent_window ) # tab will be built
 
-        self.tab_name       = "PictureCriteriaTab"
-        self.distance_from  = photo_plus_ext.DistanceFrom( "origin", 0, 0 )
+        self.tab_name           = "PictureCriteriaTab"
+        self.distance_from      = photo_plus_ext.DistanceFrom( "origin", 0, 0 )
         self.set_lat_long_for_location()
             # dict of location look at parameters
+
+        # because setting default date seems to check this
+        use_widget       = self.critera_widget_dict[ "use_dates" ]
+        # do not believe signals are used but just in case
+        use_widget.blockSignals( True )
+        use_widget.setChecked( False )
+        use_widget.blockSignals( False )
 
     # ------------------------------------------
     def _build_tab( self, ):
@@ -555,81 +732,32 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         need to have instance var for put_criteria
         """
         page        = self
-        layout      = QVBoxLayout( page )
-                # can we fold in to next
+        layout      = QVBoxLayout( page ) # or try grid with new_row !!
 
-        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
-        layout.addLayout( grid_layout )
-
-        self._build_top_widgets_grid( grid_layout )
-
-        self._build_id_widgets( layout )
+        self._build_top_widgets_grid( layout )
         self._build_other_widgets( layout )
         self._build_date_widgets( layout )
         self._build_geo_widgets( layout )
-        self._build_sort_widgets( layout )
+        self._build_id_widgets( layout )
 
-        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
-        layout.addLayout( grid_layout )
+        sort_list   =  [
+                        'id',
+                        'id_old',
+                        'dt_item',
+                        'dt_enter',
+                        'title - ignore case',
+                        ]
 
-        # self.add_date_widgets( placer, row_labels = ( "dt_item", "dt_enter") )
+        self._build_sort_widgets( layout, sort_list )
 
-        # self.add_buttons( placer )
+        # for i_widget in self.critera_widget_list:
+        #     # add value changed to custom edits widget.textChanged.connect
+        #     i_widget.function_on_changed    = ( lambda: self.criteria_changed( True ) )
+        #     i_widget.function_on_return     = self.criteria_select
+        #     #i_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
-        # # ---- push controls up page, may need adjustment
-        # width    = 350
-        # widget   = QSpacerItem( width, 100, QSizePolicy.Expanding, QSizePolicy.Minimum )
-        # grid_layout.new_row()
-        # # grid_layout.addWidget( widget )
-        # grid_layout.addItem( widget, grid_layout.ix_row, grid_layout.ix_col    )  # row column
-
-        # ---- function_on_return( self )
-        for i_widget in self.critera_widget_list:
-            # add value changed to custom edits widget.textChanged.connect
-            i_widget.function_on_changed    = ( lambda: self.criteria_changed( True ) )
-            i_widget.function_on_return     = self.criteria_select
-            #i_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-
-
-        #self.id_field.setFocus()  # seems not to work try
-        QTimer.singleShot( 0, self.key_words_widget.setFocus )
-
-    # ------------------------------------------
-    def _build_id_widgets( self, layout ):
-        """
-        what it says, read
-
-        layout a vbox we create a grid in a groupbox
-        """
-        groupbox   = QGroupBox( "ID criteria" )   # version with title
-        layout.addWidget( groupbox )
-        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
-        groupbox.setLayout( grid_layout )
-        layout.addLayout( grid_layout )
-
-        # ----id
-        widget                = QLabel( "ID" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit(
-                                                field_name = "table_id"   )
-        self.id_field           = widget
-        self.critera_widget_list.append( widget )
-        self.critera_widget_dict[ "table_id" ] = widget
-        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget, )    # columnspan = 3 )
-
-        # ----id_old
-        widget                = QLabel( "ID Old*" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit(
-                                                field_name = "id_old"   )
-        self.critera_widget_list.append( widget )
-        self.critera_widget_dict[ "id_old" ] = widget
-        grid_layout.addWidget( widget, )    # columnspan = 3 )
+        key_words_widget    = self.critera_widget_dict[ "key_words" ]
+        QTimer.singleShot( 0, key_words_widget.setFocus )
 
     # ------------------------------------------
     def _build_date_widgets( self, layout ):
@@ -638,9 +766,9 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         layout a vbox we create a grid in a groupbox
         """
-        width               = 100
         col_max             = 10
-        groupbox            = QGroupBox( "Date Criteria" )   # version with title
+        groupbox            = QGroupBox( "Date Criteria:" )
+        groupbox.setMaximumWidth( self.groupbox_width )
         groupbox.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
         layout.addWidget( groupbox )
         grid_layout         = gui_qt_ext.CQGridLayout( col_max = col_max )
@@ -671,6 +799,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
                                                 field_name = "begin_date" )
         self.critera_widget_list.append( widget )
         self.critera_widget_dict[ "begin_date" ] = widget
+        widget.userDateChanged.connect( self.on_user_date_changed )
         grid_layout.addWidget( widget )
 
         # ---- .... end_date
@@ -684,6 +813,19 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         # next not to a grid
         #grid_layout.addStretch(1)
 
+    # ------------------------------------------
+    def on_user_date_changed( self, date ):
+        """
+        check off use date
+            connected to multiple widgets
+            user part may not be working
+        """
+        use_widget       = self.critera_widget_dict[ "use_dates" ]
+        #print( date.toString( "yyyy-MM-dd" ) )
+        use_widget.blockSignals( True )
+        use_widget.setChecked( True )
+        use_widget.blockSignals( False )
+
 
     # ------------------------------------------
     def _build_other_widgets( self, layout ):
@@ -692,7 +834,8 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         layout a vbox, we create a grid in a groupbox
         """
-        groupbox   = QGroupBox( "Misc Criteria" )   # version with title
+        groupbox   = QGroupBox( "Misc Criteria:" )
+        groupbox.setMaximumWidth( self.groupbox_width )
         layout.addWidget( groupbox )
         grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
         groupbox.setLayout( grid_layout )
@@ -703,13 +846,13 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         grid_layout.new_row()
         grid_layout.addWidget( widget )
 
-        field_name = "key_words"
-        widget                  = cw.CQHistoryComboBox(
-                                                field_name = "key_words"   )
-        self.key_words_field    = widget
-        self.key_words_widget   = widget   # seems dup but see base
-        self.critera_widget_list.append( widget )
-        self.critera_widget_dict[ "key_words" ] = widget
+        field_name      = "key_words"
+        widget          = cw.CQHistoryComboBox(
+                                                field_name = field_name )
+
+        self.critera_widget_dict[ field_name ] = widget
+        line_edit    = widget.lineEdit()
+        line_edit.returnPressed.connect( self.criteria_select )
         grid_layout.addWidget( widget, columnspan = 3 )
 
         # ---- name like
@@ -719,9 +862,9 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         field_name = "name"
         widget                  = cw.CQHistoryComboBox(
-                                                field_name = "name"   )
+                                                field_name = "name" )
         self.critera_widget_list.append( widget )
-        self.critera_widget_dict[ "name" ] = widget
+        self.critera_widget_dict[ field_name ] = widget
         grid_layout.addWidget( widget )
 
         # ---- title like
@@ -750,7 +893,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget.connect_to_history_sync( history_sync )  # or other way around connect_widget
         history_sync.add_item( None, "<none>" ) # need a none element
         self.critera_widget_list.append( widget )
-
         grid_layout.addWidget( widget )
 
         # ---- with file
@@ -816,7 +958,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget                  = cw.CQLineEdit(
                                                 field_name = field_name )
         self.critera_widget_dict[ field_name ] = widget
-        self.critera_widget_list.append( widget )
+        #self.critera_widget_list.append( widget )
         grid_layout.addWidget( widget )
 
     # ------------------------------------------
@@ -824,9 +966,9 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         """
         what it says, read
 
-        layout a vbox we create a grid in a groupbox
         """
-        groupbox   = QGroupBox( "Geo criteria" )   # version with title
+        groupbox   = QGroupBox( "Geo criteria" )
+        groupbox.setMaximumWidth( self.groupbox_width )
         layout.addWidget( groupbox )
         grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
         groupbox.setLayout( grid_layout )
@@ -840,31 +982,40 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         field_name  = "use_lat_long"
         widget      = cw.CQCheckBox(
                                   field_name = field_name )
+        widget.stateChanged.connect( self.use_widget_state_change )
         self.critera_widget_list.append( widget )
         self.critera_widget_dict[ field_name ] = widget
         grid_layout.addWidget( widget )
 
         # ---- map
-        widget        = QPushButton( 'Lat Long Map' )
+        widget          = QPushButton( 'Lat Long Map' )
         widget.clicked.connect( self.open_lat_long_map )
         grid_layout.addWidget( widget )
 
         # ---- location by name
         field_name      = "location_widget"
-        widget          = QComboBox(  )
+        widget          = cw.CQComboBox(  )
         self.critera_widget_dict[ field_name ] = widget
         values          = self.location_dict.keys()
         widget.addItems( values )
         widget.setCurrentText( self.parameters.default_loc )
+        widget.currentIndexChanged.connect( self.widget_index_changed )
         grid_layout.addWidget( widget )
+        # do pick form map and pick from photo here
+        # or rebuild whole thing from parameters
+
+        # !! need more thought on best way to do this
+        list_value                  = list( values )
+        self.index0_from_map        = list_value[ 0 ]
+        self.index1_from_photo      = list_value[ 1 ]
 
         # ---- .... size
-        widget          = QLabel( "Size Km:")
+        widget          = QLabel( "Size Km:" )
         grid_layout.addWidget( widget )
-       #self.widget_field_dict[ field_name ] = widget
 
         field_name              = "size"
-        widget                  = QLineEdit(  )
+        widget                  = cw.CQLineEdit(  )
+        widget.editingFinished.connect( self.show_widget_editing_finished )
         widget.setToolTip( field_name )
         self.critera_widget_dict[ field_name ] = widget
         grid_layout.addWidget( widget )
@@ -872,12 +1023,11 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         # ---- set at
         widget            = QPushButton( "<- Set at" )
         widget.clicked.connect( self.set_lat_long_for_location )
-        #self.size_widget        = widget
-       #self.widget_field_dict[ field_name ] = widget
         grid_layout.addWidget( widget )
 
-        grid_layout.new_row()
+
         # ---- .... south_lat
+        grid_layout.new_row()
         field_name  = "south_lat"
         widget      = cw.CQLineEdit(
                                   field_name = field_name )
@@ -895,9 +1045,10 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         grid_layout.addWidget( widget )
 
         # ---- .... north_lat
-        field_name      = "north_lat"
-        widget           = cw.CQLineEdit(
+        field_name  = "north_lat"
+        widget      = cw.CQLineEdit(
                                   field_name = field_name )
+        widget.editingFinished.connect( self.show_widget_editing_finished )
         widget.setToolTip( "north_lat"  )
         self.critera_widget_dict[ field_name ] = widget
         widget.rec_to_edit_cnv      = widget.cnv_float_to_str
@@ -916,6 +1067,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget      = cw.CQLineEdit(
                                   field_name = field_name )
         self.critera_widget_dict[ field_name ] = widget
+        widget.editingFinished.connect( self.show_widget_editing_finished )
         widget.setToolTip( "west_long" )
         # cnv do not !! seem to be used, perhaps they should see dict to.....
         widget.rec_to_edit_cnv      = widget.cnv_float_to_str
@@ -933,6 +1085,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         field_name      = "east_long"
         widget          = cw.CQLineEdit(
                                   field_name = field_name )
+        widget.editingFinished.connect( self.show_widget_editing_finished )
         self.critera_widget_dict[ field_name ] = widget
         widget.setToolTip( "east_long"  )
         widget.rec_to_edit_cnv      = widget.cnv_float_to_str
@@ -946,59 +1099,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self.critera_widget_list.append( widget )
         grid_layout.addWidget( widget )
 
-    # ------------------------------------------
-    def _build_sort_widgets( self, layout ):
-        """
-        what it says, read
-
-        layout a vbox we create a grid in a groupbox
-        """
-        groupbox   = QGroupBox( "Sort Order" )
-        layout.addWidget( groupbox )
-        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
-        groupbox.setLayout( grid_layout )
-        layout.addLayout( grid_layout )
-
-        # ---- Order by
-        grid_layout.new_row()
-        widget  = QLabel( "Order by" )
-        grid_layout.addWidget( widget )
-
-        field_name  = "order_by"
-        widget      = cw.CQComboBox(
-                                  field_name = field_name )
-        self.critera_widget_dict[ field_name ] = widget
-        self.critera_widget_list.append( widget )
-        widget.addItem('id')
-        widget.addItem('id_old')
-        widget.addItem('dt_item')
-        widget.addItem('dt_enter')
-        widget.addItem('title - ignore case')
-        grid_layout.addWidget( widget )
-
-        # ---- Order by Direction
-        widget  = QLabel( "Direction" )
-        grid_layout.addWidget( widget )
-
-        field_name  = "order_by_dir"
-        widget      = cw.CQComboBox(
-                                  field_name = field_name )
-        self.critera_widget_dict[ field_name ] = widget
-        self.critera_widget_list.append( widget )
-
-        widget.addItem('Ascending')
-        widget.addItem('Descending')
-
-        #widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
-        #grid_layout.new_row()  # because seems to be missing
-        grid_layout.addWidget( widget )
-
-        # ---- criteria changed should be in parent
-        grid_layout.new_row()
-        widget  = QLabel( "criteria_changed_widget" )
-        self.criteria_changed_widget  = widget
-        grid_layout.addWidget( widget )
-
     # --------------
     def get_lat_long( self ):
         """
@@ -1010,7 +1110,6 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             lat   = ( a + b ) / 2
 
         except:
-            pass
             lat  = 0.
 
         try:
@@ -1019,13 +1118,46 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             long  = ( a + b ) / 2
 
         except:
-            pass
             long  = 90.
 
         return ( lat, long )
 
     # --------------
     #def get_lat_long_for_location( self ):
+    def use_widget_state_change( self, state ):
+        """
+        read it, keep lat long up to date
+            get and sets based on the data in the location by name
+
+        """
+        if state  == Qt.CheckState.Checked:
+            self.set_lat_long_for_location()
+
+    # --------------
+    def widget_index_changed( self, index ):
+        """
+        read it, keep lat long up to date
+            connected to several different widgets
+        """
+        event_sender    = self.sender()     # for debug
+        use_widget      = self.critera_widget_dict[ "use_lat_long" ]
+
+        # would context management be good here
+        use_widget.blockSignals( True )
+        use_widget.setChecked(True)
+        self.set_lat_long_for_location()
+        use_widget.blockSignals( False )
+
+    # --------------
+    def show_widget_editing_finished( self, ):
+        """
+        read it, keep lat long up to date
+            connected to several different widgets
+        """
+        event_sender    =  self.sender()     # for debug
+        self.set_lat_long_for_location()
+
+    # --------------
     def set_lat_long_for_location( self ):
         """
         get and sets based on the data in the location by name
@@ -1036,11 +1168,9 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         key         = loc_widget.currentText()
         lat, long   = AppGlobal.parameters.dict_lat_lon[ key ]
 
-        #rint( lat, long )
-
         delta_km        = size_widget.text( ).strip()
 
-        try:
+        try:   # use string util instead
             delta_km    = float( delta_km )
 
         except:
@@ -1067,6 +1197,8 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         """
         do the select
         """
+        self.set_lat_long_for_location()
+            # make settings consistent
         start_dt            = time.time()
         parent_document     = self.parent_window
         model               = parent_document.list_tab.list_model
@@ -1081,39 +1213,31 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         kw_table_name       = "photo_key_words"
 
         # !! next is too much   !! change to list comp ---
-        columns     = data_dict_all.SCHEMA.get_list_columns( self.parent_window.detail_table_name )
-        #col_head_texts   = [ "seq" ]  # plus one for sequence
-        col_names   = [   ]
-        #col_head_widths  = [ "10"  ]
-        for i_column in columns:
-            col_names.append(        i_column.column_name  )
-            #col_head_texts.append(   i_column.col_head_text  )
-            #col_head_widths.append(  i_column.col_head_width  )
-        column_list                     = col_names
+        columns      = data_dict_all.SCHEMA.get_list_columns( self.parent_window.detail_table_name )
+        column_list  = [ i_column.column_name for i_column in columns ]  # !! fix in all coduments or do we fix columns above
 
         a_key_word_processor            = key_words.KeyWords( kw_table_name, AppGlobal.qsql_db_access.db )
         query_builder.table_name        = parent_document.detail_table_name
         query_builder.column_list       = column_list
 
         # ---- add criteria
-        criteria_dict                   = self.get_criteria()
-        print( f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> {criteria_dict =}")
+        criteria_value_dict             = self.get_criteria_value_dict()
 
         # !! change to bind variables sql inject
         # ---- id  table_id
-        table_id     = criteria_dict[ "table_id" ].strip().lower()
+        table_id     = criteria_value_dict[ "table_id" ].strip().lower()
         if table_id:
             add_where       =  f' id = {table_id} '
             query_builder.add_to_where( add_where, [ ])
 
         # ---- id_old
-        id_old      = criteria_dict[ "id_old" ].strip().lower()
+        id_old      = criteria_value_dict[ "id_old" ].strip().lower()
         if id_old:
             add_where       =  f' id_old = "{id_old}" '
             query_builder.add_to_where( add_where, [ ])
 
         # ---- key words
-        criteria_key_words      = criteria_dict[ "key_words" ]
+        criteria_key_words      = criteria_value_dict[ "key_words" ]
         criteria_key_words      = a_key_word_processor.string_to_key_words( criteria_key_words )
         key_word_count          = len( criteria_key_words )
 
@@ -1129,34 +1253,34 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             query_builder.add_to_where( f" key_word IN {criteria_key_words}", [] )
 
         # ---- title like
-        title                          = criteria_dict[ "title" ].strip().lower()
+        title                          = criteria_value_dict[ "title" ].strip().lower()
         if title:
             add_where       = "lower( title )  like :title"   # :is name of bind var below
             query_builder.add_to_where( add_where, [(  ":title",
                                                      f"%{title}%" ) ])
 
         # ---- name like
-        name                          = criteria_dict[ "name" ].strip().lower()
+        name                          = criteria_value_dict[ "name" ].strip().lower()
         if name:
             add_where       = "lower( name )  like :name"   # :is name of bind var below
             query_builder.add_to_where( add_where, [(  ":name",
                                                      f"%{name}%" ) ])
 
         # ---- use_dates
-        use_dates           = criteria_dict[ "use_dates" ]
+        use_dates           = criteria_value_dict[ "use_dates" ]
 
         if use_dates:
             noon_time       = QTime( 12, 0, 0)  # !! tweak this
-            begin_date      = criteria_dict[ "begin_date" ]  # to ts in next
+            begin_date      = criteria_value_dict[ "begin_date" ]  # to ts in next
             qdatetime       = QDateTime( begin_date, noon_time )
             begin_date      = qdatetime.toSecsSinceEpoch()
 
             noon_time       = QTime( 12, 0, 0)  # !! tweak this
-            end_date        = criteria_dict[ "end_date" ]  # to ts in next
+            end_date        = criteria_value_dict[ "end_date" ]  # to ts in next
             qdatetime       = QDateTime( end_date, noon_time )
             end_date        = qdatetime.toSecsSinceEpoch()
 
-            # ?? not so nice COALESCE a selectable... non seleceted
+            # ?? not so nice COALESCE a selectable... non selected
             query_builder.column_addition = ( "COALESCE(dt_item, exif_ts) "
                                                "AS effective_date" )
 
@@ -1164,22 +1288,22 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             add_where       = f" effective_date >= {begin_date} AND effective_date <= {end_date} "
             query_builder.add_to_where( add_where, [ ])
 
-            # ---- !! work out what to do with order by perahsp in order by pare
-            """
-            perhaps always have effective date
-            SELECT
-                id,
-                name,
-                dt_item,
-                exif_ts,
-                COALESCE(dt_item, exif_ts) AS effective_date
-            FROM photo
-            WHERE effective_date >= {begin_date} AND effective_date <= {end_date}
-            ORDER BY effective_date
-            """
+            # ---- !! work out what to do with order by perhaps in order by pare
+            # """
+            # perhaps always have effective date
+            # SELECT
+            #     id,
+            #     name,
+            #     dt_item,
+            #     exif_ts,
+            #     COALESCE(dt_item, exif_ts) AS effective_date
+            # FROM photo
+            # WHERE effective_date >= {begin_date} AND effective_date <= {end_date}
+            # ORDER BY effective_date
+            # """
 
         # ---- file name null  or empty -- note misname
-        file_name_empty     = criteria_dict[ "file_name_empty" ].strip().lower()
+        file_name_empty     = criteria_value_dict[ "file_name_empty" ].strip().lower()
 
         if file_name_empty == "yes":
             add_where       =  ' file IS NOT NULL and  file != "" '
@@ -1190,29 +1314,29 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             query_builder.add_to_where( add_where, [ ])
 
         # ---- file_name_like
-        file_name_like             = criteria_dict[ "file_name_like" ].strip().lower()
+        file_name_like             = criteria_value_dict[ "file_name_like" ].strip().lower()
 
         if file_name_like:
             add_where       = "lower( file )  like :file_name_like"   # :is name of bind var below
             query_builder.add_to_where( add_where, [(  ":file_name_like",
                                                      f"%{file_name_like}%" ) ])
         # ---- exif_make
-        exif_make             = criteria_dict[ "exif_make" ].strip()
+        exif_make             = criteria_value_dict[ "exif_make" ].strip()
 
         if exif_make != "<Any>":
-            add_where       = "exif_make = :exif_make"   # :is name of bind var below
+            add_where       = "exif_make = :exif_make"
             query_builder.add_to_where( add_where, [(  ":exif_make",
                                                         exif_make ) ])
         # ---- exif_model
-        exif_model             = criteria_dict[ "exif_model" ].strip()
+        exif_model             = criteria_value_dict[ "exif_model" ].strip()
 
         if exif_model != "<Any>":
-            add_where       = "exif_model = :exif_model"   # :is name of bind var below
+            add_where       = "exif_model = :exif_model"
             query_builder.add_to_where( add_where, [(  ":exif_model",
                                                         exif_model ) ])
 
         # ---- album
-        album_id             = criteria_dict[ "in_album" ]
+        album_id             = criteria_value_dict[ "in_album" ]
 
         if album_id:
             query_builder.add_to_inner_join( " INNER JOIN photo_in_show "
@@ -1223,22 +1347,22 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
                                                       f"{album_id}" ) ])
 
         # ---- use_lat_long
-        use_lat_lon         = criteria_dict[ "use_lat_long" ]
+        use_lat_lon         = criteria_value_dict[ "use_lat_long" ]
 
         if use_lat_lon:
-            lat_long        = criteria_dict[ "west_long" ]
+            lat_long        = criteria_value_dict[ "west_long" ]
             lat_long        = base_document_tabs.str_to_float( lat_long )
             west_long       = lat_long
 
-            lat_long        = criteria_dict[ "east_long" ]
+            lat_long        = criteria_value_dict[ "east_long" ]
             lat_long        = base_document_tabs.str_to_float( lat_long )
             east_long       = lat_long
 
-            lat_long        = criteria_dict[ "south_lat" ]
+            lat_long        = criteria_value_dict[ "south_lat" ]
             lat_long        = base_document_tabs.str_to_float( lat_long )
             south_lat       = lat_long
 
-            lat_long        = criteria_dict[ "north_lat" ]
+            lat_long        = criteria_value_dict[ "north_lat" ]
             lat_long        = base_document_tabs.str_to_float( lat_long )
             north_lat       = lat_long
 
@@ -1271,9 +1395,8 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
                                                          north_lat  ) ]  )
 
         # ---- dates above not here
-
         # ---- order by
-        order_by   = criteria_dict[ "order_by" ]
+        order_by        = criteria_value_dict[ "order_by" ]
 
         plus_order_by_dt_item  = True
 
@@ -1299,7 +1422,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             column_name = "dt_item"   # check if exists  dt_item
 
         # ---- "order_by_dir"
-        order_by_dir   = criteria_dict[ "order_by_dir" ].lower( )
+        order_by_dir   = criteria_value_dict[ "order_by_dir" ].lower( )
 
         if "asc" in order_by_dir:
             literal   = "ASC"
@@ -1374,13 +1497,32 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             widget.setCurrentIndex( 0 )  # set from map
             self.set_lat_long_for_location()
 
-# ----------------------------------------
-class PictureCriteriaTabBak( base_document_tabs.CriteriaTabBase, ):
-    """
-    criteria for list selection
-    moved to own file
-    """
+    # ----------------------------------
+    def select_nearby_pictures( self, data ):
+        """
+        select_nearby_pictures   zz
+        """
+        self.clear_criteria()
+        #rint( data )
 
+        # make a constant "Picked from the Map"
+        #form_data = dialog.get_form_data()
+        lat         = data[ "lat"  ]  # !! make arguments
+        long        = data[ "long" ]
+        size        = data[ "size" ]
+
+        size_widget = self.critera_widget_dict[ "size" ]
+        size_widget.setText( str( size ) )
+
+        self.location_dict[ "Picked from a Photo" ] = ( lat, long )
+        field_name  = "location_widget"  # the combo box
+        widget      = self.critera_widget_dict[ field_name ]
+        widget.setCurrentIndex( 1 )  # set from picture
+        self.set_lat_long_for_location()
+        # run the selection and activate list tab
+        self.criteria_select()
+        picture_document    = self.parent_window
+        picture_document.tab_folder.setCurrentIndex( picture_document.list_tab_index )
 
 # ----------------------------------------
 class PictureListTab( base_document_tabs.ListTabBase  ):
@@ -1388,7 +1530,7 @@ class PictureListTab( base_document_tabs.ListTabBase  ):
     This tab shows the picture list for the tab -
     used to give a large view of the picture
     """
-    def __init__(self, parent_window ):
+    def __init__( self, parent_window ):
         """
         the usual
         """
@@ -1400,30 +1542,74 @@ class PictureListTab( base_document_tabs.ListTabBase  ):
 
         # ---- buttons
         widget  = QPushButton( "Add To SlideShow" )
-        #widget.clicked.connect( self.add_to_show )
+        widget.clicked.connect( self.add_to_slideshow )
         layout.addWidget( widget)
 
+        # ---- "!!Add To Album"  look at
+        widget  = QPushButton( "!!Add To Album" )
+        widget.clicked.connect( self.add_to_album )
+        layout.addWidget( widget)
 
     # ----------------------------------------
-    def _build_guixxx( self ):
+    def add_to_slideshow( self ):
         """
-        may need but look in gui seems ok ??
-        tweak for date
-        need to match to column ix
-        rec_to_edit_cnv        = "cnv_int_to_qdate",
+        make a list and send off to the slideshow
+
         """
-        super()._build_gui(   )
-        view        = self.list_view
-        ix_col      = 5                   # need to match to schema or use header info
-        delegate    = base_document_tabs.DateFormatDelegate( view )
-        view.setItemDelegateForColumn( ix_col, delegate )
+        mdi_management  = AppGlobal.mdi_management
+        slideshow_doc   = mdi_management.get_a_doc_for_class( slideshow_subwindow.SlideShowSubWindow )
+
+        if  slideshow_doc is  None:
+            msg    = "add_album_to_slideshow not sure why we have this else message "
+            qsql_utils.ok_message_box(  title = "Action Needed:",
+                                        msg = msg )
+            logging.debug( msg )
+
+            return
+
+        start_dt     = time.time()
+
+        with gui_qt_ext.CursorContext():
+
+            model           = self.list_model
+            a_photo_list    = []
+            count           = 0
+            for row in range( model.rowCount() ):
+                record      = model.record(row)
+
+                photo_dict  =  {
+                                    "photo_id":        record.value( "id" ),
+                                    "photo_file":      record.value( "file" ),
+                                    "photo_sub_dir":   record.value( "sub_dir" ),
+                                    "photo_name":      record.value( "name" ),
+                                    }
+
+                if photo_dict[ "photo_file" ]:
+                    a_photo_list.append( photo_dict )
+                    count     += 1
+
+        slideshow_doc.add_a_photo_list( a_photo_list )
+
+        end_dt      = time.time()
+        msg         = ( f"select_record time = {end_dt - start_dt } sec" )
+        logging.info( msg )
+
+        msg         = f"Picture List added {count} pictures"
+        slideshow_doc.setup_tab.add_text( msg )
+
+    # ----------------------------------------
+    def add_to_album( self ):
+        """
+        what it says
+        """
+        1/0
 
 # ----------------------------------------
 class PictureDetailTab( base_document_tabs.DetailTabBase ):
     """
     Usual detail tab, here for the PictureDocument
     """
-    def __init__(self, parent_window  ):
+    def __init__( self, parent_window  ):
         """
         Args:
             parent_window (TYPE): DESCRIPTION.
@@ -1435,6 +1621,10 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         self.tab_name               = "PictureDetailTab"
         self.key_word_table_name    = "photo_key_word"
         self.post_init()
+
+        # we do not really need one for each document one for app would do
+        # except for field_dict
+        self.exif_to_ui    =  exif_extract_to_ui.ExifExtrctToUi( self.field_dict )
 
     #-------------------------------------
     def _build_gui( self ):
@@ -1456,7 +1646,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
 
         picture_layout  = QHBoxLayout( )
 
-        # mess with stretch below for right ballance
+        # mess with stretch below for right balance
         upper_layout.addLayout( field_layout,   stretch = 1 )
         upper_layout.addLayout( picture_layout, stretch = 1 )  # might be ok without
 
@@ -1485,36 +1675,50 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         sub_tab      = PictureBrowseSubTab( self )
         tab_folder.addTab( sub_tab, "Browse" )
 
-        sub_tab             = PictureAlbumtSubTab( self )
-        self.album_sub_tab  = sub_tab
+        sub_tab                 = PictureAlbumtSubTab( self )
+        self.album_sub_tab      = sub_tab
         tab_folder.addTab( sub_tab, "Albums" )
 
         self.prior_tab          = 0
         self.current_tab        = 0
 
         # Main notebook with tabs
-        detail_notebook           = QTabWidget()
-        self.detail_notebook      = detail_notebook
+        detail_notebook         = QTabWidget()
+        self.detail_notebook    = detail_notebook
 
         # ---- buttons
         widget  = QPushButton( "Add To Album" )
         widget.clicked.connect( self.add_to_show )
-        field_layout.addWidget( widget)
+        field_layout.addWidget( widget )
 
         # ---- .... "Clip FileName"
         widget  = QPushButton( "Clip FileName" )
         widget.clicked.connect( self.clip_filename )
-        field_layout.addWidget( widget)
+        field_layout.addWidget( widget )
 
         # ---- .... "Clip Lat Long"
         widget  = QPushButton( "Clip Lat, Long" )
         widget.clicked.connect( self.clip_lat_long )
-        field_layout.addWidget( widget)
+        field_layout.addWidget( widget )
 
-        # ---- .... "Map"
-        widget  = QPushButton( "Map" )
+        # ---- .... "Select Near"
+        widget  = QPushButton( "Select Near" )
+        widget.clicked.connect( self.select_nearby_pictures )
+        field_layout.addWidget( widget )
+
+        widget   = QLineEdit( "10" )
+        self.size_widget  = widget
+        field_layout.addWidget( widget )
+
+        # ---- ....  Earth lat long Map"
+        widget  = QPushButton( "Earth" )
         widget.clicked.connect( self.open_lat_long_map )
         field_layout.addWidget( widget)
+
+        # ---- pop up map
+        widget          = QPushButton( 'Pop Up Map' )
+        widget.clicked.connect( self.open_pop_up_map )
+        field_layout.addWidget( widget )
 
         # ---- .... "!!GEarth"
         widget  = QPushButton( "!!GEarth" )
@@ -1529,6 +1733,16 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         # ---- edit
         widget        = QPushButton( 'Edit')
         widget.clicked.connect( self.edit_file_name )
+        field_layout.addWidget( widget )
+
+        # ---- edit
+        widget        = QPushButton( '!!Delete (keep_file)')
+        #widget.clicked.connect( self.edit_file_name )
+        field_layout.addWidget( widget )
+
+        # ---- edit
+        widget        = QPushButton( '!!Delete (delete_file)')
+        #widget.clicked.connect( self.edit_file_name )
         field_layout.addWidget( widget )
 
     #---------------------------------
@@ -1556,7 +1770,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         """
         self._build_from_dict( layout )
 
-        # ---- !! temp fix untill all use field_dict
+        # ---- !! temp fix until all use field_dict
         self.file_field         = self.field_dict[ "file" ]
         self.sub_dir_field      = self.field_dict[ "sub_dir" ]
         edit_field              = self.field_dict[ "sub_dir" ]
@@ -1616,9 +1830,29 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
     def update_db( self, ):
         """
         promoted, but now extend for subjects, may later re-promote
+        ,093 add exif
         """
+
+        # here or validate ??
+        self.exif_to_ui.add_exif_data()
+
         super().update_db()
         self.subject_sub_tab.update_db()
+
+    # ----------------------------------
+    def open_pop_up_map( self ):
+        """
+
+        """
+        exif_lat    = string_utils.float_or_none( self.field_dict[ "exif_lat" ].text() )
+        exif_lon    = string_utils.float_or_none( self.field_dict[ "exif_lon" ].text() )
+
+        if not ( exif_lon and exif_lon ):
+            return
+
+        map_popup.show_map_popup( exif_lat, exif_lon, )
+            # show_map_popup( latitude, longitude, parent = None, *, zoom_start = 15, title = None, modal = False ):
+
 
     # ----------------------------------
     def open_lat_long_map( self ):
@@ -1811,7 +2045,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         get the file name into the clipboard
         """
         file_name   = self.get_picture_file_name()
-        subprocess.call(('xdg-open', file_name ) )  # linux only for now
+        subprocess.call(('xdg-open', file_name ) )  # Linux only for now
         #subprocess.Popen([ "bash", file_name ])
 
     # ------------------------------------------
@@ -1825,6 +2059,34 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
 
         subprocess.Popen([ editor, file_name ])
         QApplication.clipboard().setText( file_name )
+
+    # ------------------------------------------
+    def select_nearby_pictures( self, ):
+        """
+        zz
+        """
+        # could use the to dict or roll own here roll own
+        lat      =  string_utils.float_or_none( self.field_dict[ "exif_lat" ].get_raw_data() )
+        long     =  string_utils.float_or_none( self.field_dict[ "exif_lon" ].get_raw_data() )
+
+        size     = string_utils.float_or_none(  self.size_widget.text() )
+        if size is None:
+            size  = 100.
+
+        if lat is None   or long is None:
+            msg     = "select_nearby_pictures  lat long data missing"
+
+            gui_qt_ext.error_message_box( msg )
+            return
+
+        # ---- set up dict
+        data            = {}
+        data[ "lat"  ]  = lat
+        data[ "long" ]  = long
+        data[ "size" ]  = size
+
+        criteria_tab    = self.parent_window.criteria_tab
+        criteria_tab.select_nearby_pictures( data )
 
 # ==================================
 class PictureTextTab( base_document_tabs.TextTabBase ):
@@ -1841,12 +2103,11 @@ class PictureTextTab( base_document_tabs.TextTabBase ):
         self.post_init()
 
 # ==================================
-#class PictureBrowseSubTab( base_document_tabs.StuffdbTab   ):
 class PictureBrowseSubTab( QWidget ):
     """
     lets user browse for pictures and add to detail
     """
-    def __init__(self, parent_window  ):
+    def __init__( self, parent_window ):
         """
         this tab does not interact with the db directly
         it browses and previews picture files, and
@@ -1883,15 +2144,18 @@ class PictureBrowseSubTab( QWidget ):
         table_view          = QTableView()
         self.table_view     = table_view
 
+        # call a method at end
+        #view.setColumnWidth( ix_col, i_width * WIDTH_MULP )   # think width is in pixels ?
+
         # ---- timedateformatting
         date_column         = 1
-        delegate            = base_document_tabs.TableModelDateTimeDelegate(
+        delegate            = gui_qt_ext.TableModelDateTimeDelegate(
                                      date_column = date_column,
                                      parent = self  )
         table_view.setItemDelegateForColumn( date_column, delegate )
 
         table_view.clicked.connect( self.on_row_clicked )
-        # table_view.setModel( self.model )
+
         table_view.setModel( proxy_model )  # table_model for no sorting
 
         table_view.setSelectionBehavior( QTableView.SelectRows )
@@ -1923,7 +2187,7 @@ class PictureBrowseSubTab( QWidget ):
         # a_widget.clicked.connect( self.move_to_pic )
         # button_layout.addWidget( a_widget )
 
-        a_widget        = QPushButton( "move_all" )
+        a_widget        = QPushButton( "Move All" )
         self.launch_btn = a_widget
         a_widget.clicked.connect( self.move_all )
         button_layout.addWidget( a_widget )
@@ -1933,6 +2197,18 @@ class PictureBrowseSubTab( QWidget ):
         button_layout.addWidget( a_widget )
 
         self.set_column_width()
+
+    #-------------------------------------
+    def set_column_width( self ):
+        """
+        fighting with this put where search headers
+        work in version 64
+        """
+        # ---- width match to headers above
+        table_view    = self.table_view
+        table_view.setColumnWidth( 0, 650 )   # filename ?
+        table_view.setColumnWidth( 1, 130 )   # date
+        table_view.setColumnWidth( 2,  70 )   # what
 
     # -------------------------
     def browse( self, ):
@@ -1985,12 +2261,12 @@ class PictureBrowseSubTab( QWidget ):
                 # or atime } "      .st_mtime st_ctime st_atime
 
             row_data     = [ file, st_mtime, st_size ]
-            self.model.addRow( row_data)
+            self.model.addRow( row_data )
 
         self.display_file_at_row(  0  )
 
     #-------------------------------------------------
-    def open_move_all_dialog(self):
+    def open_move_all_dialog( self ):
         """
         """
         self.launch_btn.setEnabled(False)
@@ -2012,7 +2288,7 @@ class PictureBrowseSubTab( QWidget ):
         self.launch_btn.setEnabled(True)
 
     # --------------------------------------
-    def move_all_setup( self,  ):
+    def move_all_setup( self, ):
         """
         check that the setup is ok.
             check target directory exists
@@ -2040,7 +2316,7 @@ class PictureBrowseSubTab( QWidget ):
             picture_db_sub  = picture_db_sub[ 1: ]
 
         picture_db_root     = PARAMETERS.picture_db_root
-        picture_dir_path    = Path().joinpath( picture_db_root, picture_db_sub  )
+        picture_dir_path    = Path().joinpath( picture_db_root, picture_db_sub )
 
         record_state        = detail_tab.data_manager.record_state
 
@@ -2260,7 +2536,7 @@ class PictureBrowseSubTab( QWidget ):
             # !! need to end this now loops, an except would at least end the loop
             return
 
-        # parent_window.sub_dir_field.set_preped_data( db_sub )   --- maybe after move works
+        # parent_window.sub_dir_field.set_prepped_data( db_sub )   --- maybe after move works
         parent_window.file_field.set_preped_data( str( file_name_path_name ), is_changed = True )
 
         if not file_name_path_src.exists():
@@ -2306,19 +2582,20 @@ class PictureBrowseSubTab( QWidget ):
         """
 
         """
-        row = index.row()
+        source_index = self.proxy_model.mapToSource( index )
+        row           = source_index.row()
 
         # Retrieve the data for the entire row
-        row_data = [self.model.data(self.model.index(row, col)) for col in range(self.model.columnCount())]
+        row_data    = [ self.model.data(self.model.index( row, col )) for col in range( self.model.columnCount() ) ]
 
-        msg     = (f"on_row_clicked Row {row + 1} clicked: {row_data}")
+        msg         = (f"on_row_clicked {row = } clicked: {row_data}")
         logging.debug( msg )
 
         file_name   = row_data[0]   # what is 0 file name
         self.display_file( file_name )
 
     # -----------------------------
-    def display_file_at_row( self,  row  ):
+    def display_file_at_row( self, row ):
         """
         what it says, read
         note that this row may not exist, then work towards 0
@@ -2337,7 +2614,7 @@ class PictureBrowseSubTab( QWidget ):
             row = row_count -1
 
         self.select_row( row )
-        row_data = [self.model.data(self.model.index(row, col)) for col in range(self.model.columnCount())]
+        row_data = [ self.model.data(self.model.index(row, col)) for col in range(self.model.columnCount()) ]
 
         # msg       = ( f"display_file_at_row Row {row + 1}   {row_data}" )
         # logging.debug( msg )
@@ -2377,40 +2654,42 @@ class PictureBrowseSubTab( QWidget ):
     #          or delete
     #-------------------------------------
     def zoom_in(self):
+        """
+        what it says
+        """
         self.viewer.zoom_in()
         #rint("Zoomed In")
 
     #-------------------------------------
     def zoom_out(self):
+        """
+        what it says
+        """
         self.viewer.zoom_out()
         #rint("Zoomed Out")
 
+    #-------------------------------------
     def reset_zoom(self):
+        """
+        what it says
+        """
         self.viewer.reset_zoom()
         #rint("Zoom Reset")
 
     #-------------------------------------
     def fit_in_view(self):
         """
+        what it says
         """
         self.viewer.fit_in_view()
         #rint("PicturePictureTab Fit in View")
 
-    #-------------------------------------
-    def set_column_width( self ):
-        """
-        fighting with this put where search headers
-        work in version 64
-        """
-        # ---- width match to headers above
-        table_view    = self.table_view
-        table_view.setColumnWidth( 0, 200)   # filename ?
-        table_view.setColumnWidth( 1, 150)   # date
-        table_view.setColumnWidth( 2, 100)   # what
+
 
     #---------------------------
     def dup_check( self ):
-        """ """
+        """
+        """
         model           = self.model
         view            = self.table_view
 
@@ -2518,15 +2797,15 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         page                = self
 
         layout              = QHBoxLayout( page )
-        left_layout         = QVBoxLayout(   )
-        right_layout        = QVBoxLayout(   )
+        left_layout         = QVBoxLayout( )
+        right_layout        = QVBoxLayout( )
         layout.addLayout( left_layout )
         layout.addLayout( right_layout )
 
         button_layout        = left_layout  # need not add is a dup
 
         # ---- model_other
-        model, view         = self.make_table_model_view( "Choose", connect_dclick = None )
+        model, view         = self.make_table_model_view( "from Other Documents", connect_dclick = None )
         connect_to          = partial( self.add_from_selected, view )
         view.doubleClicked.connect( connect_to )
         #model_other.add_indexer(  self.model_other_ituple )
@@ -2543,7 +2822,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         right_layout.addWidget( view )
 
         # ----  model_display
-        model, view         = self.make_table_model_view( "Used", connect_dclick = None )
+        model, view         = self.make_table_model_view( "for this Picture", connect_dclick = None )
         self.model_display  = model
         self.view_display   = view
         right_layout.addWidget( view )
@@ -2573,32 +2852,58 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
 
-        widget        = QPushButton( 'clear' )
+        widget        = QPushButton( 'Clear' )
         connect_to    = self.model_other.clear_data
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
 
+        ## ---- Search -- ease of use go right to criteria, return button?
+        widget      = QPushButton( '!!Search' )
+        connect_to  = self.model_other.clear_data
+        #widget.clicked.connect( connect_to )
+        button_layout.addWidget( widget )
+
+        widget      = cw.CQDictComboBox(  self,
+                                             field_name = "search_dict", )
+
+        self.search_ddl_widget = widget
+
+
+        # ---- populate widget
+        a_dict      = { 0: "People",
+                        10: "Stuff",
+                        20: "twenty",
+                        30: "thirty" }
+
+        widget.pre_mutate( )
+        widget.dict_data   = a_dict
+        widget.post_mutate( )
+        widget.setCurrentIndex( 2 ) # need a set by key method
+        button_layout.addWidget( widget )
+
+
+        # ---- History
         widget        = QLabel( 'History-->' )
         button_layout.addWidget( widget )
 
-        widget        = QPushButton( 'add subj' )
-        connect_to    = partial( self.add_from_selected, self.view_history )
-        widget.clicked.connect( connect_to )
-        button_layout.addWidget( widget )
+        # widget        = QPushButton( 'add subj' )
+        # connect_to    = partial( self.add_from_selected, self.view_history )
+        # widget.clicked.connect( connect_to )
+        # button_layout.addWidget( widget )
 
-        widget        = QPushButton( 'clear' )
+        widget        = QPushButton( 'Clear' )
         connect_to    = self.model_history.clear_data
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
 
-        widget        = QLabel( 'our\nsubj-->' )
+        widget        = QLabel( 'Our\nsubj-->' )
         button_layout.addWidget( widget )
 
         widget        = QPushButton( "GoTo Subj"   )
         widget.clicked.connect( self.jump_to_subject )
         button_layout.addWidget( widget )
 
-        widget        = QPushButton( 'delete' )
+        widget        = QPushButton( 'Delete' )
         widget.clicked.connect( self.delete_record )
         button_layout.addWidget( widget )
 
@@ -2843,7 +3148,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         #model              = qt_with_logging.QSqlTableModelWithLogging(  self, self.db    )
         print( "delete_all note that rows will still be visible unless do something to refresh ")
         model  = self.model
-        # ia_qt.q_sql_table_model( model ) # inof about drop use
+        # ia_qt.q_sql_table_model( model ) # info about drop use
         # Loop through the rows in reverse order and delete them
         for row in range( model.rowCount() - 1, -1, -1 ):
             model.removeRow(row)
@@ -2938,7 +3243,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         ix_row_display  = ix_row   # because reuse below
 
         for ix_row in reversed( range( model.rowCount()) ):
-            # we do not need reversed but would if removeing several
+            # we do not need reversed but would if removing several
 
             index   = model.index( ix_row, model.fieldIndex( "table_joined" ) )
             i_table_name = model.data( index )  # loc var for debug
@@ -2966,30 +3271,8 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
 
             print( "!! apply update now or later look at rest of code ")
 
-            # id and table come from the gui model and id also callde
+            # id and table come from the gui model and id also called
             # may need hide here
-
-    # ------------------------------------------
-    def add_ix_otherxxxx( self, ix_row_integer ):
-        """
-        add the ix_integer other model to the subject models
-        may be dead
-        """
-        model_other     = self.model_other
-        data_list       = []
-        for ix_col in range( 3 ):
-            index     = model_other.index( ix_row_integer, ix_col )
-            data      = model_other.data( index, ) #role=Qt.DisplayRole)
-            data_list.append( data )
-
-        msg       = ( f"add_ix_other {ix_row_integer = } {data_list = }" )
-        logging.debug( msg )
-        msg       = ( "next call add to model all subjects>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<")
-        logging.debug( msg )
-
-        #self.add_to_model_all_subjects( self.current_id, table, table_id, info )
-        # next function seems not to exist
-        self.add_to_model_all_subjects( self.current_id, data_list[0], data_list[1], data_list[2] )
 
     # ------------------------------------------
     def add_from_selected( self, view_selected, ):
@@ -3000,7 +3283,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
             2024Dec   -- review and get to work
             perhaps at first just one then more later
         """
-        with base_document_tabs.CursorContext():
+        with gui_qt_ext.CursorContext():
             msg       = ( "add_from_selected -- getting close to working  ")
             logging.debug( msg )
 
@@ -3328,7 +3611,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
             for ix in range( len( columns ) +1 ):  # ?? list comp +1 for id
                 info         = f"{info} {query.value(ix)}"
 
-            # have util single space function ??
+            # have until single space function ??
             info     = info.strip()
             splits   = info.split( " " )
             info     = " ".join( splits )
@@ -3555,7 +3838,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         """
         msg       = ( "populate_model_other disabled, see update_sync_pre")
         logging.error( msg )
-        return
+
 
         # open_topics_list    = AppGlobal.mdi_management.open_topics    # list of dicts
         # model               = self.model_other
@@ -3723,7 +4006,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
     # ------------------------------------------
     def get_selectd_display_row( self, ):
         """
-        what it says  --- get_selectd_display_row ??
+        what it says  --- get_selected_display_row ??
 
         not right for multiple selections or none !
         QTableView TableModel
@@ -3783,7 +4066,7 @@ class AlbumSqlTableModel( QSqlRelationalTableModel ):
     what happened to column 1 stuff id
     """
     # ----------------------------
-    def __init__(self, parent=None, db=QSqlDatabase()):
+    def __init__( self, parent=None, db=QSqlDatabase() ):
         """ """
         super().__init__(parent, db)
         # Specify multiple columns to make non-editable (e.g., columns 1 and 2)
@@ -3803,7 +4086,7 @@ class AlbumSqlTableModel( QSqlRelationalTableModel ):
         return flags
 
     # ----------------------------
-    def data(self, index: QModelIndex, role = Qt.DisplayRole ):
+    def data( self, index: QModelIndex, role = Qt.DisplayRole ):
         """
         for special formatting
         and alignment
@@ -3812,6 +4095,7 @@ class AlbumSqlTableModel( QSqlRelationalTableModel ):
 
         if False:
             pass
+
         # Check role first
         elif role == Qt.DisplayRole:
             # if col == 4:  # match to code in view
@@ -3896,9 +4180,9 @@ class PictureAlbumtSubTab(  QWidget  ):
         button_layout   = QHBoxLayout()
         layout.addLayout( button_layout )
 
-        widget        = QPushButton('!!Jump to Album')
+        widget        = QPushButton('Jump to Album')
         #add_button    = widget
-        #widget.clicked.connect(self.loop_thru_subjects )
+        widget.clicked.connect( self.jump_to_album )
         button_layout.addWidget( widget )
 
     # ---------------------------------
@@ -3938,7 +4222,7 @@ class PictureAlbumtSubTab(  QWidget  ):
         #model              = QSqlTableModel( self, self.db )
         #model              = qt_with_logging.QSqlRelationalTableModelWithLogging( self, self.db )
         # model              =  QSqlRelationalTableModel( self, self.db )
-        model              = AlbumSqlTableModel( self, self.db )
+        model              = AlbumSqlTableModel( self, self.db )  # QSqlRelationalTableModel
 
         self.model         = model
 
@@ -3947,16 +4231,9 @@ class PictureAlbumtSubTab(  QWidget  ):
         model.setEditStrategy( QSqlTableModel.OnManualSubmit )
         # model_write.setEditStrategy( QSqlTableModel.OnFieldChange )
 
-        ix_foreign_key        = 0         # key to   position in table
-        #ix_foreign_key        = 6         # key to   position in table
-
-        foreign_table         = "photo_in_show"
-        foreign_table_key     = "photo_show_id"      # key joining
-
-        print( "_build_model see if there is a relation object" )
-        self.model.setRelation( ix_foreign_key, QSqlRelation( foreign_table,
-                                foreign_table_key,
-                                "id"  ))
+        # no setRelation() here -- photoshow.id is our own primary key, not a
+        # foreign key needing a lookup.  a relation on column 0 was clobbering
+        # it with photo_in_show.id, see select_by_id() for the photo_id filter
 
     # ---------------------------------------
     def select_by_id( self, a_id ):
@@ -3969,22 +4246,23 @@ class PictureAlbumtSubTab(  QWidget  ):
         model           = self.model
 
         # self.current_id  = id
-        # next fails
-        #this fails needs only column name model.setFilter( f"photo_in_show.photo_id = {id}" )
-        model.setFilter( f"photo_id = {a_id}" )
+        # self-contained subquery -- no join/relation needed, so it doesn't
+        # depend on setRelation() adding photo_in_show to the FROM clause
+        model.setFilter( f"id IN (SELECT photo_show_id FROM photo_in_show WHERE photo_id = {a_id})" )
+
         # # model_write.setFilter( f"pictureshow_id = {id} " )
         if not model.select():
-            debug_msg =  (f"select_by_id Last error: {model.lastError().text()}")
+            debug_msg   =  ( f"select_by_id Last error: {model.lastError().text()}" )
             logging.log( LOG_LEVEL,  debug_msg, )
 
-        if True:  # verbose debug -- should change to logging
-            debug_msg =  (f"select_by_id Database open: {self.db.isOpen()}")
+        if False:  # is this old junk not used try False verbose debug -- should change to logging !!
+            debug_msg   =  (f"select_by_id Database open: {self.db.isOpen()}")
             logging.log( LOG_LEVEL,  debug_msg, )
 
-            debug_msg =  ( "select_by_id now do a query and show id's" )
+            debug_msg   =  ( "select_by_id now do a query and show id's" )
             logging.log( LOG_LEVEL,  debug_msg, )
 
-            query = QSqlQuery(self.db)
+            query = QSqlQuery( self.db )
 
             # !! what, why ??
             query.exec( "SELECT * FROM photo_in_show WHERE photo_id = 1023" )
@@ -3995,14 +4273,14 @@ class PictureAlbumtSubTab(  QWidget  ):
             debug_msg =  ( "select_by_id now do a QSqlQueryModel and show rows returned" )
             logging.log( LOG_LEVEL,  debug_msg, )
 
-            model      = QSqlQueryModel(self)
-            model.setQuery(f"""
+            model      = QSqlQueryModel( self )
+            model.setQuery( f"""
                 SELECT photoshow.name, photoshow.id, photo_in_show.photo_id,
                        photo_in_show.sequence, photo_in_show.photo_show_id
                 FROM photoshow
                 JOIN photo_in_show ON photo_in_show.photo_show_id = photoshow.id
                 WHERE photo_in_show.photo_id = {a_id}
-            """, self.db)
+            """, self.db )
 
             debug_msg =  (f"check table select_by_id Rows returned: {model.rowCount()}")
             logging.log( LOG_LEVEL,  debug_msg, )
@@ -4103,6 +4381,77 @@ class PictureAlbumtSubTab(  QWidget  ):
         # chat says last
         #self.view.setModel( self.model )
 
+    # ------------------------------------------
+    def get_selected_row( self, ):
+        """
+        what it says  --- get_selectd_display_row ??
+
+        not right for multiple selections or none !
+        QTableView TableModel
+        self.model_display  = model
+        self.view_display   = view
+
+        """
+        view            = self.view
+        row             = -1
+        selection_model = view.selectionModel()
+        if selection_model:
+            selected_indexes = selection_model.selectedRows()
+
+            for index in selected_indexes:
+                row     = index.row()  # Get the row number
+                # msg     = ( f"Selected row: {row = }" )
+                # logging.debug(  msg )
+                break
+        else:
+            1/0
+
+        return row
+
+
+    # -----------------------
+    def jump_to_album( self, ):
+        """
+        jump to a album for first selected row
+        QTableView
+        QSqlQueryModel
+
+        !! currently finding the wron id
+
+        """
+        i_row      = self.get_selected_row()
+
+        if i_row < 0:
+
+            msg      = ( "Cannot find a selected row ")
+            QMessageBox.information( AppGlobal.main_window,
+                             "Problem:", msg )
+            return
+
+        model       = self.model
+        record      = model.record( i_row )
+
+        for ix in range( 20 ):
+            field           = model.record().field( ix )
+            i_field_value   = record.value( ix )
+            msg             = ( f"Field {ix}: {field.name()}, "
+                                f"Value {i_field_value} AutoValue: {field.isAutoValue()}" )
+            print( msg )
+
+        import info_about
+        msg                 = ( f"model {model = }" )
+        log_msg         = info_about.INFO_ABOUT.find_info_for(
+                        model,
+                        msg         = msg,
+                        print_it    = False
+                )
+        logging.log( LOG_LEVEL,  log_msg, )
+        print( log_msg )
+
+        table_id    = record.value( "id" )
+
+        AppGlobal.mdi_management.open_document_with_id( "album" , table_id )
+
     # -----------------------
     def update_db( self ):
         """
@@ -4122,8 +4471,7 @@ class PictureAlbumtSubTab(  QWidget  ):
 # ----------------------------------------
 class PictureHistorylTab( base_document_tabs.HistoryTabBase   ):
     """
-    new version -- to QTableWidget
-    may change ancestor ??
+    see init
     """
     def __init__(self, parent_window ):
         """
@@ -4132,4 +4480,9 @@ class PictureHistorylTab( base_document_tabs.HistoryTabBase   ):
         super().__init__( parent_window )
         self.tab_name   = "PictureHistorylTab"
 
-# ---- eof ------------------------------
+# ---- eof
+
+
+
+
+

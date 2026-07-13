@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Purpose:
-    Just starting new version for qt, some may be same as old or not
 
-        still tk code for some items
 
     part of my ( rsh ) library of reusable code
     a library module for multiple applications
@@ -17,7 +15,7 @@ Purpose:
         Search:
             PlaceInGrid
 
-Various classes to extend qt5 functionality
+Various classes to extend qt functionality
      browsers
      message frames
 
@@ -47,52 +45,35 @@ TEST
 
 # ---- imports
 
-
-from   qtpy.QtCore import ( QTimer, QDateTime,  Qt,   )
-
-
-#import PyQt.QtWidgets as qtw    #  qt widgets avaoid so much import below
-
-from   qtpy.QtWidgets import ( QApplication, QMainWindow, QToolBar, QMessageBox,
-                               QGridLayout,   QVBoxLayout,  QHBoxLayout,
-                               QTextEdit,    QGroupBox,  QPushButton,
-                               QWidget,      QLabel,     QLineEdit,  QFileDialog,
-                               QAction,       QCheckBox, )
-
-
-from   qtpy.QtGui import QTextCursor
-
-
-
-#from qt_compat import QCheckBox
-
-#from PyQt.QtWidgets import  , QToolBar, QMessageBox
-
-
-
-# from   PyQt.QtCore import Qt, QTimer
-
-
-# from   PyQt  import QtGui
 from   qtpy  import QtGui
+from   qtpy.QtCore import ( QDateTime,  Qt,    )
 
 
-#from   QtGui import QCursor
+from qtpy.QtGui  import ( QCursor,
+                          QTextCursor,
+                          QTextDocument,
+                          QAction, )
+
+from qtpy.QtGui import QColor, QBrush
+#import PyQt.QtWidgets as qtw    #  qt widgets avoid so much import below
+
+
+from qtpy.QtWidgets import (
+                            QApplication, QMessageBox,
+                            QGridLayout,   QVBoxLayout,       QGroupBox,  QPushButton,
+                            QWidget,      QLabel,     QLineEdit,  QFileDialog,
+                            QCheckBox,
+                            QStyledItemDelegate,
+
+                            QTextEdit,
+
+                             )
+
+
 QCursor  =  QtGui.QCursor
-#from   qtpy.QtGui     import QCursor
-
-#from PyQt.QtWidgets import QApplication,  QMainWindow
-#from PyQt.QtWidgets import QGridLayout,   QVBoxLayout
-#from PyQt.QtWidgets import QLabel,        QTextEdit,    QGroupBox,  QPushButton
-#from PyQt.QtWidgets import QApplication,  QWidget,      QLabel, QLineEdit, QPushButton, QFileDialog, QMessageBox
 
 
-#import sys
-#import os
 
-
-#import string_utils
-import string_utils as string_util
 import string_utils
 
 from   app_global import AppGlobal
@@ -106,9 +87,8 @@ logger          = logging.getLogger( )
 
 
 # for custom logging level at module
-LOG_LEVEL  = 5   # higher is more
-
-
+LOG_LEVEL   = 5   # higher is more
+NOGO        =  "That is a No Go"
 
 
 # ----- style sheets  gui_qt_ext.LINE_EDIT_READ_ONLY
@@ -141,13 +121,12 @@ def bring_to_top( root_frame  ):
     root_frame.deiconify()
 
 #---------------------
-def minimize_gui( root_frame  ):
+def minimize_gui( root_frame ):
     """
     What it says, read code
     gui.ttk_ext.minimize_gui( root )
     root frame is QMainWindow
     """
-    #root_frame.ShowMimized()
     root_frame.showMinimized()
     #rint( f"bring_to_top() {__name__}"  )
     # method 2
@@ -163,7 +142,6 @@ def maximize_gui( root_frame  ):
     gui.ttk_ext.minimize_gui( root )
     root_frame may be central_widget or its parent or....
     """
-    #root_frame.ShowMimized()
     root_frame.showMaximized()
     #rint( f"bring_to_top() {__name__}"  )
     # method 2
@@ -193,7 +171,7 @@ class SizedMessageBoxxxx( QMessageBox ):
     def showEvent(self, event):
         super().showEvent(event)
         self.custom_show_event( self, event )
-            # this is injected or replacable function
+            # this is injected or replaceable function
             # self twice since it is not in class
 
 
@@ -205,13 +183,232 @@ class SizedMessageBoxxxx( QMessageBox ):
         #     self.resize(self._rect.size())
 
 #---------------------
-class PositionMessageBox( QMessageBox ):
-    def __init__(self, *args, upper_left,  **kwargs):
-        """
-        upper_left is a point
+def custom_show_event( widget_self, event, rectangle,  ):
+    """
+    adjust with partial then pass to above
+    """
+    # widget_self.resize( widget_self.fixed_size )          # or self.setFixedSize(...)
+    # Optional: center on screen or parent
+    widget_self.setGeometry( rectangle  )
 
-        Pa
-        None.
+    # if widget_self.parent():
+    #     widget_self.move( widget_self.parent().geometry().center() - widget_self.rect().center())
+    # else:
+    #     screen = QApplication.primaryScreen().geometry()
+    #     widget_self.move(
+    #         (screen.width() - self.width()) // 2,
+    #         (screen.height() - self.height()) // 2
+    #   )
+
+
+#---------------------
+def color_toolbar_action( toolbar, action, bg_color, text_color):
+    """
+    from claud
+    Apply colors to a specific toolbar action
+
+    Args:
+        toolbar: QToolBar containing the action
+        action: QAction to color
+        bg_color: Background color (hex string)
+        text_color: Text color (hex string)
+
+    gui_qt_ext.color_toolbar_action( toolbar, action, bg_color = "#FF5555", text_color = "#FFFFFF" )
+                make/find some constans for these
+                color_toolbar_action(toolbar, action1, "#FF5555", "#FFFFFF")  # Red background
+                color_toolbar_action(toolbar, action2, "#55FF55", "#000000")  # Green background
+                color_toolbar_action(toolbar, action3, "#5555FF", "#FFFFFF")  # Blue background
+    """
+    if not toolbar or not action:
+        print("Error: Invalid toolbar or action")
+        return
+
+    # Get the QToolButton widget associated with this action
+    widget = toolbar.widgetForAction( action )
+
+    if widget:
+        stylesheet = f"""
+            QToolButton {{
+                background-color: {bg_color};
+                color: {text_color};
+                border: 1px solid #888;
+                border-radius: 3px;
+                padding: 5px;
+            }}
+            QToolButton:hover {{
+                background-color: {lighten_color(bg_color)};
+                border: 1px solid #000;
+            }}
+            QToolButton:pressed {{
+                background-color: {darken_color(bg_color)};
+            }}
+        """
+        widget.setStyleSheet(stylesheet)
+    #else:
+        #rint(f"Warning: Could not find widget for action '{action.text()}'")
+
+#---------------------
+def lighten_color( hex_color, factor=1.2):
+    """
+    Lighten a hex color for hover effect"""
+    try:
+        hex_color = hex_color.lstrip('#')
+        r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        r       = min(255, int(r * factor))
+        g       = min(255, int(g * factor))
+        b       = min(255, int(b * factor))
+        return f"#{r:02x}{g:02x}{b:02x}"
+
+    except ( ValueError, IndexError ):
+        return hex_color
+
+#---------------------
+def darken_color( hex_color, factor=0.8 ):
+    """Darken a hex color for pressed effect"""
+    try:
+        hex_color = hex_color.lstrip('#')
+        r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        r = int(r * factor)
+        g = int(g * factor)
+        b = int(b * factor)
+        return f"#{r:02x}{g:02x}{b:02x}"
+    except ( ValueError, IndexError ):
+        return hex_color
+
+#---------------------
+def about(  controller  ):
+    """
+    interfaces with controller and called back from gui
+    What it says, read code
+            url   =  r"coming soon not at http://www.opencircuits.com/TBD"
+        __, mem_msg   = cls.show_process_memory( )
+        msg  = f"{cls.controller.app_name}  version:{cls.controller.version} \n
+        by Russ Hensel\n  Memory in use {mem_msg} \n
+        Check <Help> or \n     {url} \n     for more info."
+        messagebox.showinfo( "About", msg,  )
+        #   tried ng: width=20  icon = "spark_plug_white.ico"
+    gui_qt_ext.about( controller )
+    """
+    message_box = QMessageBox( controller.gui )
+    message_box.setWindowTitle( "About this Application" )
+
+    msg         = ( f"{ controller.app_name}  version:{ controller.app_version}"
+                    f"\n  by Russ Hensel"
+                    # f"\n  Memory in use {mem_msg} "
+                    f"\n  Check <Help> or "
+                    f"\n  {controller.app_url} \n"
+                   )
+
+    message_box.setText( msg )
+
+    # message_box.setIcon(QMessageBox.Information)
+    box_exec  = message_box.exec( )
+
+#-----------------------------------
+def error_message_box( error_text ):
+    """
+    this is simple, plan to extend !!
+    Returns:
+        None
+    if not base_document_tabs.is_delete_ok():
+        return
+    may want to extend to position color... log
+    from base_document_tabs   is_delete_ok
+    gui_qt_ext.error_message_box( error_text )   # import gui_qt_ext
+
+    """
+    QMessageBox.information( AppGlobal.main_window,
+                             NOGO, error_text )
+
+# -----------------------------------
+class DateFormatDelegate( QStyledItemDelegate ):
+    """for table integer to date formats """
+
+    # -----------------------------------
+    def displayText(self, value, locale):
+
+        # Assuming the integer is a Unix timestamp in seconds
+        date = QDateTime.fromSecsSinceEpoch(int(value ) )
+        return date.toString("yyyy-MM-dd")  # Customize format as needed
+        #return super().displayText(value, locale)
+
+# -----------------------------------
+class DateTimeFormatDelegate( QStyledItemDelegate ):
+    """
+    for table integer to datetime formats
+    gui_qt_ext.DateTimeFormatDelegate
+    """
+
+    # -----------------------------------
+    def displayText( self, value, locale ):
+
+        date_time = QDateTime.fromSecsSinceEpoch(int( value ) )
+
+        return date_time.toString( "yyyy-MM-dd hh:mm:ss" )
+
+# -----------------------------------
+class ColoredRowDelegate( QStyledItemDelegate ):
+    """ """
+    def __init__(self, colored_rows = None, parent = None, color = '#FFDDC1'  ):
+        """
+        colored_rows   = {1, 3}  # Rows to color
+        delegate       = gui_qt_ext.ColoredRowDelegate( colored_rows, self )
+        view.setItemDelegate( delegate )
+
+        # '#FFDDC1' Light orange background
+
+        when applied can we change it either color or rows ?
+             or change and reapply??
+
+        """
+        super().__init__( parent )
+        self.colored_rows       = colored_rows if colored_rows is not None else set()
+        self.highlight_color    = color  # or use as interface -- will it work
+
+    # -----------------------------------
+    def initStyleOption(self, option, index):
+        """ """
+        super().initStyleOption(option, index)
+
+        if index.row() in self.colored_rows:
+            option.backgroundBrush = QBrush( QColor( self.highlight_color ) )
+
+        else:
+            option.backgroundBrush = QBrush( QColor('#FFFFFF') )  # Default white background
+
+# -----------------------------------
+class TableModelDateTimeDelegate( QStyledItemDelegate ):
+    """
+    for a qabstract table model from grok, slightly modified
+    """
+    def __init__(self, date_column=0, parent = None):
+        super().__init__(parent)
+        self.date_column = date_column  # Column index with integer timestamps
+
+    # -----------------------------------
+    def displayText(self, value, locale):
+        # Convert integer timestamp to datetime string for the specified column
+        # if isinstance( value, int ):
+        try:
+            # works
+            value   = int( value )
+            dt      = QDateTime.fromSecsSinceEpoch(value)
+            return dt.toString("yyyy-MM-dd hh:mm:ss")
+
+            # in a line??  -- think failed
+            #dt      = QDateTime.fromSecsSinceEpoch( int( value ) ).toString("yyyy-MM-dd hh:mm:ss")
+
+        except:
+            return str(value)  # Fallback if conversion fails
+
+        return str(value)
+
+#---------------------
+class PositionMessageBox( QMessageBox ):
+    def __init__( self, *args, upper_left,  **kwargs ):
+        """
+        the message box is opened at a position
+        upper_left is a point
 
         """
         super().__init__(*args, **kwargs)
@@ -237,135 +434,28 @@ class PositionMessageBox( QMessageBox ):
     #     print( "_apply_geometry" )
     #     self.setGeometry(self.rectangle)
 
-
-
-#---------------------
-def custom_show_event( widget_self, event, rectangle,  ):
+# -----------------------------------
+class CursorContext:
     """
-    adjust with partial then pass to above
+    chat context manager
+    gui_qt_ext.CursorContext   # import gui_qt_ext
+         replaces base_document_tabs.CursorContext
+    use         with CursorContext():
+                    ...... code
     """
-    # widget_self.resize( widget_self.fixed_size )          # or self.setFixedSize(...)
-    # Optional: center on screen or parent
-    widget_self.setGeometry( rectangle  )
+    # ---------------------------------
+    def __enter__(self):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
 
-    # if widget_self.parent():
-    #     widget_self.move( widget_self.parent().geometry().center() - widget_self.rect().center())
-    # else:
-    #     screen = QApplication.primaryScreen().geometry()
-    #     widget_self.move(
-    #         (screen.width() - self.width()) // 2,
-    #         (screen.height() - self.height()) // 2
-    #   )
-
-
-
-
-#---------------------
-def color_toolbar_action( toolbar, action, bg_color, text_color):
-        """
-
-        from claud
-        Apply colors to a specific toolbar action
-
-        Args:
-            toolbar: QToolBar containing the action
-            action: QAction to color
-            bg_color: Background color (hex string)
-            text_color: Text color (hex string)
-
-        gui_qt_ext.color_toolbar_action( toolbar, action, bg_color = "#FF5555", text_color = "#FFFFFF" )
-                    make/find some constans for these
-                    color_toolbar_action(toolbar, action1, "#FF5555", "#FFFFFF")  # Red background
-                    color_toolbar_action(toolbar, action2, "#55FF55", "#000000")  # Green background
-                    color_toolbar_action(toolbar, action3, "#5555FF", "#FFFFFF")  # Blue background
-        """
-        if not toolbar or not action:
-            print("Error: Invalid toolbar or action")
-            return
-
-        # Get the QToolButton widget associated with this action
-        widget = toolbar.widgetForAction( action )
-
-        if widget:
-            stylesheet = f"""
-                QToolButton {{
-                    background-color: {bg_color};
-                    color: {text_color};
-                    border: 1px solid #888;
-                    border-radius: 3px;
-                    padding: 5px;
-                }}
-                QToolButton:hover {{
-                    background-color: {lighten_color(bg_color)};
-                    border: 1px solid #000;
-                }}
-                QToolButton:pressed {{
-                    background-color: {darken_color(bg_color)};
-                }}
-            """
-            widget.setStyleSheet(stylesheet)
-        else:
-            print(f"Warning: Could not find widget for action '{action.text()}'")
-
-def lighten_color( hex_color, factor=1.2):
-    """
-    Lighten a hex color for hover effect"""
-    try:
-        hex_color = hex_color.lstrip('#')
-        r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
-        r       = min(255, int(r * factor))
-        g       = min(255, int(g * factor))
-        b       = min(255, int(b * factor))
-        return f"#{r:02x}{g:02x}{b:02x}"
-    except (ValueError, IndexError):
-        return hex_color
-
-def darken_color( hex_color, factor=0.8 ):
-    """Darken a hex color for pressed effect"""
-    try:
-        hex_color = hex_color.lstrip('#')
-        r, g, b = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
-        r = int(r * factor)
-        g = int(g * factor)
-        b = int(b * factor)
-        return f"#{r:02x}{g:02x}{b:02x}"
-    except (ValueError, IndexError):
-        return hex_color
-
-
-#---------------------
-def about(  controller  ):
-    """
-    interfaces with controller and called back from gui
-    What it says, read code
-            url   =  r"comming soon not at http://www.opencircuits.com/TBD"
-        __, mem_msg   = cls.show_process_memory( )
-        msg  = f"{cls.controller.app_name}  version:{cls.controller.version} \n  by Russ Hensel\n  Memory in use {mem_msg} \n  Check <Help> or \n     {url} \n     for more info."
-        messagebox.showinfo( "About", msg,  )   #   tried ng: width=20  icon = "spark_plug_white.ico"
-    gui_qt_ext.about( controller )
-    """
-    message_box = QMessageBox( controller.gui )
-    message_box.setWindowTitle( "About this Application" )
-
-    msg         = ( f"{ controller.app_name}  version:{ controller.app_version}"
-                    f"\n  by Russ Hensel"
-                    # f"\n  Memory in use {mem_msg} "
-                    f"\n  Check <Help> or "
-                    f"\n  {controller.app_url} \n"
-                   )
-
-    message_box.setText( msg )
-
-    # message_box.setIcon(QMessageBox.Information)
-    box_exec  = message_box.exec( )
-
+    # ---------------------------------
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        QApplication.restoreOverrideCursor()
 
 # ---------------------------------
 class FileBrowseWidget( QWidget ):
     """
-    where alreay used ??
+    where already used ??
     gui_qt_ext.FileBrowseWidget
-
 
     in stuff db
        /mnt/WIN_D/Russ/0000/python00/python3/_projects/stuffdb/file_browse.py
@@ -373,12 +463,11 @@ class FileBrowseWidget( QWidget ):
 
     adding to ./test
 
-
     """
     #-----------------------------
     def __init__(self, parent=None, entry_width=None):
         """
-        unclear wht this is or does is not a widget but
+        unclear what this is or does is not a widget but
         seems to contain widgets
 
         for now just see stuff code.
@@ -442,13 +531,13 @@ class FileBrowseWidget( QWidget ):
         return self.entry_1.text()
 
 
-
+#---------------------------------
 class DirBrowseWidget(QWidget):
     """
 
 
     """
-
+    # ---------------------------------
     def __init__(self, parent=None, initialdir=None, browse_title=None):
         super().__init__(parent)
         self.setWindowTitle("Directory Browse Widget")
@@ -467,6 +556,7 @@ class DirBrowseWidget(QWidget):
         self.initialdir = initialdir if initialdir else "/"
         self.browse_title = browse_title if browse_title else "Select Directory"
 
+    # ---------------------------------
     def browse(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks
@@ -481,18 +571,13 @@ class DirBrowseWidget(QWidget):
             selected_dir = dir_dialog.selectedFiles()
             self.set_text(selected_dir[0])
 
+    # ---------------------------------
     def set_text(self, a_string):
         self.entry_1.setText(a_string)
 
+    # ---------------------------------
     def get_text(self):
         return self.entry_1.text()
-
-
-# if __name__ == '__main__':
-#     app = QApplication(sys.argv)
-#     widget = DirBrowseWidget()
-#     widget.show()
-#     sys.exit(app.exec_())
 
 #  --------
 class MessageArea( QGroupBox ):
@@ -506,7 +591,7 @@ class MessageArea( QGroupBox ):
          make ctrl-c -v work
 
     add arguments to init
-    make buttons optiona !!
+    make buttons optional !!
     make disable always on !!
 
     message frame used in so many apps
@@ -538,7 +623,7 @@ class MessageArea( QGroupBox ):
 
 
     """
-        print( QApplication.instance())
+        #rint( QApplication.instance())
         super().__init__()
 
         # ---- build gui
@@ -548,7 +633,7 @@ class MessageArea( QGroupBox ):
         #group_placer   = PlaceInGrid(  self, by_rows = False )
 
         copy_button = QPushButton( "Copy Text" )
-        copy_button.clicked.connect(lambda: self.copy_text( ))
+        copy_button.clicked.connect( lambda: self.copy_text( ))
         group_placer.place( copy_button, rowspan = 1, columnspan = 1 )
 
         # Create QTextEdit widget
@@ -558,7 +643,7 @@ class MessageArea( QGroupBox ):
         group_placer.place( text_edit, rowspan = 8, columnspan = 3 )
 
         widget = QPushButton( "Delete Text" )
-        widget.clicked.connect(lambda: self.delete_text( ))
+        widget.clicked.connect( lambda: self.delete_text( ))
         widget.setMaximumWidth(150)
         #widget       = delete_button
         group_placer.new_row( )
@@ -577,10 +662,8 @@ class MessageArea( QGroupBox ):
         group_placer.new_row( )
         group_placer.place( widget, rowspan = 1, columnspan = 1 )
 
-        widget      = QPushButton("Clear")
+        widget          = QPushButton("Clear")
         widget.clicked.connect( lambda: self.clear_text( ) )
-        clear_button = widget
-        # layout.addWidget(copy_selected_button, 6, 0)
         group_placer.new_row( )
         group_placer.place( widget, rowspan = 1, columnspan = 1 )
 
@@ -590,88 +673,11 @@ class MessageArea( QGroupBox ):
         state                       = True
         self.auto_scroll_widget.setChecked( state )
         self.auto_scroll = state
-        # layout.addWidget(copy_selected_button, 6, 0)
         group_placer.new_row( )
         group_placer.place( widget, rowspan = 1, columnspan = 1 )
 
     # ---------------  end of button actions and class
-    # ---------------------------------------
-    def print_stringxxxx( self, a_string,
-                     plus_newline    = True,
-                     title           = "",
-                     clear           = False,
-                     update_now      = False ):
-        """
-        this is old tk  .... fix ?? for now redirect o display_string
-        msg_frame.print( a_string _  )
-        print to message area, with scrolling and
-        log if we are configured for it
-        should we have a prefix, or just do in the call?? or gui
-        parameters.gui_text_log_fn    = False  # "gui_text.log"       # a file name or something false
 
-        parameters.log_gui_text       = False # True or false to log text
-        parameters.log_gui_text_level = 10    # logging level for above
-
-        a_string,
-        plus_newline,
-        title = "",
-        clear = False,
-        update_now = False
-        plus_newline
-        !! dup with display_string ??
-
-        """
-        self.display_string( a_string )
-
-        return
-
-
-
-        if  AppGlobal.parameters.gui_text_log_fn:
-
-            with open( AppGlobal.parameters.gui_text_log_fn, "a"  ) as a_file:
-                a_file.write( a_string )   # do we need \n check
-                #rint(   a_string )
-
-        if  AppGlobal.parameters.log_gui_text:
-            AppGlobal.logger.log( AppGlobal.parameters.log_gui_text_level, a_string, )
-
-        if clear:
-            self.clear_message_area()
-
-        if  title != "":
-            self.msg_text.insert( tk.END, title, )
-
-        if plus_newline:
-            a_string = a_string + "\n"
-
-        # now the meat
-        self.msg_text.insert( tk.END, a_string, )      # this is going wrong, why how
-
-        # limit the number of lines
-        try:
-            numlines = int( self.msg_text.index('end - 1 line').split('.')[0] )
-                # !! beware int( None ) how could it happen ?? it did this is new
-        except Exception as exception:
-            # look in logs to find
-            msg  = f"MessageFrame, indexing exception {exception}"
-            AppGlobal.logger.error( msg )
-            print( msg )
-            numlines = 0
-
-        if numlines > self.max_lines:
-            cut  = int( numlines/2  )    # lines to keep/remove
-            self.msg_text.delete( 1.0, str( cut ) + ".0" )               # remove excess text
-#            msg     = "Delete from test area at " + str( cut )
-#            self.logger.info( msg )
-
-        # auto scroll
-        if self.cb_scroll_var.get():
-            self.msg_text.see( tk.END )
-
-        if update_now:
-            AppGlobal.gui.root.update()
-            print( "!! self.root not valid here ")
 
     # ---------------------------------------
     def display_string( self, a_string, update_now = False ):
@@ -713,7 +719,7 @@ class MessageArea( QGroupBox ):
 #             numlines = int( self.msg_text.index( 'end - 1 line' ).split('.')[0] )
 #                 # !! beware int( None ) how could it happen ?? it did this is new
 #         except Exception as exception:
-#         # Catch the custom exception -- !! to broad execpt
+#         # Catch the custom exception -- !! to broad except
 #             AppGlobal.logger.error( str( exception ) )
 #             print( exception )
 #             numlines = 0
@@ -745,7 +751,7 @@ class MessageArea( QGroupBox ):
         really set from check box
         the state you get is the new one
         """
-        state           =  self.auto_scroll_widget.isChecked() # after  state has xhanged
+        state           =  self.auto_scroll_widget.isChecked() # after  state has changed
         self.auto_scroll_widget.setChecked( state ) # why it does not change auto
 
         self.auto_scroll = state
@@ -765,31 +771,32 @@ class MessageArea( QGroupBox ):
     def copy_text(self,  ):
         """
         returns
-            mutates clpboard all text in the text_widget into the clipboard
+            mutates clipboard all text in the text_widget into the clipboard
             None
         """
         text_edit     = self.text_edit
         selected_text = text_edit.toPlainText()
         QApplication.clipboard().setText(selected_text)
-        print(  f" copy_text -> {selected_text }" )
+        #rint(  f" copy_text -> {selected_text }" )
 
     #-------------------
-    def delete_text(self,  ):
+    def delete_text( self,  ):
         self.text_edit.clear()
 
     #------------------------------
-    def append_text(self, text, add_nl = True ):
+    def append_text( self, text, add_nl = True ):
         """may include new line """
         text_edit   = self.text_edit
         # self.text_edit.append( text )  adds nl at end
         text_edit.moveCursor( QTextCursor.MoveOperation.End )
+
         if add_nl:
             text = text + "\n"  # and cr ???
         text_edit.insertPlainText( text )
-        if self.auto_scroll:
 
+        if self.auto_scroll:
             text_edit   = self.text_edit
-            cursor      = text_edit.textCursor()
+            # cursor      = text_edit.textCursor()
             # cursor.movePosition(cursor.Start)
             # text_edit.setTextCursor(cursor)
             text_edit.ensureCursorVisible()
@@ -800,323 +807,11 @@ class MessageArea( QGroupBox ):
         cursor.insertText(text)
 
     # --------------------------------
-    def copy_selected_text(self,  ):
+    def copy_selected_text( self, ):
         """ """
         selected_text = self.text_edit.textCursor().selectedText()
         QApplication.clipboard().setText(selected_text)
-        print(  f" copy_selected_text -> {selected_text }" )
-
-
-#  --------
-class MessageAreaOldPlacerxxx( QGroupBox ):
-    def __init__( self ):
-
-        """
-        widget   =  gui_qt_ext.MessageArea()
-    need to add or make new class to be an edit window
-         get rid of buttons
-         get all text programatically
-         make ctrl-c -v work
-
-    add arguments to init
-    make buttons optiona !!
-    make disable always on !!
-
-    message frame used in so many apps
-
-        a_frame            = gui_qt_ext.MessageArea(    )
-
-
-    # ----------- from web search -------------------------------   gui_qt_ext.MessageArea
-    def _make_message_frame( self, parent,  ):
-        x""
-        make the message frame for user feedback
-        x""
-        message_widget       = gui_qt_ext.MessageArea()
-        self.message_frame   = message_widget
-        return message_widget
-
-
-
-        self.message_frame = a_frame
-        return a_frame
-
-    Interface
-         functions
-         self.max_lines
-         self.msg_text
-         self.button_widgets
-         do_clear_button()
-         print_string()
-
-
-    """
-        print(QApplication.instance())
-        super().__init__()
-
-        # ---- build gui
-        group_placer   = PlaceInGrid(  self, by_rows = False )
-
-        copy_button = QPushButton( "Copy Text" )
-        copy_button.clicked.connect(lambda: self.copy_text( ))
-        group_placer.place( copy_button, rowspan = 1, columnspan = 1 )
-
-        # Create QTextEdit widget
-        text_edit = QTextEdit()
-        # layout.addWidget(text_edit, 4, 0, 1, 3)  # Row 4, Column 0, RowSpan 1, ColumnSpan 3
-        self.text_edit  = text_edit
-        group_placer.place( text_edit, rowspan = 8, columnspan = 3 )
-
-        widget = QPushButton( "Delete Text" )
-        widget.clicked.connect(lambda: self.delete_text( ))
-        widget.setMaximumWidth(150)
-        #widget       = delete_button
-        group_placer.new_row( )
-        group_placer.place( widget, rowspan = 1, columnspan = 1 )
-
-        insert_button = QPushButton("Insert Text")
-        insert_button.clicked.connect(lambda: self.insert_text(  "Inserted Text"))
-        widget        = insert_button
-        group_placer.new_row( )
-        group_placer.place( widget, rowspan = 1, columnspan = 1 )
-
-        copy_selected_button = QPushButton("Copy Selected Text")
-        copy_selected_button.clicked.connect(lambda: self.copy_selected_text( ))
-        widget = copy_selected_button
-        # layout.addWidget(copy_selected_button, 6, 0)
-        group_placer.new_row( )
-        group_placer.place( widget, rowspan = 1, columnspan = 1 )
-
-        widget      = QPushButton("Clear")
-        widget.clicked.connect( lambda: self.clear_text( ) )
-        clear_button = widget
-        # layout.addWidget(copy_selected_button, 6, 0)
-        group_placer.new_row( )
-        group_placer.place( widget, rowspan = 1, columnspan = 1 )
-
-        widget                      = QCheckBox( "Auto Scroll")
-        widget.clicked.connect( self.set_auto_scroll )
-        self.auto_scroll_widget     = widget
-        state                       = True
-        self.auto_scroll_widget.setChecked( state )
-        self.auto_scroll = state
-        # layout.addWidget(copy_selected_button, 6, 0)
-        group_placer.new_row( )
-        group_placer.place( widget, rowspan = 1, columnspan = 1 )
-
-    # ---------------  end of button actions and class
-    # ---------------------------------------
-    def print_stringxxxx( self, a_string,
-                     plus_newline    = True,
-                     title           = "",
-                     clear           = False,
-                     update_now      = False ):
-        """
-        this is old tk  .... fix ?? for now redirect o display_string
-        msg_frame.print( a_string _  )
-        print to message area, with scrolling and
-        log if we are configured for it
-        should we have a prefix, or just do in the call?? or gui
-        parameters.gui_text_log_fn    = False  # "gui_text.log"       # a file name or something false
-
-        parameters.log_gui_text       = False # True or false to log text
-        parameters.log_gui_text_level = 10    # logging level for above
-
-        a_string,
-        plus_newline,
-        title = "",
-        clear = False,
-        update_now = False
-        plus_newline
-        !! dup with display_string ??
-
-        """
-        self.display_string( a_string )
-
-        return
-
-
-
-        if  AppGlobal.parameters.gui_text_log_fn:
-
-            with open( AppGlobal.parameters.gui_text_log_fn, "a"  ) as a_file:
-                a_file.write( a_string )   # do we need \n check
-                #rint(   a_string )
-
-        if  AppGlobal.parameters.log_gui_text:
-            AppGlobal.logger.log( AppGlobal.parameters.log_gui_text_level, a_string, )
-
-        if clear:
-            self.clear_message_area()
-
-        if  title != "":
-            self.msg_text.insert( tk.END, title, )
-
-        if plus_newline:
-            a_string = a_string + "\n"
-
-        # now the meat
-        self.msg_text.insert( tk.END, a_string, )      # this is going wrong, why how
-
-        # limit the number of lines
-        try:
-            numlines = int( self.msg_text.index('end - 1 line').split('.')[0] )
-                # !! beware int( None ) how could it happen ?? it did this is new
-        except Exception as exception:
-            # look in logs to find
-            msg  = f"MessageFrame, indexing exception {exception}"
-            AppGlobal.logger.error( msg )
-            print( msg )
-            numlines = 0
-
-        if numlines > self.max_lines:
-            cut  = int( numlines/2  )    # lines to keep/remove
-            self.msg_text.delete( 1.0, str( cut ) + ".0" )               # remove excess text
-#            msg     = "Delete from test area at " + str( cut )
-#            self.logger.info( msg )
-
-        # auto scroll
-        if self.cb_scroll_var.get():
-            self.msg_text.see( tk.END )
-
-        if update_now:
-            AppGlobal.gui.root.update()
-            print( "!! self.root not valid here ")
-
-    # ---------------------------------------
-    def display_string( self, a_string, update_now = False ):
-        """
-        !! we may phase out for print_string  or the reverse ??
-             make one call the other
-        print to message area, with scrolling and
-        log if we are configured for it
-
-        parameters.gui_text_log_fn    = False  # "gui_text.log"
-                                               # a file name or something false
-
-
-        parameters.log_gui_text       = False # True or false to log text
-        parameters.log_gui_text_level = 10    # logging level for above
-
-        !! add parameter clear_msg = True or false
-
-        """
-        #rint(  f"MessageArea.display_string, with a_string = {a_string}")
-        # return
-        #   try  !!!  QTextEdit.clear()
-        cursor = self.text_edit.textCursor()
-        # cursor.movePosition( QTextCursor::End )
-        cursor.insertText( a_string )
-
-#         #rint( "debug for display_string")
-#         if  AppGlobal.parameters.gui_text_log_fn:
-#             # for now open close.... later perhaps improve
-#             with open( AppGlobal.parameters.gui_text_log_fn, "a"  ) as a_file:
-#                 a_file.write( a_string )   # do we need \n check
-#                 #rint(   a_string )
-
-#         if  AppGlobal.parameters.log_gui_text:
-#             AppGlobal.logger.log( AppGlobal.parameters.log_gui_text_level, a_string, )
-
-#         self.msg_text.insert( tk.END, a_string, )      # this is going wrong, why how
-#         try:
-#             numlines = int( self.msg_text.index( 'end - 1 line' ).split('.')[0] )
-#                 # !! beware int( None ) how could it happen ?? it did this is new
-#         except Exception as exception:
-#         # Catch the custom exception -- !! to broad execpt
-#             AppGlobal.logger.error( str( exception ) )
-#             print( exception )
-#             numlines = 0
-#         if numlines > self.max_lines:
-#             cut  = int( numlines/2  )    # lines to keep/remove
-#             self.msg_text.delete( 1.0, str( cut ) + ".0" )
-#                 # remove excess text
-# #            msg     = "Delete from test area at " + str( cut )
-# #            self.logger.info( msg )
-
-#         if self.cb_scroll_var.get():
-#             self.msg_text.see( tk.END )
-
-#         if update_now:
-#             AppGlobal.gui.root.update()
-#             print( "!! self.root not valid here ")
-
-    #  --------
-    def print_message(self, text):
-        print("Button clicked:", text)
-
-    #--------
-    def clear_text( self ):
-        self.text_edit.clear()
-
-    #  --------
-    def set_auto_scroll( self ):
-        """
-        really set from check box
-        the state you get is the new one
-        """
-        state           =  self.auto_scroll_widget.isChecked() # after  state has xhanged
-        self.auto_scroll_widget.setChecked( state ) # why it does not change auto
-
-        self.auto_scroll = state
-
-    #-------------
-    def get_plain_text(self,  ):
-        """
-        returns
-            text in the text_edit
-        """
-        text_edit     = self.text_edit
-        selected_text = text_edit.toPlainText()
-        return selected_text
-        #print(  f" copy_text -> {selected_text }" )
-
-    #-------------
-    def copy_text(self,  ):
-        """
-        returns
-            mutates clpboard all text in the text_widget into the clipboard
-            None
-        """
-        text_edit     = self.text_edit
-        selected_text = text_edit.toPlainText()
-        QApplication.clipboard().setText(selected_text)
-        print(  f" copy_text -> {selected_text }" )
-
-    #-------------------
-    def delete_text(self,  ):
-        self.text_edit.clear()
-
-    #------------------------------
-    def append_text(self, text, add_nl = True ):
-        """may include new line """
-        text_edit   = self.text_edit
-        # self.text_edit.append( text )  adds nl at end
-        text_edit.moveCursor( QTextCursor.MoveOperation.End )
-        if add_nl:
-            text = text + "\n"  # and cr ???
-        text_edit.insertPlainText( text )
-        if self.auto_scroll:
-
-            text_edit   = self.text_edit
-            cursor      = text_edit.textCursor()
-            # cursor.movePosition(cursor.Start)
-            # text_edit.setTextCursor(cursor)
-            text_edit.ensureCursorVisible()
-
-    #------------------------------
-    def insert_text( self,  text ):
-        cursor = self.text_edit.textCursor()
-        cursor.insertText(text)
-
-    # --------------------------------
-    def copy_selected_text(self,  ):
-        """ """
-        selected_text = self.text_edit.textCursor().selectedText()
-        QApplication.clipboard().setText(selected_text)
-        print(  f" copy_selected_text -> {selected_text }" )
-
-
+        #rint(  f" copy_selected_text -> {selected_text }" )
 
 # -----------------------------------
 class CQGridLayout( QGridLayout ) :
@@ -1129,7 +824,7 @@ class CQGridLayout( QGridLayout ) :
         needs to be anywhere go to next row
 
     unclear what happens when columnspan will overrun the col_max
-    might experiment and offere options
+    might experiment and offer options
 
     self.ix_row
     self.ix_col are port of the interface, but how does
@@ -1138,22 +833,13 @@ class CQGridLayout( QGridLayout ) :
     """
     def __init__( self,   *, col_max = 0, indent = 0   ):
         super().__init__(  )
-        self.col_max    = col_max  # 0 no max
-        self.ix_row     = 0
-        self.ix_col     = 0
-        self.indent     = indent  # an idea but what idea
-        # for debug valuse just prior to addWidget
-        self.last_ix_row  = None
-        self.last_ix_col  = None
-        #self.last_stretch = None
-        # or call reset
-        self.reset
+        self.reset( col_max = col_max, indent = indent  )
 
     # -----------------------------------
     def reset( self,  *, col_max = 0, indent = 0   ):
         """
-        for debug may become more pearmanent
-        grids my have enouth internal state that they should
+        for debug may become more permanent
+        grids my have enough internal state that they should
         not be reused
         """
         self.col_max        = col_max  # 0 no max
@@ -1165,7 +851,7 @@ class CQGridLayout( QGridLayout ) :
         self.last_ix_col    = None
         #self.last_stretch = None
 
-        print( "CQGridLayout_reset================>", self )
+        #rint( "CQGridLayout_reset================>", self )
 
     # -----------------------------------
     def addWidget( self,
@@ -1204,7 +890,7 @@ class CQGridLayout( QGridLayout ) :
         super().addWidget( widget, self.ix_row, self.ix_col, rowspan, columnspan )
             #  row, column, rowspan, columnspan
 
-        # if columnspan is None: not sure what is devault
+        # if columnspan is None: not sure what is default
         #     # make default
         #     columnspan = 1
 
@@ -1241,7 +927,6 @@ class CQGridLayout( QGridLayout ) :
         rowspan will be passed on but is not accounted for by
         self.ix_row
 
-
         """
         if self.ix_row is None:
             self.ix_row  = 0
@@ -1267,7 +952,7 @@ class CQGridLayout( QGridLayout ) :
         # later check for nones and delta
         super().addLayout( layout, self.ix_row, self.ix_col, ) # rowspan, columnspan )
 
-        # if columnspan is None: not sure what is devault
+        # if columnspan is None: not sure what is default
         #     # make default
         #     columnspan = 1
 
@@ -1275,17 +960,12 @@ class CQGridLayout( QGridLayout ) :
         self.ix_col    += columnspan
         if self.col_max and ( self.ix_col  >= self.col_max ):
             self.new_row()
-            # is self.new_row better here?
-            # self.ix_row    += 1
-            # self.ix_col    = 0
 
-            debug_msg       = f"addLayoutt__increment row {self}  "
+            debug_msg       = f"addLayout  increment row {self}  "
             logging.log( LOG_LEVEL,  debug_msg, )
         # else:  # for debug
         #     pass
         #     print( self )
-
-
 
     # ------------------------think bad indent-----------
     def place( self,
@@ -1315,25 +995,12 @@ class CQGridLayout( QGridLayout ) :
     # ----------------------
     def get_add_parm_str( self, ):
         """
-        for debugging lable controls wit this
+        for debugging label controls wit this
         """
         msg       = f"r{self.last_ix_row},c{self.last_ix_col} s{self.last_columnspan}"
         return msg
         #super().addWidget( widget, self.ix_row, self.ix_col )
 
-    def __str__( self, ):
-        """ """
-        a_str   = ""
-        a_str   = ">>>>>>>>>>* CQGridLayout *<<<<<<<<<<<<"
-        a_str   = string_util.to_columns( a_str, ["col_max",
-                                           f"{self.col_max}" ] )
-        a_str   = string_util.to_columns( a_str, ["indent",
-                                           f"{self.indent}" ] )
-        a_str   = string_util.to_columns( a_str, ["ix_col",
-                                           f"{self.ix_col}" ] )
-        a_str   = string_util.to_columns( a_str, ["ix_row",
-                                           f"{self.ix_row}" ] )
-        return a_str
 
     # -----------------------------------
     def new_row( self, delta_row = 1, indent = None ):
@@ -1342,18 +1009,27 @@ class CQGridLayout( QGridLayout ) :
         !! also for col
         """
         if indent is None:
-            indent = self.indent    # or vise versa
+            indent = self.indent    # or vise
+
         else:
             self.indent = indent
+
         self.ix_row     += delta_row
         self.ix_col      = indent
         debug_msg       =( f"new_row {self.ix_row = }  {self.ix_col = }")
         logging.log( LOG_LEVEL,  debug_msg, )
 
+    #--------------------------
+    def __str__( self ):
+        """
+        universal __str__
+        """
+        return string_utils.obj_to_str( self )
 
 # -----------------------------------
 class PlaceInGrid( ):
     """
+    DO NOT USE IN NEW WORK PHASE OUT
     old tk comment, some applies to qt some not
     called sequentially to help layout grids in a row and column format
     columnspan=2, rowspan=2
@@ -1381,34 +1057,19 @@ class PlaceInGrid( ):
         uses  layout a QGridLayout()
         placer = gui_qt_ext.PlaceInGrid( parent_widget, a_max, by_rows = False)
         Args:
-               parent_widget  container for the widges that this will place
+               parent_widget  container for the widgets that this will place
                 a_max, may want to change to by name and default to 0 which is unlimited
                 by_rows  --- require name ?? default
 
         """
-        # if central_widget:
-        #     self.central_widget = central_widget
-        # else:
-        #     print( "creating central widget " )
-        #     self.central_widget = QWidget()
-
-        # a_window.setCentralWidget( self.central_widget )
-
-        # self.window   = a_window   # for later ref
-
-        # if layout:
-        #     self.layout   = layout
-        # else:
-        #     print( "creating layout" )
-        #     self.layout   = QGridLayout()
-
         self.central_widget = central_widget
         self.layout         = QGridLayout()
+
         if  isinstance(  central_widget,  QVBoxLayout ):  # should be more here
             self.central_widget.addLayout( self.layout )
+
         else:
             self.central_widget.setLayout( self.layout )
-            pass   # for debug
 
         #rint( f"PlaceInGrid __init__ central_widget.layout(){ central_widget.layout()} " )
         self.debug_id       = "default_id"  # use as part of interface
@@ -1420,12 +1081,11 @@ class PlaceInGrid( ):
         self.indent         = 0    # interface and set by new_row
 
         if by_rows:
-            self.function =  self._place_down_row_
+            1/0   # droped this option
+            #self.function =  self._place_down_row_
 
         else:
             self.function =  self._place_across_col_
-
-
 
     # -----------------------------------
     def addWidget( self,
@@ -1453,8 +1113,8 @@ class PlaceInGrid( ):
                ):
         """
 
-        move row or column by delta grid spacings after pacing control
-        what is row span vs deltac
+        move row or column by delta grid spacing's after pacing control
+        what is row span vs delta
         args:
             widget     -> the widget being placed
             columnspan -> the column span               left over from tk not implemented
@@ -1473,7 +1133,7 @@ class PlaceInGrid( ):
     # -----------------------------------
     def place_filler( self,  stretch   = 1, widget = None  ):
         """
-        place a filler widget that will streach
+        place a filler widget that will stretch
         filler is layed out in the central_widget layout ?
         need to fix for widget = None
         """
@@ -1487,48 +1147,21 @@ class PlaceInGrid( ):
         ix_col_stretch  = self.ix_col + 1
 
         self.layout.setColumnStretch( ix_col_stretch, stretch )
-        print( f"-------- end place filler  ----- col >{ix_col_stretch}<  row >{self.ix_row}< ---- {stretch}-----")
+        #rint( f"-------- end place filler  ----- col >{ix_col_stretch}<  row >{self.ix_row}< ---- {stretch}-----")
         # seems keywords not allowed in addWidget, just by position
         self.layout.addWidget(  widget,
                                 self.ix_row,
                                 ix_col_stretch ,
-                                # column_span,       # columnSpan -1, then the widget will extend to the
-                                                    #     bottom and/or right edge, respectively.
-                                # row_span,          # rowSpan
+        # column_span,       # columnSpan -1, then the widget will extend to the
+                            #     bottom and/or right edge, respectively.
+        # row_span,          # rowSpan
 
-                                #1,    #Alignment or flag  Qt.Alignment()]]])     # is it a list ? The alignment is specified by alignment .
-                                                    #The default alignment is 0, which means that the widget fills the entire cell.
+        #1,    #Alignment or flag  Qt.Alignment()]]])
+            # is it a list ? The alignment is specified by alignment .
+            #The default alignment is 0, which means that the widget fills the entire cell.
                                 )
 
-    # -----------------------------------
-    def _place_down_row_( self, a_widget, columnspan, rowspan, sticky = None ):
-        """
-        one of the value intended for self.function
-        does its name
-        not much tested
-        need to add sticky
-        """
-        # if sticky is None:
-        #     sticky = self.sticky
 
-        #rint( f"_place_down_row_ row = {self.ix_row} col = {self.ix_col}"  )
-        # a_widget.grid( row          = self.ix_row,
-        #               column        = self.ix_col,
-        #               rowspan       = rowspan,
-        #               sticky        = sticky,  )
-        1/0
-
-        self.layout.addWidget( a_widget,
-                               self.ix_row,
-                               self.ix_col ,
-                               columnSpan     = columnspan,
-                               rowSpan        = rowspan,    )
-
-        self.ix_row += rowspan
-        if ( self.max > 0  ) and ( self.ix_row >= self.max ):
-            #rint( f"{self.debug_id} hit max row {self.max}"  )
-            self.ix_col += 1
-            self.ix_row  = 0
 
     # -----------------------------------
 #    delta_row_col( delta_row, delta_col )
@@ -1537,7 +1170,7 @@ class PlaceInGrid( ):
     def new_column( self, delta = 1,  ):
         """
         start a new column in row 0
-        for going down columns not aacross
+        for going down columns not across
 
         """
         self.ix_row     = 0
@@ -1557,7 +1190,7 @@ class PlaceInGrid( ):
         self.ix_col      = indent
 
         # -----------------------------------
-    def dwn_and_back( self,  delta_row = 1 ):
+    def dwn_and_back( self, delta_row = 1 ):
         """
         just an idea
         for now just us direct manipulation of ix_row, ix_col
@@ -1634,7 +1267,7 @@ class PlaceInGrid( ):
         #                        self.ix_row,
         #                        self.ix_col,
         #                        rowspan,              # streah
-        #                        # sticky,  #  Qt.AlignCenter,       # allignment ??    Qt.AlignCenter works but makes a mess
+        #                        # sticky,  #  Qt.AlignCenter,       # alignment ??    Qt.AlignCenter works but makes a mess
         #                        )
 
         self.ix_col         += columnspan
@@ -1663,6 +1296,4 @@ class PlaceInGrid( ):
         return a_str
 
 
-
 # ---- eof
-

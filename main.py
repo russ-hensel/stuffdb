@@ -19,7 +19,7 @@ print(os.getcwd())  # Prints the new working directory
 # from qt_compat import QApplication, QAction, exec_app, qt_version
 # from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
 
-
+import map_popup
 import stuffdb
 
 stuffdb.main()

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+# ---- tof
 """
 photo_website.py -- build a simple static HTML photo gallery from a list
 of photo dicts (the same shape SlideShowSubWindow produces).
@@ -24,6 +26,7 @@ import html
 import logging
 import shutil
 from   pathlib import Path
+from   qtpy.QtWidgets import ( QApplication, )
 
 
 # ---- constants
@@ -70,7 +73,6 @@ def _safe_html( s ):
         return ""
     return html.escape( str( s ) )
 
-
 # ----------------------------------------
 class PhotoWebsite( ):
     """
@@ -86,13 +88,14 @@ class PhotoWebsite( ):
 
     # ------------------------------------
     def __init__(
-        self,
-        photo_list,
-        output_dir,
-        picture_root,
-        title         = "Photo Album",
-        copy_images   = True,
-    ):
+                    self,
+                    photo_list,
+                    output_dir,
+                    picture_root,
+                    title         = "Photo Album",
+                    copy_images   = True,
+                    msg_function  = None
+                                          ):
         """
         photo_list   -- iterable of dicts with photo_file, photo_sub_dir,
                         photo_name keys (plus anything else, ignored)
@@ -107,6 +110,7 @@ class PhotoWebsite( ):
         self.picture_root   = Path( picture_root )
         self.title          = title
         self.copy_images    = copy_images
+        self.msg_function   = msg_function  # function for message output
 
         self.index_path     = None     # set by build()
 
@@ -118,6 +122,7 @@ class PhotoWebsite( ):
         """
         self._prepare_dirs( )
         self._write_css( )
+        msg_function  = self.msg_function
 
         entries = []
         seq_n   = 0
@@ -141,6 +146,12 @@ class PhotoWebsite( ):
                 "photo":        photo,
                 "image_rel":    image_rel,
                 "page_rel":     page_rel, } )
+
+
+            if msg_function:
+                msg         = ( f"working on {seq_n} photo" )
+                msg_function( msg )
+                QApplication.processEvents()
 
         for i, entry in enumerate( entries ):
             prev_e = entries[ i - 1 ] if i > 0                  else None

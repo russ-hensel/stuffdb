@@ -25,7 +25,6 @@ from qtpy.QtCore import ( QCoreApplication,
 from qtpy.QtGui  import QIcon
 from qtpy.QtGui  import QAction
 
-#from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
                              QApplication,
@@ -36,11 +35,11 @@ from qtpy.QtWidgets import (
                              QMessageBox,
                              QToolBar,
                              QVBoxLayout,
-                             QWidget )
+                             QWidget,
+                             )
 
 # ---- local imports
-# ------- local
-#import gui_qt_ext
+
 import psutil
 import show_parameters
 #import    document_maker
@@ -54,14 +53,14 @@ import combo_dict_ext
 #import app_logging
 import gui_qt_ext
 
-# mover limited might be better !!
+
 from   help_document      import HelpDocument
 from   album_document     import AlbumDocument
 from   plant_document     import PlantDocument
 from   planting_document  import PlantingDocument
 from   stuff_document     import StuffDocument
-from   people_document    import PeopleDocument
-from   picture_document   import PictureDocument
+from   people_document           import PeopleDocument
+from   picture_document          import PictureDocument
 
 from   db_management_subwindow   import DbManagementSubWindow
 from   db_sync_test_subwindow    import DbSyncTestSubWindow
@@ -380,7 +379,7 @@ class StuffdbMainWindow( QMainWindow ):
         a_menu.addAction( action )
 
         # ---- DocOps db operations
-        menu            = menubar.addMenu("DocOps")
+        menu            = menubar.addMenu(" DocOps" )
         self.menu_open  = menu # do we need ref, may want to change the name
 
         action          = QAction( "Add", self )
@@ -480,14 +479,14 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         a_menu.addAction( action )
 
-        # ---- "Slideshow"
-        instance_ix     = 1 # only allows one to be open at a time
-        action          = QAction( "Slideshow", self )
-        connect_to      = functools.partial( self.add_subwindow,
-                                                 window_class   = SlideShowSubWindow,
-                                                 instance_ix    = instance_ix )
-        action.triggered.connect( connect_to )
-        a_menu.addAction( action )
+        # # ---- "Slideshow"
+        # instance_ix     = 1 # only allows one to be open at a time
+        # action          = QAction( "Slideshow", self )
+        # connect_to      = functools.partial( self.add_subwindow,
+        #                                          window_class   = SlideShowSubWindow,
+        #                                          instance_ix    = instance_ix )
+        # action.triggered.connect( connect_to )
+        # a_menu.addAction( action )
 
         #---------------
         open_action     = QAction( "Open Parameters", self )
@@ -601,7 +600,7 @@ class StuffdbMainWindow( QMainWindow ):
 
         """
         max_instance = 3
-        for i_instance in range( 1,  max_instance +1 ):
+        for i_instance in range( 1,  max_instance + 1 ):
             instance_ix     = i_instance
             ix              = i_instance
             if i_instance == max_instance:
@@ -637,6 +636,7 @@ class StuffdbMainWindow( QMainWindow ):
             action.triggered.connect( connect_to )
             menu_open.addAction( action )
 
+            # ---- Plant
             action          = QAction( f"Plant {ix}", self )
             connect_to      = functools.partial( self.add_subwindow,
                                                     window_class   = PlantDocument,
@@ -651,6 +651,7 @@ class StuffdbMainWindow( QMainWindow ):
             action.triggered.connect( connect_to )
             menu_open.addAction( action )
 
+            # ---- Stuff
             action          = QAction( f"Stuff {ix}", self )
             connect_to      = functools.partial( self.add_subwindow,
                                                     window_class   = StuffDocument,
@@ -660,6 +661,14 @@ class StuffdbMainWindow( QMainWindow ):
 
             menu_open.addSeparator()
 
+            # ---- "Slideshow"
+            instance_ix     = 1 # only allows one to be open at a time
+            action          = QAction( "Slideshow", self )
+            connect_to      = functools.partial( self.add_subwindow,
+                                                     window_class   = SlideShowSubWindow,
+                                                     instance_ix    = instance_ix )
+            action.triggered.connect( connect_to )
+            menu_open.addAction( action )
 
     # ------------------------------------
     def build_menu_open_notes( self, menu_open ):
@@ -732,7 +741,6 @@ class StuffdbMainWindow( QMainWindow ):
         doc_name        = asw.help_filename
         doc_name        = f"{AppGlobal.parameters.help_path}/{doc_name}"
         #rint( f"open_document_help active document name {doc_name = }]")
-
 
         AppGlobal.os_open_txt_file( doc_name  )
 

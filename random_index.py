@@ -53,8 +53,6 @@ class PureRandomIndex(   ):
         self.bias                = 2        # direction we tend to move
         self.last                = 0        # index of the last item from get_next  a lot like sef.now_ix
 
-
-
     #--------------------------
     def __str__( self ):
         """
@@ -70,7 +68,6 @@ class PureRandomIndex(   ):
         """
         ix_now          = random.randrange( 0, self.length )
         self.ix_now     = ix_now
-
         self.last       = ix_now
 
         return self.ix_now

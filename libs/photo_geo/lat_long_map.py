@@ -104,7 +104,7 @@ class LatLongMap( QDialog ):
 
         self.setWindowTitle( title )
 
-        print( data )
+        #rint( data )
          #   "lat" "long" "place"
 
         self.data       = data
@@ -114,10 +114,10 @@ class LatLongMap( QDialog ):
             1/0 # need parent which is the tab where the model is
 
         # ---- resolve image paths (defaults live next to this module) ----
-        here_dir = Path( __file__ ).resolve().parent
+        here_dir        = Path( __file__ ).resolve().parent
 
         if image_path is None:
-            image_path     = here_dir / "world_equirectangular.png"
+            image_path  = here_dir / "world_equirectangular.png"
 
         if alt_image_path is None:
             alt_image_path = here_dir / "world_satellite.png"
@@ -214,7 +214,7 @@ class LatLongMap( QDialog ):
             self.panel.set_status(msg )
 
     # ----------------------------------------
-    def _on_picked(self, lat: float, lon: float) -> None:
+    def _on_picked( self, lat: float, lon: float) -> None:
         """
         On every click: panel.lock_at() takes care of clearing the previous
         marker, updating the readout, and dropping a fresh marker at the
@@ -228,7 +228,7 @@ class LatLongMap( QDialog ):
         # data[ "long"]   = lon
 
         msg         = ("Lat Long locked ")
-        self.panel.set_status(msg )
+        self.panel.set_status( msg )
         # self.statusBar().showMessage(
         #     f"Locked: {lat:+.5f}, {lon:+.5f}   (Esc or Reset to unlock)"
         # )
@@ -277,11 +277,13 @@ class LatLongMap( QDialog ):
         # If the panel was locked at a lat/lon before the swap, put the
         # crosshair back where it geographically belongs in the new image.
         if getattr( self.panel, "is_locked", False ):
+
             try:
                 lat     = float( self.panel.lat_edit.text() )
                 lon     = float( self.panel.lon_edit.text() )
                 x, y    = self.scene.projection.latlon_to_pixel( lat, lon )
                 self.scene.show_crosshair_at( x, y )
+
             except ( ValueError, AttributeError ):
                 pass
 
@@ -333,7 +335,6 @@ class LatLongMap( QDialog ):
         Drop a marker on the map.  See MapScene.add_marker for kwargs:
         color, radius, label.  Returns the underlying QGraphicsItem.
         """
-
         return self.scene.add_marker( lat, lon, **kwargs )
 
     # ----------------------------------------

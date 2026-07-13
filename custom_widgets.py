@@ -69,7 +69,7 @@ import string_utils
 import wat_inspector
 from   app_global     import AppGlobal
 import exec_qt
-import clip_string_utils
+#import clip_string_utils
 import string_list_utils
 import data
 import history_sync
@@ -947,7 +947,7 @@ class TextEditExtMixin(  ):
 
         # ---- "0_sreen_dirt"
         foo_action = menu.addAction("0_sreen_dirt")
-        processing_function     = partial( clip_string_utils.list_to_list_remove_dirt, screen_dirt = AppGlobal.parameters.screen_dirt )
+        processing_function     = partial( string_list_utils.list_to_list_remove_dirt, screen_dirt = AppGlobal.parameters.screen_dirt )
         foo                     = partial( self.process_selected,  processing_function = processing_function )
         foo_action.triggered.connect( foo )
         foo_action.setEnabled( has_selection )
@@ -1570,7 +1570,7 @@ class TextEditExtMixin(  ):
                 ii_line  = f">>url   {i_line}"
 
             elif string_utils.begins_with_file_name( i_line ):
-                ii_line  = f">>shell   {i_line}\n>copy     {i_line}"
+                ii_line  = f">>shell   {i_line}\n>>copy     {i_line}"
 
             new_lines.append( ii_line )
 
@@ -2233,14 +2233,14 @@ class CQEditBase():
         self.exec( global_pos )
 
     #----------------------------
-    def handle_right_click(self, event):
+    def handle_right_click( self, event ):
         """ chat code, modified a bit
             may be dead code
         """
+        # for debug
         if self.field_name in [ "name", "title" ]:
             breakpoint()
             pass
-
 
         if event.button() == Qt.RightButton:
             self.show_context_menu( event.globalPos() )
@@ -2263,7 +2263,6 @@ class CQEditBase():
         #     print( f" {self.field_name = } {self.is_keep_prior_enabled = }  {self.contextMenuPolicy() = }" )
         #     breakpoint()
         #     pass
-
 
     #----------------------------
     def cnv_float_to_str( self, data  ):
@@ -2585,7 +2584,10 @@ class CQLineEdit( QLineEdit, CQEditBase ):
             self_field_name   = self.field_name
             msg = f"set_prepped_data error a_string, not a string {self.field_name = }  return for now inspect then break"
             logging.debug( msg )
+
             return
+
+            # hang around for debug
             wat_inspector.go(
                 msg            = msg,
                 # inspect_me     = self.people_model,
@@ -2825,6 +2827,7 @@ class CQCheckBox( QCheckBox, CQEditBase ):
         start with non editable
 
     try         self.setEditable(True)
+    .setChecked( True )
     """
     def __init__(self,
                  parent                 = None,
@@ -2855,7 +2858,7 @@ class CQCheckBox( QCheckBox, CQEditBase ):
         self.null_surogatexxx          = ""
         # ---- set functions
         #a_partial           = partial( self.do_ct_value, "do_ct_value!!" )
-        a_partial           = partial( self.set_value, "" )
+        a_partial           = partial( self.set_value, False )
         self.set_default    = a_partial
 
         self.set_prior      = self.set_pass
@@ -2869,26 +2872,23 @@ class CQCheckBox( QCheckBox, CQEditBase ):
 
     # ---- required implementations
     #----------------------------
-    def set_preped_data( self, a_string,   is_changed = None ):
+    def set_preped_data( self, a_value, is_changed = None ):
         """
         specialize for this edit
         what about prior value
+        see CQLineEdit
 
-        a prepped data is data in the format for the edit and
-        formatted and ready for the edit.
-
-        arg
-            is_changed     None      leave is_changed as it was
-                           True        is_changed set to True
-                           False        is_changed set to False
-                           other       undefined behavior
-        mutates
-
-            changes contents of edit
-            may change self.is_changed
-            self.prior_value  -- so far unchanged, this is probably wrong
 
         """
+        if a_value:
+            self.setChecked( True )
+
+        else:
+            self.setChecked( False )
+
+        if is_changed is not None:
+            self.is_changed = is_changed
+
         return
         # needs implementation
         # # next !! debug
@@ -3197,7 +3197,7 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         self.max_history = 50
 
         # Connect signals
-        self.lineEdit().returnPressed.connect(self.add_current_text_to_history)
+        self.lineEdit().returnPressed.connect( self.add_current_text_to_history )
 
 
         #self.default_value         = "default-value"     # deprecate
@@ -3419,7 +3419,7 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         debug_msg    = ( "say give each its own copy of index_to_key ... but could centralized ")
         logging.log( LOG_LEVEL,  debug_msg, )
 
-        self.index_valid     = False   # false while in process of building
+        self.index_valid   = False   # false while in process of building
 
         # the dict and its various supplementary dicts
         self.dict_data     = {}
@@ -3595,10 +3595,13 @@ class CQDictComboBox( QComboBox, CQEditBase ):
         """
         debug_msg  = ( "load_combo_box get the value, save in temp, reset the combo and reset")
         logging.log( LOG_LEVEL,  debug_msg, )
+
         debug_msg  = ( "load_combo_box not necessary if we always add at the end ????")
         logging.log( LOG_LEVEL,  debug_msg, )
+
         self.index_to_key    = {}
         self.clear()
+
         for index, (key, value) in enumerate( self.widget_ext.combo_dict.items() ):
             self.addItem(str(value))
             self.index_to_key[index] = key

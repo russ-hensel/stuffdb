@@ -41,6 +41,8 @@ from qtpy.QtWidgets import (
 
 logger          = logging.getLogger( )
 
+
+from app_global import AppGlobal
 # for custom logging level at module
 LOG_LEVEL  = 10   # higher is more
 
@@ -76,18 +78,15 @@ class PictureViewer( QGraphicsView ):
         # # Set the scene for the view  -- does this need to be done again
         # self.view.setScene(self.scene)
 
-        # bunch of 5 6 changes
-        #from qt_compat import RenderHint_Antialiasing, RenderHint_SmoothPixmapTransform, AnchorUnderMouse
-
         self.setRenderHint( QPainter.Antialiasing )
         self.setRenderHint( QPainter.SmoothPixmapTransform )
         self.setTransformationAnchor( QGraphicsView.AnchorUnderMouse )
         self.setResizeAnchor( QGraphicsView.AnchorUnderMouse )
         self.file_name              = None
-        self.file_name_not_found    = None
+        self.file_name_not_found    = AppGlobal.parameters.pic_nf_file_name
 
     # -----------------------------
-    def display_file( self,  file_name ):
+    def display_file( self, file_name ):
         """
         what it says, read
         """
@@ -97,8 +96,10 @@ class PictureViewer( QGraphicsView ):
         ok              = self.set_pixmap( pixmap )
 
         if not ok:
+
             if file_name is None:
                 file_exists   = False
+
             else:
                 file_exists   = os.path.exists( file_name )
             debug_msg   = (  f"PictureViewer display_file error    { file_name = } {file_exists = }")
@@ -112,7 +113,6 @@ class PictureViewer( QGraphicsView ):
 
         self.fit_in_view()
 
-
     # -----------------------------
     def set_fnf( self,  file_name ):
         """
@@ -125,10 +125,20 @@ class PictureViewer( QGraphicsView ):
         self.file_name_not_found     = file_name
 
     # -----------------------------
-    def display_fnf( self,    ):
+    def display_file_fnf( self, ):
+        """
+        what it says
+
+        """
+        file_name       = self.file_name_not_found
+        self.display_file( file_name )
+
+    # -----------------------------
+    def display_fnf( self, ):
         """
         what
         no error checking here
+        not sure if use, did not do what I wanted so added display_file_fnf
         """
         file_name       = self.file_name_not_found
         self.file_name  = file_name
@@ -241,13 +251,16 @@ class PictureViewer( QGraphicsView ):
         super().resizeEvent(event)
         self.fit_in_view()
 
+    # ------------------------------------
     def showEvent(self, event):
         super().showEvent(event)
         self.fit_in_view()  # fit once widget is visible and sized
 
     # ------------------------------------
-    def get_file_name(self, event):
-        """ """
+    def get_file_name( self, event ):
+        """
+        just debug
+        """
         debug_msg    = ( "PictureViewer finish get_file_name {self.file_name = }" )
         logging.log( LOG_LEVEL,  debug_msg, )
 
@@ -339,6 +352,8 @@ class PictureViewerPlus( QWidget ):
     PictureViewer( QGraphicsView ):
         def __init__(self, parent=None):
 
+        widget =    picture_viewer.PictureViewerPlus( parent = )  # import picture_viewer
+
     QWidget
     QGraphicsView
     used like where
@@ -347,7 +362,7 @@ class PictureViewerPlus( QWidget ):
     """
 
     # ----------------------------------
-    def __init__(self, parent=None):
+    def __init__(self, parent = None):
         """
         what it says, read it
         """

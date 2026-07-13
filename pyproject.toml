@@ -10,4 +10,7 @@ dependencies = [
     "wat-inspector",
     "qtpy",
     "qt6",
+    "gmplot",
+    "exifread",
+    "simpkml",
 ]

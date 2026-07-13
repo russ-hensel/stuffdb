@@ -25,9 +25,11 @@ from qtpy.QtSql import (QSqlDatabase,
                          QSqlQuery,
                          QSqlTableModel)
 
-from qtpy.QtWidgets import (QDialog,
+from qtpy.QtWidgets import (
+                        QDialog,
                         QHBoxLayout,
                         QLabel,
+                        QGroupBox,
                         QSizePolicy,
                         QSpacerItem,
                         QTabWidget,
@@ -80,6 +82,7 @@ class PlantingDocument( base_document_tabs.DocumentBase ):
         self.detail_table_name  = "planting"
         self.text_table_name    = "planting_text"  # text tables always id and text_data
         self.subwindow_name     = "PlantingSubWindow"
+        self.document_color     = AppGlobal.parameters.planting_color
 
         self._build_gui()
         self.__init_2__()
@@ -247,126 +250,72 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
     def _build_tab( self, ):
         """
         what it says, read
-        put page into the notebook
+
+        need to have instance var for put_criteria
         """
-        # debug_util.get_traceback_list()
-        page             = self
+        page        = self
+        layout      = QVBoxLayout( page )
 
-        layout           = QHBoxLayout( page )
-                # can we fold in to next
+        self._build_top_widgets_grid( layout )
+        self._build_other_widgets( layout )
+        self._build_id_widgets( layout )
 
-        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        sort_list    = [
+                         'name',
+                         'lbl_name',
+                         'Title??',  ]
+        self._build_sort_widgets( layout, sort_list )
+
+        # # ---- function_on_return( self )
+        # for i_widget in self.critera_widget_dict.values():
+        #     # add value changed to custom edits widget.textChanged.connect
+        #     i_widget.function_on_changed    = ( lambda: self.criteria_changed( True ) )
+        #     i_widget.function_on_return     = self.criteria_select
+        #             # check if working and if other redundant code
+
+            #self.id_field.setFocus()  # seems not to work try
+        key_words_widget   = self.critera_widget_dict[ "key_words" ]
+        QTimer.singleShot( 0, key_words_widget.setFocus )
+
+    # ------------------------------------------
+    def _build_other_widgets( self, layout ):
+        """
+        what it says, read
+
+        layout a vbox, we create a grid in a groupbox
+        """
+        groupbox        = QGroupBox( "Misc Criteria:" )
+        groupbox.setMaximumWidth( self.groupbox_width )
+        layout.addWidget( groupbox )
+
+        grid_layout     = gui_qt_ext.CQGridLayout( col_max = 10 )
+        groupbox.setLayout( grid_layout )
         layout.addLayout( grid_layout )
 
-        self._build_top_widgets_grid( grid_layout )
-
         # ----key words
-        widget                = QLabel( "Key Words" )
+        widget          = QLabel( "Key Words" )
         grid_layout.new_row()
         grid_layout.addWidget( widget )
 
-        widget                  = cw.CQLineEdit(
-                                                 field_name = "key_words"   )
-        self.critera_widget_list.append( widget )
-        self.key_words_widget   = widget  # is needed for paste
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        field_name      = "key_words"
+        widget          = cw.CQHistoryComboBox( field_name = field_name )
+
+        self.critera_widget_dict[ field_name ] = widget
+
         grid_layout.addWidget( widget, columnspan = 3 )
-
-        # ----id
-        widget                = QLabel( "ID" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit(
-                                             field_name = "table_id" )
-        self.id_field           = widget
-        self.critera_widget_list.append( widget )
-        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget, )    # columnspan = 3 )
-
-
-        # ----id_old
-        widget                = QLabel( "ID Old*" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit(
-                                                field_name = "id_old"   )
-        self.critera_widget_list.append( widget )
-        self.critera_widget_dict[ "id_old" ] = widget
-        grid_layout.addWidget( widget, )    # columnspan = 3 )
-
-
-
-
-
 
         # ---- name like
         grid_layout.new_row()
-        widget  = QLabel( "Name (like)" )
+        widget       = QLabel( "Name (like)" )
         grid_layout.addWidget( widget )
 
-        widget                  = cw.CQLineEdit(
-                                                 field_name = "name"   )
-        self.name_widget        = widget
-        self.critera_widget_list.append( widget )
+        field_name  = "name"
+        widget      = cw.CQLineEdit( field_name = field_name )
+
+        self.critera_widget_dict[ field_name ] = widget
+
         widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget )
-
-        # ---- Order by
-        grid_layout.new_row()
-        widget  = QLabel( "!!Order by" )
-        grid_layout.addWidget( widget )
-
-        widget                 = cw.CQComboBox(
-                                                 field_name = "order_by"   )
-        self.critera_widget_list.append( widget )
-
-        widget.addItem('name')
-        widget.addItem('lbl_name')
-        widget.addItem('Title??')
-
-        grid_layout.addWidget( widget )
-
-        # ---- Order by Direction
-        #placer.new_row()
-        widget  = QLabel( "Direction" )
-        grid_layout.addWidget( widget )
-
-        widget                     = cw.CQComboBox(
-                                         field_name  = "order_by_dir",  )
-        self.critera_widget_list.append( widget )
-
-        widget.addItem('Ascending')
-        widget.addItem('Decending')
-
-        print( "build_tab build criteria change put in as marker ")
-        widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget )
-
-        # ---- criteria changed should be in parent
-        grid_layout.new_row()
-        widget  = QLabel( "criteria_changed_widget" )
-        self.criteria_changed_widget  = widget
-        grid_layout.addWidget( widget )
-
-        # # ---- push up on page still needs adjust
-        # width    = 350
-        # widget   = QSpacerItem( width, 310, QSizePolicy.Expanding, QSizePolicy.Minimum )
-        # grid_layout.new_row()
-        # # grid_layout.addWidget( widget )
-        # grid_layout.addItem( widget, grid_layout.ix_row, grid_layout.ix_col )
-
-        # # ---- function_on_return( self )
-        # for i_widget in self.critera_widget_list:
-        #     i_widget.function_on_return   = self.criteria_select
-        # ---- function_on_return( self )
-        for i_widget in self.critera_widget_list:
-            # ---- new  only really changes some edits
-            i_widget.on_value_changed       = lambda: self.criteria_changed( True )
-            i_widget.on_return_pressed      = self.criteria_select
-
-        QTimer.singleShot( 0, self.key_words_widget.setFocus )
 
     # -------------
     def criteria_select( self,     ):
@@ -382,8 +331,12 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         query                           = QSqlQuery( AppGlobal.qsql_db_access.db )
         query_builder                   = qt_sql_query.QueryBuilder( query, print_it = False, )
 
+        #  !! look at stuff and get from schema
         kw_table_name                   = "platning_key_word"
-        column_list                     = [ "id", "id_old", "name", "add_kw", "bed_id",       ]
+
+        # !! next is too much   !! change to list comp ---
+        columns      = data_dict_all.SCHEMA.get_list_columns( self.parent_window.detail_table_name )
+        column_list  = [ i_column.column_name for i_column in columns ]  # !! fix in all coduments or do we fix columns above
 
         a_key_word_processor            = key_words.KeyWords( kw_table_name,
                                              AppGlobal.qsql_db_access.db )
@@ -391,10 +344,11 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         query_builder.column_list       = column_list
 
         # ---- add criteria
-        criteria_dict                   = self.get_criteria()
+        #criteria_dict                   = self.get_criteria()
+        criteria_value_dict             = self.get_criteria_value_dict()
 
         # ---- key words
-        criteria_key_words              = criteria_dict[ "key_words" ]
+        criteria_key_words              = criteria_value_dict[ "key_words" ]
         criteria_key_words              = a_key_word_processor.string_to_key_words( criteria_key_words )
         key_word_count                  = len(  criteria_key_words )
 
@@ -412,26 +366,26 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         # !! change to bind variables sql inject
         # ---- id  table_id
-        table_id     = criteria_dict[ "table_id" ].strip().lower()
+        table_id     = criteria_value_dict[ "table_id" ].strip().lower()
         if table_id:
             add_where       =  f' id = {table_id} '
             query_builder.add_to_where( add_where, [ ])
 
         # ---- id_old
-        id_old      = criteria_dict[ "id_old" ].strip().lower()
+        id_old      = criteria_value_dict[ "id_old" ].strip().lower()
         if id_old:
             add_where       =  f' id_old = "{id_old}" '
             query_builder.add_to_where( add_where, [ ])
 
         # ---- name like
-        name                          = criteria_dict[ "name" ].strip().lower()
+        name                          = criteria_value_dict[ "name" ].strip().lower()
         if name:
             add_where       = "lower( name )  like :name"   # :is name of bind var below
             query_builder.add_to_where( add_where, [(  ":name",
                                                      f"%{name}%" ) ])
 
         # ---- order by
-        order_by   = criteria_dict[ "order_by" ]
+        order_by   = criteria_value_dict[ "order_by" ]
 
         if   order_by == "name":
             column_name = "name"
@@ -493,17 +447,9 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         modeled on other documents
         """
         page            = self
-        tabxxx             = self
         max_col         = 10
         self.max_col    = max_col
-        box_layout_1    =  QVBoxLayout( page )
-
-        # placer          = gui_qt_ext.PlaceInGrid(
-        #                     central_widget  = box_layout_1,
-        #                     a_max           = max_col,
-        #                     by_rows         = False  )
-
-        # tab_layout      = placer
+        box_layout_1    = QVBoxLayout( page )
 
         # !! change name
         placer          = gui_qt_ext.CQGridLayout( col_max = max_col )
@@ -587,290 +533,9 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
 
 
         return
-
+        # form more manual method see versions earlier than .092
         # ---- dead
-        """
-        What it says, read
-            this is generated code
-            tweaks
-                spacing
-                plnat_combo_dict look for code
-        """
 
-
-
-
-
-
-
-        """
-        What it says, read
-            this is generated code except
-            tweaks
-                for spacing
-                plant_id   is done by hand
-                    plant_id  by hand id_in_old ---------------
-
-        """
-
-
-
-
-
-
-
-
-
-        width  = 50
-        for ix in range( self.max_col ):  # try to tweak size to make it work
-            widget   = QSpacerItem( width,
-                                   10,
-                                   QSizePolicy.Expanding,
-                                   QSizePolicy.Minimum )
-
-            layout.addItem( widget, 0, ix  )  # row column
-
-        # ---- code_gen: TableDict.to_build_form
-            #2025_04_01 for planting -- begin table entries
-
-        # ---- id
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id", )
-        self.id_field     = edit_field
-        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
-        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
-        edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
-        edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
-        edit_field.setReadOnly( True )
-        edit_field.setPlaceholderText( "id" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 1 )
-
-        # ---- id_old
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id_old", )
-        self.id_old_field     = edit_field
-        edit_field.setReadOnly( True )
-        edit_field.setPlaceholderText( "id_old" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 1 )
-
-        # ---- name
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "name", )
-        self.name_field     = edit_field
-        edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "name" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # # ---- plant_id
-        # edit_field                  = cw.CQLineEdit(
-        #                                         parent         = None,
-        #                                         field_name     = "plant_id", )
-        # self.plant_id_field     = edit_field
-        # edit_field.setPlaceholderText( "plant_id" )
-        # self.data_manager.add_field( edit_field, is_key_word = False )
-        # layout.addWidget( edit_field, columnspan = 2 )
-
-
-        # ---- plant_id  by hand ---------------
-        edit_field                 = cw_2.CQModelComboBox(
-                                     field_name = "plant_id" )
-
-        # self.in_album_widget   = edit_field
-        kvl_model     = AppGlobal.mdi_management.get_key_value_list_model( "plant" )
-        # could check have default values or do in get function better
-        edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # # ---- plant_id  by hand id_in_old ---------------
-        # edit_field                 = cw.CQDictComboBox(
-        #                              field_name = "plant_id" )
-        # self.in_album_widget   = edit_field
-        # history_sync           = AppGlobal.mdi_management.get_history_sync( "plant" )
-        # edit_field.connect_to_history_sync( history_sync )  # or other way around connect_widget
-        # history_sync.add_item( None, "<none>" ) # need a none element
-        # self.data_manager.add_field( edit_field, is_key_word = False )
-
-        # layout.addWidget( edit_field, columnspan = 2 )
-
-
-        # ---- old version plant id
-        # edit_field                  = cw.CQDictComboBox(
-        #                                         parent         = None,
-        #                                         field_name     = "plant_id", )
-        # self.plant_id_field           = edit_field
-
-        # widget_ext                    = combo_dict_ext.PLANT_COMBO_DICT_EXT
-        # widget_ext.add_widget( edit_field )
-        # edit_field.setPlaceholderText( "plant_id" )
-        # #edit_field.set_dictionary     = self.parent_window.stuff_containers
-        # #edit_field.get_info_for_id    = get_info_for_id          # will self get passed
-
-        # #edit_field.set_dictionary( AppGlobal.mdi_management.plant_containers )
-
-        #     # to get info given an id
-        # # still validator / default func  None
-        # self.data_manager.add_field( edit_field, is_key_word = False )
-
-        # layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- bed_old
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "bed_old", )
-        self.bed_old_field     = edit_field
-        edit_field.setPlaceholderText( "bed_old" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- location
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "location", )
-        self.location_field     = edit_field
-        edit_field.setPlaceholderText( "location" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- add_kw
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "add_kw", )
-        self.add_kw_field     = edit_field
-        edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "add_kw" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- descr
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "descr", )
-        self.descr_field     = edit_field
-        edit_field.setPlaceholderText( "descr" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- type
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "type", )
-        self.type_field     = edit_field
-        edit_field.setPlaceholderText( "type" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- cmnt
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "cmnt", )
-        self.cmnt_field     = edit_field
-        edit_field.setPlaceholderText( "cmnt" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- lbl
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "lbl", )
-        self.lbl_field     = edit_field
-        edit_field.setPlaceholderText( "lbl" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- bed !! does not exist needs a lookup and ddl  probably
-        # edit_field                  = cw.CQLineEdit(
-        #                                         parent         = None,
-        #                                         field_name     = "bed", )
-        # self.bed_field     = edit_field
-        # edit_field.setPlaceholderText( "bed" )
-        # self.data_manager.add_field( edit_field, is_key_word = False )
-        # layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- bed_id  cw_2
-        edit_field                 = cw_2.CQModelComboBox(
-                                     field_name = "bed_id" )
-        kvl_model     = AppGlobal.mdi_management.get_key_value_list_model( "planting_bed" )
-        # could check have default values or do in get function better
-        edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-
-        # ---- bed id with just edit
-        # edit_field                  = cw.CQLineEdit(
-        #                                         parent         = None,
-        #                                         field_name     = "bed_id",
-        #                                         is_keep_prior_enabled     = False, )
-        # edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
-        # edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
-        # edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
-        # edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
-        # edit_field.setReadOnly( True )
-        # edit_field.is_keep_prior_enabled        = False
-        # edit_field.setPlaceholderText( "bed_id" )
-        # self.data_manager.add_field( edit_field, is_key_word = False )
-        # layout.addWidget( edit_field, columnspan = 1 )
-
-        # ---- lbl_name
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "lbl_name", )
-        self.lbl_name_field     = edit_field
-        edit_field.setPlaceholderText( "lbl_name" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- itag1
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "itag1", )
-        self.itag1_field     = edit_field
-        edit_field.setPlaceholderText( "itag1" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- planting_status
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "planting_status", )
-        self.planting_status_field     = edit_field
-        edit_field.setPlaceholderText( "planting_status" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- need_stake
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "need_stake", )
-        self.need_stake_field     = edit_field
-        edit_field.setPlaceholderText( "need_stake" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- need_label
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "need_label", )
-        self.need_label_field     = edit_field
-        edit_field.setPlaceholderText( "need_label" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- need_work
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "need_work", )
-        self.need_work_field     = edit_field
-        edit_field.setPlaceholderText( "need_work" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
 
     # ----------------------------
     def fetch_detail_row( self, id = None ):
@@ -907,8 +572,8 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         # mypref   = self.mypref_field.text()
         # mygroup  = self.mygroup_field.text()
         # add_ts   = self.add_ts_field.text()
-        edit_ts  = self.edit_ts_field.text()
-        edit_ts  = "self.edit_ts_field.text()"   # !! test
+        edit_ts     = self.edit_ts_field.text()
+        edit_ts     = "self.edit_ts_field.text()"   # !! test
 
         self.default_new_row(  next_key )
 

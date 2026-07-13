@@ -91,42 +91,42 @@ default_values[ "form_col_span" ]           = -1
 
 DEFAULT_VALUES                              = default_values
 
-
-COL_ATTRIBUTES_ALPHA   = [
-                            "column_name",
-                            "col_head_order",
-                            "col_head_text",
-                            "col_head_width",
-                            "create_self",
-                            "db_type",
-                            "default_func",
-                            "detail_edit_class",
-                            "dict_to_edit_cnv",
-                            "display_order",
-                            "edit_in_type",
-                            "edit_to_dict_cnv",
-                            "edit_to_rec",
-                            "edit_to_rec_cnv",
-                            "edit_tool_tip",
-                            "foreign_key_info",
-                            "form_col_span",
-                            "form_edit",
-                            "form_make_ref",
-                            "form_read_only",
-                            "initial_value",
-                            "is_keep_prior_enabled",
-                            "is_key_word",
-                            "is_topic",
-                            "max_len",
-                            "placeholder_text",
-                            "primay_key_ix",
-                            "rec_to_edit",
-                            "rec_to_edit_cnv",
-                            "set_editable",
-                            "topic_column_order",
-                            "use_index",
-                            "validate",
-                               ]
+# # why twice
+# COL_ATTRIBUTES_ALPHA   = [
+#                             "column_name",
+#                             "col_head_order",
+#                             "col_head_text",
+#                             "col_head_width",
+#                             "create_self",
+#                             "db_type",
+#                             "default_func",
+#                             "detail_edit_class",
+#                             "dict_to_edit_cnv",
+#                             "display_order",
+#                             "edit_in_type",
+#                             "edit_to_dict_cnv",
+#                             "edit_to_rec",
+#                             "edit_to_rec_cnv",
+#                             "edit_tool_tip",
+#                             "foreign_key_info",
+#                             "form_col_span",
+#                             "form_edit",
+#                             "form_make_ref",
+#                             "form_read_only",
+#                             "initial_value",
+#                             "is_keep_prior_enabled",
+#                             "is_key_word",
+#                             "is_topic",
+#                             "max_len",
+#                             "placeholder_text",
+#                             "primay_key_ix",
+#                             "rec_to_edit",
+#                             "rec_to_edit_cnv",
+#                             "set_editable",
+#                             "topic_column_order",
+#                             "use_index",
+#                             "validate",
+#                                ]
 
 COL_ATTRIBUTES_ALPHA   = [
                             "column_name",
@@ -462,7 +462,9 @@ class SchemaDict(   ):
 
     #------------------------------------------------
     def get_table_name_list( self):
-        """ """
+        """
+
+        """
         table_list   = [ i_table_name for i_table_name in self.table_dicts.keys(  ) ]
         return table_list
 
@@ -1208,6 +1210,7 @@ class TableDict(  ):
             #     key_part    = " PRIMARY KEY NOT NULL "
             if ix_column > 0:
                 line    = ","
+
             else:
                 line    = ""
 

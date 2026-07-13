@@ -35,7 +35,7 @@ import string_utils as string_util
 
 
 # -----------------------
-def model_dump(  model, msg = "model dump msg" ):
+def model_dump( model, msg = "model dump msg" ):
     """
     believe is a debug thing
     what type need models be?
@@ -233,8 +233,6 @@ class TableModel( QAbstractTableModel ):
     def set_data_at_index(self, index, value, role = Qt.EditRole):
         """
         index might be index = model.index(ix_row,  ix_col )  # Row 1, Column 1
-
-
 
         """
         if role == Qt.EditRole:

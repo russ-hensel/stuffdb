@@ -19,9 +19,9 @@ import gui_qt_ext
 #import string_utils
 from app_global import AppGlobal
 
-from qtpy.QtWidgets import QMessageBox
 
-from qtpy.QtCore import QModelIndex, Qt
+
+from qtpy.QtCore import ( QModelIndex, Qt,     QTimer, )
 
 from qtpy.QtSql import (
                             QSqlDatabase,
@@ -35,21 +35,24 @@ from qtpy.QtWidgets import (
                              QHBoxLayout,
                              QLabel,
                              QMessageBox,
+                             QGroupBox,
                              QPushButton,
                              QSizePolicy,
                              QSpacerItem,
                              QTableView,
                              QTabWidget,
-                             QVBoxLayout)
+                             QVBoxLayout
+                             )
 
 # ---- imports local
-
+import data_dict_all
 import base_document_tabs
 import custom_widgets as cw
 import key_words
 import qt_sql_query
 import qt_with_logging
 import combo_dict_ext
+# import plant_document_edit  -- !! seems not to be written
 # import plant_document_edit
 
 
@@ -67,10 +70,10 @@ class PlantingtSqlTableModel( QSqlTableModel ):
         """
         super().__init__(parent, db)
         # Specify multiple columns to make non-editable (e.g., columns 1 and 2)
-        self.non_editable_columns = {0, 1, }  # Columns ..doe it have to be in init or is synamic ..
+        self.non_editable_columns = {0, 1, }  # Columns ..doe it have to be in init or is dynamic ..
 
     #---------------------------
-    def flags(self, index: QModelIndex):
+    def flags(self, index: QModelIndex ):
         """ """
         # Get default flags from the base class
         flags = super().flags(index)
@@ -86,10 +89,13 @@ class PlantingtSqlTableModel( QSqlTableModel ):
         if role == Qt.TextAlignmentRole:
             if index.column() == 0:  # Left-align column 0
                 return Qt.AlignLeft | Qt.AlignVCenter
+
             elif index.column() == 1:  # Center-align column 1
                 return Qt.AlignCenter | Qt.AlignVCenter
+
             elif index.column() == 2:  # Right-align column 2
                 return Qt.AlignRight | Qt.AlignVCenter
+
         # Default to base class implementation for other roles
         return super().data(index, role)
 
@@ -107,6 +113,7 @@ class PlantDocument( base_document_tabs.DocumentBase ):
         self.detail_table_name  = "plant"
         self.text_table_name    = "plant_text"  # text tables always id and text_data
         self.subwindow_name     = "Plant Document"
+        self.document_color     = AppGlobal.parameters.plant_color
 
         self._build_gui()
         self.__init_2__()
@@ -278,216 +285,82 @@ class PlantCriteriaTab( base_document_tabs.CriteriaTabBase, ):
     def _build_tab( self, ):
         """
         what it says, read
-        put page into the notebook
+
+        need to have instance var for put_criteria
         """
         page            = self
-        layout          = QHBoxLayout( page )
-                # can we fold in to next
+        layout          = QVBoxLayout( page )
 
-        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        self._build_top_widgets_grid( layout )
+        self._build_other_widgets( layout )
+
+        self._build_id_widgets( layout )
+        sort_list       =  [ 'name', 'latin_name' ]
+        self._build_sort_widgets( layout, sort_list )
+
+        grid_layout     = gui_qt_ext.CQGridLayout( col_max = 10 )
         layout.addLayout( grid_layout )
 
-        self._build_top_widgets_grid( grid_layout )
-
-        # ----key words
-        widget                = QLabel( "Key Words" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit(
-                                                 field_name = "key_words"   )
-        self.key_words_widget   = widget  # is needed for paste
-        self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget, columnspan = 3 )
-
-
-        # ----id
-        widget                = QLabel( "ID" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit(
-                                                field_name = "table_id"   )
-        self.id_field           = widget
-        self.critera_widget_list.append( widget )
-        self.critera_widget_dict[ "table_id" ] = widget
-        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget, )    # columnspan = 3 )
-
-        # ----id_old
-        widget                = QLabel( "ID Old*" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit(
-                                                field_name = "id_old"   )
-        self.critera_widget_list.append( widget )
-        self.critera_widget_dict[ "id_old" ] = widget
-        grid_layout.addWidget( widget, )    # columnspan = 3 )
-
-
-
-        # ----name
-        widget                = QLabel( "Name" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit(
-                                                 field_name = "name"   )
-        self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget, )
-
-        # ----latin_name
-        widget                = QLabel( "latin_name" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit(
-                                                 field_name = "latin_name"   )
-        self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget,  )
-
-
-        # ---- Order by
-        grid_layout.new_row()
-        widget  = QLabel( "Order by" )
-        grid_layout.addWidget( widget )
-
-        widget                 = cw.CQComboBox(
-                                                 field_name = "order_by"   )
-        self.critera_widget_list.append( widget )
-        widget.addItem('name')
-        widget.addItem('latin_name')
-        grid_layout.addWidget( widget )
-
-        # ---- Order by Direction
-        #grid_layout.new_row()
-        widget  = QLabel( "Direction" )
-        grid_layout.addWidget( widget )
-
-        widget                 = cw.CQComboBox(
-                                     field_name = "order_by_dir" )
-        self.critera_widget_list.append( widget )
-
-        widget.addItem('Ascending')
-        widget.addItem('Decending')
-
-        widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget )
-
-        debug_msg = ( "build_tab build criteria change put in as marker ")
-        logging.debug( debug_msg )
-        widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget )
-
-        # ---- criteria changed should be in parent
-        grid_layout.new_row()
-        widget  = QLabel( "criteria_changed_widget" )
-        self.criteria_changed_widget  = widget
-        grid_layout.addWidget( widget )
-
-        # # ---- push controls up page, may need adjuxtment
-        # width    = 350
-        # widget   = QSpacerItem( width, 310, QSizePolicy.Expanding, QSizePolicy.Minimum )
-        # grid_layout.new_row()
-        # # grid_layout.addWidget( widget )
-        # grid_layout.addItem( widget, grid_layout.ix_row, grid_layout.ix_col )
-
-        # # ---- function_on_return( self )
         # for i_widget in self.critera_widget_list:
-        #     i_widget.function_on_return   = self.criteria_select
+        #     # add value changed to custom edits widget.textChanged.connect
+        #     i_widget.function_on_changed    = ( lambda: self.criteria_changed( True ) )
+        #     i_widget.function_on_return     = self.criteria_select
+        #     #i_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
-        # ---- function_on_return( self )
-        for i_widget in self.critera_widget_list:
-            # ---- new  only really changes some edits
-            i_widget.on_value_changed       = lambda: self.criteria_changed( True )
-            i_widget.on_return_pressed      = self.criteria_select
+        key_words_widget    = self.critera_widget_dict[ "key_words" ]
+        QTimer.singleShot( 0, key_words_widget.setFocus )
 
     # ------------------------------------------
-    def _build_tab_old_almost( self, ):
+    def _build_other_widgets( self, layout ):
         """
         what it says, read
-        put page into the notebook
+
+        layout a vbox, we create a grid in a groupbox
         """
-        page            = self
-
-        layout          = QHBoxLayout( page )
-                # can we fold in to next
-
-        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        groupbox    = QGroupBox( "Misc Criteria:" )
+        groupbox.setMaximumWidth( self.groupbox_width )
+        layout.addWidget( groupbox )
+        grid_layout = gui_qt_ext.CQGridLayout( col_max = 10 )
+        groupbox.setLayout( grid_layout )
         layout.addLayout( grid_layout )
-
-        self._build_top_widgets_grid( grid_layout )
-
-        # ----name
-        widget                = QLabel( "Name" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit(
-                                                 field_name = "name"   )
-        self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget, )
-
-        # ----latin_name
-        widget                = QLabel( "latin_name" )
-        grid_layout.new_row()
-        grid_layout.addWidget( widget )
-
-        widget                  = cw.CQLineEdit(
-                                                 field_name = "latin_name"   )
-        self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
-        grid_layout.addWidget( widget,  )
 
         # ----key words
         widget                = QLabel( "Key Words" )
         grid_layout.new_row()
         grid_layout.addWidget( widget )
 
-        widget                  = cw.CQLineEdit(
-                                                 field_name = "key_words"   )
-        self.key_words_widget   = widget  # is needed for paste
-        self.critera_widget_list.append( widget )
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        field_name  = "key_words"
+        widget      = cw.CQHistoryComboBox(
+                                 field_name = field_name   )
+
+        self.critera_widget_dict[ field_name ] = widget
+        #widget.returnPressed.connect( self.criteria_select )   # not for a combo box
+        line_edit    = widget.lineEdit()
+        line_edit.returnPressed.connect( self.criteria_select )
         grid_layout.addWidget( widget, columnspan = 3 )
 
-        # ---- Order by
+        # ----name
+        widget                = QLabel( "Name" )
         grid_layout.new_row()
-        widget  = QLabel( "Order by" )
         grid_layout.addWidget( widget )
 
-        widget                 = cw.CQComboBox(
-                                                 field_name = "order_by"   )
-        self.critera_widget_list.append( widget )
-        widget.addItem('name')
-        widget.addItem('latin_name')
-        # widget.addItem('Title??')
+        field_name  =  "name"
+        widget      = cw.CQLineEdit(
+                               field_name = field_name   )
+        self.critera_widget_dict[ field_name ] = widget
+        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )
 
-        print( "build_tab build criteria change put in as marker ")
-        widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
+        # ----latin_name
+        widget                = QLabel( "Latin Name" )
+        grid_layout.new_row()
         grid_layout.addWidget( widget )
 
-        # ---- criteria changed should be in parent
-        grid_layout.new_row()
-        widget  = QLabel( "criteria_changed_widget" )
-        self.criteria_changed_widget  = widget
-        grid_layout.addWidget( widget )
-
-        # ---- push controls up page, may need adjuxtment
-        width    = 350
-        widget   = QSpacerItem( width, 310, QSizePolicy_Expanding, QSizePolicy_Minimum )
-        grid_layout.new_row()
-        # grid_layout.addWidget( widget )
-        grid_layout.addItem( widget, grid_layout.ix_row, grid_layout.ix_col )
-
-        # ---- function_on_return( self )
-        for i_widget in self.critera_widget_list:
-            i_widget.function_on_return   = self.criteria_select
+        field_name  = "latin_name"
+        widget      = cw.CQLineEdit( field_name = field_name   )
+        self.critera_widget_dict[ field_name ] = widget
+        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget,  )
 
     # -------------
     def criteria_select( self,     ):
@@ -503,20 +376,23 @@ class PlantCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         query_builder                   = qt_sql_query.QueryBuilder( query, print_it = False, )
 
         kw_table_name                   = "plant_key_words"
-        column_list                     = [ "id", "id_old", "name", "latin_name", "add_kw", ]
-            # might be able to get from data dict, perhaps even at startup
+
+        columns         = data_dict_all.SCHEMA.get_list_columns( self.parent_window.detail_table_name )
+
+        column_list  = [ i_column.column_name for i_column in columns ]  # !! fix in all coduments or do we fix columns above
 
         a_key_word_processor            = key_words.KeyWords( kw_table_name, AppGlobal.qsql_db_access.db )
         query_builder.table_name        = parent_document.detail_table_name
         query_builder.column_list       = column_list
 
         # ---- add criteria
-        criteria_dict                   = self.get_criteria()
+        #criteria_dict                   = self.get_criteria()
+        criteria_value_dict             = self.get_criteria_value_dict()
 
         # ---- key words
-        criteria_key_words              = criteria_dict[ "key_words" ]
+        criteria_key_words              = criteria_value_dict[ "key_words" ]
         criteria_key_words              = a_key_word_processor.string_to_key_words( criteria_key_words )
-        key_word_count                  = len(  criteria_key_words )
+        key_word_count                  = len( criteria_key_words )
 
         criteria_key_words              = ", ".join( [ f'"{i_word}"' for i_word in criteria_key_words ] )
         criteria_key_words              = f'( {criteria_key_words} ) '    # ( "one", "two" )
@@ -531,34 +407,33 @@ class PlantCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         # !! change to bind variables sql inject
         # ---- id  table_id
-        table_id     = criteria_dict[ "table_id" ].strip().lower()
+        table_id        = criteria_value_dict[ "table_id" ].strip().lower()
         if table_id:
-            add_where       =  f' id = {table_id} '
+            add_where   =  f' id = {table_id} '
             query_builder.add_to_where( add_where, [ ])
 
         # ---- id_old
-        id_old      = criteria_dict[ "id_old" ].strip().lower()
+        id_old          = criteria_value_dict[ "id_old" ].strip().lower()
         if id_old:
-            add_where       =  f' id_old = "{id_old}" '
+            add_where   =  f' id_old = "{id_old}" '
             query_builder.add_to_where( add_where, [ ])
 
-
         # ---- name like
-        name                          = criteria_dict[ "name" ].strip().lower()
+        name            = criteria_value_dict[ "name" ].strip().lower()
         if name:
-            add_where       = "lower( name )  like :name"   # :is name of bind var below
+            add_where   = "lower( name )  like :name"   # :is name of bind var below
             query_builder.add_to_where( add_where, [(  ":name",
                                                      f"%{name}%" ) ])
 
         # ---- latin name like
-        latin_name                          = criteria_dict[ "latin_name" ].strip().lower()
+        latin_name          = criteria_value_dict[ "latin_name" ].strip().lower()
         if name:
-            add_where       = "lower( latin_name )  like :latin_name"   # :is name of bind var below
+            add_where       = "lower( latin_name )  like :latin_name"
             query_builder.add_to_where( add_where, [(  ":latin_name",
                                                      f"%{latin_name}%" ) ])
 
         # ---- order by
-        order_by   = criteria_dict[ "order_by" ]
+        order_by            = criteria_value_dict[ "order_by" ]
 
         if   order_by == "name":
             column_name = "name"
@@ -567,18 +442,18 @@ class PlantCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         else:   # !! might better handle this
             column_name = "name"
 
-        query_builder.add_to_order_by(    column_name, "ASC",   )
+        query_builder.add_to_order_by( column_name, "ASC", )
 
         query_builder.prepare_and_bind()
 
-        msg      = f"{query_builder = }"
+        msg          = f"{query_builder = }"
         logging.log( LOG_LEVEL,  msg, )
 
-        is_ok  = AppGlobal.qsql_db_access.query_exec_model( query,
+        is_ok       = AppGlobal.qsql_db_access.query_exec_model( query,
                                                   model,
                                                   msg = "HelpSubWindow criteria_select" )
 
-        msg      = (  query.executedQuery()   )
+        msg         = ( query.executedQuery() )
         logging.log( LOG_LEVEL,  msg, )
 
         parent_document.main_notebook.setCurrentIndex( parent_document.list_tab_index )
@@ -636,18 +511,17 @@ class PlantDetailTab( base_document_tabs.DetailTabBase  ):
         self._build_fields( placer )
 
         # ---- buttons
-        widget        = QPushButton( 'Jump to Planting' )
+        widget          = QPushButton( 'Jump to Planting' )
         #add_button    = widget
         #widget.clicked.connect( self.add_record )
         placer.addWidget( widget )
 
-
         # ---- tab area
         # ---------------
-        tab_folder   = QTabWidget()
+        tab_folder      = QTabWidget()
         # tab_folder.setTabPosition(QTabWidget.West)
 
-        tab_folder.setMovable(True)
+        tab_folder.setMovable( True ) # !! in ancestor or not at all
         tab_layout.new_row()
         tab_layout.addWidget( tab_folder, columnspan   = max_col )
 
@@ -691,7 +565,7 @@ class PlantDetailTab( base_document_tabs.DetailTabBase  ):
     def _build_fields( self, layout ):
         """
         New implementation based on the data dict
-            for older look arount ver090 or so
+            for older look around ver090 or so
             builds the fields that interact with the db
             mostly based on base documents
         """
@@ -701,380 +575,6 @@ class PlantDetailTab( base_document_tabs.DetailTabBase  ):
         # could check have default values or do in get function better
         # edit_field                 = self.field_dict[ "id_in" ]
         # edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
-
-
-        return
-
-        """
-        What it says, read
-            this is generated code
-            tweaks
-                spacing
-                plnat_combo_dict look for code
-        """
-
-
-        width  = 50
-        for ix in range( self.max_col ):  # try to tweak size to make it work
-            widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
-            layout.addItem( widget, 0, ix  )  # row column
-
-        self.plant_combo_dict_ext    = combo_dict_ext.PLANT_COMBO_DICT_EXT
-            # see main window
-        # ---- code_gen: TableDict.to_build_form 2025_04_01 for plant -- begin table entries -----------------------
-
-        # ---- id
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id", )
-        self.id_field     = edit_field
-        edit_field.rec_to_edit_cnv        = edit_field.cnv_int_to_str
-        edit_field.dict_to_edit_cnv       = edit_field.cnv_int_to_str
-        edit_field.edit_to_rec_cnv        = edit_field.cnv_str_to_int
-        edit_field.edit_to_dict_cnv       = edit_field.cnv_str_to_int
-        edit_field.setReadOnly( True )
-        edit_field.setPlaceholderText( "id" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 1 )
-
-        # ---- id_old
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "id_old", )
-        self.id_old_field     = edit_field
-        edit_field.setReadOnly( True )
-        edit_field.setPlaceholderText( "id_old" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 1 )
-
-        # ---- name
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "name", )
-        self.name_field     = edit_field
-        edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "name" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- latin_name
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "latin_name", )
-        self.latin_name_field     = edit_field
-        edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "latin_name" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- descr
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "descr", )
-        self.descr_field     = edit_field
-        edit_field.setPlaceholderText( "descr" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- cmnt
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "cmnt", )
-        self.cmnt_field     = edit_field
-        edit_field.setPlaceholderText( "cmnt" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- add_kw
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "add_kw", )
-        self.add_kw_field     = edit_field
-        edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "add_kw" )
-        self.data_manager.add_field( edit_field, is_key_word = True )
-        layout.addWidget( edit_field, columnspan = 4 )
-
-        # ---- plant_type
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "plant_type", )
-        self.plant_type_field     = edit_field
-        edit_field.setPlaceholderText( "plant_type" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- type_sub
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "type_sub", )
-        self.type_sub_field     = edit_field
-        edit_field.setPlaceholderText( "type_sub" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- life
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "life", )
-        self.life_field     = edit_field
-        edit_field.setPlaceholderText( "life" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- water
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "water", )
-        self.water_field     = edit_field
-        edit_field.setPlaceholderText( "water" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- sun_min
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "sun_min", )
-        self.sun_min_field     = edit_field
-        edit_field.setPlaceholderText( "sun_min" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- sun_max
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "sun_max", )
-        self.sun_max_field     = edit_field
-        edit_field.setPlaceholderText( "sun_max" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- zone_min
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "zone_min", )
-        self.zone_min_field     = edit_field
-        edit_field.setPlaceholderText( "zone_min" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- zone_max
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "zone_max", )
-        self.zone_max_field     = edit_field
-        edit_field.setPlaceholderText( "zone_max" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- height
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "height", )
-        self.height_field     = edit_field
-        edit_field.setPlaceholderText( "height" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- form
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "form", )
-        self.form_field     = edit_field
-        edit_field.setPlaceholderText( "form" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- color
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "color", )
-        self.color_field     = edit_field
-        edit_field.setPlaceholderText( "color" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- pref_unit
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "pref_unit", )
-        self.pref_unit_field     = edit_field
-        edit_field.setPlaceholderText( "pref_unit" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- hybridizer
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "hybridizer", )
-        self.hybridizer_field     = edit_field
-        edit_field.setPlaceholderText( "hybridizer" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- hybridizer_year
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "hybridizer_year", )
-        self.hybridizer_year_field     = edit_field
-        edit_field.setPlaceholderText( "hybridizer_year" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- color2
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "color2", )
-        self.color2_field     = edit_field
-        edit_field.setPlaceholderText( "color2" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- color3
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "color3", )
-        self.color3_field     = edit_field
-        edit_field.setPlaceholderText( "color3" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- life2
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "life2", )
-        self.life2_field     = edit_field
-        edit_field.setPlaceholderText( "life2" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- tag1
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "tag1", )
-        self.tag1_field     = edit_field
-        edit_field.setPlaceholderText( "tag1" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- chromosome
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "chromosome", )
-        self.chromosome_field     = edit_field
-        edit_field.setPlaceholderText( "chromosome" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- bloom_time
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "bloom_time", )
-        self.bloom_time_field     = edit_field
-        edit_field.setPlaceholderText( "bloom_time" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- bloom_dia
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "bloom_dia", )
-        self.bloom_dia_field     = edit_field
-        edit_field.setPlaceholderText( "bloom_dia" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- fragrance
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "fragrance", )
-        self.fragrance_field     = edit_field
-        edit_field.setPlaceholderText( "fragrance" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- rebloom
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "rebloom", )
-        self.rebloom_field     = edit_field
-        edit_field.setPlaceholderText( "rebloom" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- itag1
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "itag1", )
-        self.itag1_field     = edit_field
-        edit_field.setPlaceholderText( "itag1" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- extended
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "extended", )
-        self.extended_field     = edit_field
-        edit_field.setPlaceholderText( "extended" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- plant_class
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "plant_class", )
-        self.plant_class_field     = edit_field
-        edit_field.setPlaceholderText( "plant_class" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- source_type
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "source_type", )
-        self.source_type_field     = edit_field
-        edit_field.setPlaceholderText( "source_type" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- source_detail
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "source_detail", )
-        self.source_detail_field     = edit_field
-        edit_field.setPlaceholderText( "source_detail" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- spider
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "spider", )
-        self.spider_field     = edit_field
-        edit_field.setPlaceholderText( "spider" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- spider_ratio
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "spider_ratio", )
-        self.spider_ratio_field     = edit_field
-        edit_field.setPlaceholderText( "spider_ratio" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-        # ---- double
-        edit_field                  = cw.CQLineEdit(
-                                                parent         = None,
-                                                field_name     = "double", )
-        self.double_field     = edit_field
-        edit_field.setPlaceholderText( "double" )
-        self.data_manager.add_field( edit_field, is_key_word = False )
-        layout.addWidget( edit_field, columnspan = 2 )
-
-
 
     # ---------------------------
     def select_record( self, id_value  ):
@@ -1289,7 +789,7 @@ class PlantEventSubTab( base_document_tabs.SubTabBase  ):
             msg     = f"select_all_for_test not query_ok {query_ok} "  # "{AppGlobal.stuff_db_db}"
             logging.error( msg )
 
-            print( " next 1/0    ", flush=True)
+            print( "!! next 1/0    ", flush = True)
             1 / 0
 
         self.list_view.resizeColumnsToContents()
@@ -1333,7 +833,7 @@ class PlantEventSubTab( base_document_tabs.SubTabBase  ):
         self.text_tab.default_new_row(   next_key )
 
     # ------------------------------------------
-    def add_record(self):
+    def add_record( self ):
         """
         what it says, read?
         add test for success an refactor??
@@ -1343,7 +843,7 @@ class PlantEventSubTab( base_document_tabs.SubTabBase  ):
         if dialog.exec_() == QDialog.Accepted:
             #self.model.submitAll()
             ok     = base_document_tabs.model_submit_all(
-                       model,  f"PlantEventsSubTab.add_record " )
+                       model,  "PlantEventsSubTab.add_record " )
             self.model.select()
 
     # ------------------------------------------
@@ -1352,7 +852,7 @@ class PlantEventSubTab( base_document_tabs.SubTabBase  ):
         what it says, read?
 
         !! promotable but for 2 lines so could
-            pass a bit to a more general finction
+            pass a bit to a more general function
             same for add ... look for other uses
 
             args in self
@@ -1427,7 +927,7 @@ class PlantPlantingSubTab( base_document_tabs.SubTabBaseOld  ):
         # model.setHeaderData( 1, Qt.Horizontal, "YT ID"  )
 
         view                = QTableView()
-        model               = self.model
+        #model               = self.model
         #self.list_view       = view
         self.view           = view
         view.setModel( self.model )
@@ -1511,7 +1011,7 @@ class PlantPlantingSubTab( base_document_tabs.SubTabBaseOld  ):
     # ---------------------------------------
     def select_by_id( self, a_id ):
         """
-        maybe make anscestor and promote but filter need name of key field
+        maybe make ancestor and promote but filter need name of key field
 
         """
         # ---- write
@@ -1529,7 +1029,7 @@ class PlantPlantingSubTab( base_document_tabs.SubTabBaseOld  ):
     def get_selectd_display_row( self, ):
         """
         from some other place -- search on name
-        what it says  --- get_selectd_display_row ??
+        what it says  --- get_selected_display_row ??
 
         not right for multiple selections or none !
         QTableView TableModel
@@ -1571,7 +1071,6 @@ class PlantPlantingSubTab( base_document_tabs.SubTabBaseOld  ):
         table_id    = record.value( "id" )
 
         AppGlobal.mdi_management.open_document_with_id( "planting", table_id )
-
 
     # -----------------------
     def __str__( self ):

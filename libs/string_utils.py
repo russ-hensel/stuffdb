@@ -222,6 +222,7 @@ def float_or_none( a_obj, ):
     """
     try:
         ret     = float( a_obj )
+
     except:
         ret     = None
 

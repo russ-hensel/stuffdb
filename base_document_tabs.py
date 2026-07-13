@@ -2,23 +2,21 @@
 # -*- coding: utf-8 -*-
 # sssspylint: disable=E221,E201,C0325,E0611,W0201,W0612,E0401
 # pylint: disable=E202,C0325,E0611,W0201,W0612,E0401
-"""
-
-"""
-
 # ---- tof
+"""
+
+"""
+
+
 # --------------------
 if __name__ == "__main__":
-    pass
     import main  # noqa  stops auto removal by pycln
-    #main.main()
 # --------------------
 
 # ---- imports
 #import functools
 import logging
 import pprint
-import subprocess
 from   pathlib    import Path
 import traceback
 from   functools  import partial
@@ -28,9 +26,11 @@ import time
 from qtpy import QtCore, QtWidgets
 
 from qtpy.QtCore   import QDate, QDateTime,   QModelIndex, Qt, Slot
-from qtpy.QtGui import QIcon, QFont
-
-
+from qtpy.QtGui import (
+                        QIcon, QFont,
+                        QColor,
+                        QPalette,
+                        )
 
 from qtpy.QtSql import ( QSqlQuery,
                          QSqlQueryModel,
@@ -58,29 +58,31 @@ from qtpy.QtWidgets import (
                          QTableWidgetItem,
                          QTabWidget,
                          QVBoxLayout,
-                         QWidget)
+                         QWidget,
+                         )
 
 import wat_inspector
 from   app_global     import AppGlobal
 import data_dict_all
 import gui_qt_ext
 import info_about
-
+import slideshow_subwindow
 import string_utils
-#import string_utils   as string_util
+import qsql_utils
 import text_edit_ext
-import custom_widgets as cw
+import custom_widgets   as cw
 import custom_widgets_2 as cw_2
 import data_manager
 import parameters
 import picture_viewer
+import app_exceptions
+
 
 # ---- constants
 
 FIF                 = info_about.INFO_ABOUT.find_info_for
 
 EXEC_RUNNER         = None  # setup below
-# MARKER              = ">snip"
 
 LOG_LEVEL           = 10    # higher is more
 
@@ -376,45 +378,10 @@ class SnippetManager:
 
         return text
 
-# -----------------------------------
-class CursorContext:
-    """
-    chat context manager
-    base_document_tabs.CursorContext
-    """
-    def __enter__(self):
-        QApplication.setOverrideCursor(Qt.WaitCursor)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        QApplication.restoreOverrideCursor()
 
 # -----------------------------------
-class DateFormatDelegate( QStyledItemDelegate ):
-    """for table integer to date formats """
-    def displayText(self, value, locale):
-
-        # Assuming the integer is a Unix timestamp in seconds
-        date = QDateTime.fromSecsSinceEpoch(int(value ) )
-        return date.toString("yyyy-MM-dd")  # Customize format as needed
-        #return super().displayText(value, locale)
-
-# -----------------------------------
-class DateTimeFormatDelegate( QStyledItemDelegate ):
-    """for table integer to datetime formats """
-    def displayText( self, value, locale ):
-        #if value.isValid():
-            # Convert integer (Unix timestamp in seconds) to QDateTime
-            date_time = QDateTime.fromSecsSinceEpoch(int( value ) )
-            # Format as yyyy-MM-dd hh:mm:ss for text sorting to match time order
-            return date_time.toString( "yyyy-MM-dd hh:mm:ss" )
-        #return super().displayText(value, locale)
-
-# # Apply delegate to the specific column (e.g., column index 2)
-# delegate = DateTimeFormatDelegate(view)
-# view.setItemDelegateForColumn(2, delegate)
-
-# -----------------------------------
-class TableModelDateTimeDelegate( QStyledItemDelegate ):
+class TableModelDateTimeDelegatexxx( QStyledItemDelegate ):
     """
     for a qabstract table model from grok, slightly modified
     """
@@ -510,6 +477,7 @@ class DocumentBase( QMdiSubWindow ):
         self.text_tab_index         = None
         self.history_tab_index      = None
         self.picture_tab_index      = None   # does this ever exist
+        self.document_color         = None
 
         self.mapper                 = None    # !! delete when sage
         self.help_filename          = "help_file_not_set.txt"
@@ -559,6 +527,13 @@ class DocumentBase( QMdiSubWindow ):
         # consider using self.icon in mainwindow or mdi management
         icon    = QIcon( parameters.PARAMETERS.icon )
         self.setWindowIcon( icon )
+
+        # ---- color
+        if self.document_color is not None:
+            pal         = self.palette()
+            pal.setColor( QPalette.ColorRole.Window, QColor( self.document_color ) )
+            self.setPalette( pal )
+            self.setAutoFillBackground( True )
 
         if self.add_history_to_data_manager:
             # this is bad consider refactor
@@ -745,6 +720,12 @@ class DocumentBase( QMdiSubWindow ):
             update before moving
         consider second arg a delta -- that might eliminate the prior next but
         working now
+        !! add a return of the id or None, None indicates that the
+        list is empty, and we may want to insert an new_note_since_list_was empty !!
+        could do here -- see delete
+        return
+                next_id, None if there is none
+
         """
         if do_update:
             self.update_db()    # because current may be dirty
@@ -755,6 +736,7 @@ class DocumentBase( QMdiSubWindow ):
         if no_rows < 1:
             debug_msg  = ( "set_list_to_detail_ix  may need to clear some stuff" )
             logging.debug( debug_msg )
+            return None
 
         list_ix             = tab.list_ix
 
@@ -781,6 +763,8 @@ class DocumentBase( QMdiSubWindow ):
         # update sync should make unnecessary
         # record    = self.detail_tab.data_manager.current_record
         # self.record_to_history_table( record )
+
+        return id_data
 
     # -----------------------------
     def prior_history_to_detail( self ):
@@ -948,10 +932,9 @@ class DocumentBase( QMdiSubWindow ):
             self.text_tab.delete_all()
 
         self.list_tab.delete_row_by_id( current_id )
-
         self.history_tab.delete_row_by_id( current_id )
 
-        self.next_list_to_detail( do_update = False )
+        next_id   = self.next_list_to_detail( do_update = False )
                 # no update because no record, could be in record_state
                 # and hope it works --- need tab shift?
                 # if not perhaps stay on criteria or clear the detail ... to
@@ -973,7 +956,7 @@ class DocumentBase( QMdiSubWindow ):
         only this update_db should validate, the rest
         should assume this one has use self.validate to check all
         """
-        with CursorContext():
+        with gui_qt_ext.CursorContext():
             try:
                 self.validate( )
 
@@ -1098,7 +1081,7 @@ class DocumentBase( QMdiSubWindow ):
         what about photo --- well things do not have one photo except photo itself
         """
         start_dt     = time.time()
-        with CursorContext():
+        with gui_qt_ext.CursorContext():
 
             debug_msg   = ( "base document select_record  first validate, "
                             "then save, wait for except then go on ?? ")
@@ -1125,6 +1108,7 @@ class DocumentBase( QMdiSubWindow ):
 
             if current_ix not in [ self.detail_tab_index, self.text_tab_index, self.picture_tab_index, ]:
                 tab_folder.setCurrentIndex( self.detail_tab_index )
+
         end_dt     = time.time()
         msg        = (f"select_record time = {end_dt - start_dt } sec")
         logging.info( msg )
@@ -1364,7 +1348,7 @@ class DetailTabBase( QWidget ):
     #---------------------------------
     def _build_from_dict( self, layout ):
         """
-
+        Now working well, and should be open to enhancement
         builds the fields that interact with the db
         mostly based on base documents
         see doc string in base_document
@@ -1372,31 +1356,14 @@ class DetailTabBase( QWidget ):
         New implementation based on the data dict
             for older look arount ver090 or so
 
-
-        old comment about to delete
-        there is an issue with defaults as widget already have their own
-        defaults, but are different for differerent kinds of widgets
-
-        this is mostly for the conversion functions
-
-        what should we do here -- we get the value, or perhaps
-            None, then we skip the function call
-
-        this may be what skip is for
-        finish me
-
-        FINISH ME
-
-        ADD EACH COLUMN TO A DICT COULD BE HERE OR DATA MANAGER
-
         """
-        width    = 200
+        width           = 200
 
         for ix in range( layout.col_max ):
             widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum )
             layout.addItem( widget, 0, ix  )
 
-        self.field_dict = {}  # only for data in db
+        self.field_dict = {}  # only for data in db  dict of widgets
 
         a_schema        = data_dict_all.SCHEMA
         table_name      = self.table_name
@@ -1425,8 +1392,7 @@ class DetailTabBase( QWidget ):
 
             # build index for later tweaking.... access, etch
             self.field_dict[ field_name ] = widget
-            # print( type( widget ) )
-            # print( widget.field_name )
+            # print( type( widget ) )  # print( widget.field_name )
 
             # value    = i_column.get_column_value( "detail_edit_class" )
             #rint(  field_name, i_column.get_column_value( "form_read_only" ) )
@@ -1525,6 +1491,8 @@ class DetailTabBase( QWidget ):
         """
         from russ crud was in phototexttab, probably universal
         """
+        begin_time  = time.time()
+
         self.data_manager.update_db()
 
         # ---- better in db manager??
@@ -1541,6 +1509,10 @@ class DetailTabBase( QWidget ):
 
         for i_tab in self.sub_tab_list:
             i_tab.update_db()
+
+        elapsed_time    = time.time() - begin_time
+        msg             = ( f"update_db {elapsed_time = }")
+        logging.debug( msg )
 
     # ---------------------------------------
     def validate( self, ):
@@ -1784,7 +1756,7 @@ class ListTabBase( DetailTabBase ):
             a_max          = 0,
             by_rows        = False  )
 
-        # ---- Set up the model
+        # ---- model Set up the model
         model_class         = QSqlTableModel
         model_class         = ReadOnlySqlTableModel
         model               = model_class(
@@ -1841,9 +1813,8 @@ class ListTabBase( DetailTabBase ):
             cnv   = i_column.rec_to_edit_cnv
             if cnv and "qdate" in cnv:
                 #delegate    = DateFormatDelegate( view )
-                delegate    = DateFormatDelegate(   )
+                delegate    = gui_qt_ext.DateFormatDelegate(   )
                 view.setItemDelegateForColumn( ix_col, delegate )
-
 
         # # ?? look around fro redundancy
         # for ix_col, i_width in enumerate( col_head_widths ):
@@ -1856,6 +1827,7 @@ class ListTabBase( DetailTabBase ):
         """
         called after a record delete perhaps from document
         seems best of redoing the select
+        this keeps deleted records from showin
         """
         model           = self.list_model
 
@@ -1919,13 +1891,20 @@ class ListTabBase( DetailTabBase ):
 # ----------------------------------------
 class CriteriaTabBase( QWidget ):
     """
-    criteria tab parent, not sure if useful yet ..
+    criteria tab parent
     """
-    def __init__(self, parent_window ):
+    def __init__( self, parent_window ):
         """
         lots of variable may not be used .... clean up later
         """
         super().__init__()
+
+        # would a getattry ... be better
+        try:
+            x                       = self.groupbox_width
+
+        except:
+            self.groupbox_width     = 700
 
         self.criteria_dict          = {}   # this collects values
         self.critera_widget_list    = []   # this will phase out
@@ -1938,75 +1917,29 @@ class CriteriaTabBase( QWidget ):
         self._build_tab()
         self.clear_criteria()
 
-    # -----------------------------
-    def add_date_widgetsxxx( self, placer, row_lables = ("Edit", "Add") ):
-        """
-        might want to add labels to the
-        arguments and default to edit and add
-        """
-        # # ---- dates
-        # placer.new_row()
-        # widget  = QLabel( row_lables[0] )
-        # placer.new_row()
-        # placer.place( widget )
-
-        # # widget                  = QDateEdit()
-        # # self.end_date_widget    = widget
-        # # widget.setCalendarPopup( True )
-        # # widget.editingFinished.connect( lambda: self.criteria_changed( True ) )
-        # # widget.setDate(QDate( 2025, 1, 1 ))
-        # # placer.place( widget )
-        # widget, widget_to_layout       = self.make_criteria_date_widget()
-        # #widget                         = self.make_criteria_date_widget()
-        # self.start_edit_date_widget    = widget
-        # widget.critera_name  = "start_edit_date"
-        # self.critera_widget_list.append( widget )
-        # widget.setDate(QDate( 2025, 1, 1 ))
-        # placer.place( widget )
-
-        # widget  = QLabel( "to" )
-        # placer.place( widget )
-
-        # widget, widget_to_layout       = self.make_criteria_date_widget()
-        # self.end_edit_date_widget       = widget
-        # widget.critera_name  = "end_edit_date"
-        # self.critera_widget_list.append( widget )
-        # widget.setDate(QDate( 2025, 1, 1 ))
-        # placer.place( widget )
-
-        # # ---- placer.new_row()
-        # placer.new_row()
-        # widget  = QLabel( row_lables[1] )
-        # placer.new_row()
-        # placer.place( widget )
-
-        # widget, widget_to_layout       = self.make_criteria_date_widget()
-        # self.start_add_date_widget      = widget
-        # widget.critera_name  = "add_start_date"
-        # self.critera_widget_list.append( widget )
-        # widget.setDate(QDate( 2025, 1, 1 ))
-        # placer.place( widget_to_layout )
-
-        # widget  = QLabel( "to" )
-        # placer.place( widget )
-
-        # widget, widget_to_layout       = self.make_criteria_date_widget()
-        # self.end_add_date_widget        = widget
-        # widget.critera_name  = "add_end_date"
-        # self.critera_widget_list.append( widget )
-        # widget.setDate(QDate( 2025, 1, 1 ))
-        # placer.place( widget_to_layout )
-
+    # ------------------------
     # -------------------------------
-    def _build_top_widgets_grid( self, grid_layout ):
+    def _build_top_widgets_grid( self, layout ):
         """
         what it says read, std for all criteria tabs
         lets add a Hbox
         now on an hbox placed on the grid layout
         return
             mutates
-            creates new row, uses creates another
+
         """
+        #layout.new_row()
+        col_max             = 10
+        groupbox            = QGroupBox( "Actions:" )
+        groupbox.setMaximumWidth( self.groupbox_width )
+        groupbox.setMaximumHeight( 100 )
+        groupbox.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
+        layout.addWidget( groupbox )
+
+        grid_layout         = gui_qt_ext.CQGridLayout( col_max = col_max )
+        groupbox.setLayout( grid_layout )
+        layout.addLayout( grid_layout )
+
         grid_layout.new_row()
         button_layout    = QHBoxLayout()
         grid_layout.addLayout( button_layout,
@@ -2026,51 +1959,22 @@ class CriteriaTabBase( QWidget ):
 
         # ---- buttons
         a_widget        = QPushButton( "Clear" )
-        a_widget.clicked.connect(  self.clear_criteria )
+        a_widget.clicked.connect( self.clear_criteria )
         button_layout.addWidget( a_widget )
 
         a_widget        = QPushButton( "Go -->" )
-        a_widget.clicked.connect(  self.parent_window.criteria_select )
+        a_widget.clicked.connect( self.parent_window.criteria_select )   # why not just self.
         button_layout.addWidget( a_widget )
 
         a_widget        = QPushButton( "Paste/Go -->" )
-        a_widget.clicked.connect(  self.paste_go )
+        a_widget.clicked.connect( self.paste_go )
         button_layout.addWidget( a_widget )
 
         a_widget        = QPushButton( "Clear/Paste/Go -->" )
-        a_widget.clicked.connect(  self.clear_go )
+        a_widget.clicked.connect( self.clear_go )
         button_layout.addWidget( a_widget )
 
         grid_layout.new_row()
-
-    # -------------------------------
-    def _build_top_widgets_placer_delete( self, placer ):
-        """
-        what it says read, std for all criteria tabs
-        lets add a Hbox
-        """
-        placer.new_row()
-        button_layout    = QHBoxLayout()
-        placer.layout.addLayout( button_layout, placer.ix_col, placer.ix_row, 0, 5  )
-        #row: int, column: int, rowSpan: int, columnSpan:
-            # int, alignment: Union[Qt.Alignment, Qt.AlignmentFlag] = Qt.Alignment()):
-        placer.new_row()
-        # ---- buttons
-        a_widget        = QPushButton( "Clear" )
-        a_widget.clicked.connect(  self.clear_criteria )
-        button_layout.addWidget( a_widget )
-
-        a_widget        = QPushButton( "Go -->" )
-        a_widget.clicked.connect(  self.parent_window.criteria_select )
-        button_layout.addWidget( a_widget )
-
-        a_widget        = QPushButton( "Paste/Go -->" )
-        a_widget.clicked.connect(  self.paste_go )
-        button_layout.addWidget( a_widget )
-
-        a_widget        = QPushButton( "Clear/Paste/Go -->" )
-        a_widget.clicked.connect(  self.clear_go )
-        button_layout.addWidget( a_widget )
 
     # -------------------------------
     def add_buttons( self, placer ):
@@ -2106,7 +2010,7 @@ class CriteriaTabBase( QWidget ):
         placer.place( a_widget )
 
     # -------------------------
-    def make_criteria_date_widget( self,   ):
+    def make_criteria_date_widgetxxxx( self,   ):
         """
         THE WIDGETS HAVE CHANGED SINCE THIS WAS WRITTEN, FIX WHEN NEXT USED
 
@@ -2126,6 +2030,108 @@ class CriteriaTabBase( QWidget ):
         #widget_to_layout            = widget.container
         return ( widget, widget )
         # widget, widget_to_layout  =self.make_criteria_date_widget()
+
+    # ------------------------------------------
+    def _build_sort_widgets( self, layout, sort_list = None ):
+        """
+        what it says, read
+        all but values in ddl are promotable
+        layout a vbox we create a grid in a groupbox
+
+        also take a final wack at all the criteria widgets
+        """
+        groupbox        = QGroupBox( "Sort Order:" )
+        groupbox.setMaximumWidth( self.groupbox_width )
+        layout.addWidget( groupbox )
+        grid_layout     = gui_qt_ext.CQGridLayout( col_max = 10 )
+        groupbox.setLayout( grid_layout )
+        layout.addLayout( grid_layout )
+
+        # ---- Order by
+        grid_layout.new_row()
+        widget      = QLabel( "Order by" )
+        grid_layout.addWidget( widget )
+
+        field_name  = "order_by"
+        widget      = cw.CQComboBox(
+                                  field_name = field_name )
+        self.critera_widget_dict[ field_name ] = widget
+        #self.critera_widget_list.append( widget )
+
+        # remove if and force error
+        if sort_list is not None:
+            widget.addItems( sort_list )
+
+        grid_layout.addWidget( widget )
+
+        # ---- Order by Direction
+        widget  = QLabel( "Direction" )
+        grid_layout.addWidget( widget )
+
+        field_name  = "order_by_dir"
+        widget      = cw.CQComboBox(
+                                  field_name = field_name )
+        self.critera_widget_dict[ field_name ] = widget
+        #self.critera_widget_list.append( widget )
+
+        widget.addItem('Ascending')
+        widget.addItem('Descending')
+
+        #widget.currentIndexChanged.connect( lambda: self.criteria_changed(  True   ) )
+        #grid_layout.new_row()  # because seems to be missing
+        grid_layout.addWidget( widget )
+
+        # ---- criteria changed should be in parent
+        grid_layout.new_row()
+        widget  = QLabel( "criteria_changed_widget" )
+        self.criteria_changed_widget  = widget
+        grid_layout.addWidget( widget )
+
+        # ---- function_on_return( self )  move into build sort ?
+        for i_widget in self.critera_widget_dict.values():
+            # add value changed to custom edits widget.textChanged.connect
+            i_widget.function_on_changed            = ( lambda: self.criteria_changed( True ) )
+            i_widget.on_return_pressed     = self.criteria_select
+                    # check if working and if other redundant code
+
+    # ------------------------------------------
+    def _build_id_widgets( self, layout ):
+        """
+        what it says, read
+            this should be fully promotable
+
+        layout a vbox we create a grid in a groupbox
+        """
+        groupbox   = QGroupBox( "ID Criteria:" )
+        groupbox.setMaximumWidth( self.groupbox_width )
+        layout.addWidget( groupbox )
+        grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
+        groupbox.setLayout( grid_layout )
+        layout.addLayout( grid_layout )
+
+        # ----id
+        widget                = QLabel( "ID" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit(
+                                                field_name = "table_id"   )
+        self.id_field           = widget
+        #self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "table_id" ] = widget
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
+
+        # ----id_old
+        widget                = QLabel( "ID Old*" )
+        grid_layout.new_row()
+        grid_layout.addWidget( widget )
+
+        widget                  = cw.CQLineEdit(
+                                                field_name = "id_old"   )
+        #self.critera_widget_list.append( widget )
+        self.critera_widget_dict[ "id_old" ] = widget
+        grid_layout.addWidget( widget, )    # columnspan = 3 )
 
     # ---- Actions
     def criteria_select_if( self,   ):
@@ -2167,14 +2173,10 @@ class CriteriaTabBase( QWidget ):
 
 
     # -----------------------------
-    def get_criteria_widget( self, field_name ):
+    def get_criteria_widgetxxx( self, field_name ):
         """
         but now have a dict so should drop this
         """
-        for i_criteria in self.critera_widget_list:
-            if i_criteria.field_name == field_name:
-                return i_criteria
-        raise ValueError( f"get_criteria_widget no widget for {field_name} found")
 
     # -----------------------------
     def put_criteria( self, criteria, ):   #clear = True ):
@@ -2191,11 +2193,12 @@ class CriteriaTabBase( QWidget ):
                     i_criteria.build_criteria( criteria_dict )
 
         """
-        # !! implement clear
+        # !! implement clear -- may have already been called
         self.clear_criteria()
         for field_name, value in criteria.items():
             try:
-                widget = self.get_criteria_widget( field_name )
+                #widget = self.get_criteria_widget( field_name )  zz
+                widget = self.critera_widget_dict[ field_name ]
                 widget.set_data( value )
 
             except ValueError as error:
@@ -2215,6 +2218,7 @@ class CriteriaTabBase( QWidget ):
     # -----------------------------
     def get_criteria( self ):
         """
+        phase out for get_criteria_value_dict
         What it says, read
             note: strip the strings
             dates not yet right
@@ -2229,18 +2233,41 @@ class CriteriaTabBase( QWidget ):
         return criteria_dict
 
     # -----------------------------
+    def get_criteria_value_dict( self ):
+        """
+        What it says, read
+            note: strip the strings
+            dates not yet right
+            mutates self.criteria_dict but also returns
+            !! could eliminate and let select get as needed
+        """
+        self.criteria_value_dict      = {}
+        criteria_value_dict           = self.criteria_value_dict
+
+        for i_criteria in self.critera_widget_dict.values():
+            i_criteria.build_criteria( criteria_value_dict )
+
+        return criteria_value_dict
+
+    # -----------------------------
     def clear_criteria( self ):
         """
         What it says, read
         """
-        for i_criteria in self.critera_widget_list:
-           # i_criteria.set_data_default()
-            i_criteria.set_default()
+        print( "!!!!!!!!!!!!!!!! must fixed? clear_criteria or is fixed")
+        # help seems to use but not stuff ??????????????
+        for i_criteria_widget in self.critera_widget_dict.values():
 
-        # next from help will it work in general
-        widget   = self.get_criteria_widget( "key_words" )
+            if i_criteria_widget.field_name == "use_lat_long":
+                pass   # breakpoint
+
+            i_criteria_widget.set_default()
+
+        widget  = self.critera_widget_dict[ "key_words" ]
         widget.setFocus()
         self.criteria_changed( False )
+
+        return
 
     # -----------------------------
     def paste_go( self ):
@@ -2248,7 +2275,8 @@ class CriteriaTabBase( QWidget ):
         What it says, read
         paste key word only then go
         """
-        self.key_words_widget.set_data( QApplication.clipboard().text( ) )
+        widget     = self.critera_widget_dict[ "key_words" ]
+        widget.set_data( QApplication.clipboard().text( ) )
         QApplication.clipboard().text( )
         self.criteria_select()
 
@@ -2258,9 +2286,9 @@ class CriteriaTabBase( QWidget ):
         What it says, read
             think clear paste and go ?
         """
-        #int( "clear_go --------------------------------------- add the clear ")
         self.clear_criteria()
-        self.key_words_widget.set_data( QApplication.clipboard().text( ) )
+        widget     = self.critera_widget_dict[ "key_words" ]
+        widget.set_data( QApplication.clipboard().text( ) )
         QApplication.clipboard().text( )
         self.criteria_select()
 
@@ -2269,14 +2297,14 @@ class CriteriaTabBase( QWidget ):
         """
 
         """
-        parent_window    = self.parent_window
+        parent_window = self.parent_window
         parent_window.update_db()
 
         # tab_widget.setCurrentIndex( tab_index )
         tab_index     = parent_window.criteria_tab_index
 
-        parent_window.tab_folder.setCurrentIndex(  tab_index )
-        self.clear_criteria()
+        parent_window.tab_folder.setCurrentIndex( tab_index )
+        self.clear_criteria()  # run thru debug may be dup !!
         self.put_criteria( criteria )
         self.criteria_select()
 
@@ -2451,7 +2479,7 @@ class SubTabWithEditBase( QWidget ):
         """
         maybe make ancestor and promote
         """
-        1/0  # in descendant
+        1/0  # in descendant change to not implemented
         # model               = self.model
 
         # self.current_id     = id
@@ -2461,7 +2489,7 @@ class SubTabWithEditBase( QWidget ):
 
     #---------------- restart here model view dialog name
     #  ---- chat functions
-    def add(self):
+    def add( self ):
         """
         Open dialog to add a new event and insert it into the model.
         !! may not be used, should it be seem entire imp in desceanant
@@ -2472,7 +2500,7 @@ class SubTabWithEditBase( QWidget ):
         if dialog.exec_() == QDialog.Accepted:
             form_data   = dialog.get_form_data()
 
-            # Create a new record
+            # ---- record
             row         = self.model.rowCount()
             self.model.insertRow(row)
 
@@ -2541,9 +2569,6 @@ class SubTabWithEditBase( QWidget ):
 
         if dialog.exec_() == QDialog.Accepted:
             form_data = dialog.get_form_data()
-
-            # for field_name, field_ix in  PEOPLE_CONTACT_COLUMN_DICT.items():
-            #     model.setData( model.index( row, field_ix ), form_data[ field_name ] )
 
             field_ix = -1   # could make loop or even list comp
             for i_column_name, col_dict in self.field_dict.items():
@@ -2635,7 +2660,7 @@ class SubTabBase( QWidget ):
         self.current_id      = None  # probably get from somewhere else ??
 
     # -----------------------
-    def update_db( self,    ):
+    def update_db( self, ):
         """
         beware may be overridden
         for debugging
@@ -3002,7 +3027,7 @@ class HistoryTabBase( QWidget ):
         #     col_head_widths.append(  i_column.col_head_width  )
             cnv   = i_column.rec_to_edit_cnv
             if cnv and "qdate" in cnv:
-                  delegate    = DateFormatDelegate(   )
+                  delegate    = gui_qt_ext.DateFormatDelegate(   )
                   table.setItemDelegateForColumn( ix, delegate) # +1 for seq
             #     view.setItemDelegateForColumn( ix_col, delegate )
 
@@ -3883,7 +3908,7 @@ class StuffdbPictureTab( DetailTabBase ):
         print( "StuffdbPictureTab get_topic --- this for Picture but not others with lists " )
         detail_tab     = self.parent_window.detail_tab
         # do we have a picture sub tab
-        # zz
+
 
         picture_sub_tab     = detail_tab.picture_sub_tab
 
@@ -4075,7 +4100,7 @@ class StuffdbPictureTab_not_photo( QWidget ):
         #rint("picturePhotoTab Fit in View")
 
 # ----------------------------------------
-class PictureListSubTabBase( QWidget  ):
+class PictureListSubTabBase( QWidget ):
     """
     from albums picture list but no update -- and albums not currently using
             --- also for stuff, plant.... is albums the special one
@@ -4111,7 +4136,7 @@ class PictureListSubTabBase( QWidget  ):
         self.table_name         = self.list_table_name # -- clean up
         self.pictures_for_table = "set me in child init "
         self.db                 = AppGlobal.qsql_db_access.db
-
+        self.select_id          = None  # set when a select is done
         self._build_gui()
 
     # ------------------------------------------
@@ -4157,10 +4182,21 @@ class PictureListSubTabBase( QWidget  ):
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
 
+        # ---- 'Jump to Picture'
         widget         = QPushButton('Jump to Picture')
         connect_to     = self.jump_to_picture
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
+
+        widget         = QPushButton( "Add All to SlideShow" )
+        connect_to     = self.add_to_slideshow
+        widget.clicked.connect( connect_to )
+        button_layout.addWidget( widget )
+
+        # ---- "Add To Album"  look at
+        widget          = QPushButton( "Add All To Album" )
+        widget.clicked.connect( self.add_to_album )
+        button_layout.addWidget( widget)
 
     # ------------------------------------------
     def _build_model( self, ):
@@ -4169,7 +4205,7 @@ class PictureListSubTabBase( QWidget  ):
         from russ_qrm
         sql set in select_by_id
         """
-        # ----
+        #---- QSqlQueryModel
         model       = QSqlQueryModel( )
         self.model  = model
         # Set the headers for the columns -- needs to be done after connect?
@@ -4180,7 +4216,7 @@ class PictureListSubTabBase( QWidget  ):
         what it says, read
         now just a table
         """
-        row                     = index.row()
+        row                    = index.row()
         self.list_ix           = row
         self.prior_next( 0 )   # 0 sets to beginning
 
@@ -4192,6 +4228,7 @@ class PictureListSubTabBase( QWidget  ):
         probably can factor out some of this??
         """
         table_id        = a_id
+        self.select_id  = table_id
         model           = self.model  #   a QSqlQueryModel()
         table_joined    = self.pictures_for_table
 
@@ -4285,14 +4322,15 @@ class PictureListSubTabBase( QWidget  ):
         """
         view                    = self.view    #  QTableView
         model                   = self.model   #  QSqlQueryModel
-        #prior_list_ix    = self.list_ix  # ng
-        no_rows                  = model.rowCount()
 
-        list_ix                  = self.list_ix
-        new_list_ix              = picture_ix
+        #prior_list_ix    = self.list_ix  # ng
+        no_rows                 = model.rowCount()
+        list_ix                 = self.list_ix
+        new_list_ix             = picture_ix
         # self.list_ix           = row
+
         if no_rows <= 0:
-            debug_msg     = f"set_picture_ix {no_rows = }  should clear display or no pic pic "
+            debug_msg           = f"set_picture_ix {no_rows = }  should clear display or no pic pic "
             logging.debug( debug_msg )
             file_name        = fix_pic_filename( None )
             self._display_picture( file_name )
@@ -4382,7 +4420,7 @@ class PictureListSubTabBase( QWidget  ):
 
         ix_col      += 1
         #delegate    = DateTimeFormatDelegate( view )
-        delegate    = DateFormatDelegate( view )
+        delegate    = gui_qt_ext.DateFormatDelegate( view )
         view.setItemDelegateForColumn( ix_col, delegate )
         model.setHeaderData( ix_col, Qt.Horizontal, "Date" )
         view.setColumnWidth( ix_col, 150 )
@@ -4436,6 +4474,9 @@ class PictureListSubTabBase( QWidget  ):
         i_row      = self.get_selectd_row()
 
         if i_row < 0:
+            msg      = ( "Cannot find a selected row ")
+            QMessageBox.information( AppGlobal.main_window,
+                             "Problem:", msg )
             return
 
         model       = self.model
@@ -4443,6 +4484,161 @@ class PictureListSubTabBase( QWidget  ):
         table_id    = record.value( "id" )
 
         AppGlobal.mdi_management.open_document_with_id( "photo", table_id )
+
+    # -----------------------
+    def add_to_slideshow( self, ):
+        """
+        make a list and send off to the slideshow
+
+            # -------------------------------------  WAS
+            def add_album_to_slideshow( self, photo_dict ):
+            may except on no show selected
+             self.detail_tab
+            picture_sub_tab
+
+        """
+        mdi_management  = AppGlobal.mdi_management
+        slideshow_doc   = mdi_management.get_a_doc_for_class( slideshow_subwindow.SlideShowSubWindow )
+
+        if  slideshow_doc is  None:
+            msg         = "add_to_slideshow not sure why we have this else message "
+            qsql_utils.ok_message_box(  title = "Action Needed:",
+                                        msg   = msg )
+            logging.debug( msg )
+
+            return
+
+        model           = self.model
+        a_photo_list    = []
+        count           = 0
+        for row in range( model.rowCount() ):
+            record      = model.record(row)
+
+            file            = record.value( "file" )
+            photo_dict      =  {
+                                    "photo_id":        record.value( "id" ),
+                                    "photo_file":      file,
+                                    "photo_sub_dir":   record.value( "sub_dir" ),
+                                    "photo_name":      record.value( "name" ),
+                                    "photo_ts":        record.value( "dt_item" ),
+                                    }
+            if file:
+                count   += 1
+                a_photo_list.append( photo_dict )
+
+        slideshow_doc.add_a_photo_list( a_photo_list )
+
+        id      = "?"
+        msg     = f"Pictures for {id}  added {count} pictures"
+        slideshow_doc.setup_tab.add_text( msg )
+
+    # --------------------------------------
+    def copy_album_setup( self,  ):
+        """
+        adapted from album code
+        check that the setup is ok
+
+            have a single album to add the pictures to
+
+
+        return -- album document to send to
+        raise  some exception if error
+        """
+        from   album_document   import AlbumDocument
+            # here because of import issue
+        detail_tab      = self.parent_window
+        document        = detail_tab.parent_window
+
+        #album_docs      = AppGlobal.mdi_management.get_album_docx()
+        album_docs      = AppGlobal.mdi_management.get_docs_for_class( AlbumDocument )
+        len_album_docs  = len( album_docs )
+
+        if len_album_docs !=  1:
+            msg     = f"For this to work you need ONE = 1 Album Documents open, you have {len_album_docs}."
+            raise app_exceptions.ReturnToGui( msg )
+
+        album_target = album_docs[ 0 ]
+
+        # for i_album_doc in album_docs:
+
+        #     if i_album_doc.instance_ix != document.instance_ix:
+        #         album_target = i_album_doc
+        #         break
+
+        # if album_target is None:
+        #     msg     = f"Problem: I cannot find a target album, this should not happen ."
+        #     raise app_exceptions.ReturnToGui( msg )
+
+        record_state    = album_target.detail_tab.data_manager.record_state
+
+        if record_state == data_manager.RECORD_NULL:   # not 0 look it up
+            msg     = "For this to work you need an item in your target Album Document."
+            raise app_exceptions.ReturnToGui( msg )
+
+        #rint( f"!!!!!!Error still need to check it has a record {record_state}")
+        # ---- are files present
+        # if self.model.rowCount() < 1:
+        #     msg       = ( "For this to work you need to have some files in this tab.")
+        #     logging.debug( msg )
+        #     raise app_exceptions.ReturnToGui( msg )
+
+        return album_target
+
+    # -----------------------
+    def add_to_album( self, ):
+        """
+        send off to the add_to_album
+        add_to_album
+        """
+        try:
+            album_target = self.copy_album_setup()
+
+        except app_exceptions.ReturnToGui as an_except:
+            msg       = f"{str( an_except)}"
+            logging.debug( msg )
+            QMessageBox.information( AppGlobal.main_window,
+                                     "That is a No Go", msg )
+            return
+
+        model       =  self.model
+
+        start_dt    = time.time()
+
+        with gui_qt_ext.CursorContext():
+
+            for ix_row in range( model.rowCount() ):
+                self.add_to_other_album( album_target, ix_row )
+
+        end_dt     = time.time()
+        msg        = (f"base_document add_to_album time = {end_dt - start_dt } sec")
+        logging.info( msg )
+
+    # -----------------------------
+    def add_to_other_album( self, album_target, ix_row ):
+
+        """
+        adapted from album document
+        will add one to the show need to call over and over
+        took from picture detail  was add_to_show
+        # change name to add to album when ewe get farther along
+        add a picture to a show -- which must be open in another window
+        query.addBindValue( data_in_dict["photo_id"]  )
+        """
+        model         = self.model
+        # dict is a bit odd  --- some is wrong all we really need i photo_id
+        #photo_id      =  int( self.id_field.text() )  # may be available elsewhere   this would db test
+        photo_id_ix   = 0
+        photo_id      = model.data( model.index( ix_row, photo_id_ix ) )
+        #photo_fn      =  self.file_field.text()
+        # may want to double check but seems now only photo id matters set rest to None, drop when it works
+        row_dict            = { "photo_name":               "from album_picture_sub_tab",
+                                "photo_fn":                  None,
+                                "photo_id":                  photo_id,
+                                "photoshow_photo_id":        None,
+                               }
+
+        album_target.add_photo_to_show( row_dict )
+                # perhaps in album picture sub tab
 
 # ---- eof ---------------------------
 

@@ -58,16 +58,16 @@ sql
 
 # ---- imports qt
 
-from qt_compat import QApplication, QAction, exec_app, qt_version
-from PyQt.QtWidgets import QMainWindow, QToolBar, QMessageBox
+#from qt_compat        import QApplication, QAction, exec_app, qt_version
+from qtpy.QtWidgets   import QMainWindow, QToolBar, QMessageBox
 
 
 
-from PyQt import QtGui
-from PyQt.QtCore import (QAbstractTableModel, QDate, QDateTime, QModelIndex,
-                          QSize, Qt, QTimer, pyqtSlot)
-from PyQt.QtGui import QTextCursor, QTextDocument
-from PyQt.QtSql import (QSqlDatabase, QSqlError, QSqlField, QSqlQuery,
+from qtpy import QtGui
+from qtpy.QtCore import ( QAbstractTableModel, QDate, QDateTime, QModelIndex,
+                          QSize, Qt, QTimer, Slot )
+from qtpy.QtGui import QTextCursor, QTextDocument
+from qtpy.QtSql import (QSqlDatabase, QSqlError, QSqlField, QSqlQuery,
                          QSqlQueryModel, QSqlRecord, QSqlRelation,
                          QSqlRelationalDelegate, QSqlRelationalTableModel,
                          QSqlTableModel)
@@ -75,7 +75,7 @@ from PyQt.QtSql import (QSqlDatabase, QSqlError, QSqlField, QSqlQuery,
 
 #from PyQt.QtGui import ( QAction, QActionGroup, )
 
-from PyQt.QtWidgets import (  QApplication, QBoxLayout, QButtonGroup,
+from qtpy.QtWidgets import (  QApplication, QBoxLayout, QButtonGroup,
                              QCheckBox, QComboBox, QDateEdit, QGridLayout,
                              QGroupBox, QHBoxLayout, QLabel, QLineEdit,
                              QListWidget, QListWidgetItem, QMainWindow, QMenu,
@@ -140,7 +140,7 @@ def to_columns( item_list, format_list = ( "{: <30}", "{:<30}" ), indent = "    
     return line_out
 
 
-
+# -----------
 def short_repr( a_obj, max_len = MAX_REPR_LEN ):
     """
     make a repr, shorten if too long
@@ -534,12 +534,13 @@ class InfoAboutQWidget ( info_about.InfoAboutBase  ):
 #         #         break
 
 #         #     self.add_line( f"{self.xin}{INDENT} {i_key = } {i_value = }" )
+
 # -----------------------------------
 class InfoAboutQSqlRecord( info_about.InfoAboutBase  ):
     """ info_about_qt.InfoAboutQSqlRecord( )
     """
     #----------- init -----------
-    def __init__(self,   ):
+    def __init__( self,   ):
         """
         look at relationaltable see if some stuff should be moved here
         """
@@ -1168,3 +1169,12 @@ class InfoAboutQBoxLayout( info_about.InfoAboutBase  ):
         self.add_line(  f"{self.xin}{INDENT2}isEnabled()         = {obj.isEnabled() }" )
 
 # ---- eof
+
+
+
+
+
+
+
+
+

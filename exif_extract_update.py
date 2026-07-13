@@ -5,6 +5,8 @@
 run inside stuffdb environment, perhaps as a helper
 use own db connect thru alternate parms
 
+still needs some clean up, run from db_maint perhaps with low and hi id ?
+
 /mnt/8ball1/first6_root/photos/photos_raw/from_phone/moved_to_computer/older_june23_copy
 
 
@@ -276,8 +278,8 @@ def update_exif_with_select( sql ):
         see sql for select, will rewriet now could change
 
     """
-    begin  = time.time()
-    db   = su.create_connection( use_temp = True )   # beware not using True
+    begin               = time.time()
+    db                  = su.create_connection( use_temp = True )   # beware not using True
 
         # match out var and bind to this
     out_file_name       = "./exif_out"
@@ -307,9 +309,21 @@ def test_1():
         "SELECT id, name, file, sub_dir FROM photo WHERE sub_dir = '24' "
            )
 
-    sql2  = (
-        "SELECT id, name, file, sub_dir FROM photo WHERE id >= 0 and id <= 1000 "
+    sql  = (
+        "SELECT id, name, file, sub_dir FROM photo WHERE id >= 53200 and id <= 100000 "
            )
+
+    # sql  = (
+    #     "SELECT id, name, file, sub_dir FROM photo WHERE sub_dir = '23' "
+    #        )
+
+    # sql  = (
+    #     "SELECT id, name, file, sub_dir FROM photo WHERE sub_dir = '25' "
+    #        )
+
+    # sql  = (
+    #     "SELECT id, name, file, sub_dir FROM photo WHERE sub_dir = '26' "
+    #        )
 
 
         # match out var and bind to this
@@ -323,7 +337,7 @@ def test_1():
 if __name__ == "__main__":
     pass
 
-    #test_1()
+    test_1()
 # --------------------
 
 

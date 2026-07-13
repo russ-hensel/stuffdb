@@ -1158,4 +1158,7 @@ class InfoAboutQBoxLayout( info_about.InfoAboutBase  ):
         self.add_line(  f"{self.xin}{INDENT2}geometry()          = {obj.geometry() }" )
         self.add_line(  f"{self.xin}{INDENT2}isEnabled()         = {obj.isEnabled() }" )
 
-# ---- eof
+# ----
+
+
+

@@ -89,8 +89,6 @@ except ValueError as error:
         src_root         = "/mnt/WIN_D/russ/0000/python00/python3"
 
 
-
-
 #src_root         = "/mnt/WIN_D/russ/0000/python00/python3"
 py3_root            = src_root
 proj_root           = f"{py3_root}/_projects"
@@ -117,6 +115,7 @@ sys.path.insert( 1, f"{src_root}/rshlib/utils" )
 #sys.path.insert( 1, f"{src_root}/_examples" )
 sys.path.insert( 1, f"{src_root}/stuffdb" )
 sys.path.insert( 1, f"{src_root}/stuffdb/libs" )
+sys.path.insert( 1, f"{src_root}/stuffdb/libs/photo_geo" )
 sys.path.insert( 1, f"{src_root}/stuffdb/data_dict_src" )
 #sys.path.insert( 1, f"{src_root}/stuffdb/py_helpers" )
 sys.path.insert( 1, f"{src_root}/stuffdb/sql" )

@@ -4,6 +4,13 @@
 Created on Sun Jul 13 08:28:33 2025
 
 @author: russ
+
+TEST:
+
+    there is a test_py_helpers.py     look for it
+          /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/py_helpers/test/test_py_helpers.py
+
+
 """
 
 
@@ -26,67 +33,6 @@ from qtpy.QtSql import QSqlDatabase, QSqlQuery
 import parameters
 
 #-------------------------------
-
-# ----------------------------------------
-class KeyGenxxx(   ):
-    """
-    runs sql when passed a dict -- no under construction
-
-    outpur to ?? a file
-    """
-    def __init__(self, db_file_name ):
-        """
-        the usual
-            will assume sql lite for now
-
-        """
-        self.db_file_name    = db_file_name
-
-    # --------------------------------
-    def init_db( self, ):
-        """
-        why not just get_connection
-
-        print( "Channel Subwindow init_db" )
-        self.db = QSqlDatabase.addDatabase( AppGlobal.parameters.db_type )
-        self.db.setDatabaseName(            AppGlobal.parameters.db_fn )
-        if not self.db.open():
-            QMessageBox.critical( None, "Database Error", self.db.lastError().text())
-
-        db = AppGlobal.qsql_db_access.db
-        xxxAppGlobal.db    = self.db   # globla avail
-        db appears to be the connection
-        russ is still confused try using AppGlobal.qsql_db_access.db   = a_qsql_db_access.db
-        """
-
-        # debug_msg   = ( "QsqlDbAccess  init_db()" )
-        # logging.log( LOG_LEVEL,  debug_msg, )
-
-        db_file_name        = self.db_file_name
-        db_type             = "QSQLITE"
-        self.db             = QSqlDatabase.addDatabase( db_type  )
-        self.connect_name   = "temp_connect_db"  # not the file name
-
-        self.is_existing    = False
-
-        if QSqlDatabase.contains( self.connect_name ):
-            self.db             = QSqlDatabase.database( self.connect_name )
-            self.is_existing    = True
-        else:
-            self.db             = QSqlDatabase.addDatabase( self.db_type, self.connection_name )
-            self.db.setDatabaseName( self.db_file_name)
-
-        if not self.db.open():
-            msg    = f"Database Error: {self.db.lastError().databaseText()} {db_file_name =} "
-            print( msg, )
-            # QMessageBox.critical(
-            #     None,
-            #     "databasenot open - Error!", msg
-            #     )
-
-        connection_name = self.db.connectionName()
-        debug_msg     = ( f"init_db {connection_name = }")
-        print(  debug_msg, )
 
 
 
@@ -117,28 +63,31 @@ class RunSql(   ):
         """
         self.sql_dict       = sql_dict
         self.connect_name   = None
-        try:
-            self.go()
 
-        except Exception as error:
+        self.go()
 
-            error_message = str(error)
-            msg  = (f"Caught an error in trying go: {error_message}")
-            print( msg )
+        # try:
+        #     self.go()
 
-            # msg_box_msg    = "this is a message"
-            # msg_box             = QMessageBox()
-            # msg_box.setIcon( QMessageBox.Information )
-            # msg_box.setText(  msg_box_msg  )
-            # msg_box.setWindowTitle( "Sorry that is a No Go " )
-            # msg_box.setStandardButtons( QMessageBox.Ok )
+        # except Exception as error:
 
-        finally:
-            self.finalize_db()
-            self.close_file_out()
+        #     error_message = str(error)
+        #     msg  = (f"Caught an error in trying go: {error_message}")
+        #     print( msg )
+        #     raise()
+        #     # msg_box_msg    = "this is a message"
+        #     # msg_box             = QMessageBox()
+        #     # msg_box.setIcon( QMessageBox.Information )
+        #     # msg_box.setText(  msg_box_msg  )
+        #     # msg_box.setWindowTitle( "Sorry that is a No Go " )
+        #     # msg_box.setStandardButtons( QMessageBox.Ok )
+
+        # finally:
+        #     self.finalize_db()
+        #     self.close_file_out()
 
     # -------------------------------------
-    def go(self,   ):
+    def go( self, ):
         """
 
 
@@ -147,13 +96,16 @@ class RunSql(   ):
 
         key             = "output_type"
         get_item        = self.sql_dict.get( key, None )
+
         if not get_item:
             self.sql_dict[ key ] = None
+
         else:
             self.sql_dict[ key ] = get_item.lower()
 
         key             = "output_file_name"
         get_item        = self.sql_dict.get( key, None )
+
         if not get_item:
             self.sql_dict[ key ] = None
         else:
@@ -166,7 +118,11 @@ class RunSql(   ):
         self.columns    = None
         self.file_out   = None   # changes if file is opened
 
-        sql_type   = self.sql_dict["sql_type"].lower( )
+        # will now ignore type in dict, no longer required
+        sql_type        = self.determine_type()
+
+        #sql_type   = self.sql_dict["sql_type"].lower( )
+
         if  sql_type == "select":
             self.select_data()
             #self.run_sql_select   = RunSqlSelect( sql_dict )
@@ -184,6 +140,27 @@ class RunSql(   ):
 
         print( "go all done ")
 
+    # -------------------------------------
+    def determine_type( self, ):
+        """
+        what it says, read
+
+        """
+        sql     = self.sql_dict[ "sql" ]
+        sql     = sql.lower().strip()
+
+        if sql.startswith( "select" ):
+            sql_type    = "select"
+
+        elif sql.startswith( "delete" ):
+            sql_type    = "delete"
+
+        elif sql.startswith( "update" ):
+            sql_type    = "update"
+
+
+        # 1/0 # not done
+        return sql_type
 
     # --------------------------------
     def init_db( self, ):
@@ -576,7 +553,7 @@ class RunSql(   ):
             self.file_out.close()
         self.file_out = None
 
-
+# --------------------------------
 def query_exec_error_check( *, query, sql = None, raise_except = True ):
     """
     !! think about outher args

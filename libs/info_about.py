@@ -10,7 +10,7 @@ the main file for info_about
 --
 --
 """
-# ----
+
 
 # ---- search
 """
@@ -73,7 +73,6 @@ import ia_search
 
 
 INFO_ABOUT      = None   # after import is an infoabout object
-
 
 DEBUGGING       = False  # in testing may be changed externally
 
@@ -322,7 +321,7 @@ class InfoAbout(   ):
 
         for i_info_provider in self.info_provider_list:
             if  i_info_provider.have_info_for( inspect_me ):
-                print( "---------------")
+                print( "---------------" )
                 info = i_info_provider.get_info(
                          inspect_me,
                          msg            = msg,
@@ -377,14 +376,21 @@ class InfoAboutBase(   ):
     #---------------------
     def reset( self, ):
         """ """
-        self.msg                   = ""
-        self.line_list             = []
+        self.msg        = ""
+        self.line_list  = []
         #self.
 
     # --------------------------
     def have_info_for( self, a_obj ):
 
-        return isinstance(  a_obj, self.my_class   )
+        #return isinstance( a_obj, self.my_class )
+        is_inst    = isinstance( a_obj, self.my_class )
+
+        if True:
+            msg     = ( f"have_info_for:  {is_inst = } {a_obj = } {self.my_class = }")
+            print( msg )
+
+        return is_inst
 
     # def have_info_for( self, obj ):
     #     """ """

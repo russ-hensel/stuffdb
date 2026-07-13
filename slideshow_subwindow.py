@@ -1,20 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# ---- tof
 """
 import  slideshow_subwindow
 # or a document, not really not in db ....
 
-
-
 """
 
-
-# ---- tof
 
 # --------------------
 if __name__ == "__main__":
     import main    # noqa  stops auto removal by pycln
-    pass
 # --------------------
 
 # ---- imports
@@ -22,24 +18,22 @@ from   functools import partial
 import table_model
 #import inspect
 import logging
-#import pprint
 import traceback
 import os
 import time
 
-#from functools import partial
 from pathlib import Path
 
+from qtpy.QtGui import QColor, QPalette
 
-from qtpy.QtCore   import ( Slot,
-                           QSortFilterProxyModel,
-                           QModelIndex,
+from qtpy.QtCore   import (
+                            Slot,
+                            QSortFilterProxyModel,
+                            QModelIndex,
                            )
 
 
 from qtpy.QtSql import ( QSqlQuery )
-
-#from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtGui import QTextCursor
 
@@ -65,20 +59,18 @@ from qtpy.QtWidgets import (
 
 # ---- local imports
 
-import collections
+#import custom_widgets as cw
 import parameters
-
 import file_utils
 import string_utils
 import base_document_tabs
-
+import gui_qt_ext
 import picture_viewer
 import info_about
 import photo_website
 import random_index
 import wat_inspector
 from   app_global     import AppGlobal
-
 
 # ---- import end
 
@@ -90,6 +82,30 @@ EXEC_RUNNER     = None  # setup below
 # PERHAPS IN DATA DICT
 # list
 
+
+# ----------------------------------------
+class PhotoListObj:
+    """
+    just a struct for photo data
+    __slots__  so a fixed structure
+    !! in process
+    xxx       = slideshow_subwindow.PhotoListObj(
+                                    photo_id       = photo_id,
+                                    photo_file     = photo_file,
+                                    photo_sub_dir  = photo_sub_dir,
+                                    photo_name     = photo_name,
+
+                                    )
+    """
+    __slots__ = ( "photo_id", "photo_file", "photo_sub_dir", "photo_name" )
+
+    def __init__( self, *, photo_id, photo_sub_dir, photo_file, photo_name ):
+        """
+        """
+        self.photo_id       = photo_id
+        self.photo_file     = photo_file
+        self.photo_sub_dir  = photo_sub_dir
+        self.photo_name     = photo_name
 
 # ----------------------------------------
 class SlideShowSubWindow( QMdiSubWindow ):
@@ -105,10 +121,9 @@ class SlideShowSubWindow( QMdiSubWindow ):
         super().__init__()
 
         self.subwindow_name     = "SlideShow"
-
         self.instance_ix        = instance_ix
 
-        mdi_area                = AppGlobal.main_window.mdi_area
+        #mdi_area                = AppGlobal.main_window.mdi_area
             #we could return the subwindow for parent to add
         #sub_window              = self
             # sub_window.setWindowTitle( "this title may be replaced " )
@@ -119,9 +134,9 @@ class SlideShowSubWindow( QMdiSubWindow ):
         self.detail_table_id    = None # for compatible with midi management
 
         # self.record_state
-        self.current_tab_index      = 0       # assumed to be criteria
+        self.current_tab_index  = 0       # assumed to be criteria
 
-        self.tab_folder             = QTabWidget() # create for descendants
+        self.tab_folder         = QTabWidget() # create for descendants
 
         # may want to keep at end of this init
         AppGlobal.mdi_management.register_document(  self )
@@ -130,6 +145,13 @@ class SlideShowSubWindow( QMdiSubWindow ):
         # self.key_word_table_name    = "stuff_key_word"
         # self.text_table_name        = "stuff_text"  # text tables always id and text_data
             # used in text tab base
+
+        # ---- color
+        pal         = self.palette()
+        color       = "yellow"   #  "#1e1e2e"
+        pal.setColor( QPalette.ColorRole.Window, QColor( color ) )
+        self.setPalette( pal )
+        self.setAutoFillBackground( True )
 
         self.file_out = None
         self._build_gui()
@@ -293,7 +315,7 @@ class SlideShowSubWindow( QMdiSubWindow ):
         logging.debug( debug_msg )
 
     # ------------------------------------------
-    def add_album( self, row_dict  ):
+    def add_album( self, row_dict ):
         """
         links
         row_dict -- see caller and callee
@@ -302,6 +324,13 @@ class SlideShowSubWindow( QMdiSubWindow ):
         # logging.debug( debug_msg )
 
         self.setup_tab.add_album( row_dict )
+
+    # ------------------------------------------
+    def add_a_photo_list( self, a_photo_list ):
+        """
+        just forward a_photo_list
+        """
+        self.setup_tab.add_a_photo_list( a_photo_list )
 
     # ------------------------------------------
     def doc_wat_inspect( self, ):
@@ -339,7 +368,7 @@ class SetupTab( QWidget ):
     """
     def __init__(self, parent_window ):
         """
-        self.model
+        build this widget
         """
         super().__init__()
 
@@ -348,17 +377,43 @@ class SetupTab( QWidget ):
 
         self.tab_name               = "SetupTab"
         self.build_gui()
+        self.reset()
 
     # -----------------------------
-    def build_gui( self,   ):
+    def reset( self, ):
+        """
+        reset to no photo,
+        need to add album reset
+        """
+        self.photo_list   = []
+        self.text_edit.clear()
+        self.add_text( "Reset")
+
+    # -----------------------------
+    def add_text( self, data ):
+        """
+        """
+        text_edit   = self.text_edit
+        text_edit.append( f"\n{data}" )
+        # Optional: scroll to the bottom automatically
+        text_edit.ensureCursorVisible()  # or text_edit.verticalScrollBar().setValue(text_edit.verticalScrollBar().maximum())
+
+    # -----------------------------
+    def build_gui( self, ):
         """
 
         """
         main_layout         = QHBoxLayout( self )
 
-        layout              = QVBoxLayout(  )  # all but model
+        #layout              = QVBoxLayout(  )
+        layout               = gui_qt_ext.CQGridLayout( col_max = 2 )
         main_layout.addLayout( layout )
 
+        # ---- Reset
+        widget              = QPushButton( "Reset" )
+        connect_to          = self.reset
+        widget.clicked.connect(  connect_to   )
+        layout.addWidget( widget )
 
         # ---- Run
         widget              = QPushButton( "Run" )
@@ -366,7 +421,18 @@ class SetupTab( QWidget ):
         widget.clicked.connect(  connect_to   )
         layout.addWidget( widget )
 
+        # ---- Debug
+        widget              = QPushButton( "Debug" )
+        widget.clicked.connect( self.debug )
+        layout.addWidget( widget )
 
+        # ---- Debug
+        widget              = QPushButton( "Info" )
+        widget.clicked.connect( self.show_info )
+        layout.addWidget( widget )
+
+        # ---- Delay
+        layout.new_row( )
         widget              = QLabel( "Delay ( sec ):" )
         layout.addWidget( widget )
 
@@ -376,6 +442,7 @@ class SetupTab( QWidget ):
         layout.addWidget( widget )
 
         # ----  "Sequence:"
+        layout.new_row( )
         widget              = QLabel( "Sequence:" )
         layout.addWidget( widget )
 
@@ -387,27 +454,27 @@ class SetupTab( QWidget ):
         widget.setMinimumWidth( 200 )
         layout.addWidget( widget )
 
-
         # ---- "Make Website"
+        layout.new_row( )
         widget              = QPushButton( "Make Website" )
         connect_to          = self.make_website
         widget.clicked.connect(  connect_to   )
         layout.addWidget( widget )
 
-        widget              = QPushButton( "move_up" )
-        connect_to          = self.delete_row
-        #widget.clicked.connect(  connect_to   )
-        layout.addWidget( widget )
+        # widget              = QPushButton( "move_up" )
+        # connect_to          = self.delete_row
+        # #widget.clicked.connect(  connect_to   )
+        # layout.addWidget( widget )
 
-        widget              = QPushButton( "move_dwn" )
-        connect_to          = self.delete_row
-        #widget.clicked.connect(  connect_to   )
-        layout.addWidget( widget )
+        # widget              = QPushButton( "move_dwn" )
+        # connect_to          = self.delete_row
+        # #widget.clicked.connect(  connect_to   )
+        # layout.addWidget( widget )
 
-        widget              = QPushButton( "delete_row" )
-        connect_to          = self.delete_row
-        widget.clicked.connect(  connect_to   )
-        layout.addWidget( widget )
+        # widget              = QPushButton( "delete_row" )
+        # connect_to          = self.delete_row
+        # widget.clicked.connect(  connect_to   )
+        # layout.addWidget( widget )
 
 
         # ---- model and headers
@@ -424,9 +491,9 @@ class SetupTab( QWidget ):
         table_view          = QTableView()
         self.table_view     = table_view
 
-        # ---- timedateformatting
+        # ---- timedateformatting  gui_qt_ext.DateTimeFormatDelegate
         date_column         = 1
-        delegate            = base_document_tabs.TableModelDateTimeDelegate(
+        delegate            = gui_qt_ext.TableModelDateTimeDelegate(
                                      date_column = date_column,
                                      parent = self  )
         table_view.setItemDelegateForColumn( date_column, delegate )
@@ -440,47 +507,51 @@ class SetupTab( QWidget ):
         table_view.setSortingEnabled( True )
             # Enables sorting by clicking column headers may need QSort....
 
-        # ---- new layout
+        # ---- text edit
         layout              = QHBoxLayout(  )  # all but model
         main_layout.addLayout( layout )
 
         layout.addWidget( table_view )
 
+        widget          = QTextEdit()
+        self.text_edit  = widget
+        layout.addWidget( widget )
+
         return
 
-    #------------------------------------------
-    def delete_row( self, ):
-        """
+    # #------------------------------------------
+    # def delete_row( self, ):
+    #     """
 
 
-        """
-        # table_name      = "table_name"
-        # table_id        = "table_id"
-        # topic           = "topic"
+    #     """
+    #     # table_name      = "table_name"
+    #     # table_id        = "table_id"
+    #     # topic           = "topic"
 
-        # row_data            = [ table_name, table_id, topic ]
-        # self.model.add_or_update_row( row_data )
+    #     # row_data            = [ table_name, table_id, topic ]
+    #     # self.model.add_or_update_row( row_data )
 
-        model           = self.model
-        view            = self.table_view
+    #     model           = self.model
+    #     view            = self.table_view
 
-        row             = -1
-        # Assuming `view` is your QTableView
-        selection_model = view.selectionModel()
-        if selection_model:
-            selected_indexes = selection_model.selectedRows()
+    #     row             = -1
+    #     # Assuming `view` is your QTableView
+    #     selection_model = view.selectionModel()
+    #     if selection_model:
+    #         selected_indexes = selection_model.selectedRows()
 
-            # will get the first selected
-            for index in selected_indexes:
-                row = index.row()
-                #print(f"delete_row Selected row: {row = }")
-                break   # only get one
+    #         # will get the first selected
+    #         for index in selected_indexes:
+    #             row = index.row()
+    #             #print(f"delete_row Selected row: {row = }")
+    #             break   # only get one
 
-        if row == -1:
-            # print( "delete_row no selected row")
-            return
+    #     if row == -1:
+    #         # print( "delete_row no selected row")
+    #         return
 
-        self.model.removeRow( row )
+    #     self.model.removeRow( row )
 
     # #------------------------------------------
     # def add_row( self, ):
@@ -497,42 +568,73 @@ class SetupTab( QWidget ):
     #     self.model.addRow( row_data )
 
     # ------------------------------------------
-    def add_album( self, row_dict):
+    def add_album( self, row_dict ):
         """
         links
         row_dict -- see caller and callee  -- started at album_document?
+        later change to just album_id !!
         """
         # debug_msg = ( "SetupTab  add_album ")
         # logging.debug( debug_msg )
 
-        row_data     = [ row_dict[ "album_id" ], row_dict[ "album_id" ],   row_dict[ "album_name" ],  ]
-        self.model.addRow( row_data)
+        #row_data     = [ row_dict[ "album_id" ], row_dict[ "album_id" ], row_dict[ "album_name" ], ]
+        album_id        = row_dict[ "album_id" ]
+
+        self.add_photos_for_album_id( album_id, )
+
 
     # ------------------------------------------
-    def run( self,    ):
+    def show_info( self, ):
+        """
+        what it says
+        """
+        for i_photo in self.photo_list:
+            msg     = ( f"{i_photo}" )
+            self.add_text( msg )
+
+    # ------------------------------------------
+    def debug( self, ):
+        """
+
+        """
+        for i_photo in self.photo_list:
+            print( f"{i_photo}" )
+
+    # ------------------------------------------
+    def run( self, ):
         """
 
         """
         photo_list      = self._build_photo_list()
 
         # ?? maybe move this stuff there
-        parent_window    =  self.parent_window
+        parent_window   =  self.parent_window
 
         parent_window.main_notebook.setCurrentWidget( parent_window.picture_tab  )
 
         QApplication.processEvents()
-        parameters          = AppGlobal.parameters
+        parameters      = AppGlobal.parameters
 
         try:
-            delay     = float( self.delay_widget.text() )
+            delay       = float( self.delay_widget.text() )
 
         except:
-            delay     = parameters.picture_sleep
+            delay       = parameters.picture_sleep
 
-        seq_type      = self.seq_widget.currentText( )
-
+        seq_type        = self.seq_widget.currentText( )
 
         parent_window.picture_tab.run( photo_list, seq_type, delay )
+
+    # ------------------------------------------
+    def add_a_photo_list( self, a_photo_list ):
+        """
+        what says, read
+            mutates self.photo_list
+        """
+        photo_list      = self.photo_list
+        photo_list     += a_photo_list
+
+        return photo_list
 
     # ------------------------------------------
     def _build_photo_list( self, ):
@@ -545,8 +647,8 @@ class SetupTab( QWidget ):
 
         Shared by run() (slideshow) and make_website() (static gallery).
         """
-        photo_list      = []
-        self.photo_list = photo_list
+
+        photo_list      = self.photo_list
 
         model           = self.model
 
@@ -580,47 +682,52 @@ class SetupTab( QWidget ):
             parent_window.activate_output_tab()
             return
 
-        # ---- derive directory name + title from the album table ----
-        model           = self.model
-        n_albums        = model.rowCount( QModelIndex() )
-        first_id        = model.data( model.index( 0, 0 ) )
-        first_name      = model.data( model.index( 0, 2 ) ) or "Photos"
 
-        if n_albums == 1:
-            title       = str( first_name )
-        else:
-            title       = f"{first_name} (+{n_albums - 1} more)"
+        # # ---- derive directory name + title from the album table ----
+        # model           = self.model
+        # n_albums        = model.rowCount( QModelIndex() )
+        # first_id        = model.data( model.index( 0, 0 ) )
+        # first_name      = model.data( model.index( 0, 2 ) ) or "Photos"
+
+        # if n_albums == 1:
+        #     title       = str( first_name )
+
+        # else:
+        #     title       = f"{first_name} (+{n_albums - 1} more)"
 
         output_root     = AppGlobal.parameters.output_dir
         picture_root    = AppGlobal.parameters.picture_db_root
-        site_dir        = f"{output_root}/website_album_{first_id}"
+        site_dir        = f"{output_root}/website"
 
-        msg = f"make_website: building site for {len( photo_list )} photos -> {site_dir}"
+        msg             = f"make_website: building site for {len( photo_list )} photos -> {site_dir}"
         logging.info( msg )
         parent_window.output_msg( msg, clear = True )
         parent_window.activate_output_tab()
         QApplication.processEvents()
 
+        title           = "photos"
         site            = photo_website.PhotoWebsite(
-            photo_list      = photo_list,
-            output_dir      = site_dir,
-            picture_root    = picture_root,
-            title           = title, )
+                                photo_list      = photo_list,
+                                output_dir      = site_dir,
+                                picture_root    = picture_root,
+                                title           = title,
+                                msg_function    = parent_window.output_msg, )
+
         site.build()
 
-        msg = f"make_website: wrote {site.index_path}"
+        msg             = f"make_website: wrote {site.index_path}"
         logging.info( msg )
         parent_window.output_msg( msg )
 
         webbrowser.open( site.index_path.as_uri() )
 
-
     # ------------------------------------------
-    def add_photo_for_id( self, album_id, photo_list ):
+    def add_photos_for_album_id( self, album_id, ):
         """
         this way does not reuse the query  .... refactor ??
         mutates photo_list
         """
+        photo_list      = self.photo_list
         db      = AppGlobal.qsql_db_access.db
         sql     = ( "SELECT photo.id, photo.file, photo.sub_dir,  "
                     " photo.name,  photo.exif_ts, photo.exif_lat, photo.exif_lon, photo.exif_make, photo.exif_model "
@@ -632,10 +739,11 @@ class SetupTab( QWidget ):
         query.prepare( sql )
         query.bindValue( ":album_id", album_id )
 
-        if not query.exec_():  # Check if execution failed
+        if not query.exec_():
             msg = ( f"query_print_tab Error executing query:  {query.lastError().text()}" )
             logging.error(msg)
 
+        count   = 0
         while query.next():
             photo_id        = query.value(0)
             photo_file      = query.value(1)
@@ -647,10 +755,14 @@ class SetupTab( QWidget ):
                                     "photo_sub_dir":   photo_sub_dir,
                                     "photo_name":      photo_name,
                                     }
-                        # change to tuple for efficency ??
+                        # change to tuple for efficiency ??
 
             #rint( f"ID: {photo_id},  {photo_id = },   {photo_name = }")
-            photo_list.append( photo_dict )
+            if photo_file:
+                count     += 1
+                photo_list.append( photo_dict )
+
+        self.add_text( f"add album {album_id = } {count} pictures" )
 
     # -----------------------------------
     def __str__( self ):
@@ -751,7 +863,7 @@ class PictureTab( QWidget ):
         # for i_photo in photo_list:
         #     print( i_photo )
 
-        self.show_pictures(  photo_list, seq_type, delay )
+        self.show_pictures( photo_list, seq_type, delay )
 
      # ----------------------------------------------
     def show_pictures( self, photo_list, seq_type, delay ):
@@ -764,6 +876,7 @@ class PictureTab( QWidget ):
         self.continue_flag  = True
         parameters          = AppGlobal.parameters
         picture_root        = parameters.picture_db_root
+        output_tab          = self.parent_window.output_tab
 
         if len( photo_list ) == 0:
             msg         = f"No Display as it appears you have not read a list?\n"
@@ -788,36 +901,39 @@ class PictureTab( QWidget ):
                                     width      = parameters.picture_ran_width,
                                     bias       = parameters.picture_ran_bias )
 
+        count  = 0
         while  self.continue_flag:
+            count               += 1
+            ix                  = self.seq_gen.get_next()
+            i_photo             = photo_list[ ix ]
 
-                ix                  = self.seq_gen.get_next()
-                i_photo             = photo_list[ ix ]
+            # migrage to a phot obj
+            # msg                 = f"show_pictures  {i_photo} at index {ix}\n"
+            # print( msg )
+            #self.gui_write( msg )
 
-                # msg                 = f"show_pictures  {i_photo} at index {ix}\n"
-                # print( msg )
-                #self.gui_write( msg )
+            full_file_name      = picture_root + "/" + i_photo[ "photo_sub_dir" ] +  "/" + i_photo[ "photo_file" ]
+            full_file_name      = file_utils.fewer_slashes( full_file_name )
+            self.picture_viewer.display_file( full_file_name )
+            photo_name          =  i_photo[ "photo_name" ]
 
-                full_file_name      = picture_root + "/" + i_photo[ "photo_sub_dir" ] +  "/" + i_photo[ "photo_file" ]
-                full_file_name      = file_utils.fewer_slashes( full_file_name )
-                self.picture_viewer.display_file( full_file_name )
-                self.name_widget.setText( i_photo[ "photo_name" ] )
-                self.name_widget.setText( i_photo[ "photo_name" ] )
+            self.name_widget.setText( photo_name )
 
+            output_tab.add_text( f"{count}: {ix} -> {photo_name}")
 
-                time_continue       = time.time() + delay
-                while time.time()  < time_continue:
-                    # are 4 better than 1?
-                    QApplication.processEvents()
-                    QApplication.processEvents()
-                    QApplication.processEvents()
-                    QApplication.processEvents()
+            time_continue       = time.time() + delay
+            while time.time()  < time_continue:
+                # are 4 better than 1?
+                QApplication.processEvents()
+                QApplication.processEvents()
+                QApplication.processEvents()
+                QApplication.processEvents()
 
-                while self.pause_flag: # combine with above ?
-                    QApplication.processEvents()
-                    QApplication.processEvents()
-                    QApplication.processEvents()
-                    QApplication.processEvents()
-
+            while self.pause_flag: # combine with above ?
+                QApplication.processEvents()
+                QApplication.processEvents()
+                QApplication.processEvents()
+                QApplication.processEvents()
 
 # ----------------------------------------
 class OutputTab( QWidget ):
@@ -871,30 +987,43 @@ class OutputTab( QWidget ):
         row_layout      = QHBoxLayout(   )
         layout.addLayout( row_layout, )
 
-        # ----
-        widget          = QTextEdit("load\nthis should be new row ")
+        # ---- text edit
+        widget          = QTextEdit( "" )
         self.msg_widget = widget
         #widget.clicked.connect( self.load    )
         row_layout.addWidget( widget, )
         self.output_edit    = widget
 
     # ---- Actions
+    # -----------------------------
+    def add_text( self, data ):
+        """
+        add text in data to message widget
+        """
+        text_edit   = self.msg_widget
+        text_edit.append( f"\n{data}" )
+        # Optional: scroll to the bottom automatically
+        text_edit.ensureCursorVisible()  # or text_edit.verticalScrollBar().setValue(text_edit.verticalScrollBar().maximum())
+
     # -----------------------
     def top( self, ):
-        """ """
+        """
+        go to top of widget
+        """
         widget      = self.msg_widget
         cursor      = widget.textCursor()
-        cursor.movePosition(QTextCursor.Start)     # or QTextCursor.MoveAnchor mode is default
-        widget.setTextCursor(cursor)
+        cursor.movePosition( QTextCursor.Start )     # or QTextCursor.MoveAnchor mode is default
+        widget.setTextCursor( cursor )
         widget.ensureCursorVisible()
 
     # -----------------------
     def bot( self, ):
-        """ """
+        """
+        go to bottom of widget
+        """
         widget      = self.msg_widget
 
-
-        widget.moveCursor(QTextCursor.End)
+        widget.moveCursor( QTextCursor.End )
         widget.ensureCursorVisible()
 
         # cursor      = widget.textCursor()
@@ -936,5 +1065,3 @@ class OutputTab( QWidget ):
 # #     test_clean_path_part()
 
 # ---- eof
-
-

@@ -1,16 +1,16 @@
 """QGraphicsView subclass that emits lat/lon as the user moves and clicks.
 
 Supports wheel zoom (anchored at cursor) and drag-to-pan with either the
-middle mouse button or the right mouse button.  The right-button context
-menu is suppressed so the drag-release doesn't trigger one.
+middle mouse button or the left mouse button.  A left click that doesn't
+move past a small threshold is treated as a pick instead of a pan -- see
+PAN_CLICK_THRESHOLD_PX.
 """
 from __future__ import annotations
 
-from qtpy.QtCore    import QPoint, Qt, Signal
-from qtpy.QtGui     import QMouseEvent, QPainter, QResizeEvent, QWheelEvent
-from qtpy.QtWidgets import QGraphicsView
-
 from map_scene import MapScene
+from qtpy.QtCore import QPoint, Qt, Signal
+from qtpy.QtGui import QMouseEvent, QPainter, QResizeEvent, QWheelEvent
+from qtpy.QtWidgets import QGraphicsView
 
 
 class MapView( QGraphicsView ):
@@ -19,7 +19,7 @@ class MapView( QGraphicsView ):
     Signals:
         coordsHovered(lat, lon): emitted on every mouse move while inside the map.
         coordsCleared():         emitted when the cursor leaves the map.
-        coordsPicked(lat, lon):  emitted on a left click inside the map.
+        coordsPicked(lat, lon):  emitted on a left click (not a drag) inside the map.
         zoomChanged(zoom):       current zoom level (1.0 == fit-in-view).
     """
 
@@ -32,6 +32,10 @@ class MapView( QGraphicsView ):
     ZOOM_STEP = 1.20    # multiplicative factor per wheel notch
     MIN_ZOOM  = 1.0     # 1.0 == fit-in-view; cannot shrink past full globe
     MAX_ZOOM  = 16.0    # cap zoom-in
+
+    # left-button press must move at least this far (manhattan distance, in
+    # view pixels) before it's treated as a pan instead of a click-to-pick
+    PAN_CLICK_THRESHOLD_PX = 4
 
     def __init__( self, scene: MapScene ) -> None:
         super().__init__(scene)
@@ -47,8 +51,9 @@ class MapView( QGraphicsView ):
         self.setResizeAnchor(QGraphicsView.AnchorViewCenter )
         self.setFocusPolicy( Qt.StrongFocus )
 
-        # right-button drag is used for panning, so don't pop a context
-        # menu when the user releases the right button.
+        # right button does nothing now ( panning moved to left+middle ),
+        # keep the native context menu suppressed rather than popping an
+        # empty one.
         self.setContextMenuPolicy( Qt.NoContextMenu )
 
         # zoom & pan state
@@ -57,6 +62,10 @@ class MapView( QGraphicsView ):
         self._panning: bool     = False
 
         self._pan_last: QPoint | None = None
+
+        # left button is down but hasn't yet moved past PAN_CLICK_THRESHOLD_PX
+        # -- still undecided between "click to pick" and "drag to pan"
+        self._left_press_view_pos: QPoint | None = None
 
     # --- public API -------------------------------------------------------
     def fit_in_view(self) -> None:
@@ -109,6 +118,20 @@ class MapView( QGraphicsView ):
             ev.accept()
             return
 
+        # Left button held but not yet past the click/drag threshold --
+        # check whether it just crossed it and should become a pan.
+        if self._left_press_view_pos is not None:
+            view_pos = self._view_pos(ev)
+            moved    = view_pos - self._left_press_view_pos
+            if moved.manhattanLength() >= self.PAN_CLICK_THRESHOLD_PX:
+                self._panning              = True
+                self._pan_last             = view_pos
+                self._left_press_view_pos  = None
+                self.setCursor(Qt.ClosedHandCursor)
+                ev.accept()
+                return
+            # still within the click threshold -- fall through to hover
+
         # Hover: update crosshair + readout.
         x, y = self._scene_xy(ev)
         proj = self._scene.projection
@@ -123,30 +146,38 @@ class MapView( QGraphicsView ):
 
     #--------------------------------
     def mousePressEvent(self, ev: QMouseEvent) -> None:
-        # Middle OR right button start a pan drag.  Right is the more
-        # natural one-handed option; middle is kept for compatibility.
-        if ev.button() in ( Qt.MiddleButton, Qt.RightButton ):
+        # Middle button starts a pan drag immediately.
+        if ev.button() == Qt.MiddleButton:
             self._panning       = True
             self._pan_last      = self._view_pos(ev)
             self.setCursor(Qt.ClosedHandCursor)
             ev.accept()
             return
 
-
         if ev.button() == Qt.LeftButton:
-            x, y = self._scene_xy(ev)
-            proj = self._scene.projection
-            if proj.in_bounds(x, y):
-                lat, lon = proj.pixel_to_latlon(x, y)
-                self._scene.show_crosshair_at(x, y)
-                self.coordsPicked.emit(lat, lon)
+            # Don't pick yet -- record the press and wait to see whether
+            # this turns into a drag (pan) or stays a click (pick).  See
+            # mouseMoveEvent's threshold check and mouseReleaseEvent below.
+            self._left_press_view_pos = self._view_pos(ev)
 
         super().mousePressEvent(ev)
 
 
     #--------------------------------
     def mouseReleaseEvent(self, ev: QMouseEvent) -> None:
-        if ev.button() in ( Qt.MiddleButton, Qt.RightButton ) and self._panning:
+        if ev.button() == Qt.LeftButton and self._left_press_view_pos is not None:
+            # released without crossing the drag threshold -- it's a pick
+            x, y = self._scene_xy(ev)
+            proj = self._scene.projection
+            if proj.in_bounds(x, y):
+                lat, lon = proj.pixel_to_latlon(x, y)
+                self._scene.show_crosshair_at(x, y)
+                self.coordsPicked.emit(lat, lon)
+            self._left_press_view_pos = None
+            ev.accept()
+            return
+
+        if ev.button() in ( Qt.MiddleButton, Qt.LeftButton ) and self._panning:
             self._panning  = False
             self._pan_last = None
             self.unsetCursor()

@@ -25,7 +25,6 @@ typically in AppGlobal as:
 if __name__ == "__main__":
     #----- run the full app
     import main  # noqa  stops auto removal by pycln
-    pass
 # --------------------
 
 # ---- imports
@@ -80,7 +79,7 @@ LOG_LEVEL   = 20   # higher is more
 
 # ---- dict constants make the search commands work
 SEARCH_COMMAND_DICT                       = defaultdict( lambda: None )
-SEARCH_COMMAND_DICT["search_help"     ]   = help_document.HelpDocument
+SEARCH_COMMAND_DICT["search_help"     ]   = HelpDocument
 SEARCH_COMMAND_DICT["search_stuff"    ]   = stuff_document.StuffDocument
 SEARCH_COMMAND_DICT["search_pic"      ]   = picture_document.PictureDocument
 SEARCH_COMMAND_DICT["search_picture"  ]   = picture_document.PictureDocument
@@ -318,15 +317,20 @@ class MdiManagement( QObject ):
             # Ensure the sub-window is not maximized_area       = self.main_window.mdi_area
 
     # -------------------------------------
-    def show_document( self, sub_window ):
+    def show_document( self, sub_window, activate_tab = None ):
         """
         what it says, read
         of course it should exist
         !! may need more for minimized documents
         midi_management.show_document( sub_window )
+        activate_tab   tab to activate
+            mdi_management.show_document( doc, activate_tab = doc.list_tab_index )
         """
         sub_window.show()
         sub_window.setFocus()
+
+        if activate_tab:
+            sub_window.tab_folder.setCurrentIndex( activate_tab )
 
     #----------------------------
     def update_menu_itemxxx( self, ):
@@ -340,7 +344,6 @@ class MdiManagement( QObject ):
                 # getTitle setTitle
                 # is a get for set self.setWindowTitle
 
-    # ---- update_menu_item
     # -------------------------------
     @Slot( object, str, str, int, object, )  # update_menu_item
     def update_sync_pre( self,
@@ -769,7 +772,7 @@ class MdiManagement( QObject ):
         if AppGlobal.parameters.set_doc_maximized:
             sub_window.showMaximized()
 
-        self.show_document
+        self.show_document( sub_window )  # !! run debug through this
         self.main_window.assign_icon()   # reassign to see if we can keep it
 
         return sub_window

@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+# ---- tof
 """
 Created on Wed Dec 25 16:09:47 2024
 
 @author: russ
 """
-
+# ---- imports
+import string_utils
 
 
 global PARAMETERS
@@ -48,10 +51,22 @@ class Parameters( ):
         """
         self.mode              = "mode_default"
         self.dir_for_search    = [ "/mnt/WIN_D/russ/0000/python00/python3/_projects/rshlib/in_spect/" ]
+        self.dir_for_search    = [ "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/in_spect"  ]
             # where we seareh for inofmation about modules
+
+    #--------------------------
+    def __str__( self ):
+        """
+        universal __str__
+        """
+        return string_utils.obj_to_str( self )
+
+
 
 if PARAMETERS is None:
     PARAMETERS  = Parameters()
+    msg         = ( f"ia_parameters.py  {str( PARAMETERS ) = }")
+    print( msg )
 
 
 # ---- eof
