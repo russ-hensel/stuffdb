@@ -69,7 +69,6 @@ import string_utils
 import wat_inspector
 from   app_global     import AppGlobal
 import exec_qt
-#import clip_string_utils
 import string_list_utils
 import data
 import history_sync

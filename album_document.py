@@ -542,7 +542,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         order_by_dir   = criteria_value_dict[ "order_by_dir" ].lower( )
 
-        # debug_msg    = f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{column_name = }  {order_by_dir = }"
+        # debug_msg    = f"------------------------------{column_name = }  {order_by_dir = }"
         # logging.debug( debug_msg )
 
         if "asc" in order_by_dir:
