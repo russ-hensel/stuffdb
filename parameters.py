@@ -139,12 +139,18 @@ class Parameters( ):
         self.db_file_name       = "./data_sync/stuffdb.db"      #  = "sample.db"   =  ":memory:"
 
         self.db_lock_file_name  = "./data_sync/lock_db.txt"     # if present then db is locked else none
+
+        # ---- pictures
         self.picture_db_root    = "/mnt/8ball1/first6_root/photos/photos_db"
+
+        self.picture_browse     = "/mnt/8ball1/first6_root/photos/photos_raw/07"
 
        #  self.picture_db_sub     = "/73"
        # # self.picture_db_sub     = "/76"
        # # self.picture_db_sub     = "/72"
-        self.picture_db_sub     = "/10"
+        #self.picture_db_sub     = "/07"
+        #self.picture_db_sub     = "/08"
+        #self.picture_db_sub     = "/10"
         # self.picture_db_sub     = "/11"
        # # self.picture_db_sub     = "/26"
        #  self.picture_db_sub     = "/21"
@@ -152,7 +158,7 @@ class Parameters( ):
        #  #self.picture_db_sub     = "/23"
        #  # self.picture_db_sub     = "/25"
 
-       #  #self.picture_db_sub     = "/26"
+        self.picture_db_sub     = "/26"
        #  #self.picture_db_sub     = "/25"
 
 
@@ -923,7 +929,7 @@ class Parameters( ):
 
         # ---- sort the templates so the user does not
         #rint(  "sort on key item[0]" )
-        self.text_snippets = {a_key: a_value for a_key, a_value in sorted( a_dict.items(), key = lambda item: item[0] ) }
+        self.text_snippets = { a_key: a_value for a_key, a_value in sorted( a_dict.items(), key = lambda item: item[0] ) }
         #rint( b_dict )
 
         # ---- systems for helpdb ??alpha  to sort make all quotes the same

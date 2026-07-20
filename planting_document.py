@@ -262,8 +262,10 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         sort_list    = [
                          'name',
+                         'id',
                          'lbl_name',
                          'Title??',  ]
+
         self._build_sort_widgets( layout, sort_list )
 
         # # ---- function_on_return( self )
@@ -391,10 +393,26 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             column_name = "name"
         elif order_by == "lbl_name":
             column_name = "lbl_name"
+        elif order_by == "id":
+            column_name = "id"
         else:   # !! might better handel this
             column_name = "name"
 
-        query_builder.add_to_order_by(    column_name, "ASC",   )
+        # can we factor this out
+        order_by_dir   = criteria_value_dict[ "order_by_dir" ].lower( )
+
+        # debug_msg    = f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>{column_name = }  {order_by_dir = }"
+        # logging.debug( debug_msg )
+
+        if "asc" in order_by_dir:
+            literal     = "ASC"
+
+        else:
+            literal     = "DESC"
+
+        query_builder.add_to_order_by( column_name, literal, )
+
+        # query_builder.add_to_order_by( column_name, "ASC",   )
 
         query_builder.prepare_and_bind()
 

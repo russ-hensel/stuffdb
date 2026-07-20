@@ -33,7 +33,6 @@ look for links
         .logger
 gui_qt_ext.
 
-saved a compat version but convert this to qtpy
 
 
 TEST
@@ -45,43 +44,34 @@ TEST
 
 # ---- imports
 
-from   qtpy  import QtGui
-from   qtpy.QtCore import ( QDateTime,  Qt,    )
+import logging
 
+import string_utils
+from qtpy import QtGui
+from qtpy.QtCore import QDateTime, Qt
+from qtpy.QtGui import (QAction, QBrush, QColor, QCursor, QTextCursor,
+                        QTextDocument)
+from qtpy.QtWidgets import (QApplication, QCheckBox, QFileDialog, QGridLayout,
+                            QGroupBox, QLabel, QLineEdit, QMessageBox,
+                            QPushButton, QStyledItemDelegate, QTextEdit,
+                            QVBoxLayout, QWidget)
 
-from qtpy.QtGui  import ( QCursor,
-                          QTextCursor,
-                          QTextDocument,
-                          QAction, )
+from app_global import AppGlobal
 
-from qtpy.QtGui import QColor, QBrush
 #import PyQt.QtWidgets as qtw    #  qt widgets avoid so much import below
 
 
-from qtpy.QtWidgets import (
-                            QApplication, QMessageBox,
-                            QGridLayout,   QVBoxLayout,       QGroupBox,  QPushButton,
-                            QWidget,      QLabel,     QLineEdit,  QFileDialog,
-                            QCheckBox,
-                            QStyledItemDelegate,
-
-                            QTextEdit,
-
-                             )
 
 
-QCursor  =  QtGui.QCursor
+# QCursor  =  QtGui.QCursor
 
 
 
-import string_utils
 
-from   app_global import AppGlobal
 # for above to work need to have an AppGlobal in the dir
 # where app was started, or provide another in this dir
 # seems to work
 
-import logging
 
 logger          = logging.getLogger( )
 
@@ -304,6 +294,23 @@ def about(  controller  ):
     # message_box.setIcon(QMessageBox.Information)
     box_exec  = message_box.exec( )
 
+
+#-----------------------------------
+def util_message_box( title_text, msg_text ):
+    """
+    this is simple, plan to extend !!
+    Returns:
+        None
+    if not base_document_tabs.is_delete_ok():
+        return
+    may want to extend to position color... log
+    from base_document_tabs   is_delete_ok
+    gui_qt_ext.util_message_box( title_text = "abc", msg_text = "def" ) )   # import gui_qt_ext
+
+    """
+    QMessageBox.information( AppGlobal.main_window,
+                             title_text, msg_text )
+
 #-----------------------------------
 def error_message_box( error_text ):
     """
@@ -325,10 +332,15 @@ class DateFormatDelegate( QStyledItemDelegate ):
     """for table integer to date formats """
 
     # -----------------------------------
-    def displayText(self, value, locale):
+    def displayText( self, value, locale ):
 
         # Assuming the integer is a Unix timestamp in seconds
-        date = QDateTime.fromSecsSinceEpoch(int(value ) )
+        try:
+            date = QDateTime.fromSecsSinceEpoch(int(value ) )
+
+        except ( TypeError, ValueError ):   # null/empty in db
+            return ""
+
         return date.toString("yyyy-MM-dd")  # Customize format as needed
         #return super().displayText(value, locale)
 
@@ -342,7 +354,10 @@ class DateTimeFormatDelegate( QStyledItemDelegate ):
     # -----------------------------------
     def displayText( self, value, locale ):
 
-        date_time = QDateTime.fromSecsSinceEpoch(int( value ) )
+        try:
+            date_time = QDateTime.fromSecsSinceEpoch(int( value ) )
+        except ( TypeError, ValueError ):   # null/empty in db
+            return ""
 
         return date_time.toString( "yyyy-MM-dd hh:mm:ss" )
 
@@ -442,6 +457,8 @@ class CursorContext:
          replaces base_document_tabs.CursorContext
     use         with CursorContext():
                     ...... code
+                    with  gui_qt_ext.CursorContext()   # import  gui_qt_ext
+
     """
     # ---------------------------------
     def __enter__(self):
@@ -527,12 +544,13 @@ class FileBrowseWidget( QWidget ):
     def set_text(self, a_string):
         self.entry_1.setText(a_string)
 
+    #--------------------
     def get_text(self):
         return self.entry_1.text()
 
 
 #---------------------------------
-class DirBrowseWidget(QWidget):
+class DirBrowseWidget( QWidget ):
     """
 
 

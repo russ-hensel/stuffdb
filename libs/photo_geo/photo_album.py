@@ -97,13 +97,15 @@ class PhotoAlbum( ):
     see __init__
     """
     #----------------------------------
-    def __init__( self, a_id ):
+    def __init__( self, file_name ):
         """
-        pretty much a dict in a class
+        really a kmz maker
             a_id is the album db id
             this stores photo points by db id
+            a_photo_album    = photo_album.PhotoAlbum( file_name )
+
         """
-        self.id                 = a_id
+        self.file_name          = file_name
         self.photo_point_dict   = { }
         self.point_list         = []
             # key is db id
@@ -127,10 +129,28 @@ class PhotoAlbum( ):
         return key
 
     #----------------------------------
+    def make_list( self, ):
+        """
+        what it says, read
+            no error checks... sort, just do it
+            for list of 1 but could be used for ?
+            used by picture document
+        """
+        the_list      = []
+        for i_point in self.photo_point_dict.values():
+            the_list.append( i_point )
+
+        self.point_list     = the_list
+
+        return the_list
+
+    #----------------------------------
     def make_list_by_ts( self, ):
         """
         what it says, read
-
+            sort by the timestamp
+            drop points in the_list that are missing lat long or ts
+            mutates self
         """
         the_list      = []
         for i_point in self.photo_point_dict.values():
@@ -170,10 +190,10 @@ class PhotoAlbum( ):
 
         out_dir       = Path( AppGlobal.parameters.output_dir )
         out_dir.mkdir( parents = True, exist_ok = True )
-        file_name     = str( ( out_dir / f"album_{self.id}.kmz" ).resolve() )
+        file_name     = str( ( out_dir / f"{self.file_name}.kmz" ).resolve() )
 
         kml                 = simplekml.Kml()
-        kml.document.name   = f"Album {self.id}"
+        kml.document.name   = f"{self.file_name}"
 
         # ---- shared point style (define once, reuse for every photo) ----
         pt_style                            = simplekml.Style()
@@ -293,10 +313,13 @@ class PhotoPoint():
     """
     see __init__
     """
-    def __init__(self, a_id   ):
+    def __init__( self, a_id  ):
         """
         in memory data about photos for
+        more or less a dict
         mapping etc
+            a_id is the photo id i think
+            a_pp     = photo_album.PhotoPoint( a_id )
         """
         self.id         = a_id
         self.ts         = None
@@ -349,6 +372,7 @@ class PhotoAlbumCreator():
     def query( self, ):
         """
         what it says, read
+            creates the points
         """
         query       = QSqlQuery( AppGlobal.qsql_db_access.db )
         sql         = self.sql
@@ -380,7 +404,6 @@ class PhotoAlbumCreator():
             a_album.add_point( a_id, a_point )
             #rint( f"ID: {a_point} " )
             #rint( a_point.photo_name )
-
 
 # ---- eof ---------------------------
 

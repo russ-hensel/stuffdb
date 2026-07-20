@@ -9,7 +9,6 @@ came from
 photo_viewer.Photo-----Viewer()
 
 
-
 """
 # ---- tof
 # --------------------
@@ -20,29 +19,24 @@ if __name__ == "__main__":
 import logging
 import os
 
-
-
 from qtpy.QtCore import QRectF, Qt
-from qtpy.QtGui  import QPainter, QPixmap
-
-
-
-from qtpy.QtWidgets import (
-                             QApplication,
-                             QGraphicsPixmapItem,
-                             QGraphicsScene,
-                             QGraphicsView,
-                             QMenu,
-                             QSizePolicy,
-                             QTabWidget,
-                             QTextEdit,
-                             QVBoxLayout,
-                             QWidget)
+from qtpy.QtGui import QPainter, QPixmap
+from qtpy.QtWidgets import (QApplication,
+                            QGraphicsPixmapItem,
+                            QGraphicsScene,
+                            QGraphicsView,
+                            QMenu,
+                            QSizePolicy,
+                            QTabWidget,
+                            QTextEdit,
+                            QVBoxLayout,
+                            QWidget)
 
 logger          = logging.getLogger( )
 
 
 from app_global import AppGlobal
+
 # for custom logging level at module
 LOG_LEVEL  = 10   # higher is more
 
@@ -82,6 +76,15 @@ class PictureViewer( QGraphicsView ):
         self.setRenderHint( QPainter.SmoothPixmapTransform )
         self.setTransformationAnchor( QGraphicsView.AnchorUnderMouse )
         self.setResizeAnchor( QGraphicsView.AnchorUnderMouse )
+
+        # ---- drag
+        # drag with left mouse button to pan the image
+        self.setDragMode( QGraphicsView.ScrollHandDrag )
+
+        # once the user zooms manually, stop auto fit on resize/show
+        # cleared by display_file() and the Fit in View menu action
+        self.user_zoomed            = False
+
         self.file_name              = None
         self.file_name_not_found    = AppGlobal.parameters.pic_nf_file_name
 
@@ -111,6 +114,7 @@ class PictureViewer( QGraphicsView ):
             #rint( f"display_   { file_name = }")
             pass
 
+        self.user_zoomed    = False
         self.fit_in_view()
 
     # -----------------------------
@@ -160,6 +164,7 @@ class PictureViewer( QGraphicsView ):
             #rint(f"Image set: {pixmap.size()}")
             self.fit_in_view()  # Automatically fit the image to view when loaded\\\\\\
             return True
+
         else:
             debug_msg   = ( "PictureViewer Failed to load image pixmap is null")
             logging.log( LOG_LEVEL,  debug_msg, )
@@ -175,10 +180,27 @@ class PictureViewer( QGraphicsView ):
     #     self.display_file( "/mnt/WIN_D/PhotoDB/02/102_motor2.jpg" )
 
     # -----------------------------
+    def wheelEvent( self, event ):
+        """
+        zoom with the mouse wheel, up zooms in, down zooms out
+        factors are exact inverses so in then out returns to start
+        zoom centers on the mouse from AnchorUnderMouse in __init__
+        """
+        delta      = event.angleDelta().y()
+        if delta > 0:
+            zoom   = 1.25
+        else:
+            zoom   = 0.8
+
+        self.user_zoomed    = True
+        self.scale( zoom, zoom )
+
+    # -----------------------------
     def zoom_in(self):
         """
         what it says, read it
         """
+        self.user_zoomed    = True
         self.scale(1.5, 1.5)
         #p#rint("Zoomed In")
 
@@ -187,16 +209,21 @@ class PictureViewer( QGraphicsView ):
         """
         what it says, read it
         """
+        self.user_zoomed    = True
         self.scale(0.75, 0.75)
         #rint("Zoomed Out")
 
     # -----------------------------
     def reset_zoom(self):
+        """
+        what it says, read it
+        """
+        self.user_zoomed    = True   # 1:1 is a manual choice, keep it on resize
         self.resetTransform()
         #rint("Zoom Reset")
 
     # -----------------------------
-    def fit_image(self):
+    def fit_imagexxxxx(self):
             """From Grok
             Scale the image to fill the view while maintaining aspect ratio.
             seems to get called all to often debug !!
@@ -249,12 +276,14 @@ class PictureViewer( QGraphicsView ):
     # ------------------------------------
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        self.fit_in_view()
+        if not self.user_zoomed:
+            self.fit_in_view()
 
     # ------------------------------------
     def showEvent(self, event):
         super().showEvent(event)
-        self.fit_in_view()  # fit once widget is visible and sized
+        if not self.user_zoomed:
+            self.fit_in_view()  # fit once widget is visible and sized
 
     # ------------------------------------
     def get_file_name( self, event ):
@@ -303,6 +332,7 @@ class PictureViewer( QGraphicsView ):
         elif action == reset_zoom_action:
             self.reset_zoom()
         elif action == fit_in_view_action:
+            self.user_zoomed    = False   # auto fit on resize/show resumes
             self.fit_in_view()
         elif action == photo_1_action:
             self.photo_1()

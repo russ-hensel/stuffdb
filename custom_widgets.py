@@ -738,6 +738,7 @@ class TextEditExtMixin(  ):
     #------------------------------
     def make_search_widgets( self, ):
         """
+        really should be called find !!
         search_text_widget,  up_button,  dn_button  =  text_edit.make_search_wigets(  )
         ⇑ Up Double Arrow (U+21D1)
         ⇓ Down Double Arrow (U+21D3)
@@ -758,12 +759,11 @@ class TextEditExtMixin(  ):
     # ---------------------
     def ctrl_f_search_down( self,   ):
         """
-
+        find down in the text
         """
         selected_text    = self.capture_selected_text()
-        #self.append( f"ctrl_f_search_down {selected_text = }")
         self.search_text_widget.setText( selected_text )
-        # do not do the firs search
+            # do not do the first search
 
     # ---------------------
     def search_down( self,   ):
@@ -790,8 +790,10 @@ class TextEditExtMixin(  ):
                 text_edit.ensureCursorVisible()  # Optional: Scroll to top if reset
 
     # ---------------------
-    def search_up( self,  ):
-        """case insensitive
+    def search_up( self, ):
+        """
+        really find
+        case insensitive
         for an text edit search for a string
         the line_edit contains the string that is the target
         direction of search is up
@@ -827,7 +829,6 @@ class TextEditExtMixin(  ):
         what it says
             call in the init of the final widget ?
         """
-
         self.setContextMenuPolicy( Qt.CustomContextMenu )
 
         self.customContextMenuRequested.connect( self.show_context_menu )
@@ -1051,8 +1052,6 @@ class TextEditExtMixin(  ):
         cmd_args    = splits[ 1:]
 
         debug_msg   = ( f"cmd_exec {cmd = } \n {cmd_args = }")
-        # need to fic
-        #self.logging.log( LOG_LEVEL,  debug_msg, )
         self.log( msg = debug_msg )
 
         # ---- py
@@ -1151,12 +1150,11 @@ class TextEditExtMixin(  ):
                 msg   = ( f"cannot do search as STUFF_DB  = none  ")
                 #self.logging.error( msg )
                 self.log( msg = msg, )
-                # !! put up dialog
+                # !! put up dialog ??
                 return
 
             else:
                 self.stuffdb_app_global.mdi_management.do_db_search( cmd, cmd_args )
-
 
         # ---- find_dn
         elif cmd == "find_dn":
@@ -3395,6 +3393,104 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         """
         pass
 
+    # ---- a whold bunch of stuff from line edit needless code dup !! fix
+    #----------------------------
+    def set_custom_context_menu( self, ):
+        """
+        what it says
+            call in the init of the final widget ?
+        """
+        self.setContextMenuPolicy( Qt.CustomContextMenu )
+
+        self.customContextMenuRequested.connect( self.show_context_menu )
+
+        # if self.field_name in [ "name", "title" ]: zz
+        #     print( f" {self.field_name = } {self.is_keep_prior_enabled = }  {self.contextMenuPolicy() = }" )
+        #     breakpoint()
+        #     pass
+
+    #----------------------------
+    def show_context_menu(self, pos):
+        """
+        need to access the text edit underneat
+
+
+        None.
+
+        """
+        menu        = QMenu( self )
+        widget      = self
+        line_edit   = self.lineEdit()
+
+        # Undo
+
+        undo_action = QAction( "Undo", self )
+        undo_action.triggered.connect( line_edit.undo )
+        undo_action.setEnabled( line_edit.isUndoAvailable() )
+        menu.addAction( undo_action )
+
+        # # Redo
+        # redo_action = QAction("Redo", self)
+        # redo_action.triggered.connect( self.redo )
+        # redo_action.setEnabled(self.isRedoAvailable())
+        # menu.addAction(redo_action)
+
+        menu.addSeparator()
+
+        # Cut
+        cut_action = QAction("Cut", self)
+        cut_action.triggered.connect( line_edit.cut)
+        cut_action.setEnabled( line_edit.hasSelectedText() and not line_edit.echoMode() == QLineEdit.Password)
+        menu.addAction( cut_action )
+
+        # Copy
+        copy_action = QAction("Copy", self )
+        copy_action.triggered.connect( line_edit.copy)
+        copy_action.setEnabled( line_edit.hasSelectedText() and not line_edit.echoMode() == QLineEdit.Password)
+        menu.addAction( copy_action )
+
+        # # Paste
+        # paste_action = QAction("Paste", self)
+        # paste_action.triggered.connect(self.paste)
+        # paste_action.setEnabled(not self.isReadOnly() and bool(QApplication.clipboard().text()))
+        # menu.addAction(paste_action)
+
+        # # Delete
+        # delete_action = QAction("Delete", self)
+        # delete_action.triggered.connect(lambda: self.del_())
+        # delete_action.setEnabled(self.hasSelectedText())
+        # menu.addAction(delete_action)
+
+        # menu.addSeparator()
+
+        # # Select All
+        # select_all_action = QAction("Select All", self)
+        # select_all_action.triggered.connect(self.selectAll)
+        # select_all_action.setEnabled(bool(self.text()))
+        # menu.addAction(select_all_action)
+
+        # ---- date
+        paste_action = menu.addAction( "Paste Date" )
+        paste_action.triggered.connect( widget.insert_date )
+        # paste_action.setEnabled( can_paste )
+
+        # # ---- inspect for debug
+        # paste_action = menu.addAction( "Inspect" )
+        # paste_action.triggered.connect( widget.inspect )
+        # # paste_action.setEnabled( can_paste )
+
+
+        menu.exec( widget.mapToGlobal( pos) )
+
+    #----------------------------
+    def insert_date( self, ):
+        """'
+        what it says
+            or paste date
+        """
+        dt_now     = datetime.now()
+        text       = dt_now.strftime("%Y-%m-%d") + " "
+        self.insert( text )
 
 #-------------------------------
 class CQDictComboBox( QComboBox, CQEditBase ):
@@ -4230,7 +4326,7 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
 
         a_str   = f"{a_str}{CQEditBase.__str__( self, )    }"
 
-        a_str   = f"{a_str}\n>>>>>>>>>>* CQDateEdit ( nothing so far ) *<<<<<<<<<<<<"
+        a_str   = f"{a_str}\n------------------- CQDateEdit ( nothing so far ) ----------------"
 
         a_str   = string_utils.to_columns( a_str, ["getDate",
                                             f"{str(self.date() )}" ] )

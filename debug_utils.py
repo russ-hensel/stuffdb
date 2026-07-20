@@ -26,6 +26,7 @@ def model_dump( model, msg = "model dump msg" ):
     what type need models be?
     import debug_utils
     debug_utils.model_dump( model )
+    move to rsh_utils inspect
     """
     print( "model_dump begin")
 

@@ -147,7 +147,6 @@ class PhotoWebsite( ):
                 "image_rel":    image_rel,
                 "page_rel":     page_rel, } )
 
-
             if msg_function:
                 msg         = ( f"working on {seq_n} photo" )
                 msg_function( msg )
@@ -257,6 +256,12 @@ class PhotoWebsite( ):
 
     # ------------------------------------
     def _render_index( self, entries ):
+        """
+        believe this does the entire index page
+        might check by looking at the index page in
+        output
+
+        """
         tiles = []
         for e in entries:
             photo = e[ "photo" ]

@@ -17,66 +17,55 @@ if __name__ == "__main__":
 #import functools
 import logging
 import pprint
-from   pathlib    import Path
-import traceback
-from   functools  import partial
 import time
+import traceback
+from   functools import partial
+from   pathlib import Path
+import subprocess
 
 
 from qtpy import QtCore, QtWidgets
+from qtpy.QtCore import QDate, QDateTime, QModelIndex, Qt, Slot
+from qtpy.QtGui import QColor, QFont, QIcon, QPalette
+from qtpy.QtSql import QSqlQuery, QSqlQueryModel, QSqlTableModel
+from qtpy.QtWidgets import (QApplication,
+                            QComboBox,
+                            QDialog,
+                            QGridLayout,
+                            QGroupBox,
+                            QHBoxLayout,
+                            QHeaderView,
+                            QLabel,
+                            QLineEdit,
+                            QMdiSubWindow,
+                            QMenu,
+                            QMessageBox,
+                            QPushButton,
+                            QSizePolicy,
+                            QSpacerItem,
+                            QStyledItemDelegate,
+                            QTableView,
+                            QTableWidget,
+                            QTableWidgetItem,
+                            QTabWidget,
+                            QVBoxLayout,
+                            QWidget)
 
-from qtpy.QtCore   import QDate, QDateTime,   QModelIndex, Qt, Slot
-from qtpy.QtGui import (
-                        QIcon, QFont,
-                        QColor,
-                        QPalette,
-                        )
-
-from qtpy.QtSql import ( QSqlQuery,
-                         QSqlQueryModel,
-                         QSqlTableModel )
-
-from qtpy.QtWidgets import (
-                         QApplication,
-                         QComboBox,
-                         QDialog,
-                         QGroupBox,
-                         QStyledItemDelegate,
-                         QGridLayout,
-                         QHBoxLayout,
-                         QSpacerItem,
-                         QSizePolicy,
-                         QHeaderView,
-                         QLabel,
-                         QLineEdit,
-                         QMdiSubWindow,
-                         QMenu,
-                         QMessageBox,
-                         QPushButton,
-                         QTableView,
-                         QTableWidget,
-                         QTableWidgetItem,
-                         QTabWidget,
-                         QVBoxLayout,
-                         QWidget,
-                         )
-
-import wat_inspector
-from   app_global     import AppGlobal
+import app_exceptions
 import data_dict_all
 import gui_qt_ext
 import info_about
-import slideshow_subwindow
 import string_utils
-import qsql_utils
 import text_edit_ext
-import custom_widgets   as cw
+import wat_inspector
+import custom_widgets as cw
 import custom_widgets_2 as cw_2
 import data_manager
 import parameters
 import picture_viewer
-import app_exceptions
-
+import qsql_utils
+import slideshow_subwindow
+from   app_global import AppGlobal
 
 # ---- constants
 
@@ -116,6 +105,9 @@ WIDGET_CLASS_DICT   = { "CQLineEdit":           cw.CQLineEdit,
                         # add from cw_1
                         # no longer needed delete .... in old
                         }
+
+PLSB_IX_FN                =  3  # column number PLSB picture list subtab base
+PLSB_IX_SUB_DIR           =  2  # was ix_sub_dir
 
 
 # --------------------------------
@@ -963,10 +955,10 @@ class DocumentBase( QMdiSubWindow ):
             except cw.ValidationIssue as an_except:
                 msg     = an_except.args[0]
                 #rint( f"{msg = }" )
-                msg_box = QMessageBox()
+                msg_box     = QMessageBox()
                 msg_box.setWindowTitle("Input Issue")
                 msg_box.setText( msg )
-                choice_a = msg_box.addButton( "Ok", QMessageBox.ActionRole )
+                choice_a    = msg_box.addButton( "Ok", QMessageBox.ActionRole )
                 msg_box.setModal( True )
                 msg_box.exec_()
 
@@ -1781,26 +1773,6 @@ class ListTabBase( DetailTabBase ):
         placer.place( view )
         view.clicked.connect( self.parent_window.on_list_clicked )
 
-        # # ------- old, try new
-        # # !! next is too much  col_head_order
-        # columns          = data_dict_all.SCHEMA.get_list_columns( self.parent_window.detail_table_name )
-        # col_head_texts   = [  ]  # plus one for sequence
-        # col_names        = [  ]
-        # col_head_widths  = [  ]
-        # for i_column in columns:
-        #     col_names.append(        i_column.column_name     )
-        #     col_head_texts.append(   i_column.col_head_text   )
-        #     col_head_widths.append(  i_column.col_head_width  )
-
-        # # !! better done in on loop over columns, do not need the lists
-        # for ix_col, i_text in enumerate( col_head_texts ):
-        #     model.setHeaderData( ix_col, Qt.Horizontal,  i_text )
-
-        # # ?? look around fro redundancy
-        # for ix_col, i_width in enumerate( col_head_widths ):
-        #     #rint( f" {ix_col = } { i_width = }")
-        #     view.setColumnWidth( ix_col, i_width * WIDTH_MULP )
-
         # ---- new
         columns          = data_dict_all.SCHEMA.get_list_columns( self.parent_window.detail_table_name )
 
@@ -1812,8 +1784,7 @@ class ListTabBase( DetailTabBase ):
 
             cnv   = i_column.rec_to_edit_cnv
             if cnv and "qdate" in cnv:
-                #delegate    = DateFormatDelegate( view )
-                delegate    = gui_qt_ext.DateFormatDelegate(   )
+                delegate    = gui_qt_ext.DateFormatDelegate( view )
                 view.setItemDelegateForColumn( ix_col, delegate )
 
         # # ?? look around fro redundancy
@@ -3027,7 +2998,7 @@ class HistoryTabBase( QWidget ):
         #     col_head_widths.append(  i_column.col_head_width  )
             cnv   = i_column.rec_to_edit_cnv
             if cnv and "qdate" in cnv:
-                  delegate    = gui_qt_ext.DateFormatDelegate(   )
+                  delegate    = gui_qt_ext.DateFormatDelegate( table )
                   table.setItemDelegateForColumn( ix, delegate) # +1 for seq
             #     view.setItemDelegateForColumn( ix_col, delegate )
 
@@ -4182,6 +4153,11 @@ class PictureListSubTabBase( QWidget ):
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
 
+        widget         = QPushButton( 'Shell' )
+        #connect_to     = partial( self.shell_out, 1 )
+        widget.clicked.connect( self.shell_file_name )
+        button_layout.addWidget( widget )
+
         # ---- 'Jump to Picture'
         widget         = QPushButton('Jump to Picture')
         connect_to     = self.jump_to_picture
@@ -4267,6 +4243,21 @@ class PictureListSubTabBase( QWidget ):
 
         self.set_headers()
         self.set_picture_ix( 0 )
+
+    # ------------------------------------------
+    def shell_file_name( self, ):
+        """
+        like a double click on the file name
+        zz
+        """
+        model                = self.model
+        sub_dir              = model.data( model.index( self.list_ix, PLSB_IX_SUB_DIR ) )
+        file_name            = model.data( model.index( self.list_ix, PLSB_IX_FN ) )
+        # combine next two ??
+        file_name            = build_pic_filename( file_name = file_name, sub_dir = sub_dir )
+        subprocess.call(('xdg-open', file_name ) )  # Linux only for now
+
+
 
     # ------------------------------------------
     def get_picture_topic( self, ):
@@ -4360,7 +4351,6 @@ class PictureListSubTabBase( QWidget ):
         fn_item              = build_pic_filename( file_name = file_name, sub_dir = sub_dir )
         fn_item              = fix_pic_filename( fn_item )
         index                = self.model.index( self.list_ix, 0)
-
 
         selection_model = self.view.selectionModel()
         selection_model.clearSelection()
@@ -4544,7 +4534,7 @@ class PictureListSubTabBase( QWidget ):
         return -- album document to send to
         raise  some exception if error
         """
-        from   album_document   import AlbumDocument
+        from album_document import AlbumDocument
             # here because of import issue
         detail_tab      = self.parent_window
         document        = detail_tab.parent_window

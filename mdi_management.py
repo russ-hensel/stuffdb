@@ -33,43 +33,33 @@ if __name__ == "__main__":
 import collections
 import functools
 import logging
+from   collections  import defaultdict
 
-from app_global   import AppGlobal
-
-from qtpy.QtGui   import QAction
-
-
-from qtpy.QtCore import ( Qt,
-                          QObject,
-                          Signal,
-                          Slot,
-                           )
-
-from qtpy.QtWidgets import (
-                             QMessageBox
-                             )
+from qtpy.QtCore    import QObject, Qt, Signal, Slot
+from qtpy.QtGui     import QAction
+from qtpy.QtWidgets import QMessageBox
 
 # !! think we just use the document so shorten see main_window
 import album_document
+import custom_widgets_2 as cw_2
 import help_document
-from    help_document import HelpDocument  # !! change from above
+import history_sync
 import people_document
 import picture_document
 import plant_document
 import planting_document
 import stuff_document
-
 import topic_for_table
-import history_sync
-import custom_widgets_2   as cw_2
 import update_sync
+from   app_global import AppGlobal
+from   help_document import HelpDocument  # !! change from above
+import gui_qt_ext
 
 #import string_utils
 
-from collections import defaultdict
 
 # Create a defaultdict with int as default_factory (defaults to 0)
-counter = defaultdict( int )
+counter     = defaultdict( int )
 # ---- imports end
 
 logger      = logging.getLogger( )
@@ -80,6 +70,7 @@ LOG_LEVEL   = 20   # higher is more
 # ---- dict constants make the search commands work
 SEARCH_COMMAND_DICT                       = defaultdict( lambda: None )
 SEARCH_COMMAND_DICT["search_help"     ]   = HelpDocument
+SEARCH_COMMAND_DICT["search_note"     ]   = HelpDocument
 SEARCH_COMMAND_DICT["search_stuff"    ]   = stuff_document.StuffDocument
 SEARCH_COMMAND_DICT["search_pic"      ]   = picture_document.PictureDocument
 SEARCH_COMMAND_DICT["search_picture"  ]   = picture_document.PictureDocument
@@ -270,6 +261,36 @@ class MdiManagement( QObject ):
 
         del self.window_dict[ window_id ]    # not sure still need window_dict
         window_id  = None  # this does not matter but all othere reverences do
+
+    # -------------------------
+    def save_all_documents( self, ):
+        """
+        save every registered document that has an update_db
+        called from the File menu Save All
+        no dirty check -- update_db validates and updates what is there
+        a validation failure pops its message box then we go on to the next doc
+        """
+        ix_fail   = 0
+        with  gui_qt_ext.CursorContext():   # import  gui_qt_ext
+            for i_doc in list( self.window_dict.keys() ):
+                a_function   = getattr( i_doc, "update_db", None )
+                if a_function is None:
+                    continue      # doc type with no save, help viewer ...
+
+                try:
+                    a_function()
+
+                except Exception as an_except:
+                    ix_fail  += 1
+                    msg   = ( f"save_all_documents failed for {i_doc = } "
+                              f">>{an_except}<<" )
+                    logging.error( msg )
+
+        if ix_fail:
+           gui_qt_ext.util_message_box( title_text = "Save All", msg_text = "Save All FAILED " )
+
+        else:
+            gui_qt_ext.util_message_box( title_text = "Save All", msg_text = "Save All Complete " )
 
     # --------------------------------------
     def cascade_documents( self, ):
@@ -923,15 +944,15 @@ class MdiManagement( QObject ):
 
         """
         # make a module costant !!
-        dict_class_for_table   = {    "stuff": stuff_document.StuffDocument,
-                                      "photo": picture_document.PictureDocument,
-                                      "people": people_document.PeopleDocument,
-                                      "plant": plant_document.PlantDocument,
-                                      "planting": planting_document.PlantingDocument,
-                                      "album": album_document.AlbumDocument,
-                                      }
+        dict_class_for_table    = {       "stuff": stuff_document.StuffDocument,
+                                          "photo": picture_document.PictureDocument,
+                                          "people": people_document.PeopleDocument,
+                                          "plant": plant_document.PlantDocument,
+                                          "planting": planting_document.PlantingDocument,
+                                          "album": album_document.AlbumDocument,
+                                          }
 
-        document_class = dict_class_for_table[ table ]
+        document_class          = dict_class_for_table[ table ]
         # ---- change above to a dict
         doc     = self.get_a_doc_for_class( document_class )
         # docs    = get_document()
@@ -1086,7 +1107,7 @@ class TextEditSearch( ):
                 msg_box.setStandardButtons( QMessageBox.Ok )
                 msg_box.exec_()
                 return
-
+            # !! zz really
             target_subwindow    = self.mdi_management.get_a_doc_for_class( window_class, open = True )
 
         # !! bring focus to window

@@ -936,7 +936,13 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
         a_album     = a_creator.album
         #rint(  f"{a_album}")
 
-        a_list   = a_album.make_list_by_ts()
+        a_list      = a_album.make_list_by_ts()
+
+        if len( a_list ) == 0:
+            gui_qt_ext.util_message_box( title_text = "No Data",
+                        msg_text = "There is not enough lat long data for this." )    # import gui_qt_ext
+            return
+
         # for i_item in a_list:
         #     print( i_item )
 

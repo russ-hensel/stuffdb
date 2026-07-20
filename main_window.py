@@ -18,53 +18,46 @@ import logging
 import os
 import traceback
 
-
-from qtpy.QtCore import ( QCoreApplication,
-                         Qt, )
-
-from qtpy.QtGui  import QIcon
-from qtpy.QtGui  import QAction
-
-
-from qtpy.QtWidgets import (
-                             QApplication,
-                             QDialog,
-                             QLabel,
-                             QMainWindow,
-                             QMdiArea,
-                             QMessageBox,
-                             QToolBar,
-                             QVBoxLayout,
-                             QWidget,
-                             )
-
-# ---- local imports
-
+#import app_logging
+import gui_qt_ext
 import psutil
 import show_parameters
-#import    document_maker
-#import    help_sub_window
-# import   db_create
-from   app_global import AppGlobal
+from qtpy.QtCore import QCoreApplication, Qt
+from qtpy.QtGui import QAction, QIcon
+from qtpy.QtWidgets import (QApplication,
+                            QDialog,
+                            QLabel,
+                            QMainWindow,
+                            QMdiArea,
+                            QMessageBox,
+                            QToolBar,
+                            QVBoxLayout,
+                            QWidget)
+
+import combo_dict_ext
 import mdi_management
 import parameters
 import stuffdb
-import combo_dict_ext
-#import app_logging
-import gui_qt_ext
+from album_document import AlbumDocument
+#import    document_maker
+#import    help_sub_window
+# import   db_create
+from app_global import AppGlobal
+from db_management_subwindow import DbManagementSubWindow
+from db_sync_test_subwindow import DbSyncTestSubWindow
+from help_document import HelpDocument
+from people_document import PeopleDocument
+from picture_document import PictureDocument
+from plant_document import PlantDocument
+from planting_document import PlantingDocument
+from slideshow_subwindow import SlideShowSubWindow
+from stuff_document import StuffDocument
+
+# ---- local imports
 
 
-from   help_document      import HelpDocument
-from   album_document     import AlbumDocument
-from   plant_document     import PlantDocument
-from   planting_document  import PlantingDocument
-from   stuff_document     import StuffDocument
-from   people_document           import PeopleDocument
-from   picture_document          import PictureDocument
 
-from   db_management_subwindow   import DbManagementSubWindow
-from   db_sync_test_subwindow    import DbSyncTestSubWindow
-from   slideshow_subwindow       import SlideShowSubWindow
+
 
 # ------------------------------------------
 class StuffdbMainWindow( QMainWindow ):
@@ -366,16 +359,14 @@ class StuffdbMainWindow( QMainWindow ):
         a_menu          = menubar.addMenu( "File" )
 
         action          = QAction( "Save", self )
-        # connect_to      = functools.partial( AppGlobal.os_open_txt_file,
-        #                                      AppGlobal.parameters.pylogging_fn  )
-        action.triggered.connect( self.not_implemented )
+        connect_to      = functools.partial(  self.go_active_sub_window_func,
+                                              "update_db"     )
+        action.triggered.connect( connect_to )
         a_menu.addAction( action )
 
-        #---------------
+        # ---- save all
         action          = QAction( "Save All", self )
-        connect_to      = functools.partial( AppGlobal.os_open_txt_file,
-                                             AppGlobal.parameters.pylogging_fn  )
-        action.triggered.connect( connect_to )
+        action.triggered.connect( self.save_all )
         a_menu.addAction( action )
 
         # ---- DocOps db operations
@@ -460,7 +451,8 @@ class StuffdbMainWindow( QMainWindow ):
 
         ok     = parameters.PARAMETERS.use_geo_photo
         if ok:
-            import photo_util_subwindow   # needs to be differed
+            import photo_util_subwindow  # needs to be differed
+
             # ---- "D"Photo Util"
             instance_ix     = 1
             action          = QAction( "Photo Util", self )
@@ -703,6 +695,14 @@ class StuffdbMainWindow( QMainWindow ):
         what it says read:
         """
         QMessageBox.information(self, "Not Implemented", "Working on this...")
+
+    #----------------------------
+    def save_all( self,   ):
+        """
+        File menu Save All -- save every open document
+        thin wrapper, resolves mdi_management at click time
+        """
+        AppGlobal.mdi_management.save_all_documents()
 
     #-------
     def open_general_document_help( self,   ):

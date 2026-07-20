@@ -24,9 +24,9 @@ import os
 import shutil
 import subprocess
 import time
-from datetime import datetime
-from functools import partial
-from pathlib import Path
+from   datetime import datetime
+from   functools import partial
+from   pathlib import Path
 
 import app_exceptions
 import data_dict_all
@@ -86,7 +86,8 @@ import qt_sql_query
 import slideshow_subwindow
 import table_model
 import update_sync
-from app_global import AppGlobal
+from   app_global import AppGlobal
+import photo_album
 
 #from   album_document  import AlbumDocument
 
@@ -443,7 +444,9 @@ class DupDialog( QDialog ):
 class ProgressDialog( QDialog ):
 
     def __init__(self, *, iterator,  main_label_ref = None, parent = None ):
-        """ """
+        """
+
+        """
         super().__init__(parent)
         self.iterator       = iterator
         self.main_label     = main_label_ref
@@ -452,7 +455,7 @@ class ProgressDialog( QDialog ):
         self._is_paused     = False
         self._is_halted     = False
 
-        self.setWindowTitle("Direct Loop Controller")
+        self.setWindowTitle( "Importing Pictures" )
         self.setFixedSize(350, 180)
 
         # UI Setup
@@ -485,6 +488,7 @@ class ProgressDialog( QDialog ):
         """
         The core logic. This runs a standard loop but manually
         pumps the Qt event queue.
+        what is item ??
         """
         try:
             for item in self.iterator:
@@ -504,12 +508,12 @@ class ProgressDialog( QDialog ):
                     time.sleep(0.01) # Avoid 100% CPU usage during pause
 
                 # --- UPDATE UI ---
-                self.status_label.setText(f"Processing: {item}")
+                self.status_label.setText( f"Processing: {item}" )
                 self.set_main_lable_text( "Main Status: Running ({item})")
 
                 # --- THE MAGIC LINE ---
                 # This keeps the UI responsive and allows clicks to be registered
-                print( "QCoreApplication.processEvents()" )
+                #rint( "QCoreApplication.processEvents()" )
                 QCoreApplication.processEvents()
 
                 # Artificial delay so we can see it happen
@@ -523,7 +527,7 @@ class ProgressDialog( QDialog ):
             QMessageBox.critical(self, "Iterator Error", str(e))
 
         finally:
-            self.pause_btn.setEnabled(False)
+            self.pause_btn.setEnabled( False )
             self.halt_btn.setText( "Close" )
 
             # Disconnect old signals and set to close the dialog
@@ -1500,7 +1504,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
     # ----------------------------------
     def select_nearby_pictures( self, data ):
         """
-        select_nearby_pictures   zz
+        select_nearby_pictures
         """
         self.clear_criteria()
         #rint( data )
@@ -1711,18 +1715,18 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         field_layout.addWidget( widget )
 
         # ---- ....  Earth lat long Map"
-        widget  = QPushButton( "Earth" )
+        widget  = QPushButton( "Earth Graphic" )
         widget.clicked.connect( self.open_lat_long_map )
         field_layout.addWidget( widget)
 
         # ---- pop up map
-        widget          = QPushButton( 'Pop Up Map' )
+        widget          = QPushButton( 'Street Map' )
         widget.clicked.connect( self.open_pop_up_map )
         field_layout.addWidget( widget )
 
-        # ---- .... "!!GEarth"
-        widget  = QPushButton( "!!GEarth" )
-        #widget.clicked.connect( self.clip_lat_long )
+        # ---- .... "GEarth"
+        widget  = QPushButton( "GEarth" )
+        widget.clicked.connect( self.g_earth )
         field_layout.addWidget( widget)
 
         # ---- Shell
@@ -1750,7 +1754,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         """
         What it says, read
         self.sub_dir_field.  !! find file field need manual add
-
+        # see version 90 and lower for code_gen approach
         gen the code then tweak -- this now out of date some is auto
 
         spacer code at the top
@@ -1782,10 +1786,17 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         edit_field.set_clear    = a_partial
         edit_field.set_default  = a_partial
 
-        # ---- tweak
+        # ---- tweak name
         edit_field              = self.field_dict[ "name" ]
+        edit_field.set_custom_context_menu()  # yes has its one in class
         edit_field.setMaxVisibleItems( 40 )
-        # see version 90 and lower for code_gen approach
+
+
+        # ---- tweak add_kw
+        edit_field              = self.field_dict[ "add_kw" ]
+        edit_field.set_custom_context_menu()
+
+
         return
 
     # ---------------------------
@@ -1852,6 +1863,48 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
 
         map_popup.show_map_popup( exif_lat, exif_lon, )
             # show_map_popup( latitude, longitude, parent = None, *, zoom_start = 15, title = None, modal = False ):
+
+    # ----------------------------------
+    def g_earth( self ):
+        """
+
+            a_pp     = photo_album.PhotoPoint( a_id )
+        """
+        a_id            = self.data_manager.current_id
+        a_pp            = photo_album.PhotoPoint( a_id )
+        #a_pp.id         = a_id
+        a_pp.ts         = None  # no sort so we do not need
+        a_pp.ts         = string_utils.float_or_none( self.field_dict[ "exif_ts" ].get_raw_data() )
+                                # may be int, but float ok
+        a_pp.lat        = string_utils.float_or_none( self.field_dict[ "exif_lat" ].get_raw_data() )
+        a_pp.long       = string_utils.float_or_none( self.field_dict[ "exif_lon" ].get_raw_data() )
+        a_pp.file       = self.field_dict[ "file" ].get_raw_data()
+        a_pp.sub_dir    = self.field_dict[ "sub_dir" ].get_raw_data()
+        a_pp.base_dir   = AppGlobal.parameters.picture_db_root
+        a_pp.photo_name = self.field_dict[ "name" ].get_raw_data()
+
+        #rint( f"{str( a_pp ) = }")
+
+        if a_pp.lat is None:
+            gui_qt_ext.util_message_box( title_text = "No Data",
+                        msg_text = "There is not enough lat long data for this." )    # import gui_qt_ext
+            return
+
+        a_photo_album    = photo_album.PhotoAlbum( "photo_point" )
+        a_photo_album.add_point( a_id, a_pp )
+        a_photo_album.make_list()
+        a_photo_album.list_to_kmz( )
+
+
+
+        # lat      = string_utils.float_or_none( self.field_dict[ "exif_lat" ].get_raw_data() )
+        # long     = string_utils.float_or_none( self.field_dict[ "exif_lon" ].get_raw_data() )
+
+        # exif_lat    = string_utils.float_or_none( self.field_dict[ "exif_lat" ].text() )
+        # exif_lon    = string_utils.float_or_none( self.field_dict[ "exif_lon" ].text() )
+
+        # if not ( exif_lon and exif_lon ):
+        #     return
 
 
     # ----------------------------------
@@ -2063,13 +2116,13 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
     # ------------------------------------------
     def select_nearby_pictures( self, ):
         """
-        zz
+        what it says, seems to work
         """
         # could use the to dict or roll own here roll own
-        lat      =  string_utils.float_or_none( self.field_dict[ "exif_lat" ].get_raw_data() )
-        long     =  string_utils.float_or_none( self.field_dict[ "exif_lon" ].get_raw_data() )
+        lat      = string_utils.float_or_none( self.field_dict[ "exif_lat" ].get_raw_data() )
+        long     = string_utils.float_or_none( self.field_dict[ "exif_lon" ].get_raw_data() )
 
-        size     = string_utils.float_or_none(  self.size_widget.text() )
+        size     = string_utils.float_or_none( self.size_widget.text() )
         if size is None:
             size  = 100.
 
@@ -2142,7 +2195,7 @@ class PictureBrowseSubTab( QWidget ):
         self.proxy_model    = proxy_model
 
         table_view          = QTableView()
-        self.table_view     = table_view
+        self.table_view     = table_view   # consider change to view !!
 
         # call a method at end
         #view.setColumnWidth( ix_col, i_width * WIDTH_MULP )   # think width is in pixels ?
@@ -2187,14 +2240,24 @@ class PictureBrowseSubTab( QWidget ):
         # a_widget.clicked.connect( self.move_to_pic )
         # button_layout.addWidget( a_widget )
 
-        a_widget        = QPushButton( "Move All" )
+        a_widget        = QPushButton( "Import" )
         self.launch_btn = a_widget
         a_widget.clicked.connect( self.move_all )
         button_layout.addWidget( a_widget )
 
-        a_widget        = QPushButton( "Fit" )
-        a_widget.clicked.connect( self.fit_in_view )
+        a_widget        = QPushButton( "Remove Sel" )
+        a_widget.clicked.connect( self.remove_delete_selected )
         button_layout.addWidget( a_widget )
+
+        a_widget        = QPushButton( "Delete Sel" )
+        a_partial       = partial( self.remove_delete_selected, delete_flag = True  )
+        a_widget.clicked.connect( a_partial )
+        button_layout.addWidget( a_widget )
+
+        # # ---- fit
+        # a_widget        = QPushButton( "Fit" )
+        # a_widget.clicked.connect( self.fit_in_view )
+        # button_layout.addWidget( a_widget )
 
         self.set_column_width()
 
@@ -2383,6 +2446,7 @@ class PictureBrowseSubTab( QWidget ):
     # --------------------------------------
     def move_all( self,  ):
         """
+        or import
         for use with progress dialog
         move all picture files to new picture documents
             want to change this to require
@@ -2677,14 +2741,72 @@ class PictureBrowseSubTab( QWidget ):
         #rint("Zoom Reset")
 
     #-------------------------------------
-    def fit_in_view(self):
+    def fit_in_view( self ):
         """
         what it says
         """
         self.viewer.fit_in_view()
         #rint("PicturePictureTab Fit in View")
 
+    #---------------------------
+    def remove_delete_selected( self, delete_flag = False ):
+        """
+        """
+    # # ------------------------------------------
+    # def remove_rows_selected(self):
+    #     """
+    #     remove all visually selected rows
+    #     works from the end towards the top so the
+    #     row indexes do not shift under us
+    #     see also remove_row_selected
+    #     """
+    #     self.append_msg( "\nremove_rows_selected" )
 
+        model           = self.model
+        view            = self.table_view
+        proxy_model     = self.proxy_model
+
+        selection_model = view.selectionModel()
+
+        # do we really need this
+        if selection_model is None:
+            msg     = ( "remove_delete_selected no selection model" )
+            logging.debug( msg )
+            return
+
+        selected_indexes  = selection_model.selectedRows()
+
+        if not selected_indexes:
+            msg           = ( "no selected rows" )
+            logging.debug( msg )
+            return
+
+        # view is on the proxy, map to source rows or sorting will bite us
+        ix_rows         = [ proxy_model.mapToSource( index ).row()
+                            for index in selected_indexes ]
+
+        # end towards top
+        ix_rows.sort( reverse = True )
+
+        for ix_row in ix_rows:
+
+            index               = model.index( ix_row, 0 )  # filename col
+            filename            = model.data( index )
+            msg       =  ( f"removing row {ix_row = } {filename = } {delete_flag}" )
+            logging.debug( msg )
+
+            if delete_flag:
+                file_path = Path( filename )
+
+                if file_path.exists():  # perhaps ovecautious
+                    file_path.unlink()
+                    msg   = (f"Deleted: {file_path}")
+                    logging.debug( msg )
+
+            model.removeRow( ix_row )
+
+        msg  = ( f"removed {len( ix_rows )} rows" )
+        logging.debug( msg )
 
     #---------------------------
     def dup_check( self ):

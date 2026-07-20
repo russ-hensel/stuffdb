@@ -11,6 +11,13 @@ DB_NAME:        stuffdb
 
 """
 
+# # --------------------
+# if __name__ == "__main__":
+#     #----- run the full app
+#     import main  # noqa  stops auto removal by pycln
+# # --------------------
+
+
 #import adjust_path
 import data_dict_all
 
@@ -204,7 +211,7 @@ def build_it( a_data_dict_all ):
                                              detail_edit_class  = "cw.CQDateEdit",
                                              form_edit          = "cw.CQDateEdit",
 
-                                             col_head_text      = "Date",
+                                             col_head_text      = "Date Item",
                                              col_head_width     = 15,
                                              col_head_order     = 50,
 
@@ -253,7 +260,7 @@ def build_it( a_data_dict_all ):
                                              default_func= None,   )
     a_table_dict.add_column( a_column_dict )
 
-    # ---- file
+    # ---- file  just the file name, no directory info
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "file",
                                              db_type        = "VARCHAR(100)",
                                              display_type   = "string",
@@ -347,12 +354,46 @@ def build_it( a_data_dict_all ):
     a_table_dict.add_column( a_column_dict )
 
     if True:
-        # ---- EXIF ....................
+        # ---- EXIF DEBUGGING CLEAN UP WHEN DOEN ....................
         # ---- exif_ts
         a_column_dict = data_dict_all.ColumnDict(    column_name    = "exif_ts",
                                                   db_type           = "INTEGER",
                                                   display_type      = "timestamp",
                                                   #form_col_span      = 1,
+
+                                                 # rec_to_edit_cnv      = "cnv_int_to_qdate",
+                                                 # dict_to_edit_cnv     = "cnv_int_to_qdate",
+                                                 # edit_to_rec_cnv      = "cnv_qdate_to_int",
+                                                 # edit_to_dict_cnv     = "cnv_qdate_to_int",
+
+                                                 # detail_edit_class  = "cw.CQDateEdit",
+                                                 # form_edit          = "cw.CQDateEdit",
+                                                 # form_read_only       = True,
+
+                                             rec_to_edit_cnv      = "cnv_int_to_qdate",
+                                             dict_to_edit_cnv     = "cnv_int_to_qdate",
+                                             edit_to_rec_cnv      = "cnv_qdate_to_int",
+                                             edit_to_dict_cnv     = "cnv_qdate_to_int",
+
+                                             detail_edit_class  = "cw.CQDateEdit",
+                                             form_edit          = "cw.CQDateEdit",
+
+                                                 col_head_text      = "Exif Date",
+                                                 col_head_width     = 15,
+                                                 col_head_order     = 41,
+
+
+
+                                                 form_col_span      = 2,
+                                                  max_len           = None,
+                                                  default_func      = None,   )
+        #a_table_dict.add_column( a_column_dict )
+
+        # ---- dt_item -> to exif
+        a_column_dict = data_dict_all.ColumnDict(    column_name    = "exif_ts",
+                                                  db_type           = "INTEGER",
+                                                  display_type      = "timestamp",
+                                                  form_col_span      = 2,
 
                                                  rec_to_edit_cnv      = "cnv_int_to_qdate",
                                                  dict_to_edit_cnv     = "cnv_int_to_qdate",
@@ -361,15 +402,17 @@ def build_it( a_data_dict_all ):
 
                                                  detail_edit_class  = "cw.CQDateEdit",
                                                  form_edit          = "cw.CQDateEdit",
-                                                 form_read_only       = True,
 
-                                                 col_head_text      = "Exif Date",
-                                                 # col_head_width     = 15,
-                                                 # col_head_order     = 150,
-                                                 form_col_span      = 2,
+                                                 col_head_text      = "Date EXIF",
+                                                 col_head_width     = 15,
+                                                 col_head_order     = 51,
+
                                                   max_len           = None,
                                                   default_func      = None,   )
         a_table_dict.add_column( a_column_dict )
+
+
+
 
         # ---- exif_lat
         a_column_dict = data_dict_all.ColumnDict(    column_name    = "exif_lat",
