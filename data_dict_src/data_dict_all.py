@@ -52,7 +52,7 @@ COLUMN_SPAN   = 2   # this should be for normal fields 1 is smallest
 
 # ---- default on input
 
-COLUMN_ORDER  = 100
+COLUMN_ORDER  = 500
 
 # ---- defaults  --- use if dict entry is None  -- these are defaults
 # now none to none is automatic
@@ -353,6 +353,21 @@ def make_name_to_ix_dictxxxx( table_name, verbose = False ):
             msg    = f'{ix} { i_colum_name = }   {i_order = }   '
             print( msg )
             ix      += 1
+#
+#
+
+# -------------------------------------------
+def columns_to_name_coma( columns, verbose = False ):
+    """
+    Code gen or runtime
+        name with commas except the last
+    column_str    = data_dict_all.columns_to_name_coma( columns )
+    """
+    column_str      = ""
+    for i_column in columns:
+        column_str   = f"{column_str} {i_column.column_name},"
+    column_str      = column_str[ : -1 ]
+    return column_str
 
 # -------------------------------------------
 def rpt_sub_tab_columns_order( table_name, verbose = False ):
@@ -664,14 +679,35 @@ class TableDict(  ):
         return key_word_column_list
 
     #------------------------------------------------
-    def get_columns_for_detail(self,    ):
+    def get_columns_names_display_order( self, ):
         """
         redo get_detail_columns for automatic generation of forms from data dict
         """
         column_list    = self.columns
         column_list.sort( key = lambda i_column: i_column.display_order )
 
+        a_str  = ""
+         # ----      zz
+        for ix_column, i_column in enumerate( self.columns ):
+            display_order  = i_column.display_order
+            if display_order:
+                name    = f"{i_column.column_name}"
 
+                form_col_span    = f"{i_column.form_col_span}"
+                # sql     = f"{sql}{line}"
+                # sql     = f"{sql}\n    "
+
+                a_str             = f"{a_str}\n{name} {display_order}  {form_col_span = } "
+
+        return a_str
+
+    #------------------------------------------------
+    def get_columns_for_detail(self,    ):
+        """
+        redo get_detail_columns for automatic generation of forms from data dict
+        """
+        column_list    = self.columns
+        column_list.sort( key = lambda i_column: i_column.display_order )
 
         # for ix_column, i_column in enumerate( self.columns ):
 
@@ -731,6 +767,7 @@ class TableDict(  ):
         get the columns ( not including id ) in the correct order  --- sorted
         for the history tab, add column heading
         column    = data_dict.DATA_DICT.get_history_columns( a_table_name )
+        these are the columns, not the column names
         """
         column_list    = []
 
@@ -771,7 +808,7 @@ class TableDict(  ):
     def get_list_column_names_sql_order( self,    ):
         """
         the column names
-
+            but sql order and not marked for lists
 
         """
         column_list    = self.get_list_columns_sql_order()
@@ -1238,10 +1275,13 @@ class TableDict(  ):
 
         for ix_column, i_column in enumerate( self.columns ):
             key_part    = ""
+
             if i_column.primay_key_ix is not None:
                 key_part    = " PRIMARY KEY "
+
             if ix_column > 0:
                 line    = ","
+
             else:
                 line    = ""
 
@@ -1256,12 +1296,11 @@ class TableDict(  ):
         for ix_column, i_column in enumerate( self.columns ):
 
             if i_column.foreign_key_info is not None:
-                sql         = f"{sql},    "
-                line        = ""
-                line        = f"{line}\n     {i_column.foreign_key_info}  "
-                sql         = f"{sql}{line}"
-                sql         = f"{sql}\n    "
-
+                sql     = f"{sql},    "
+                line    = ""
+                line    = f"{line}\n     {i_column.foreign_key_info}  "
+                sql     = f"{sql}{line}"
+                sql     = f"{sql}\n    "
 
         sql             = f"{sql}\n    ); "
 

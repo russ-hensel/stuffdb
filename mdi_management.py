@@ -97,13 +97,15 @@ SEARCH_CRITERIA_DICT["id"]          = "id",
 
 ALBUM_HISTORY_SYNC              = None    # created on demand
 STUFF_HISTORY_SYNC              = None    # created on demand
-PLANT_HISTORY_SYNC              = None
+PLANT_HISTORY_SYNC              = None    # created on demand
+STUFF_BED_HISTORY_SYNC          = None    #    = "bed_id", for plant
 
-# _KVLM  key value list model
+# _KVLM  key value list model used for drop downs
 ALBUM_KVLM                      = None
 STUFF_KVLM                      = None    # created on demand
 PLANT_KVLM                      = None
-PLANTING_BED_KVLM               = None
+PLANTING_BED_KVLM               = None     #    = "bed_id", for plant for stuff marked beds
+STUFF_IN_KVLM                   = None     #    = "bed_id", for plant for stuff marked beds
 
 #mdi_management
 # may have been supplanted by TopicDict
@@ -499,97 +501,6 @@ class MdiManagement( QObject ):
 
         return docs
 
-    # -------------------------
-    def get_help_docs_depricated_for_above( self, ):
-        """
-        docs      = AppGlobal.mdi_management.get_help_docs()
-
-        !! why not get_docs_for_class
-        what it says, read
-          may replace !! get_album_doc
-              may generalize even more
-
-         does this matter
-
-         self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
-                                       "action_id":  None }   # title action_id
-
-        """
-        docs    = []
-        for i_doc in  self.window_dict.keys():   # !! better a comp
-            if type( i_doc ) == help_document.HelpDocument:
-                docs.append( i_doc )
-
-        return docs
-
-    # -------------------------
-    def get_stuff_docsdepricated_for_above( self, ):
-        """
-        album_docs      = AppGlobal.mdi_management..get_album_docs()
-
-        what it says, read
-          may replace !! get_album_doc
-              may generalize even more
-
-         does this matter
-
-         self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
-                                       "action_id":  None }   # title action_id
-         AlbumDocument
-
-        """
-        docs    = []
-        for i_doc in  self.window_dict.keys():   # !! better a comp
-            if type( i_doc ) == stuff_document.StuffDocument:
-                docs.append( i_doc )
-
-        return docs
-
-    # -------------------------
-    def get_picture_docs_depricated_for_above(self, ):
-        """
-        picture_docs      = AppGlobal.mdi_management..get_picture_docs()
-
-        what it says, read
-          may replace !! get_album_doc
-              may generalize even more
-
-         does this matter
-
-         self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
-                                       "action_id":  None }   # title action_id
-
-        """
-        picture_docs    = []
-        for i_doc in  self.window_dict.keys():   # !! better a comp
-            if type( i_doc ) == picture_document.PictureDocument:
-                picture_docs.append( i_doc )
-
-        return picture_docs
-
-    # -------------------------
-    def get_album_docsdepricated_for_above(self, ):
-        """
-        album_docs      = AppGlobal.mdi_management..get_album_docs()
-
-        what it says, read
-          may replace !! get_album_doc
-              may generalize even more
-
-         does this matter
-
-         self.window_dict[ window_id ]     = { "title": window_id.windowTitle(),
-                                       "action_id":  None }   # title action_id
-         AlbumDocument
-
-        """
-        album_docs    = []
-
-        for i_doc in  self.window_dict.keys():   # !! better a comp
-            if type( i_doc ) == album_document.AlbumDocument:
-                album_docs.append( i_doc )
-
-        return album_docs
 
     # -------------------------
     def get_album_doc_generalized_work_on_scratch (self, ):
@@ -906,6 +817,7 @@ class MdiManagement( QObject ):
         """
         the key value pairs for the combo boxes
         ?? convert to dict
+        it returns an instance, singleton, creates if necessary
         """
         global  ALBUM_KVLM
         global  STUFF_KVLM

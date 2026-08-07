@@ -108,6 +108,8 @@ class ParmsTemp( ):
         self.db_file_name      = "./data_sync_b/stuffdb.db"    # becareful
         self.db_file_name      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync_b/stuffdb.db"
         self.db_file_name      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db"
+        self.db_file_name      = "/tmp/ramdisk/stuffdb.db"
+
 
         self.idle_venv          = "py_12_misc"   # idle will open in this python venv
             # path leading to all docs and help

@@ -386,8 +386,20 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self._build_top_widgets_grid( layout )
         self._build_other_widgets( layout )
         self._build_id_widgets( layout )
-        self._build_sort_widgets( layout )
 
+
+        # ---- order by
+
+        sort_list    = [
+                         'name',
+                         'id',
+                         'lbl_name',
+                         'Title??',  ]
+
+        self._build_sort_widgets( layout, sort_list )
+
+
+        # self._build_sort_widgets( layout )
 
 
         # # ---- function_on_return( self )
@@ -407,7 +419,7 @@ class AlbumCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         layout a vbox, we create a grid in a groupbox
         """
-        groupbox        = QGroupBox( "Misc Criteria:" )
+        groupbox        = QGroupBox( "General Criteria:" )
         groupbox.setMaximumWidth( self.groupbox_width )
         layout.addWidget( groupbox )
         grid_layout     = gui_qt_ext.CQGridLayout( col_max = 10 )
@@ -1110,12 +1122,12 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
         button_layout.addWidget( widget )
 
         # ---- 'set_move_target'
-        widget      = QPushButton( 'set_move_target' )
+        widget      = QPushButton( 'Set Move Target' )
         widget.clicked.connect( self.set_move_target )
         button_layout.addWidget( widget )
 
         #
-        widget      = QPushButton( 'move_after' )
+        widget      = QPushButton( 'Move After Target' )
         widget.clicked.connect( self.move_after )
         button_layout.addWidget( widget )
 
@@ -1124,14 +1136,14 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
         widget.clicked.connect( self.move_top )
         button_layout.addWidget( widget )
 
-        # ---- 'resequence by 10'
-        widget      = QPushButton( 'resequence by 10' )
-        connect_to  = partial( self.resequence, increment= 10 )
-        widget.clicked.connect( connect_to )
-        button_layout.addWidget( widget )
+        # # ---- 'resequence by 10'
+        # widget      = QPushButton( 'resequence by 10' )
+        # connect_to  = partial( self.resequence, increment= 10 )
+        # widget.clicked.connect( connect_to )
+        # button_layout.addWidget( widget )
 
         # ---- 'resequence by 20'
-        widget        = QPushButton( 'resequence by 20' )
+        widget        = QPushButton( 'Resequence by 20' )
         connect_to    = partial( self.resequence, increment= 20 )
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )

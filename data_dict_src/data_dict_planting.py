@@ -28,7 +28,7 @@ def build_it( a_data_dict_all ):
                                              edit_to_rec_cnv      = "cnv_str_to_int",
                                              edit_to_dict_cnv     = "cnv_str_to_int",
 
-
+                                             display_order  = 0,
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
@@ -55,6 +55,8 @@ def build_it( a_data_dict_all ):
     # ---- name
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "name",
                                              db_type        = "VARCHAR(60)",
+
+                                             display_order  = 5,
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
@@ -77,10 +79,10 @@ def build_it( a_data_dict_all ):
     a_table_dict.add_column( a_column_dict )
 
     # ---- plant_id
-    a_column_dict = data_dict_all.ColumnDict(    column_name    = "plant_id",
+    a_column_dict = data_dict_all.ColumnDict(  column_name    = "plant_id",
 
-                                             db_type        = "INTEGER",
-                                             form_read_only       = True,
+                                             db_type                = "INTEGER",
+                                             form_read_only         = True,
                                              rec_to_edit_cnv      = "cnv_int_to_str",
                                              dict_to_edit_cnv     = "cnv_int_to_str",
                                              edit_to_rec_cnv      = "cnv_str_to_int",
@@ -89,18 +91,19 @@ def build_it( a_data_dict_all ):
                                              detail_edit_class    = "cw_2.CQModelComboBox",
                                              form_edit            = "cw_2.CQModelComboBox",
 
+                                             display_order  = 50,
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
                                              col_head_text      = "Plant_ID",
                                              col_head_width     = 10,
                                              col_head_order     = 80,
-                                             form_col_span      = 1,  )
+                                             form_col_span      = 2,  )
 
     a_table_dict.add_column( a_column_dict )
 
     # ---- bed_old
-    a_column_dict = data_dict_all.ColumnDict(    column_name    = "bed_old",
+    a_column_dict = data_dict_all.ColumnDict( column_name    = "bed_old",
                                              db_type        = "VARCHAR(20)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -110,6 +113,7 @@ def build_it( a_data_dict_all ):
     # ---- location
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "location",
                                              db_type        = "VARCHAR(75)",
+                                             display_order  = 60,
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
@@ -121,6 +125,7 @@ def build_it( a_data_dict_all ):
     # ---- add_kw
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "add_kw",
                                              db_type        = "VARCHAR(50)",
+                                             display_order  = 40,
                                              display_type   = "string",
                                              is_keep_prior_enabled  = True,
                                              is_key_word            = True,
@@ -144,14 +149,22 @@ def build_it( a_data_dict_all ):
 
     # ---- type
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "type",
-                                             db_type        = "VARCHAR(15)",
+                                             db_type        = "VARCHAR(15)",  # zz
+                                             display_order  = 70,
                                              display_type   = "string",
+
+                                             detail_edit_class    = "cw.CQComboBox",
+                                             form_edit            = "cw.CQComboBox",
+
+
                                              max_len        = None,
                                              default_func= None,   )
     a_table_dict.add_column( a_column_dict )
 
     # ---- cmnt
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "cmnt",
+
+                                             display_order  = 35,
                                              db_type        = "VARCHAR(250)",
                                              display_type   = "string",
                                              max_len        = None,
@@ -162,6 +175,8 @@ def build_it( a_data_dict_all ):
     # ---- lbl
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "lbl",
                                              db_type        = "VARCHAR(25)",
+
+                                             display_order  = 70,
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
@@ -178,29 +193,36 @@ def build_it( a_data_dict_all ):
                                              default_func= None,   )
     a_table_dict.add_column( a_column_dict )
 
-    # ---- bed_id_    --- translated from stuff added aug 2025 bad convert
+    # ---- bed_id_  zz  --- translated from stuff added aug 2025 bad convert
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "bed_id",
 
-                                             db_type        = "INTEGER",
+
+                                             db_type             = "INTEGER",
                                              form_read_only       = True,
                                              rec_to_edit_cnv      = "cnv_int_to_str",
                                              dict_to_edit_cnv     = "cnv_int_to_str",
                                              edit_to_rec_cnv      = "cnv_str_to_int",
                                              edit_to_dict_cnv     = "cnv_str_to_int",
 
+                                             detail_edit_class    = "cw_2.CQModelComboBox",  # zz
+                                             form_edit            = "cw_2.CQModelComboBox",
 
+
+                                             display_order  = 100,
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
                                              col_head_text      = "Bed ID",
                                              col_head_width     = 10,
                                              col_head_order     = 80,
-                                             form_col_span      = 1,  )
+                                             form_col_span      = 2,  )
     a_table_dict.add_column( a_column_dict )
 
     # ---- lbl_name
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "lbl_name",
                                              db_type        = "VARCHAR(30)",
+
+                                             display_order  = 100,
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func= None,   )
@@ -217,6 +239,8 @@ def build_it( a_data_dict_all ):
     # ---- planting_status
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "planting_status",
                                              db_type        = "VARCHAR(15)",
+
+                                             display_order  = 110,
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func= None,   )

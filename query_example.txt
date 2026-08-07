@@ -1,0 +1,146 @@
+query_example.txt -- sample code for study only, NOT wired into base_document_tabs.py
+
+Context: ListSubTabBase._build_model() currently does
+
+    model              = self.model_class( self, self.db )
+    self.model         = model
+    model.setTable( self.list_table_name )
+    model.setEditStrategy( QSqlRelationalTableModel.OnManualSubmit )
+
+... which always SELECTs every column of "planting". select_by_id() then
+does model.setFilter( f"{self.table_key} = {a_id}" ) followed by
+model.select().
+
+Goal: restrict to just
+    id, name, cmnt, add_kw, plant_id, location
+and filter with  WHERE plant_id = a_id
+
+
+----------------------------------------------------------------------
+Option A -- QSqlQueryModel, explicit SQL, bound parameter
+----------------------------------------------------------------------
+
+This is the simplest fit for a read-only list ( which this sub tab already
+is -- NoEditTriggers in the view ). QSqlQueryModel has no concept of
+"table" at all -- you just give it a SELECT and it shows exactly those
+columns, in that order. Model becomes read-only automatically ( no
+setEditStrategy needed ).
+
+    from qtpy.QtSql import QSqlQueryModel, QSqlQuery
+
+    # ---- replaces self._build_model()
+    def _build_model( self ):
+        self.model = QSqlQueryModel( self )
+        # column headers matching the select list below, in order
+        self._set_headers()
+
+    # ---- replaces select_by_id()
+    def select_by_id( self, a_id ):
+        self.current_id = a_id
+
+        query = QSqlQuery( self.db )
+        query.prepare(
+            "SELECT id, name, cmnt, add_kw, plant_id, location "
+            "FROM planting "
+            "WHERE plant_id = :plant_id"
+        )
+        query.bindValue( ":plant_id", a_id )
+        query.exec_()
+
+        self.model.setQuery( query )
+        self._set_headers()
+
+        debug_msg = ( f"select_by_id subtab (QSqlQueryModel) "
+                      f"{self.table_key = }  {a_id = }" )
+        logging.debug( debug_msg )
+
+    # ---- headers have to be (re)applied after every setQuery() call --
+    # QSqlQueryModel forgets custom header text/labels on each new query
+    def _set_headers( self ):
+        model = self.model
+        model.setHeaderData( 0, Qt.Horizontal, "ID" )
+        model.setHeaderData( 1, Qt.Horizontal, "Name" )
+        model.setHeaderData( 2, Qt.Horizontal, "Comment" )
+        model.setHeaderData( 3, Qt.Horizontal, "Keyword" )
+        model.setHeaderData( 4, Qt.Horizontal, "Plant ID" )
+        model.setHeaderData( 5, Qt.Horizontal, "Location" )
+
+Notes:
+    * query.prepare()/bindValue() is the parameterized-query pattern --
+      avoids building f"...{a_id}" strings directly into SQL text ( the
+      current code's model.setFilter( f"{self.table_key} = {a_id}" ) is
+      technically a SQL-building-by-string-concat pattern too, just on the
+      filter clause rather than the whole statement -- fine as long as
+      a_id is always a trusted int, but bindValue() is the safer habit ).
+    * self.view.setModel( self.model ) still only needs to be called once
+      in _build_gui() as today -- setQuery() on the same model instance
+      updates the view automatically.
+    * jump_to_planting() (whatever it currently does with row/model data)
+      needs to read column 0 for id and column 4 for plant_id instead of
+      whatever column indexes match a full "SELECT *" -- column order here
+      is exactly the 6 named above, ID_COL = 0, PLANT_ID_COL = 4 etc.
+
+
+----------------------------------------------------------------------
+Option B -- keep QSqlTableModel-family model_class, override selectStatement()
+----------------------------------------------------------------------
+
+Use this if you want to keep using self.model_class ( e.g. the existing
+ReadOnlySqlTableModel near the top of base_document_tabs.py ) and its
+setFilter()/select() interface rather than switching to QSqlQueryModel.
+QSqlTableModel normally builds "SELECT <all columns> FROM <table> WHERE
+<filter>" itself -- overriding selectStatement() lets you substitute your
+own column list while everything else ( setFilter, select, OnManualSubmit,
+etc ) keeps working the same as it does now.
+
+    from qtpy.QtSql import QSqlTableModel
+
+    class PlantingListSqlTableModel( QSqlTableModel ):
+        """
+        like ReadOnlySqlTableModel, but also restricts the column list
+        """
+        COLUMNS = ( "id", "name", "cmnt", "add_kw", "plant_id", "location" )
+
+        def selectStatement( self ):
+            columns = ", ".join( self.COLUMNS )
+            where   = self.filter()   # whatever setFilter() was given
+            stmt    = f"SELECT {columns} FROM {self.tableName()}"
+            if where:
+                stmt += f" WHERE {where}"
+            return stmt
+
+        def flags( self, index ):
+            return Qt.ItemIsSelectable | Qt.ItemIsEnabled  # read only
+
+Then pass this class in as model_class when constructing the
+ListSubTabBase ( instead of QSqlTableModel / QSqlRelationalTableModel ),
+and _build_model()/select_by_id() need no changes at all -- setTable(),
+setFilter( f"{self.table_key} = {a_id}" ), and select() all keep working
+exactly as they do today, they just now produce a narrower SELECT.
+
+Notes:
+    * self.tableName() and self.filter() are QSqlTableModel's own
+      accessors for what was passed to setTable()/setFilter() -- using
+      them (rather than self.list_table_name / a hand-built string) keeps
+      this in sync automatically if either ever changes.
+    * column order in the resulting model matches COLUMNS above, same
+      caveat as Option A about jump_to_planting() needing matching column
+      indexes.
+    * QSqlTableModel still issues its own extra queries internally for
+      things like primary-key lookups on submit -- fine here since this
+      stays read-only, would need more care if this model_class were ever
+      reused somewhere editable.
+
+
+----------------------------------------------------------------------
+Which one
+----------------------------------------------------------------------
+
+Option A ( QSqlQueryModel ) is less code and matches "read-only list,
+exact columns, one WHERE clause" directly -- probably the better fit for
+this sub tab specifically.
+
+Option B is the smaller diff against the current model_class-based design
+if this tab might grow editable behavior later, or if other sub tabs share
+model_class and you want the column restriction to be a drop-in replacement
+for a class name rather than a rewrite of _build_model()/select_by_id().

@@ -28,14 +28,8 @@ from   datetime import datetime
 from   functools import partial
 from   pathlib import Path
 
-import app_exceptions
-import data_dict_all
-import gui_qt_ext
-import lat_long_map
-#import photo_geo_criteria
-import photo_plus_ext
-import string_utils
-import wat_inspector
+
+
 from qtpy.QtCore import (QCoreApplication,
                          QDateTime,
                          QModelIndex,
@@ -44,11 +38,13 @@ from qtpy.QtCore import (QCoreApplication,
                          QTime,
                          QTimer,
                          Slot)
+
 from qtpy.QtSql import (QSqlDatabase,
                         QSqlQuery,
                         QSqlQueryModel,
                         QSqlRelationalTableModel,
                         QSqlTableModel)
+
 from qtpy.QtWidgets import (QApplication,
                             QComboBox,
                             QDialog,
@@ -88,9 +84,18 @@ import table_model
 import update_sync
 from   app_global import AppGlobal
 import photo_album
+import app_exceptions
+import data_dict_all
+import gui_qt_ext
+import lat_long_map
+#import photo_geo_criteria
+import photo_plus_ext
+import string_utils
+import wat_inspector
+import os_services
+
 
 #from   album_document  import AlbumDocument
-
 
 
 # ---- end imports
@@ -99,6 +104,41 @@ LOG_LEVEL   = 30    # higher is more
 logger      = logging.getLogger( )
 PARAMETERS  = parameters.PARAMETERS
 NOGO        =  "That is a No Go"
+
+
+# ----------------------------------------------
+def select_count( test_file_name ):
+    """
+    if there are 2 or more records
+    then do not delete
+    return count   -1 if error
+    """
+    file_name   = Path( test_file_name ).name
+    file_found  = False
+
+
+    sql         = ( "SELECT COUNT(*) AS record_count "
+                  " FROM photo "
+                  " WHERE file = :file_name" )
+
+    query = QSqlQuery( AppGlobal.qsql_db_access.db )
+    query.prepare(sql)
+    query.bindValue( ':file_name', file_name )
+
+    if not query.exec(   ):
+        error   = query.lastError()
+        msg     =( f"select_count Database error: {error.text()} return -1" )
+        logging.error( msg )
+
+        return -1
+
+    # do not need loop only one record
+    while query.next():
+        count       = query.value( 0 )
+        msg         = ( f"select_count duplicate {file_name =} {count = }  ")
+        logging.debug( msg )
+
+    return count
 
 # ------------
 class CounterIterator:
@@ -115,6 +155,7 @@ class CounterIterator:
         self.photo_browse_sub_tab   = photo_browse_sub_tab
         self.on_first_row           = True
         pbst                        = self.photo_browse_sub_tab
+        self.ix                     = 0
 
     #-----------------------
     def __iter__(self):
@@ -131,6 +172,7 @@ class CounterIterator:
 
         "what would have been photo_browse_sub_tab is now pbst"
         while True:
+            self.ix       += 1
             pbst          = self.photo_browse_sub_tab
             #status_label
 
@@ -158,7 +200,7 @@ class CounterIterator:
                 # photo_dict    = data_in_dict["photo_id"]
                 # album_target.add_photo_to_show( photo_dict )
 
-            return "return from itr"
+            return f"Count now {self.ix}"
 
         raise StopIteration
 
@@ -471,8 +513,8 @@ class ProgressDialog( QDialog ):
         self.btn_layout.addWidget(self.halt_btn)
         self.layout.addLayout(self.btn_layout)
 
-        self.pause_btn.clicked.connect(self.toggle_pause)
-        self.halt_btn.clicked.connect(self.halt_process)
+        self.pause_btn.clicked.connect( self.toggle_pause )
+        self.halt_btn.clicked.connect( self.halt_process )
 
     #------------------------
     def toggle_pause(self):
@@ -508,7 +550,7 @@ class ProgressDialog( QDialog ):
                     time.sleep(0.01) # Avoid 100% CPU usage during pause
 
                 # --- UPDATE UI ---
-                self.status_label.setText( f"Processing: {item}" )
+                self.status_label.setText( f"Importing: {item}" )
                 self.set_main_lable_text( "Main Status: Running ({item})")
 
                 # --- THE MAGIC LINE ---
@@ -520,7 +562,7 @@ class ProgressDialog( QDialog ):
                 time.sleep(0.1)
 
             if not self._is_halted:
-                self.status_label.setText( "Process Finished." )
+                self.status_label.setText( "Import Finished." )
                 self.set_main_lable_text( "Main Status: Idle" )
 
         except Exception as e:
@@ -541,6 +583,94 @@ class ProgressDialog( QDialog ):
         ml        =  self.main_label
         if ml:
             ml.setText( text )
+
+# ------------------------------------
+class AlbumSqlTableModel( QSqlRelationalTableModel ):
+    """
+    from EventSqlTableModel
+    from chat as a way to control editabllity and
+    centering, is this a good idea
+    what happened to column 1 stuff id
+
+    how different from PlantingtSqlTableModel !! can we generalize off data dict
+         how are display columns controled
+             there should be some sql... stuff somewhere
+                 it is in select by id
+             we need relational because we are doing an update
+    """
+    # ----------------------------
+    def __init__( self, parent=None, db=QSqlDatabase() ):
+        """
+        think db default is ng
+        """
+        super().__init__( parent, db )
+        # Specify multiple columns to make non-editable (e.g., columns 1 and 2)
+        #self.non_editable_columns = { 0, 1, }  # Columns ..doe it have to be in init or is dynamic ..
+        self.non_editable_columns = { 99 }
+
+    # ----------------------------
+    def flags( self, index: QModelIndex ):
+        """
+        from chat, not really used as for non edit
+        """
+        # Get default flags from the base class
+        flags = super().flags(index)
+        # Remove editable flag for the specified columns
+        if index.column() in self.non_editable_columns:
+            return flags & ~Qt.ItemIsEditable  # Make these columns non-editable
+        return flags
+
+    # ----------------------------
+    def data( self, index: QModelIndex, role = Qt.DisplayRole ):
+        """
+        for special formatting
+        and alignment
+        """
+        ix_col = index.column()
+
+        if False:
+            pass
+
+        # Check role first
+        elif role == Qt.DisplayRole:
+            # if col == 4:  # match to code in view
+            #     value = super().data(index, Qt.EditRole)
+            #     if value is not None:
+            #         return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
+            #     return value  # Return raw value if None
+
+            if ix_col == 5:  # match to code in view  ix_col
+                value = super().data(index, Qt.EditRole)
+                if value is not None and value != "":   # or True may need empty string also
+                    return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
+                return value  # Return raw value if None
+
+            if ix_col == 6:  # match to code in view  ix_col
+                value = super().data(index, Qt.EditRole)
+                if value:         # new for  is not None:
+                    return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
+                return value  # Return raw value if None
+
+        elif role == Qt.EditRole:
+            # Return raw value for editing/database sync
+            pass
+            # if col == 2:
+            #     return super().data(index, Qt.EditRole)
+
+        elif role == Qt.TextAlignmentRole:
+            # Handle alignment for all columns
+            pass
+            # if col == 0:  # id
+            #     return Qt.AlignLeft | Qt.AlignVCenter
+            # elif col == 1:  # stuff_id
+            #     return Qt.AlignCenter | Qt.AlignVCenter
+            # elif col == 2:  # event_dt
+            #     return Qt.AlignRight | Qt.AlignVCenter
+
+        # Default to base class for all other roles and columns
+        return super().data(index, role)
+
+
 
 # ----------------------------------------
 class PictureDocument( base_document_tabs.DocumentBase ):
@@ -609,14 +739,17 @@ class PictureDocument( base_document_tabs.DocumentBase ):
         self.text_tab           = PictureTextTab( self )
         main_notebook.addTab( self.text_tab, "Text" )
 
-        ix                         += 1
-        self.picture_tab_index       = ix
+        # use a dict instead of this!!
+        self.picture_tab_index       = ( ix := ix + 1 )
         self.picture_tab             = base_document_tabs.StuffdbPictureTab( self )
         main_notebook.addTab( self.picture_tab, "Picture" )
 
-        ix                        += 1
-        self.history_tab_index     = ix
-        self.history_tab           = PictureHistorylTab( self )
+        self.video_tab_index       = ( ix := ix + 1 )
+        self.video_tab             = base_document_tabs.StuffdbVideoTab( self )
+        main_notebook.addTab( self.video_tab, "Video" )
+
+        self.history_tab_index     = ( ix := ix + 1 )
+        self.history_tab           = PictureHistoryTab( self )
         main_notebook.addTab( self.history_tab, "History" )
 
         sub_window.setWidget( main_notebook )
@@ -734,6 +867,44 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         what it says, read
 
         need to have instance var for put_criteria
+
+        # ---- order by
+        order_by        = criteria_value_dict[ "order_by" ]
+
+        plus_order_by_dt_item  = True
+
+        #dt_item  does not seem to exist  -- but this may be error
+        # may need to convert to use table name or not
+        if   order_by == "title - ignore case":
+            column_name = "lower(title)"
+
+        elif order_by == "id":
+            column_name = "photo.id"
+
+        elif order_by == "id_old":
+            column_name = "id_old"
+
+        elif   order_by == "dt_enter":
+            column_name = "dt_enter"
+
+        elif order_by == "dt_item":
+            column_name = "dt_item"
+            plus_order_by_dt_item  = False
+
+        else:   # !! might better handle this
+            column_name = "dt_item"   # check if exists  dt_item
+
+        # ---- "order_by_dir"
+        order_by_dir   = criteria_value_dict[ "order_by_dir" ].lower( )
+
+        if "asc" in order_by_dir:
+            literal   = "ASC"
+
+        else:
+            literal   = "DESC"
+
+        query_builder.add_to_order_by( column_name, literal, )
+
         """
         page        = self
         layout      = QVBoxLayout( page ) # or try grid with new_row !!
@@ -744,15 +915,31 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self._build_geo_widgets( layout )
         self._build_id_widgets( layout )
 
-        sort_list   =  [
-                        'id',
-                        'id_old',
-                        'dt_item',
-                        'dt_enter',
-                        'title - ignore case',
-                        ]
+        sort_dict    = { "name":      "name",
+                         "exif_ts":   "exif_ts",
+                         "File Name":        "file",
+                         "dt_item":   "dt_item",
+                         "Date Entered":  "dt_enter",
+                         #"lbl_name":  "lbl_name",   think plant
+                         'title - ignore case': "title",
+                         "Id":        "photo.id",
+                         'id_old':   "id_old"
 
-        self._build_sort_widgets( layout, sort_list )
+                        }
+
+        self.sort_dict  = sort_dict
+
+
+
+        # sort_list   =  [
+        #                 'id',
+        #                 'id_old',
+        #                 'dt_item',
+        #                 'dt_enter',
+        #                 'title - ignore case',
+        #                 ]
+
+        self._build_sort_widgets( layout, sort_dict )
 
         # for i_widget in self.critera_widget_list:
         #     # add value changed to custom edits widget.textChanged.connect
@@ -838,7 +1025,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         layout a vbox, we create a grid in a groupbox
         """
-        groupbox   = QGroupBox( "Misc Criteria:" )
+        groupbox   = QGroupBox( "General Criteria:" )
         groupbox.setMaximumWidth( self.groupbox_width )
         layout.addWidget( groupbox )
         grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
@@ -1148,7 +1335,7 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         # would context management be good here
         use_widget.blockSignals( True )
-        use_widget.setChecked(True)
+        use_widget.setChecked( True)
         self.set_lat_long_for_location()
         use_widget.blockSignals( False )
 
@@ -1404,26 +1591,30 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         plus_order_by_dt_item  = True
 
-        #dt_item  does not seem to exist  -- but this may be error
-        # may need to convert to use table name or not
-        if   order_by == "title - ignore case":
-            column_name = "lower(title)"
+        column_name = self.sort_dict.get( order_by, None )
+        if not column_name:
+            key_ignore, column_name = self.sort_dict.items( )[ 0 ]
 
-        elif order_by == "id":
-            column_name = "photo.id"
+        # #dt_item  does not seem to exist  -- but this may be error
+        # # may need to convert to use table name or not
+        # if   order_by == "title - ignore case":
+        #     column_name = "lower(title)"
 
-        elif order_by == "id_old":
-            column_name = "id_old"
+        # elif order_by == "id":
+        #     column_name = "photo.id"
 
-        elif   order_by == "dt_enter":
-            column_name = "dt_enter"
+        # elif order_by == "id_old":
+        #     column_name = "id_old"
 
-        elif order_by == "dt_item":
-            column_name = "dt_item"
-            plus_order_by_dt_item  = False
+        # elif   order_by == "dt_enter":
+        #     column_name = "dt_enter"
 
-        else:   # !! might better handle this
-            column_name = "dt_item"   # check if exists  dt_item
+        # elif order_by == "dt_item":
+        #     column_name = "dt_item"
+        #     plus_order_by_dt_item  = False
+
+        # else:   # !! might better handle this
+        #     column_name = "dt_item"   # check if exists  dt_item
 
         # ---- "order_by_dir"
         order_by_dir   = criteria_value_dict[ "order_by_dir" ].lower( )
@@ -1657,7 +1848,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         # ---- code_gen: sql_to_fields  -- begin table entries
         # ---- put picture in to right
         viewer              = picture_viewer.PictureViewer( self )
-        viewer.set_fnf( parameters.PARAMETERS.pic_nf_file_name )
+        viewer.set_fnf( parameters.PARAMETERS.picture_nf_file_name )
         viewer.setMinimumSize( 100, 200 )  # width=300, height=200 in pixels
         self.viewer         = viewer
         picture_layout.addWidget( viewer, stretch = 0 )
@@ -1690,7 +1881,9 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         detail_notebook         = QTabWidget()
         self.detail_notebook    = detail_notebook
 
-        # ---- buttons
+        # ----
+        field_layout.new_row()
+
         widget  = QPushButton( "Add To Album" )
         widget.clicked.connect( self.add_to_show )
         field_layout.addWidget( widget )
@@ -1736,18 +1929,19 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
 
         # ---- edit
         widget        = QPushButton( 'Edit')
-        widget.clicked.connect( self.edit_file_name )
+        widget.clicked.connect( self.edit_photo )
         field_layout.addWidget( widget )
 
-        # ---- edit
-        widget        = QPushButton( '!!Delete (keep_file)')
-        #widget.clicked.connect( self.edit_file_name )
-        field_layout.addWidget( widget )
+        # think always delete file, except if use in more than one pic
+        # # ---- 'Remove (keep_file)
+        # widget        = QPushButton( '!!Delete (keep_file)')
+        # #widget.clicked.connect( self.edit_file_name )
+        # field_layout.addWidget( widget )
 
-        # ---- edit
-        widget        = QPushButton( '!!Delete (delete_file)')
-        #widget.clicked.connect( self.edit_file_name )
-        field_layout.addWidget( widget )
+        # # ---- '!!Delete (delete_file)'
+        # widget        = QPushButton( '!!Delete (delete_file)')
+        # #widget.clicked.connect( self.edit_file_name )
+        # field_layout.addWidget( widget )
 
     #---------------------------------
     def _build_fields( self, layout ):
@@ -1836,6 +2030,32 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         file_name     = self.get_picture_file_name()
         file_name     = base_document_tabs.fix_pic_filename( file_name )
         self.viewer.display_file( file_name )
+
+    # -------------------------------------
+    def delete_all( self,   ):
+        """
+        special for pictures because the picture file should go as well
+        needs testing
+        """
+        super().delete_all()
+        # now the file we could check if another picture references it
+        # or just to some sort of mass cleanup later
+        file_name    = self.get_picture_file_name()
+        file_path    = Path( file_name )
+
+        count        = select_count( file_name )
+        if count >= 2:
+            msg   = print( f"delete_all found file count > 1 {file_name} " )
+            logging.error( msg )
+
+            return
+
+        try:
+            file_path.unlink()
+
+        except Exception as e:
+            msg   = print( f"Error deleting {file_path}: {e}" )
+            logging.error( msg )
 
     # -----------------------------------------
     def update_db( self, ):
@@ -2102,15 +2322,24 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         #subprocess.Popen([ "bash", file_name ])
 
     # ------------------------------------------
+    def edit_photo( self, ):
+        """
+            and get the file name into the clipboard
+        """
+        self.edit_file_name()
+
+    # ------------------------------------------
     def edit_file_name( self, ):
         """
         get the file name into the clipboard
         """
-        file_name   = self.get_picture_file_name()
+        file_name           = self.get_picture_file_name()
 
-        editor      = AppGlobal.parameters.picture_editor
+        editor_arg_list     = AppGlobal.parameters.picture_editor
 
-        subprocess.Popen([ editor, file_name ])
+        os_services.open_app_with_file( editor_arg_list, file_name )
+
+        #subprocess.Popen([ editor, file_name ])
         QApplication.clipboard().setText( file_name )
 
     # ------------------------------------------
@@ -2219,7 +2448,7 @@ class PictureBrowseSubTab( QWidget ):
         tab_layout.addWidget( table_view )
 
         viewer              = picture_viewer.PictureViewer( self )
-        viewer.set_fnf( parameters.PARAMETERS.pic_nf_file_name )
+        viewer.set_fnf( parameters.PARAMETERS.picture_nf_file_name )
         self.viewer         = viewer
         tab_layout.addWidget( viewer )
 
@@ -2708,7 +2937,7 @@ class PictureBrowseSubTab( QWidget ):
         call from ?
         """
         if file_name is None:
-            file_name  = parameters.PARAMETERS.pic_nf_file_name
+            file_name  = parameters.PARAMETERS.picture_nf_file_name
         # pixmap      = QPixmap( file_name )
         # self.viewer.set_photo( pixmap )
         self.viewer.display_file( file_name )
@@ -2812,20 +3041,18 @@ class PictureBrowseSubTab( QWidget ):
     def dup_check( self ):
         """
         """
-        model           = self.model
-        view            = self.table_view
-
-        dialog     = DupDialog( model, view )
+        model       = self.model
+        view        = self.table_view
+        dialog      = DupDialog( model, view )
 
         if dialog.exec() == QDialog.Accepted:
-            pass
+            pass  # not sure why we bother
 
 # ----------------------------------------
 class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
     """
     may need to be qobject as well because of slot
     """
-
     def __init__( self, parent_window ):
         """
         the usual
@@ -2969,7 +3196,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         widget        = QLabel( 'Other-->' )
         button_layout.addWidget( widget )
 
-        widget        = QPushButton( 'add subj' )
+        widget        = QPushButton( 'Add Subj' )
         connect_to    = partial( self.add_from_selected, self.view_other )
         widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
@@ -2985,7 +3212,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         #widget.clicked.connect( connect_to )
         button_layout.addWidget( widget )
 
-        widget      = cw.CQDictComboBox(  self,
+        widget      = cw.CQDictComboBox( self,
                                              field_name = "search_dict", )
 
         self.search_ddl_widget = widget
@@ -3034,7 +3261,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         # widget.clicked.connect(self.loop_thru_subjects )
         # button_layout.addWidget( widget )
 
-        widget        = QPushButton( 'inspect' )
+        widget        = QPushButton( 'Inspect' )
         #add_button    = widget
         widget.clicked.connect( self.inspect )
         button_layout.addWidget( widget )
@@ -4175,93 +4402,19 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
     # -----------------------
     def __str__( self ):
         """
+        the usual
         """
         a_str    = string_utils.obj_to_str( self )
         return a_str
 
-# ------------------------------------
-class AlbumSqlTableModel( QSqlRelationalTableModel ):
-    """
-    from EventSqlTableModel
-    from chat as a way to control editabllity and
-    centering, is this a good idea
-    what happened to column 1 stuff id
-    """
-    # ----------------------------
-    def __init__( self, parent=None, db=QSqlDatabase() ):
-        """ """
-        super().__init__(parent, db)
-        # Specify multiple columns to make non-editable (e.g., columns 1 and 2)
-        #self.non_editable_columns = { 0, 1, }  # Columns ..doe it have to be in init or is dynamic ..
-        self.non_editable_columns = { 99 }
-
-    # ----------------------------
-    def flags(self, index: QModelIndex):
-        """
-        from chat, not really used as for non edit
-        """
-        # Get default flags from the base class
-        flags = super().flags(index)
-        # Remove editable flag for the specified columns
-        if index.column() in self.non_editable_columns:
-            return flags & ~Qt.ItemIsEditable  # Make these columns non-editable
-        return flags
-
-    # ----------------------------
-    def data( self, index: QModelIndex, role = Qt.DisplayRole ):
-        """
-        for special formatting
-        and alignment
-        """
-        ix_col = index.column()
-
-        if False:
-            pass
-
-        # Check role first
-        elif role == Qt.DisplayRole:
-            # if col == 4:  # match to code in view
-            #     value = super().data(index, Qt.EditRole)
-            #     if value is not None:
-            #         return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
-            #     return value  # Return raw value if None
-
-            if ix_col == 5:  # match to code in view  ix_col
-                value = super().data(index, Qt.EditRole)
-                if value is not None and value != "":   # or True may need empty string also
-                    return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
-                return value  # Return raw value if None
-
-            if ix_col == 6:  # match to code in view  ix_col
-                value = super().data(index, Qt.EditRole)
-                if value:         # new for  is not None:
-                    return datetime.fromtimestamp(value).strftime("%Y-%m-%d")
-                return value  # Return raw value if None
-
-        elif role == Qt.EditRole:
-            # Return raw value for editing/database sync
-            pass
-            # if col == 2:
-            #     return super().data(index, Qt.EditRole)
-
-        elif role == Qt.TextAlignmentRole:
-            # Handle alignment for all columns
-            pass
-            # if col == 0:  # id
-            #     return Qt.AlignLeft | Qt.AlignVCenter
-            # elif col == 1:  # stuff_id
-            #     return Qt.AlignCenter | Qt.AlignVCenter
-            # elif col == 2:  # event_dt
-            #     return Qt.AlignRight | Qt.AlignVCenter
-
-        # Default to base class for all other roles and columns
-        return super().data(index, role)
-
 # ----------------------------------------
-class PictureAlbumtSubTab(  QWidget  ):
+class PictureAlbumtSubTab( QWidget ):
     """
     list albums that picture belongs to
     see __init__
+
+    see new imple in base !!
+
     """
     def __init__(self, parent_window ):
         """
@@ -4580,7 +4733,7 @@ class PictureAlbumtSubTab(  QWidget  ):
         not sure about this
 
         """
-        pass   # may be wrong ?? but lets it run
+        pass   # may be wrong ?? but lets it run -- right we do not do updates
 
     # -----------------------
     def __str__( self ):
@@ -4591,7 +4744,7 @@ class PictureAlbumtSubTab(  QWidget  ):
         return a_str
 
 # ----------------------------------------
-class PictureHistorylTab( base_document_tabs.HistoryTabBase   ):
+class PictureHistoryTab( base_document_tabs.HistoryTabBase   ):
     """
     see init
     """
@@ -4600,7 +4753,7 @@ class PictureHistorylTab( base_document_tabs.HistoryTabBase   ):
         what it says read -- the usual -- but ancestor matters
         """
         super().__init__( parent_window )
-        self.tab_name   = "PictureHistorylTab"
+        self.tab_name   = "PictureHistoryTab"
 
 # ---- eof
 

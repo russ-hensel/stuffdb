@@ -71,14 +71,9 @@ class MdiInfo( QDialog ):
         """
         what it says, read?
         """
-
-        #self.layout                     = QFormLayout()
         self.layout            = QVBoxLayout( self )
         #self.setLayout( self.layout )
         button_layout          = QHBoxLayout( self )
-        # button_layout           =  QHBoxLayout()
-        # self.layout.addChildLayout( button_layout )
-        # button_layout           =  self.layout
 
         form_layout                     = QFormLayout()
         self.layout.addLayout( form_layout )
@@ -109,8 +104,6 @@ class MdiInfo( QDialog ):
         a_widget.clicked.connect(  self.accept )
         button_layout.addWidget( a_widget )
 
-
-
     # ---- model to fields var ------------------------------------------
     def model_to_fields( self ):
         """
@@ -119,7 +112,6 @@ class MdiInfo( QDialog ):
         """
         #self.model_to_fields_seq()
         self.model_to_fields_2()
-
 
     # ------------------------------------------
     def model_to_fields_1( self ):

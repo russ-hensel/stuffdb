@@ -10,7 +10,8 @@ Created on Fri Mar  7 08:39:58 2025
 
 # ---- imports
 
-from   subprocess import Popen
+from subprocess import Popen
+
 #from   pathlib    import Path
 #import os
 #import psutil
@@ -28,8 +29,6 @@ from   subprocess import Popen
 
 
 
-
-
 # ---- end imports
 
 TXT_DEFAULTS    = [  "xed",   "gedit ",  "l3afpad",  "leafpad"   "nvim", "vim", "nano", "xedit", ]
@@ -38,6 +37,39 @@ print( " -----------------------------------------------------------------")
 print( TXT_DEFAULTS )
 
 #-------------------------------
+
+def  open_app_with_file( string_arg_list, file_name ):
+    """
+    what it says, read
+    os_services.open_app_with_file( string_arg_list, file_name )
+
+    string_arg_list     list of strings -- the command and any
+                                    arguments needed to launch the app.
+                                    file_name is appended as the last
+                                    argument.  Popen does not go through a
+                                    shell, so no quoting and no desktop
+                                    file "@@ ... @@" file-forwarding
+                                    markers are needed here
+    file_name                      path to the file to open
+
+    example -- Pinta via its flatpak install, whose desktop launcher is
+
+        Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=pinta --file-forwarding com.github.PintaProject.Pinta @@ %F @@
+
+        PINTA_CMD   = [
+            "/usr/bin/flatpak", "run",
+            "--branch=stable",
+            "--arch=x86_64",
+            "--command=pinta",
+            "com.github.PintaProject.Pinta",
+            ]
+        open_app_with_file( PINTA_CMD, "/path/to/file.jpg" )
+    """
+    a_cmd       = string_arg_list + [ file_name ]
+    a_proc      = Popen( a_cmd )
+
+    return a_proc
+
 
 # ------------------------
 class OSCall(  ):

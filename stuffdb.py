@@ -20,7 +20,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver .094: 2026-07-20.01"
+__version__   = "Ver .094: 2026-07-26.01"
 
 # ---- imports
 import datetime
@@ -42,7 +42,7 @@ import traceback
   # Usage:
 
 
-from   qtpy.QtCore import ( QTimer, )
+from qtpy.QtCore import ( QTimer, )
 
 from qtpy import QtWidgets
 
@@ -56,8 +56,6 @@ from qtpy.QtWidgets import (
 from   app_global import AppGlobal
 # import app_logging
 import data_dict_all
-#import   stuffdb_def
-#import dict_main
 import text_edit_ext
 import wat_inspector
 import key_gen
@@ -72,13 +70,14 @@ STUFFDB_CONNECTION_NAME    = "stuffdb_main_connection_name"
 
 # stuffdb.DB_CONNECTION_NAME
 # from stuffdb import DB_CONNECTION_NAME
-def nottof():
+def nottof():  # why
     pass
 
 # -----------------------------
 def delete_file( file_name ):
     """
     will delete any file, but intended for db file
+    ?? move to os services
     """
     exists    = str( os.path.isfile( file_name ) )
 
@@ -128,12 +127,9 @@ class App( ):
         self.app_name          = f"Stuff DB in QT {__version__}"
         self.app_url           = "www.where"
 
-        # clean out dead
         AppGlobal.controller   = self
         text_edit_ext.STUFF_DB = self
         self.gui               = None
-
-        # ---- wat inspector
 
         self.restart( )
 
@@ -147,7 +143,6 @@ class App( ):
         print( "========= StuffDb restart =================" )
 
         self.q_app              = QApplication( []  )
-        #self.q_app              = StuffApplication( []  )
 
         AppGlobal.q_app         = self.q_app
         self.app_global         = AppGlobal
@@ -175,8 +170,6 @@ class App( ):
         a_key_gen               = key_gen.KeyGenerator( a_qsql_db_access.db  )  #  AppGlobal.qsql_db_access.db
         AppGlobal.key_gen       = a_key_gen
 
-       #  data_dict_all.build_it( "stuffdb" )    # access as data_dict.DATA_DICT
-
         a_schema_dict   = data_dict_all.SchemaDict( "stuffdb" )
         a_schema_dict.import_modules( [ "data_dict_help",
                                         "data_dict_stuff",
@@ -192,11 +185,12 @@ class App( ):
                                         ])
             # access as data_dict.SCHEMA = a_schema_dict
 
-
         table_name_list         = data_dict_all.SCHEMA.get_table_name_list()
+
         if len( table_name_list ) < 10:
             msg     = f"we seem to be short on data_dict items {len( table_name_list )}"
             logging.error( msg )
+
             for i_table in table_name_list:
                 print( f"{i_table}")
             ValueError()
@@ -210,7 +204,6 @@ class App( ):
         a_wat_inspector         = wat_inspector.WatInspector( self.q_app )
 
         QTimer.singleShot(0, self.parameters.startup_function  )
-        #self.q_app.exec_()   # perhaps move to run method
         QApplication.exec()
 
     # -------------------------
@@ -267,16 +260,6 @@ class App( ):
         AppGlobal.os_open_help_file( AppGlobal.parameters.help_file )
 
     # ----------------------------------------------
-    def os_open_log( self,  ):
-        """
-        have function since want flush
-
-        """
-        my_logging   = app_logging.APP_LOGGING
-        my_logging.os_open_log_file
-        return
-
-    # ----------------------------------------------
     def os_open_parmfile( self,  ):
         """
         used as callback from gui button
@@ -328,7 +311,6 @@ def main():
 #  # mainWin     = stuff_db_main_window.StuffDbMainWindow()
 #  # mainWin.show()
 #  # sys.e
-
 # ---- eof
 
 

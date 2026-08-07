@@ -551,6 +551,131 @@ class ColumnFormater( ):
 
         return a_str
 
+# ------------------------------------------
+def string_to_py_list( a_string ):
+    """
+    FROM CLIP_STRING_UTIL
+    Purpose:
+        take a multiline string and turn it into a python
+        list of strings
+        usual clean up of lines
+        make multiline if long
+        left trim lines for leading spaces
+
+    Notes:
+        what if stuff already includes quotes.... tough
+        returns a string of python code
+
+    """
+    string_list, __     = clean_string_to_list( a_string )
+
+    a_list              = []  # return as list or back to string
+
+    len_max             = 0
+    tot_len             = 0
+
+    for i_string in string_list:
+        print( i_string )
+        i_string  = i_string.lstrip()
+        i_len      = len( i_string )
+        tot_len   += i_len                    # ?? place for wallrus
+        if i_len > len_max:
+            len_max  = i_len
+
+        a_list.append( f'"{i_string}"' )
+
+        # ret.append( "======>" + i_string )
+    if tot_len > 100:
+        a_string   = ", \n".join( a_list )
+    else:
+        a_string   = ", ".join( a_list )
+
+    a_string   = f"[ {a_string} ]"
+
+    # if False: # debug
+    #     print( f"i_string =           {i_string}")
+    #     print( f"    leading_spaces       {i_leading_spaces}")
+    #     print( f"    first_eq             {ix_first_eq}")
+    #     print( f"    ix_first_pound_sign, {ix_first_pound_sign}")
+
+
+    return a_string
+
+
+
+# ------------------------------------------
+def allign_eq_signs( a_string ):
+    """
+    FROM CLIP, NOT YET FIXED BUT SHULD BE EASY
+    Purpose:
+        alligns = signs, using first line as a template
+        preserves comments
+        ignores blank lines and all comment lines
+        trims trailing blanks
+
+    Notes:
+
+        must have an exposed = sign on first line
+        allign stops if change in indent
+                     no = sign found on a line -- unless blank or comment
+
+
+
+    ?? probably want to skip blank lines ... may not allow as first
+    inconsistent use of i and ix
+
+    !! need to add += ......
+
+
+    returns a list, not a sting, join with list_to_string_lines( a_list ) if you want a string
+
+            abc         = def   # comment
+
+    change to indicate success ?
+    i_format  = "{: <30}"
+    a_col  = i_format.format( i_item )
+
+    find_eq
+
+    """
+
+    ( lines, ix_deleted )  = clean_string_to_list( a_string,
+                          delete_tailing_spaces  = True,
+                          delete_comments        = False,
+                          delete_blank_lines     = False,   )
+    space_count  = None
+    new_lines    = []
+    for i_line in lines:
+        if space_count is None:
+            space_count   = string_utils.count_leading_spaces( i_line )
+            find_eq       = i_line.find( "=",   )
+            if find_eq == 0:
+                return a_string
+            #format_var    =  '{:<'  + str( find_eq - space_count ) + '}'
+            format_var    =  '{:<'  + str( find_eq     ) + '}'
+        splits        = i_line.split( "=" )
+        if len( splits)  < 2:
+            # no =
+            i_new_line   = i_line
+            new_lines.append( i_new_line )
+            continue
+
+        var          = ( space_count * " " ) + splits[0].strip()
+        #format_var    =  '"{: <' 30}"
+
+        assign_to    = "= " + splits[1].strip()
+        i_new_line   = string_utils.to_columns( "",
+                                            [var,    assign_to  ],
+                                            format_list = [  format_var, "{:<50}" ],
+                                            indent = "" )
+
+        #i_new_line  = var + assign_to
+        new_lines.append( i_new_line )
+
+    return "\n".join( new_lines )
+
+
+# ------------------------------------------
 def num_to_string( an_int, dp_places = "not implemented yet" ):
     """
     string_utils.num_to_string( an_int )

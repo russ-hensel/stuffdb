@@ -32,7 +32,7 @@ from   app_global import AppGlobal
 
 import help_sub_window
 import stuff_sub_window
-import photo_sub_window
+# import photo_sub_window
 import photoshow_sub_window
 
 # import sys

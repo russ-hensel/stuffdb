@@ -30,6 +30,7 @@ from qtpy.QtWidgets import (
                         QHBoxLayout,
                         QLabel,
                         QGroupBox,
+                        QPushButton,
                         QSizePolicy,
                         QSpacerItem,
                         QTabWidget,
@@ -260,13 +261,22 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         self._build_other_widgets( layout )
         self._build_id_widgets( layout )
 
-        sort_list    = [
-                         'name',
-                         'id',
-                         'lbl_name',
-                         'Title??',  ]
+        # perhaps change to a dict for dispatch !! zz
+        sort_dict    = { "name":        "name",
+                         "lbl_name":    "lbl_name",
+                          "Id":         "planting.id",
 
-        self._build_sort_widgets( layout, sort_list )
+                        }
+
+        self.sort_dict  = sort_dict
+
+        # sort_list    = [
+        #                  'name',
+        #                  'id',
+        #                  'lbl_name',
+        #                  'Title??',  ]
+
+        self._build_sort_widgets( layout, sort_dict )
 
         # # ---- function_on_return( self )
         # for i_widget in self.critera_widget_dict.values():
@@ -286,7 +296,7 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         layout a vbox, we create a grid in a groupbox
         """
-        groupbox        = QGroupBox( "Misc Criteria:" )
+        groupbox        = QGroupBox( "General Criteria:" )
         groupbox.setMaximumWidth( self.groupbox_width )
         layout.addWidget( groupbox )
 
@@ -313,11 +323,22 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         field_name  = "name"
         widget      = cw.CQLineEdit( field_name = field_name )
-
         self.critera_widget_dict[ field_name ] = widget
-
-        widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
         grid_layout.addWidget( widget )
+
+        # ----  bed_id
+        grid_layout.new_row()
+        widget      = QLabel( "!!Garden Bed" )
+        grid_layout.addWidget( widget )
+
+        field_name  = "bed_id"  # needs a kvm type field not this !!
+        widget      = cw.CQLineEdit( field_name = field_name )
+        self.critera_widget_dict[ field_name ] = widget
+        grid_layout.addWidget( widget )
+
+        #widget.textChanged.connect( lambda: self.criteria_changed(  True   ) )
+            # this should be framework set for all ??
+
 
     # -------------
     def criteria_select( self,     ):
@@ -389,14 +410,19 @@ class PlantingCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         # ---- order by
         order_by   = criteria_value_dict[ "order_by" ]
 
-        if   order_by == "name":
-            column_name = "name"
-        elif order_by == "lbl_name":
-            column_name = "lbl_name"
-        elif order_by == "id":
-            column_name = "id"
-        else:   # !! might better handel this
-            column_name = "name"
+        # if   order_by == "name":
+        #     column_name = "name"
+        # elif order_by == "lbl_name":
+        #     column_name = "lbl_name"
+        # elif order_by == "id":
+        #     column_name = "id"
+        # else:   # !! might better handel this
+        #     column_name = "name"
+
+
+        column_name = self.sort_dict.get( order_by, None )
+        if not column_name:
+            key_ignore, column_name = self.sort_dict.items( )[ 0 ]
 
         # can we factor this out
         order_by_dir   = criteria_value_dict[ "order_by_dir" ].lower( )
@@ -457,6 +483,7 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         self.tab_name                   = "PlantingDetailTab"
         self.key_word_table_name        = "planting_key_word"
         self.post_init()
+
         #self.enable_send_topic_update   = True
 
     # -------------------------------------
@@ -475,9 +502,15 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         tab_layout      = placer
         box_layout_1.addLayout( placer )
 
-
         # ----fields
         self._build_fields( placer )
+
+        # ---- buttons
+        #button_layout = QHBoxLayout()
+
+        widget      = QPushButton( "!!Jump to Plant" )
+        #create_button.clicked.connect( self.create_default_row )
+        tab_layout.addWidget( widget )
 
         # ---- tab area
         tab_folder   = QTabWidget()
@@ -486,16 +519,15 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         tab_layout.new_row()
         tab_layout.addWidget( tab_folder, columnspan   = max_col )
 
-        sub_tab      = PlantingEventSubTab( self )
-        self.event_sub_tab   = sub_tab
-        tab_folder.addTab( sub_tab, "Events" )
-
-        sub_tab      = PlantingPictureSubTab( self )
-
-        #self.pictures_tab       = sub_tab
+        sub_tab                 = PlantingPictureSubTab( self )
         self.picture_sub_tab    = sub_tab
         self.sub_tab_list.append( sub_tab )
         tab_folder.addTab( sub_tab, "Pictures" )
+
+        sub_tab                 = PlantingEventSubTab( self )
+        self.event_sub_tab      = sub_tab
+        self.sub_tab_list.append( sub_tab )
+        tab_folder.addTab( sub_tab, "Events" )
 
         self.prior_tab          = 0
         self.current_tab        = 0
@@ -504,12 +536,7 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         detail_notebook           = QTabWidget()
         self.detail_notebook      = detail_notebook
 
-        # ---- buttons
-        #button_layout = QHBoxLayout()
 
-        # create_button = QPushButton("Create Default")
-        # create_button.clicked.connect( self.create_default_row )
-        # button_layout.addWidget(create_button)
 
         # button = QPushButton( "To History" )
         # rint( "need detail_to_history")
@@ -531,8 +558,14 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
 
         # ---- was plant_id  by hand ---------------
 
-        kvl_model     = AppGlobal.mdi_management.get_key_value_list_model( "plant" )
-        edit_field                 = self.field_dict[ "plant_id" ]
+        kvl_model         = AppGlobal.mdi_management.get_key_value_list_model( "plant" )
+        edit_field        = self.field_dict[ "plant_id" ]
+        edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
+
+
+        #  PLANTING_BED_KVLM               = None     #    = "bed_id", for plant for stuff marked beds
+        kvl_model         = AppGlobal.mdi_management.get_key_value_list_model( "planting_bed" )
+        edit_field        = self.field_dict[ "bed_id" ]
         edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
 
 
@@ -666,6 +699,7 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
 
         return file_name or None if no file name
         """
+
         print( "get_picture_file_name to be implemented" )
         return ""  # none will cause exception  , just need file name that does not exist
 
@@ -673,6 +707,8 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
     def plant_containers_update( self, just_warning ):
         """sent down from on high update the stuff_id in dict  """
         self.plant_idfind_name_in_old_field.update_dictionary( just_warning )
+
+
 
 # ==================================
 class PlantingTextTab( base_document_tabs.TextTabBase  ):
@@ -793,15 +829,6 @@ class PlantingEventSubTab( base_document_tabs.SubTabWithEditBase ):
             form_data = dialog.get_form_data()
             # 0 id 1 id_old 2 planting_id_old 3 planting_id 4
             # event_dt 5 dlr 6 cmnt 7 type 8 dt_mo INTEGER, 9 dt_day INTEGER, 10 day_of_year INTEGER
-            # Update the row with the new data
-            # model.setData( model.index(row, 0), form_data["id"])
-            # model.setData( model.index(row, 2), form_data["stuff_id"])
-            # model.setData( model.index(row, 4), form_data["event_dt"])
-            # model.setData( model.index(row, 5), form_data["dlr"])
-            # model.setData( model.index(row, 6), form_data["cmnt"])
-            # model.setData( model.index(row, 7), form_data["type"])
-
-            # zz EVENT_FIELD_DICT  EVENT_FIELD_DICT PEOPLE_CONTACT_COLUMN_DICT
 
             for field_name, field_ix in  EVENT_FIELD_DICT.items():
                 model.setData( model.index( row, field_ix ), form_data[ field_name ] )
@@ -825,7 +852,7 @@ class EventSqlTableModel( QSqlTableModel ):
         self.non_editable_columns = { 99 }
             # 99 not used Columns ..doe it have to be in init or is synamic ..
 
-
+# ------------------------------------
     def flags(self, index: QModelIndex):
         """
         from chat, not really used as for non edit
@@ -838,11 +865,10 @@ class EventSqlTableModel( QSqlTableModel ):
         return flags
 
     # -------------------------------
-    def data(self, index: QModelIndex, role = Qt.DisplayRole ):
+    def data( self, index: QModelIndex, role = Qt.DisplayRole ):
         """
         for special formatting
         and alignment
-        zz
         IX_EVENT_DLR
         """
         col = index.column()

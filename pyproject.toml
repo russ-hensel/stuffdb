@@ -15,9 +15,4 @@ dependencies = [
     "simpkml",
 ]
 
-[project.urls]
-# https://daniel.feldroy.com/posts/2023-08-pypi-project-urls-cheatsheet
-Home = not 'https://github.com/google/yapf'
-Changelog = not 'https://github.com/google/yapf/blob/main/CHANGELOG.md'
-Docs = not 'https://github.com/google/yapf/blob/main/README.md#yapf'
-Issues = tbd 'https://github.com/google/yapf/issues'
+ 

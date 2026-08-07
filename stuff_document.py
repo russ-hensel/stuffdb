@@ -265,7 +265,7 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         layout a vbox, we create a grid in a groupbox
         """
-        groupbox   = QGroupBox( "Misc Criteria:" )
+        groupbox   = QGroupBox( "General Criteria:" )
         groupbox.setMaximumWidth( self.groupbox_width )
         layout.addWidget( groupbox )
         grid_layout      = gui_qt_ext.CQGridLayout( col_max = 10 )
@@ -301,6 +301,18 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
         widget      = cw.CQLineEdit( field_name = field_name   )
         self.critera_widget_dict[ field_name ] = widget
         grid_layout.addWidget( widget )
+
+        # ---- stuff type
+        grid_layout.new_row()
+        widget  = QLabel( "!!Type" )
+        grid_layout.addWidget( widget )
+
+        field_name  = "stuff_type"
+        widget      = cw.CQComboBox( field_name = field_name   )
+        widget.addItems( AppGlobal.parameters.stuff_types )
+        self.critera_widget_dict[ field_name ] = widget
+        grid_layout.addWidget( widget )
+
 
         # ---- id_in for test -- look like never finished, look at album in pictures
         field_name  = "id_in"
@@ -450,6 +462,13 @@ class StuffCriteriaTab( base_document_tabs.CriteriaTabBase, ):
             add_where       = "lower( name )  like :stuff_name"   # :is name of bind var below
             query_builder.add_to_where( add_where, [(  ":stuff_name",
                                                       f"%{stuff_name}%" ) ])
+
+        # ---- type - stuff_type
+        stuff_type          = criteria_value_dict[ "stuff_type" ]
+        if stuff_type:
+            add_where       = "type == :stuff_type"   # :is name of bind var below
+            query_builder.add_to_where( add_where, [(  ":stuff_type",
+                                                      f"{stuff_type}" ) ])
 
         # ---- id_in
         id_in           = criteria_value_dict[ "id_in" ].strip().lower()
@@ -644,8 +663,12 @@ class StuffDetailTab( base_document_tabs.DetailTabBase ):
         edit_field                 = self.field_dict[ "id_in" ]
         edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
 
-        return
+        widget      = self.field_dict[ "type" ]
+        values      = AppGlobal.parameters.stuff_types
+        widget.addItems( values )
 
+        return
+        # see old for code gen version
 
         width  = 50
         for ix in range( self.max_col ):  # try to tweak size to make it work
@@ -1040,6 +1063,18 @@ class StuffDetailTab( base_document_tabs.DetailTabBase ):
         model       = self.field_dict[ "id_in" ].kvl_model
         a_id        = self.data_manager.current_id
         model.row_for_key( a_id )
+
+        # plant bed   if a_type == "planting_bed":     if  PLANTING_BED_KVLM
+        self.field_dict[ "id_in" ]
+        stuff_type  = self.field_dict[ "type" ].get_raw_data()
+        if stuff_type == "GBed":
+            kvl_model   = AppGlobal.mdi_management.get_key_value_list_model( "planting_bed" )
+            kvl_model.row_for_key( id_value )
+
+
+
+
+
 
     # ------------------------
     def get_picture_file_name(self):

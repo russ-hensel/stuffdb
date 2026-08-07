@@ -21,13 +21,15 @@ from app_global import AppGlobal
 
 
 
-from qtpy.QtCore import ( QModelIndex, Qt,     QTimer, )
+from qtpy.QtCore import ( QModelIndex, Qt,
+                          QTimer, )
 
 from qtpy.QtSql import (
                             QSqlDatabase,
                             QSqlQuery,
                             QSqlRelationalTableModel,
-                            QSqlTableModel)
+                            QSqlTableModel
+                            )
 
 
 from qtpy.QtWidgets import (
@@ -62,11 +64,13 @@ LOG_LEVEL       = 20 # level form much debug    higher is more debugging    logg
 
 # ------------------------------------
 class PlantingtSqlTableModel( QSqlTableModel ):
-    def __init__(self, parent=None, db=QSqlDatabase()):
+    def __init__( self, parent = None, db = QSqlDatabase() ):
         """
         think chat had me do this to make non editable
         but just a QSqlQuery with the triggers off might
         be a better solution
+        how different from AlbumSqlTableModel  it is relational
+        think db default is ng
         """
         super().__init__(parent, db)
         # Specify multiple columns to make non-editable (e.g., columns 1 and 2)
@@ -487,6 +491,7 @@ class PlantDetailTab( base_document_tabs.DetailTabBase  ):
         self.tab_name                       = "PlantDetailTab"
         self.enable_send_topic_update       = True
         self.key_word_table_name            = "plant_key_word"
+        self.detail_table_name              = "planting"  # zz new, a fake opt
         self.post_init()
 
     # -------------------------------------
@@ -510,11 +515,11 @@ class PlantDetailTab( base_document_tabs.DetailTabBase  ):
         # ----fields
         self._build_fields( placer )
 
-        # ---- buttons
-        widget          = QPushButton( 'Jump to Planting' )
-        #add_button    = widget
-        #widget.clicked.connect( self.add_record )
-        placer.addWidget( widget )
+        # # ---- buttons
+        # widget          = QPushButton( 'Jump to Planting' ) # on sub tab
+        # #add_button    = widget
+        # #widget.clicked.connect( self.add_record )
+        # placer.addWidget( widget )
 
         # ---- tab area
         # ---------------
@@ -577,7 +582,7 @@ class PlantDetailTab( base_document_tabs.DetailTabBase  ):
         # edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
 
     # ---------------------------
-    def select_record( self, id_value  ):
+    def select_record( self, id_value ):
         """
         extension for read it
         """
@@ -586,9 +591,21 @@ class PlantDetailTab( base_document_tabs.DetailTabBase  ):
         # self.plant_combo_dict_ext.get_info_for_id_if( id_value )
 
         # see if this works, no select
+
+
+        msg         = ( "testing select_record for {id_value} !! check this dode " )
+        logging.log( LOG_LEVEL,  msg, )
+
+        # not sure about this try running debug thru it
+        # the plantings show up or not
         self.plant_combo_dict_ext.get_info_from_record(
                         self.data_manager.current_id,
-                        self.data_manager.current_record  )
+                        self.data_manager.current_record )
+
+        # keep dropdowns up to date with new values -- thru ist model
+        # !! on delete these should be removed somehow -- for later
+        kvl_model   = AppGlobal.mdi_management.get_key_value_list_model( "plant" )
+        kvl_model.row_for_key( id_value )
 
     # -----------------------------
     def copy_prior_row( self, next_key ):
@@ -892,7 +909,24 @@ class PlantEventSubTab( base_document_tabs.SubTabBase  ):
         return a_str
 
 # ----------------------------------------
-class PlantPlantingSubTab( base_document_tabs.SubTabBaseOld  ):
+class PlantPlantingSubTab( base_document_tabs.ListSubTabBase  ):
+#class PlantPlantingSubTab( base_document_tabs.ListTabBaseNew  ):  ListSubTabBase
+    def __init__(self, parent_window ):
+        """
+        this is a read only sub tab
+        PlantingtSqlTableModel( QSqlTableModel ):
+        QTableView
+        would this be better with just a QSqlQuery
+
+        """
+        model_class         = PlantingtSqlTableModel
+        table_name          = "planting"
+
+        super().__init__( parent_window,  table_name, "plant_id",  model_class )
+
+
+# ----------------------------------------
+class PlantPlantingSubTabOld( base_document_tabs.SubTabBaseOld  ):
 
     def __init__(self, parent_window ):
         """

@@ -124,7 +124,8 @@ class StuffdbMainWindow( QMainWindow ):
 
         self.build_toolbar()
 
-        self.document_maker             = document_maker.DocumentMaker()
+        #self.document_maker             = document_maker.DocumentMaker()
+        self.document_maker             = None
         AppGlobal.document_maker        = self.document_maker
 
     #-----------------------------------

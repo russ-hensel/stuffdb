@@ -30,7 +30,6 @@ from qtpy.QtCore import ( QModelIndex,
 
 from qtpy.QtSql import (QSqlQuery)
 
-# from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import ( QComboBox,
                              QLineEdit )
@@ -44,7 +43,6 @@ import custom_widgets as cw
 LOG_LEVEL           = 1    # higher is more
         # logging.log( LOG_LEVEL,  debug_msg, )
 logger              = logging.getLogger( )
-
 
 # watch out for trailing comma ins sql column names
 STUFF_QUERY    = "SELECT id, name, title, descr   FROM stuff  WHERE id = :arg_id"
@@ -128,6 +126,7 @@ class KeyValueListModel( QAbstractListModel ):
 
     we should be able to create once in mdi management and
     have it in charge of the signals
+    custon_widgets_2.CQModelComboBox
     """
     # -----------------------
     def __init__( self, sql,  parent = None ):
@@ -238,7 +237,7 @@ class KeyValueListModel( QAbstractListModel ):
         return the row
                    -1 if not found
         """
-        for row, (key, _value) in enumerate(self._rows):
+        for row, ( key, _value ) in enumerate( self._rows ):
 
             if key == target_key:
                 return row
@@ -256,12 +255,11 @@ class KeyValueListModel( QAbstractListModel ):
     # -----------------------
     def select_row_for_key( self, target_key ):
         """
+        MOST USESR SHOULD CALL row_for_key !! make this private
         find and add at end
             should have already down row_for_key and found missing
 
         """
-        # #--------------------------
-        # def topic_select(self, arg_id ):
         self.sender.emit_key_save()
 
         select_ok       = False
@@ -369,6 +367,7 @@ class CQModelComboBox( QComboBox, cw.CQEditBase ):
     """
     starting code from chat
     may need to run a select for values not in dd
+    custon_widgets_2.CQModelComboBox
 
     """
     def __init__(self,
@@ -562,6 +561,8 @@ class CQModelComboBox( QComboBox, cw.CQEditBase ):
     # --------------------------
     def connect_to_kvl_model( self, kvl_model ):
         """
+        were is this called
+
         """
         self.kvl_model   = kvl_model  # may be rudundant
 

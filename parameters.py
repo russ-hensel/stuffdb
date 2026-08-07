@@ -64,13 +64,14 @@ class Parameters( ):
         get here"""
 
         #self.mode_new_user()
-        self.mode_data_sync()
-        self.mode_data_sync_b()
+        #self.mode_data_sync()
+        #self.mode_data_sync_b()
         #self.mode_millhouse_b()
+        #
         #self.mode_picture_test()
 
         #self.mode_data_sync_full_path()
-        #self.mode_ramdisk()
+        self.mode_ramdisk()
         #self.mode_source_db_for_copy()
         #self.mode_data_sync_b()
         #self.mode_github()
@@ -90,29 +91,6 @@ class Parameters( ):
         # self.mode_russ_2025_ram()
         #self.mode_github()
 
-    # -------
-    def mode_millhouse( self ):
-        """
-
-        """
-        self.mode               = "mode_millhouse"
-
-        # ---- type and location of the db file
-        self.db_type            = "QSQLITE"
-        self.db_file_name       = "./data_sync/stuffdb.db"
-        self.db_lock_file_name  = "./data_sync/lock_db.txt"
-
-    # -------
-    def mode_millhouse_b( self ):
-        """
-
-        """
-        self.mode               = "mode_millhouse_b"
-
-        # ---- type and location of the db file
-        self.db_type            = "QSQLITE"
-        self.db_file_name       = "./data_sync_b/stuffdb.db"
-        self.db_lock_file_name  = "./data_sync_b/lock_db.txt"
 
     # -------
     def mode_new_user( self ):
@@ -144,6 +122,7 @@ class Parameters( ):
         self.picture_db_root    = "/mnt/8ball1/first6_root/photos/photos_db"
 
         self.picture_browse     = "/mnt/8ball1/first6_root/photos/photos_raw/07"
+        self.picture_browse     = "/mnt/8ball1/first6_root/photos/photos_raw/2016"
 
        #  self.picture_db_sub     = "/73"
        # # self.picture_db_sub     = "/76"
@@ -152,6 +131,10 @@ class Parameters( ):
         #self.picture_db_sub     = "/08"
         #self.picture_db_sub     = "/10"
         # self.picture_db_sub     = "/11"
+        self.picture_db_sub     = "/15"
+        self.picture_db_sub     = "/16"
+        self.picture_db_sub     = "/17"
+        self.picture_db_sub     = "/18"
        # # self.picture_db_sub     = "/26"
        #  self.picture_db_sub     = "/21"
        #  self.picture_db_sub     = "/22"
@@ -159,7 +142,7 @@ class Parameters( ):
        #  # self.picture_db_sub     = "/25"
 
         self.picture_db_sub     = "/26"
-       #  #self.picture_db_sub     = "/25"
+
 
 
 
@@ -185,6 +168,33 @@ class Parameters( ):
 
         self.icon              = "./misc/db_green_on_black.png"
         self.icon              = "./misc/db_red_on_black.png"
+
+    # -------
+    def mode_millhouse( self ):
+        """
+
+        """
+        self.mode               = "mode_millhouse"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+        self.db_file_name       = "./data_sync/stuffdb.db"
+        self.db_lock_file_name  = "./data_sync/lock_db.txt"
+
+    # -------
+    def mode_millhouse_b( self ):
+        """
+
+        """
+        self.mode               = "mode_millhouse_b"
+
+        # ---- type and location of the db file
+        self.db_type            = "QSQLITE"
+        self.db_file_name       = "./data_sync_b/stuffdb.db"
+        self.db_lock_file_name  = "./data_sync_b/lock_db.txt"
+
+
+
 
     # -------
     def mode_picture_test( self ):
@@ -226,6 +236,7 @@ class Parameters( ):
         self.db_file_name       = "./data/python_ex.db"
         self.db_file_name       = "/tmp/ramdisk/stuffdb.db"
         self.db_file_name       = "/tmp/ramdisk/new_user.db"
+        self.db_file_name       = "/tmp/ramdisk/stuffdb.db"
 
     # -------
     def mode_from_computer_id( self ):
@@ -670,7 +681,11 @@ class Parameters( ):
             # browsing starts from here see PictureDocument
 
         # picture to use when a valid picture is not found or does not exist
-        self.pic_nf_file_name   = "./misc/404.png"
+
+        self.picture_nf_file_name           = "./misc/404.png"
+        self.video_thumb_nf_file_name       = "./misc/404_thumb_not_found.png"
+        self.video_nf_file_name             = "./misc/404_video.png"
+
 
         self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
         self.picture_db_root    = "/mnt/8ball1/first6_root/photos/photos_db"
@@ -692,8 +707,18 @@ class Parameters( ):
             # may not be using
 
         # ---- picture_editor
-        self.picture_editor         = "gimp-2.10"
+        self.picture_editor         = [ "gimp-2.10" ]
+        self.picture_editor         = [
+                                        "/usr/bin/flatpak", "run",
+                                        "--branch=stable",
+                                        "--arch=x86_64",
+                                        "--command=pinta",
+                                        "com.github.PintaProject.Pinta",
+                                        ]
+
+
             # the editor that will be envoked when you edit a picture
+            # notice pinta a bit complex  --- flatpak version
 
         # ---- .... db type POSTG and ...
 
@@ -978,6 +1003,22 @@ class Parameters( ):
 
         # ---- add a sort for the systems
 
+        # there are too many do a slect ??
+        self.stuff_types  = [ "",
+                             "Tools",
+                             "ElecAnt",
+                             "Electro",
+                             "Farm",
+                             "Files",
+                             "Finance",
+                             "Furniture",
+                             "GBed",
+                             "Garden",
+                             "Hobby",
+                             ]
+
+
+
         # ---- locations  lat long
         values_lat_lon    = {}
         # leave first two as is -- or I will fix in code later
@@ -1214,8 +1255,8 @@ class Parameters( ):
         a_str   = string_utils.to_columns( a_str, ["picture_db_sub",
                                             f"{self.picture_db_sub}" ] )
 
-        a_str   = string_utils.to_columns( a_str, ["pic_nf_file_name",
-                                           f"{self.pic_nf_file_name}" ] )
+        a_str   = string_utils.to_columns( a_str, ["picture_nf_file_name",
+                                           f"{self.picture_nf_file_name}" ] )
 
 
         a_str   = string_utils.to_columns( a_str, ["platform",

@@ -46,8 +46,8 @@ PARAMETERS   = parameters.PARAMETERS
 def check_parameters( ):
     """ """
 
-    pic_nf_file_name    = PARAMETERS.pic_nf_file_name
-    picture_db_root     = PARAMETERS.picture_db_root
+    picture_nf_file_name    = PARAMETERS.picture_nf_file_name
+    picture_db_root         = PARAMETERS.picture_db_root
 
     # this fix up might be moved and or made more robust
     picture_db_sub      = PARAMETERS.picture_db_sub

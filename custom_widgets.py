@@ -856,19 +856,19 @@ class TextEditExtMixin(  ):
         can_paste       = QApplication.clipboard().text() != ""
 
         # Add standard actions
-        undo_action = menu.addAction("Undo")
-        undo_action.triggered.connect(widget.undo)
-        undo_action.setEnabled(can_undo)
+        undo_action = menu.addAction( "Undo" )
+        undo_action.triggered.connect( widget.undo )
+        undo_action.setEnabled( can_undo )
 
         menu.addSeparator()
 
-        cut_action = menu.addAction("Cut")
-        cut_action.triggered.connect(widget.cut)
-        cut_action.setEnabled(has_selection)
+        cut_action = menu.addAction( "Cut" )
+        cut_action.triggered.connect( widget.cut )
+        cut_action.setEnabled( has_selection )
 
-        copy_action = menu.addAction("Copy")
+        copy_action = menu.addAction( "Copy" )
         copy_action.triggered.connect( widget.copy )
-        copy_action.setEnabled(has_selection)
+        copy_action.setEnabled( has_selection )
 
         paste_action = menu.addAction("Paste")
         paste_action.triggered.connect( widget.paste )
@@ -878,12 +878,12 @@ class TextEditExtMixin(  ):
         # ---- date
         paste_action = menu.addAction( "Paste Date" )
         paste_action.triggered.connect( widget.paste_date )
-        paste_action.setEnabled( can_paste )
+        paste_action.setEnabled( True )  # does it default to true?
 
         # ---- lat long
         paste_action = menu.addAction( "Paste Lat, Long")
         paste_action.triggered.connect( widget.paste_lat_long )
-        paste_action.setEnabled( can_paste )
+        paste_action.setEnabled( True )
 
         # ---- "Smart Paste"
         foo_action = menu.addAction( "Smart Paste" )
@@ -893,14 +893,14 @@ class TextEditExtMixin(  ):
         menu.addSeparator()
 
         # ---- "Smarten"
-        foo_action = menu.addAction("Smarten")
+        foo_action = menu.addAction( "Smarten" )
         foo_action.triggered.connect( self.smarten  )
         foo_action.setEnabled(has_selection)
 
         # ---- "Search Selected"
-        foo_action = menu.addAction("Search Selected")
+        foo_action = menu.addAction( "Search Selected" )
         foo_action.triggered.connect( self.search_selected  )
-        foo_action.setEnabled(has_selection)
+        foo_action.setEnabled( has_selection )
 
         menu.addSeparator()
 
@@ -3486,10 +3486,12 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         """'
         what it says
             or paste date
+            could test type of widget
         """
         dt_now     = datetime.now()
         text       = dt_now.strftime("%Y-%m-%d") + " "
-        self.insert( text )
+        line_edit  = self.lineEdit()
+        line_edit.insert( text )
 
 #-------------------------------
 class CQDictComboBox( QComboBox, CQEditBase ):

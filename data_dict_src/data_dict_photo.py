@@ -382,18 +382,19 @@ def build_it( a_data_dict_all ):
                                                  col_head_width     = 15,
                                                  col_head_order     = 41,
 
-
-
                                                  form_col_span      = 2,
                                                   max_len           = None,
                                                   default_func      = None,   )
         #a_table_dict.add_column( a_column_dict )
 
-        # ---- dt_item -> to exif
+        # ---- exif_ts  from dt_item -> to exif
         a_column_dict = data_dict_all.ColumnDict(    column_name    = "exif_ts",
                                                   db_type           = "INTEGER",
                                                   display_type      = "timestamp",
-                                                  form_col_span      = 2,
+
+                                                  display_order      = 605,
+                                                  form_col_span      = 1,
+                                                  form_read_only       = True,
 
                                                  rec_to_edit_cnv      = "cnv_int_to_qdate",
                                                  dict_to_edit_cnv     = "cnv_int_to_qdate",
@@ -402,6 +403,7 @@ def build_it( a_data_dict_all ):
 
                                                  detail_edit_class  = "cw.CQDateEdit",
                                                  form_edit          = "cw.CQDateEdit",
+
 
                                                  col_head_text      = "Date EXIF",
                                                  col_head_width     = 15,
@@ -435,7 +437,7 @@ def build_it( a_data_dict_all ):
 
                                                  # detail_edit_class  = "custom_widgets.CQDateEdit",
                                                  # form_edit          = "custom_widgets.CQDateEdit",
-
+                                                 display_order      = 610,
                                                  col_head_text      = "Exif lat",
                                                  # col_head_width     = 15,
                                                  # col_head_order     = 150,
@@ -465,7 +467,7 @@ def build_it( a_data_dict_all ):
 
                                                  # detail_edit_class  = "custom_widgets.CQDateEdit",
                                                  # form_edit          = "custom_widgets.CQDateEdit",
-
+                                                 display_order      = 620,
                                                  col_head_text      = "Exif lat",
                                                  # col_head_width     = 15,
                                                  # col_head_order     = 150,
@@ -482,7 +484,8 @@ def build_it( a_data_dict_all ):
                                                  form_read_only       = True,
                                                  max_len        = None,
                                                  default_func   = None,
-                                                 form_col_span      = 2,)
+                                                 form_col_span      = 3,
+                                                 display_order      = 630, )
         a_table_dict.add_column( a_column_dict )
 
         # ---- exif_model
@@ -492,7 +495,8 @@ def build_it( a_data_dict_all ):
                                                      form_read_only       = True,
                                                      max_len        = None,
                                                      default_func   = None,
-                                                     form_col_span      = 2,)
+                                                     display_order      = 640,
+                                                     form_col_span      = 3,)
         a_table_dict.add_column( a_column_dict )
 
         #print( a_table_dict )

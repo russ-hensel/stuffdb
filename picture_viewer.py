@@ -18,30 +18,62 @@ if __name__ == "__main__":
 # ---- import
 import logging
 import os
+from pathlib import Path
 
-from qtpy.QtCore import QRectF, Qt
-from qtpy.QtGui import QPainter, QPixmap
+import vlc_widget
+from qtpy.QtCore import QMimeData, QRectF, Qt, QTimer, QUrl, Signal
+from qtpy.QtGui import QDrag, QImageReader, QPainter, QPalette, QPixmap
 from qtpy.QtWidgets import (QApplication,
+                            QFrame,
                             QGraphicsPixmapItem,
                             QGraphicsScene,
                             QGraphicsView,
+                            QHBoxLayout,
+                            QLabel,
                             QMenu,
+                            QPushButton,
                             QSizePolicy,
+                            QSlider,
                             QTabWidget,
                             QTextEdit,
                             QVBoxLayout,
                             QWidget)
 
-logger          = logging.getLogger( )
-
-
+#import vlc
 from app_global import AppGlobal
 
+# from   qtpy.QtWidgets import (
+#                             QGraphicsView,
+#                             QGraphicsScene,
+#                             QFrame,
+#                             QGraphicsPixmapItem,
+#                             QMenu,
+#                                 )
+
+
+#from qtpy.QtCore import Qt, QRectF
+# from   qtpy.QtCore import (Qt, QTimer, Signal, QRectF,  )
+
+
+
+logger          = logging.getLogger( )
 # for custom logging level at module
 LOG_LEVEL  = 10   # higher is more
 
+# -----------------------------
+def load_pixmap_exif_corrected( file_name ):
+    """
+    what it says, read
+    QPixmap( file_name ) ignores EXIF orientation, so photos taken in
+    portrait come in rotated 90 -- xviewer and friends apply it, we did not
+    """
+    reader          = QImageReader( file_name )
+    reader.setAutoTransform( True )
+    image           = reader.read()
+    pixmap          = QPixmap.fromImage( image )
+    return pixmap
 
-# -------------------------------------
+# -----------------------------
 class PictureViewer( QGraphicsView ):
     def __init__(self, parent=None):
         """
@@ -50,7 +82,7 @@ class PictureViewer( QGraphicsView ):
             stuffdb picture document i think
                 may be in qt5 by example
         """
-        super( PictureViewer, self).__init__(parent)
+        super( PictureViewer, self ).__init__(parent)
         self.scene          = QGraphicsScene(self)
         self.setScene( self.scene )
         self.pixmap_item    = QGraphicsPixmapItem()
@@ -63,7 +95,6 @@ class PictureViewer( QGraphicsView ):
 
         #
         sb_policy           = Qt.ScrollBarAlwaysOn
-        #sb_policy           = ScrollBarAlwaysOn   # 5  6 compat
 
             #  Qt.ScrollBarAsNeeded Qt.ScrollBarAlwaysOff  Qt.ScrollBarAlwaysOn
         self.setHorizontalScrollBarPolicy(  sb_policy )
@@ -86,15 +117,52 @@ class PictureViewer( QGraphicsView ):
         self.user_zoomed            = False
 
         self.file_name              = None
-        self.file_name_not_found    = AppGlobal.parameters.pic_nf_file_name
+        self.file_name_not_found    = AppGlobal.parameters.picture_nf_file_name
+        self.vlc_video_widget       = None
 
     # -----------------------------
-    def display_file( self, file_name ):
+    def display_file( self, file_name  ):
+        """
+        what it says, read
+            deal with mp4, and thumbnails
+
+        """
+        file_name     = file_name
+        file_path     = Path( file_name )
+        ext           = file_path.suffix.lower()
+
+        if ext in [ ".mp4" ]:
+            # we may be able to do the thumbnail so lets do that even if
+            # we cannot do the mp4
+
+            file_path_thumb   = file_path.joinpath( file_path.parent, file_path.stem  +  ".png" )
+                # this is the cover file, but it may not exist so ...
+
+            if not Path( file_path_thumb ).exists():
+                file_path_thumb   = AppGlobal.parameters.video_thumb_nf_file_name
+                    # if this does not exist then config error
+                    # have thumbnail art or art not found
+
+            vlc_video_widget   = self.vlc_video_widget
+
+            if vlc_video_widget:
+                if Path( file_name ).exists():
+                    vlc_video_widget.load( file_name )
+
+            self.display_file_base( file_path_thumb )
+
+        else:
+            self.display_file_base( file_name )
+                # the file is a "picture"
+
+
+    # -----------------------------
+    def display_file_base( self, file_name ):
         """
         what it says, read
         """
         self.file_name  = file_name
-        pixmap          = QPixmap( file_name )
+        pixmap          = load_pixmap_exif_corrected( file_name )
         self.pixmap     = pixmap
         ok              = self.set_pixmap( pixmap )
 
@@ -146,7 +214,7 @@ class PictureViewer( QGraphicsView ):
         """
         file_name       = self.file_name_not_found
         self.file_name  = file_name
-        pixmap          = QPixmap( file_name )
+        pixmap          = load_pixmap_exif_corrected( file_name )
 
         self.pixmap     = pixmap
         ok              = self.set_pixmap( pixmap )
@@ -171,13 +239,6 @@ class PictureViewer( QGraphicsView ):
 
             return False
 
-    # # -----------------------------
-    # def photo_1(self):
-    #     self.display_file( "/mnt/WIN_D/PhotoDB/02/102-0253_img.jpg" )
-
-    # # -----------------------------
-    # def photo_2(self):
-    #     self.display_file( "/mnt/WIN_D/PhotoDB/02/102_motor2.jpg" )
 
     # -----------------------------
     def wheelEvent( self, event ):
@@ -221,25 +282,6 @@ class PictureViewer( QGraphicsView ):
         self.user_zoomed    = True   # 1:1 is a manual choice, keep it on resize
         self.resetTransform()
         #rint("Zoom Reset")
-
-    # -----------------------------
-    def fit_imagexxxxx(self):
-            """From Grok
-            Scale the image to fill the view while maintaining aspect ratio.
-            seems to get called all to often debug !!
-
-            """
-            if not self.pixmap.isNull():
-                # Get the view's viewport size
-                view_rect = self.viewport().rect()
-                # Get the pixmap's bounding rectangle
-                pixmap_rect = QRectF(self.pixmap_item.pixmap().rect())
-                # Fit the pixmap in the view
-                self.fitInView( pixmap_rect, Qt.KeepAspectRatioByExpanding )
-                #self.fitInView( pixmap_rect, KeepAspectRatioByExpanding ) # 5 6 comat
-
-                # Center the scene in the view
-                self.centerOn( self.pixmap_item )
 
     # -----------------------------
     def fit_image_may(self):
@@ -286,6 +328,45 @@ class PictureViewer( QGraphicsView ):
             self.fit_in_view()  # fit once widget is visible and sized
 
     # ------------------------------------
+    def mousePressEvent( self, event ):
+        """
+        what it says, read it
+        Ctrl + left-drag starts an outbound file drag of self.file_name
+        ( to a file manager, email, gimp, etc ) -- plain left-drag is left
+        alone so it keeps panning ( see ScrollHandDrag in __init__ )
+        """
+        ctrl_held       = bool( event.modifiers() & Qt.ControlModifier )
+        left_button     = event.button() == Qt.LeftButton
+
+        if ctrl_held and left_button and self.file_name:
+            self.start_file_drag()
+            return
+
+        super().mousePressEvent( event )
+
+    # ------------------------------------
+    def start_file_drag( self ):
+        """
+        what it says, read it
+        drags self.file_name out as a file url -- source only for now,
+        this widget does not accept drops
+        """
+        file_path       = Path( self.file_name )
+
+        if not file_path.exists():
+            return
+
+        mime_data       = QMimeData()
+        mime_data.setUrls( [ QUrl.fromLocalFile( str( file_path ) ) ] )
+
+        thumb           = self.pixmap.scaled( 100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation )
+
+        drag            = QDrag( self )
+        drag.setMimeData( mime_data )
+        drag.setPixmap( thumb )
+        drag.exec_( Qt.CopyAction )
+
+    # ------------------------------------
     def get_file_name( self, event ):
         """
         just debug
@@ -319,6 +400,7 @@ class PictureViewer( QGraphicsView ):
         reset_zoom_action   = context_menu.addAction("Reset Zoom")
         fit_in_view_action  = context_menu.addAction("Fit in View")
         get_file_name_action  = context_menu.addAction("Clip File Name")
+        drag_file_action    = context_menu.addAction("Drag Image File Out")
 
         photo_1_action      = context_menu.addAction("photo_1_action")
         photo_2_action      = context_menu.addAction("photo_2_action")
@@ -340,6 +422,8 @@ class PictureViewer( QGraphicsView ):
             self.photo_2()
         elif action == get_file_name_action:
             self.clip_file_name( )
+        elif action == drag_file_action:
+            self.start_file_drag( )
 
     # ------------------------------------
     def clear( self,   ):
@@ -367,6 +451,14 @@ class PictureViewer( QGraphicsView ):
         #             self.photo_2()
         #         elif action == get_file_name_action:
         #             self.clip_file_name( )
+
+
+    # ----------------------------------
+    def add_video( self, video_widget ):
+        """
+        to the PictureViewer
+        """
+        self.vlc_video_widget    = video_widget
 
 
 # -------------------------------------
@@ -492,7 +584,7 @@ class PictureViewerPlus( QWidget ):
     # ----------------------------------
     def display_info(self,  ):
         """
-        some half baked idea does what
+        some half baked idea does what ??
         """
         fn      = self.picture_viewer_widget.file_name
         info    = fn
@@ -500,6 +592,13 @@ class PictureViewerPlus( QWidget ):
         self.info_widget.clear()
         cursor  = self.info_widget.textCursor()
         cursor.insertText( info )
+
+    # ----------------------------------
+    def add_video( self,  video_widget ):
+        """
+        to the PictureViewer
+        """
+        self.picture_viewer_widget.add_video( video_widget )
 
 # ---- eof
 

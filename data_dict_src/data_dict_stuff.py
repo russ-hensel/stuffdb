@@ -191,6 +191,9 @@ def build_it( a_schema_dict ):
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "type",
                                              db_type        = "VARCHAR(15)",
                                              display_order  = 26,
+                                             form_edit      = "cw.CQComboBox",
+                                             detail_edit_class  = "cw.CQComboBox",
+
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None, )

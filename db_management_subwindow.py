@@ -419,7 +419,7 @@ class DbManagementSubWindow( QMdiSubWindow ):
     # --------------------------------
     def output_msg( self, msg, clear = False  ):
         """
-        dup with line_out
+        append to output text edit and print
         """
         self.append_msg( msg, clear = clear  )
         print( msg )
@@ -428,7 +428,7 @@ class DbManagementSubWindow( QMdiSubWindow ):
     def output_to_file( self, msg ):
         """
         self.parent_window.output_to_file( msg )
-
+        and only file
 
         """
         self.file_out.write( msg + "\n" )
@@ -460,8 +460,8 @@ class DbManagementSubWindow( QMdiSubWindow ):
     def append_msg( self, msg, clear = False ):
         """
         read it --
-            and print to console
-        msg is just the name of the function
+            print to the output edit
+
         """
         #msg     = f"----==== {msg} ====----"
         # if clear:
@@ -862,6 +862,8 @@ class SchemaTab( QWidget ):
         self.function_dict[ "get_key_word_columns" ]    = self.get_key_word_columns
         self.function_dict[ "get_topic_columns" ]       = self.get_topic_columns
         self.function_dict[ "to_sql_create" ]           = self.to_sql_create
+        self.function_dict[ "display_order" ]           = self.to_display_order
+
 
         self.build_gui()
 
@@ -1045,6 +1047,28 @@ class SchemaTab( QWidget ):
         msg             = ">> ------------ End."
         self.parent_window.output_msg(  msg )
         self.parent_window.activate_output_tab()
+
+
+    # -------------------------
+    def to_display_order( self, ):
+        """
+        What it says, read
+
+        """
+        table_name      = self.table_widget.currentText()
+        a_table         = data_dict_all.SCHEMA.get_table( table_name )
+        a_result        = a_table.get_columns_names_display_order()
+
+        msg             = f"............\n\nto_display_order >{table_name}<"
+        self.parent_window.output_msg( msg, clear = True )
+
+        msg             = f"\n\n Display Order is \n{a_result}"
+        self.parent_window.output_msg( a_result, )
+
+        msg             = ">> ------------ End."
+        self.parent_window.output_msg(  msg )
+        self.parent_window.activate_output_tab()
+
 
     #-------------------------
     def create_sql_pg( self,   ):
@@ -1891,11 +1915,11 @@ class PictureUtilTab( QWidget ):
 
 
     # -------------------------
-    def find_file_missing( self,   ):
+    def find_file_missing( self, ):
         """
         work through records with file names and
         see if file exists, output is file name for records
-        whenre that file is missing.
+        where that file is missing.
         self.parent_window.open_file_out( )
         starting_dir   = self.dir_widget.text()
         self.explore_dir( starting_dir, 0 , explore_args )
@@ -1904,11 +1928,17 @@ class PictureUtilTab( QWidget ):
         self.parent_window.close_file_out( )
 
         """
+        verbose    = 2
         self.parent_window.open_file_out( )
 
         full_dir    = self.dir_widget.text()
 
         a_sub_dir   = full_dir.removeprefix( parameters.PARAMETERS.picture_db_root )
+
+        # --- output results ---
+        msg     =  ( f"find_file_missing() Beginning Here" )
+        self.parent_window.output_to_file( msg )
+        self.parent_window.output_msg( msg )
 
         db          = AppGlobal.qsql_db_access.db
 
@@ -1927,26 +1957,31 @@ class PictureUtilTab( QWidget ):
 
         query.bindValue(":a_sub_dir", a_sub_dir )
 
-        # --- print results ---
-        msg     =  (f"Files in sub_dir='{a_sub_dir}':")
+        # ---
+        msg     =  ( f"Files in sub_dir='{a_sub_dir}':" )
         self.parent_window.output_to_file( msg )
+        self.parent_window.output_msg( msg )
 
         if not query.exec_():
             msg     = ("Error executing query:" + query.lastError().text())
             self.parent_window.output_to_file( msg )
+            self.parent_window.output_msg( msg )
 
             # msg      = query_str
             # self.parent_window.output_to_file( msg )
 
-        ix_record_count  = 0
+        ix_record_count     = 0
+        ix_missing_count    = 0
         while query.next():
             ix_record_count     += 1
             a_id                = query.value(0)
             sub_dir             = query.value(1)
             file                = query.value(2)
 
-            msg         = (f"id={a_id}, sub_dir={sub_dir}, file={file} {ix_record_count = }")
-            self.parent_window.output_msg(  msg )
+            if verbose > 5:
+                msg         = (f"Checking File for id={a_id}, sub_dir={sub_dir}, file={file} {ix_record_count = }")
+                self.parent_window.output_to_file( msg )
+                self.parent_window.output_msg(  msg )
 
             got_file    = self.find_file( sub_dir, file )
 
@@ -1954,8 +1989,10 @@ class PictureUtilTab( QWidget ):
                 pass
 
             else:
-                msg     = f"error no file found for {a_id}, file f{sub_dir}/{file}"
+                ix_missing_count    += 1
+                msg     = f"ERROR no file found for {a_id}, file >>{sub_dir}/{file}<<"
                 self.parent_window.output_to_file( msg )
+                self.parent_window.output_msg(  msg )
 
         # if   ix_record_count == 0:
         #     msg    = f"error no record found for file f{sub_dir}/{file}"
@@ -1968,6 +2005,10 @@ class PictureUtilTab( QWidget ):
         # else:
         #     msg    = f"errorish duplicate records found for file f{full_file_name} {base_path}"
         #     self.parent_window.output_to_file( msg )
+        msg     = (f"find_file_missing complete  {ix_record_count = } {ix_missing_count = }  \n output file in {parameters.PARAMETERS.output_dir}")
+        self.parent_window.output_msg( msg )
+        self.parent_window.output_to_file( msg )
+
         self.parent_window.close_file_out( )
         self.parent_window.activate_output_tab()
 
@@ -1985,11 +2026,11 @@ class PictureUtilTab( QWidget ):
         starting_dir   = self.dir_widget.text()
         self.explore_dir( starting_dir, 0 , explore_args )
 
+        msg     = (f"find_record_missing complete look for output file in {parameters.PARAMETERS.output_dir}")
+        self.parent_window.output_msg( msg )
+
         #max_dir_depth 0 is unlimited
         self.parent_window.close_file_out( )
-
-        msg     = (f"find_record_missing complete look for output file in {parameters.PARAMETERS.output_dir}")
-        self.parent_window.output_msg(  msg )
         self.parent_window.activate_output_tab()
 
     # ---- support functions
@@ -2081,12 +2122,16 @@ class PictureUtilTab( QWidget ):
         """
         could be a file or a directory may want to make better
         assumes output file is open
-        Find a record in the photo table where the concatenated sub_dir and file match the provided values.
-        path = Path("/mnt/WIN_D/PhotoDB/14/dscn2802.jpg")
+        Returns
+            True   if file esists
+            False  else
 
-        if path.exists():
+
+
+                if path.exists():
         """
         full_file_name    = f"{parameters.PARAMETERS.picture_db_root}{sub_dir}/{file}"
+            # construct file name a bit lame
         path              = Path( full_file_name )
 
         is_found          = path.exists()
@@ -3101,7 +3146,7 @@ class OutputTab( QWidget ):
         layout.addLayout( row_layout, )
 
         # ----
-        widget          = QTextEdit("load\nthis should be new row ")
+        widget          = QTextEdit( "load\nthis should be new row " )
         self.msg_widget = widget
         #widget.clicked.connect( self.load    )
         row_layout.addWidget( widget, )

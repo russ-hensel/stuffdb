@@ -472,7 +472,6 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
         # edit_field                 = self.field_dict[ "id_in" ]
         # edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
 
-
         return
 
 
