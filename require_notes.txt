@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Nov 12 17:00:54 2025
+
+@author: russ
+"""
+
+
+THESE ARE NOW NOTES THAT HINT AT HOW TO INSTALL AND RUN
+a problem for this project is that it has had
+qt5 and qt6 versions although it is programmed in pyqt which should work
+for either.:
+
+we are moving away from qt5 the project.toml will be qt6 only
+running under spyder may require pointing
+to a qt6 environment
+
+
+
+
+
+uv self update
+
+
+>>Bash ------------ see current environments ------------
+cd   ~/python_uv_venv
+ls -lah
+
+>>end ------------
+
+use py_13 as a universal env, fill with stuff:
+>>Bash ======== create environment or activate ======== <<
+
+cd              ~/python_uv_venv
+# comment out next after created
+#uv venv      py_13  --python 3.13
+
+
+cd           /home/russ/python_uv_venv
+source       py3_13_qt6/bin/activate
+
+
+
+
+shifting to project_tomel, not done this is bad but butter
+
+import exifread    - pip
+#import dis
+import geopy           anaconda
+import geopy.distance
+import gmplot             pip
+import haversine as hs    pip
+import PIL.ExifTags           pip install Pillow
+import PIL.Image
+
+
+
+--------------- uv
+uv pip install PyQt6    # and may need fixup in stuffdb
+uv pip install qtpy
+uv pip install exifread
+uv pip install geopy
+uv pip install gpxpy
+uv pip install wat-inspector
+uv pip install Pillow
+uv pip install gmplot
+uv pip install psutil
+uv pip install folium
+uv pip install pytz
+uv pip install simplekml
+uv pip install unidecode
+
+
+uv pip install python-vlc
+uv pip install unidecode
+uv pip install unidecode
+uv pip install unidecode
+
+
+No module named 'haversine'   -- comming soon
+
+------- two steps for idle
+ uv pip install  idle
+Command 'idle' not found, but can be installed with:
+sudo apt install idle
+
+
+------------------
+WHAT about
+    import psutil
+ModuleNotFoundError: No module named 'psutil'
+
+
+#-------------------------------
+
+
+
+
+just in one line how do i install  geopy
+
+
+
+import exifread    - pip
+#import dis
+import geopy           anaconda
+import geopy.distance
+import gmplot             pip
+import haversine as hs    pip
+import PIL.ExifTags           pip install Pillow
+import PIL.Image
+
+
+
+
+what is the package associated with PIL and how do i install it
+
+
+-------------------------

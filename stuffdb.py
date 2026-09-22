@@ -95,7 +95,7 @@ def delete_file( file_name ):
 class StuffApplication( QtWidgets.QApplication ):
     """
     from gok then modified
-    to let me manage the uncaught exeeptions
+    to let me manage the uncaught exceptions
 
     not doing what I want for now
     """
@@ -142,7 +142,7 @@ class App( ):
         """
         print( "========= StuffDb restart =================" )
 
-        self.q_app              = QApplication( []  )
+        self.q_app              = QApplication( [ "arg0 for stuffdb" ] )  # map popup needs something
 
         AppGlobal.q_app         = self.q_app
         self.app_global         = AppGlobal

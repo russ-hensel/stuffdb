@@ -782,7 +782,7 @@ class PlantEventSubTab( base_document_tabs.SubTabBase  ):
         self.model         = model
 
         model.setTable( self.list_table_name )
-        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+        model.setEditStrategy( QSqlTableModel.EditStrategy.OnManualSubmit )
         # model_write.setEditStrategy( QSqlTableModel.OnFieldChange )
         model.setFilter( "-99" )   # just in case we get a select too soon
 
@@ -988,25 +988,10 @@ class PlantPlantingSubTabOld( base_document_tabs.SubTabBaseOld  ):
         # model.setHeaderData( ix_col, Qt.Horizontal, "$ Amount" )
         # view.setColumnWidth( ix_col, 100)
 
-        # ix_col += 1
-        # model.setHeaderData( ix_col, Qt.Horizontal, "Comment" )
-        # view.setColumnWidth( ix_col, 300)
-
-        # ix_col += 1
-        # model.setHeaderData( ix_col, Qt.Horizontal, "Type" )
-        # view.setColumnWidth( ix_col, 100)
-
-        # view.setColumnHidden( 1, True )  # view or model
-
-        # might want a loop for this
-        # seems to be only after set model
-        # STUFF_ID_COL    = 1
-        # view.hideColumn( STUFF_ID_COL )
 
         layout.addWidget( view )
         # ---- buttons
         widget        = QPushButton( 'Jump to Planting' )
-        #add_button    = widget
         widget.clicked.connect( self.jump_to_planting )
         layout.addWidget( widget )
 

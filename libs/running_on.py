@@ -123,32 +123,59 @@ class RunningOn(  ):
         # in that case should we populate with the current dir !! probably yes
         cls.py_path            = os.path.dirname(  cls.program_py_fn  )
 
+        cls.qt_info()
 
-        qt_version          = None
+    # ---------------------------------------
+    @classmethod
+    def qt_info( cls ):
+        """
+        read
+        import qtpy;
+        print( f"qt info {qtpy.API_NAME = }   {qtpy.QT_VERSION = } " )
+        """
+
+        import qtpy;
+
+        cls.qtpy_app_name       = qtpy.API_NAME
+        cls.qtpy_qt_version     = qtpy.QT_VERSION
+
+
+        qt_version          = ""
+
         try:
             import PyQt6
-            qt_version      = "python_qt6"
+            qt_version      = f"{qt_version} import_qt6_ok"
         except:
-            try:
-                import PyQt5
-                qt_version  = "python_qt5"
-            except:
-                pass
-        cls.qt_version      = qt_version
+            pass
+
+        try:
+            import PyQt5
+            qt_version      = f"{qt_version} import_qt5_ok"
+        except:
+            pass
+
+
 
         qtpy_present        = False
         try:
             import qtpy
             qtpy_present    = True
+            qt_version      = f"{qt_version} import_qtpy_ok"
         except:
             pass
+
         cls.qtpy_present    = qtpy_present
+
+        cls.qt_version      = qt_version.strip()
+
 
         #rint( f"running on for {cls.program_py_fn}  path is  {cls.py_path}" )
         # msg   = f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>running on gather info {cls}"
         #rint( msg )
 
 
+
+    # --------------------------
     @classmethod
     def linux_distribution( cls ):
         """

@@ -21,7 +21,7 @@ def build_it( a_data_dict_all ):
 
     # ---- id
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "id",
-                                             db_type        = "INTEGER",
+                                             db_type            = "INTEGER",
                                              form_read_only       = True,
                                              rec_to_edit_cnv      = "cnv_int_to_str",
                                              dict_to_edit_cnv     = "cnv_int_to_str",
@@ -98,7 +98,7 @@ def build_it( a_data_dict_all ):
                                              col_head_text      = "Plant_ID",
                                              col_head_width     = 10,
                                              col_head_order     = 80,
-                                             form_col_span      = 2,  )
+                                             form_col_span      = 4,  )
 
     a_table_dict.add_column( a_column_dict )
 
@@ -110,7 +110,7 @@ def build_it( a_data_dict_all ):
                                              default_func   = None,   )
     a_table_dict.add_column( a_column_dict )
 
-    # ---- location
+    # ---- location zz
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "location",
                                              db_type        = "VARCHAR(75)",
                                              display_order  = 60,
@@ -119,7 +119,8 @@ def build_it( a_data_dict_all ):
                                              default_func   = None,
                                              col_head_text      = "Location",
                                              col_head_width     = 20,
-                                             col_head_order     = 50, )
+                                             col_head_order     = 50,
+                                             form_col_span      = 4,  )
     a_table_dict.add_column( a_column_dict )
 
     # ---- add_kw
@@ -131,7 +132,8 @@ def build_it( a_data_dict_all ):
                                              is_key_word            = True,
                                              max_len                = None,
                                              default_func           = None ,
-                                             topic_column_order     = 20,)
+                                             topic_column_order     = 20,
+                                             form_col_span      = 4, )
 
     a_table_dict.add_column( a_column_dict )
 
@@ -169,7 +171,8 @@ def build_it( a_data_dict_all ):
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
-                                             is_key_word        = True,)
+                                             is_key_word        = True,
+                                             form_col_span      = 4, )
     a_table_dict.add_column( a_column_dict )
 
     # ---- lbl
@@ -208,14 +211,14 @@ def build_it( a_data_dict_all ):
                                              form_edit            = "cw_2.CQModelComboBox",
 
 
-                                             display_order  = 100,
+                                             display_order  = 62,
                                              display_type   = "string",
                                              max_len        = None,
                                              default_func   = None,
                                              col_head_text      = "Bed ID",
                                              col_head_width     = 10,
                                              col_head_order     = 80,
-                                             form_col_span      = 2,  )
+                                             form_col_span      = 4,  )
     a_table_dict.add_column( a_column_dict )
 
     # ---- lbl_name

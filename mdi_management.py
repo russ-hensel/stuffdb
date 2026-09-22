@@ -348,6 +348,8 @@ class MdiManagement( QObject ):
         midi_management.show_document( sub_window )
         activate_tab   tab to activate
             mdi_management.show_document( doc, activate_tab = doc.list_tab_index )
+
+            to open a document see.... make_document
         """
         sub_window.show()
         sub_window.setFocus()
@@ -682,6 +684,7 @@ class MdiManagement( QObject ):
         changed api an now return the instance
 
         do we have registration issues
+            window_class   class
         """
         #msg              = f"add_subwindow for window_type {window_type } {instance_ix}"
         # mdi_area       = self.main_window.mdi_area
@@ -698,14 +701,13 @@ class MdiManagement( QObject ):
 
         # because sometims missing -- grok fix
 
-        sub_window.setWindowFlags(Qt.SubWindow | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint)
-        #sub_window.setWindowFlags( Window_SubWindow | Window_SystemMenuHint | Window_CloseButtonHint ) # 5 6 compat
+        sub_window.setWindowFlags( Qt.SubWindow | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint )
 
         if AppGlobal.parameters.set_doc_maximized:
             sub_window.showMaximized()
 
         self.show_document( sub_window )  # !! run debug through this
-        self.main_window.assign_icon()   # reassign to see if we can keep it
+        self.main_window.assign_icon()    # reassign to see if we can keep it
 
         return sub_window
 
@@ -856,12 +858,12 @@ class MdiManagement( QObject ):
 
         """
         # make a module costant !!
-        dict_class_for_table    = {       "stuff": stuff_document.StuffDocument,
-                                          "photo": picture_document.PictureDocument,
-                                          "people": people_document.PeopleDocument,
-                                          "plant": plant_document.PlantDocument,
+        dict_class_for_table    = {       "stuff":    stuff_document.StuffDocument,
+                                          "photo":    picture_document.PictureDocument,
+                                          "people":   people_document.PeopleDocument,
+                                          "plant":    plant_document.PlantDocument,
                                           "planting": planting_document.PlantingDocument,
-                                          "album": album_document.AlbumDocument,
+                                          "album":    album_document.AlbumDocument,
                                           }
 
         document_class          = dict_class_for_table[ table ]
@@ -880,7 +882,7 @@ class MdiManagement( QObject ):
         self.show_document( doc )
 
     # ------------------------------------------
-    def open_picture_document_width_id( self, a_id   ):
+    def open_picture_document_width_id( self, a_id ):
         """
         what it says
             if none open, if multiple open
@@ -894,13 +896,14 @@ class MdiManagement( QObject ):
         """
         #mdi_management  = AppGlobal.mdi_management
         docs    = self.get_picture_docs()
+
         if  len( docs ) == 0:
             self.make_document( picture_document.PictureDocument, instance_ix = 1 )
             docs    = self.get_picture_docs()
+
         else:
             pass
         doc     = docs[ 0 ]
-
         doc.select_record( a_id  )
 
         self.show_document( doc )

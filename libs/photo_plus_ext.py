@@ -151,7 +151,7 @@ class PhotoPlus():
 
         filename is none will suppress read of file
         then manually populate
-
+        a_photo_plus.photo_plus_ext.PhotoPlus( ) # need reset prior to use
 
         """
         self.reset( filename )
@@ -319,6 +319,8 @@ class PhotoPlus():
         return
             the dict -- full with None values if something is missing except
             empty dict if no exif data
+            photo_plus.reset( filename = filename )
+            a_dict     = photo_plus.get_exifread_exif_dict()
         """
         try:
             with open( self.filename, "rb") as f:

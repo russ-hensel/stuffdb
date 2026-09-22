@@ -52,7 +52,6 @@ from qtpy.QtCore import ( QAbstractTableModel,
 
 from qtpy.QtSql import ( QSqlRecord )
 
-# from PyQt.QtGui import ( QAction, QActionGroup, )
 
 from qtpy.QtWidgets import (
                              QApplication,
@@ -78,7 +77,7 @@ import history_sync
 
 EXEC_RUNNER         = None  # setup below -- do we really want to do this
 MARKER              = ">>"
-LOG_LEVEL           = 1    # higher is more
+LOG_LEVEL           = 100    # higher is more
         # logging.log( LOG_LEVEL,  debug_msg, )
 logger              = logging.getLogger( )
 SCAN_LINES          = 100
@@ -1447,8 +1446,9 @@ class TextEditExtMixin(  ):
     def copy_all( self, ):
         """
         what it says
+            to the clipboard
         """
-        QApplication.clipboard().setText(self.toPlainText())
+        QApplication.clipboard().setText( self.toPlainText() )
 
     #-----------------------------------
     def search_selected( self, keep_leading = True ):
@@ -3942,7 +3942,8 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
 
     #----------------------------
     def set_preped_data( self, a_string, is_changed = None ):
-        """ specialize for this edit
+        """
+        specialize for this edit
         might have second argument for is changed
         add to rest of group
         """
@@ -3959,6 +3960,7 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
 
         self.setText( a_string  )
         self.prior_value  = a_string
+
         if is_changed is not None:
             self.is_changed = is_changed
 
@@ -3973,7 +3975,9 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
 
     #-----------------------------
     def get_data_for_record_debug( self, record, record_state ):
-        """a debug trick to try other than that consider an if  """
+        """
+        a debug trick to try other than that consider an if
+        """
         msg    = ( "get_data_for_record_debug this for debug only ")
         logging.debug( msg )
         CQEditBase.get_data_for_record( self, record, record_state )

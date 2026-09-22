@@ -5,6 +5,8 @@
 run inside stuffdb environment, perhaps as a helper
 use own db connect thru alternate parms
 
+        so this is an sql based updater not for the ui directly
+
 still needs some clean up, run from db_maint perhaps with low and hi id ?
 
 /mnt/8ball1/first6_root/photos/photos_raw/from_phone/moved_to_computer/older_june23_copy
@@ -171,6 +173,7 @@ class ExifExtractor( ):
     # -----------------------------------
     def test_add_exif_data( self ):
         """
+        seems to take exif data from file and adds to database
 
         """
         ix_max          = 300000
@@ -214,8 +217,10 @@ class ExifExtractor( ):
                    print( ret )
 
             if a_dict != {}:
+
                 if False:
                     print( "update row off")
+
                 else:
                     self.update_row( i_dict[ "id" ], a_dict )
 
@@ -226,6 +231,10 @@ class ExifExtractor( ):
     # -----------------------------------
     def update_row( self, id_value, exif_dict ):
         """
+        update the row in the db
+        might be useful as part of import
+        or a version of it in the update cycle
+
         -1 error
         0  different kind of error
         """

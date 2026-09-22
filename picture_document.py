@@ -1818,7 +1818,8 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         self.post_init()
 
         # we do not really need one for each document one for app would do
-        # except for field_dict
+        # except for field_dict  zz  seems should be in browse tab -- but needs field dist
+        # so translate across
         self.exif_to_ui    =  exif_extract_to_ui.ExifExtrctToUi( self.field_dict )
 
     #-------------------------------------
@@ -2064,8 +2065,8 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         ,093 add exif
         """
 
-        # here or validate ??
-        self.exif_to_ui.add_exif_data()
+        # here or validate or import i think import ??
+        #self.exif_to_ui.add_exif_data()
 
         super().update_db()
         self.subject_sub_tab.update_db()
@@ -2561,9 +2562,9 @@ class PictureBrowseSubTab( QWidget ):
     def open_move_all_dialog( self ):
         """
         """
-        self.launch_btn.setEnabled(False)
+        self.launch_btn.setEnabled( False )
              # CRITICAL: Prevent re-entrancy
-             # not enough want to get main window i thin
+             # not enough want to get main window i think
 
         it          = CounterIterator( photo_browse_sub_tab = self )
         self.dial   = ProgressDialog( iterator = it   )
@@ -2577,7 +2578,7 @@ class PictureBrowseSubTab( QWidget ):
 
         self.dial.run_loop()
 
-        self.launch_btn.setEnabled(True)
+        self.launch_btn.setEnabled( True )
 
     # --------------------------------------
     def move_all_setup( self, ):
@@ -2684,8 +2685,8 @@ class PictureBrowseSubTab( QWidget ):
         may want to change to selected rows
 
         """
-        msg   = ( "move_all begin ^^^^^^^^^^^^^^^^^^^^^^^   call move to pic  but add to album in process  ")
-        logging.debug( msg )
+        # msg   = ( "move_all begin ^^^^^^^^^^^^^^^^^^^^^^^   call move to pic  but add to album in process  ")
+        # logging.debug( msg )
 
         # or perhaps resolve in iterator or send in a dits or init of itter
         document        = self.parent_window.parent_window
@@ -2727,8 +2728,10 @@ class PictureBrowseSubTab( QWidget ):
             index  sort of look like it is not used -- seem to key off selected rows
 
         """
-        msg       = ( "\n move_to_pic")
+        msg       = ( "\n move_to_pic is this were exif should be done ")
         logging.debug( msg )
+
+        exif_to_ui          = self.parent_window.exif_to_ui
 
         parms               = AppGlobal.parameters
         db_root             = parms.picture_db_root
@@ -2763,7 +2766,7 @@ class PictureBrowseSubTab( QWidget ):
         if selection_model:
             selected_indexes = selection_model.selectedRows()
 
-            # Iterate over the selected rows
+            # Iterate over the selected rows  -- !! not really breaks out could change?
             for i_index in selected_indexes:
                 row         = i_index.row()
                 msg         = ( f"move_to_picSelected row: {row = }" )
@@ -2797,6 +2800,7 @@ class PictureBrowseSubTab( QWidget ):
         form_id          = parent_window.id_field.get_raw_data()
         form_sub_dir     = parent_window.sub_dir_field.get_raw_data()
         form_file        = parent_window.file_field.get_raw_data().strip()
+
 
         # msg    = ( "some_debug -- inspect might be better ")
 
@@ -2847,6 +2851,9 @@ class PictureBrowseSubTab( QWidget ):
                           f"\n    {a_except = }" )
             logging.error( msg )
             raise app_exceptions.ApplicationError( msg )
+
+        #   zz  PhotoPlus  file fields need to be moved first
+        exif_to_ui.add_exif_data()
 
         model.removeRow( row )
 
@@ -3321,7 +3328,7 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         model_indexer       = table_model.ModelIndexer( model, self.model_ituple  )
               # to index table, table_id )
         self.model_indexer  = model_indexer
-        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+        model.setEditStrategy( QSqlTableModel.EditStrategy.OnManualSubmit )
 
         # ---- model subject
         # ============================================================
@@ -4503,7 +4510,7 @@ class PictureAlbumtSubTab( QWidget ):
 
         model.setTable( self.table_name )
 
-        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+        model.setEditStrategy( QSqlTableModel.EditStrategy.OnManualSubmit )
         # model_write.setEditStrategy( QSqlTableModel.OnFieldChange )
 
         # no setRelation() here -- photoshow.id is our own primary key, not a

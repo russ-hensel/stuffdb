@@ -21,6 +21,7 @@ import os
 from pathlib import Path
 
 import vlc_widget
+
 from qtpy.QtCore import QMimeData, QRectF, Qt, QTimer, QUrl, Signal
 from qtpy.QtGui import QDrag, QImageReader, QPainter, QPalette, QPixmap
 from qtpy.QtWidgets import (QApplication,
@@ -82,18 +83,16 @@ class PictureViewer( QGraphicsView ):
             stuffdb picture document i think
                 may be in qt5 by example
         """
-        super( PictureViewer, self ).__init__(parent)
-        self.scene          = QGraphicsScene(self)
+        super( PictureViewer, self ).__init__( parent )
+        self.scene          = QGraphicsScene( self )
         self.setScene( self.scene )
         self.pixmap_item    = QGraphicsPixmapItem()
 
         self.pixmap         = QPixmap( "" )  # initial null item
         self.scene.addItem( self.pixmap_item )
 
-        #self.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
         self.setSizePolicy( QSizePolicy.Expanding, QSizePolicy.Expanding )
 
-        #
         sb_policy           = Qt.ScrollBarAlwaysOn
 
             #  Qt.ScrollBarAsNeeded Qt.ScrollBarAlwaysOff  Qt.ScrollBarAlwaysOn
@@ -178,9 +177,9 @@ class PictureViewer( QGraphicsView ):
 
             self.clear()
 
-        else:
-            #rint( f"display_   { file_name = }")
-            pass
+        # else:
+        #     #rint( f"display_   { file_name = }")
+        #     pass
 
         self.user_zoomed    = False
         self.fit_in_view()
@@ -239,7 +238,6 @@ class PictureViewer( QGraphicsView ):
 
             return False
 
-
     # -----------------------------
     def wheelEvent( self, event ):
         """
@@ -248,8 +246,10 @@ class PictureViewer( QGraphicsView ):
         zoom centers on the mouse from AnchorUnderMouse in __init__
         """
         delta      = event.angleDelta().y()
+
         if delta > 0:
             zoom   = 1.25
+
         else:
             zoom   = 0.8
 
@@ -281,48 +281,43 @@ class PictureViewer( QGraphicsView ):
         """
         self.user_zoomed    = True   # 1:1 is a manual choice, keep it on resize
         self.resetTransform()
-        #rint("Zoom Reset")
-
-    # -----------------------------
-    def fit_image_may(self):
-        """
-        new in may, older grok code not working
-            this seem to do what i want always can see all of picture
-        """
-        if self.pixmap_item:
-            self.fitInView(self.pixmap_item, Qt.AspectRatioMode.KeepAspectRatio)
 
     # -----------------------------
     def fit_in_view( self ):
         """
         what it says, read it
-        but what does it mean
-            a redirect for experiment
-            seems to get called all to often debug !!
+            size it to just fit
+
         """
-        #self.fit_image()
-        self.fit_image_may()
+        if self.pixmap_item:
+            self.fitInView( self.pixmap_item, Qt.AspectRatioMode.KeepAspectRatio )
 
         #self.fitInView( self.scene.sceneRect(), Qt.KeepAspectRatio)
         #rint("Fit in View")
 
-    # -----------------------------
-    def fit_in_view_1( self ):
-        """
-        what it says, read it
-        but what does it mean
-        """
-        self.fitInView( self.scene.sceneRect(), Qt.KeepAspectRatio)
-        #rint("Fit in View")
+    # # -----------------------------
+    # def fit_in_view_1( self ):
+    #     """
+    #     what it says, read it
+    #        size it to just fit
+    #     """
+    #     self.fitInView( self.scene.sceneRect(), Qt.KeepAspectRatio)
+
 
     # ------------------------------------
     def resizeEvent(self, event):
+        """
+        what it says, read
+        """
         super().resizeEvent(event)
         if not self.user_zoomed:
             self.fit_in_view()
 
     # ------------------------------------
     def showEvent(self, event):
+        """
+        what it says, read
+        """
         super().showEvent(event)
         if not self.user_zoomed:
             self.fit_in_view()  # fit once widget is visible and sized
@@ -331,9 +326,9 @@ class PictureViewer( QGraphicsView ):
     def mousePressEvent( self, event ):
         """
         what it says, read it
-        Ctrl + left-drag starts an outbound file drag of self.file_name
-        ( to a file manager, email, gimp, etc ) -- plain left-drag is left
-        alone so it keeps panning ( see ScrollHandDrag in __init__ )
+            Ctrl + left-drag starts an outbound file drag of self.file_name
+            ( to a file manager, email, gimp, etc ) -- plain left-drag is left
+            alone so it keeps panning ( see ScrollHandDrag in __init__ )
         """
         ctrl_held       = bool( event.modifiers() & Qt.ControlModifier )
         left_button     = event.button() == Qt.LeftButton
@@ -392,20 +387,22 @@ class PictureViewer( QGraphicsView ):
     def contextMenuEvent(self, event):
         """
         what it says, read it
+        !! use dict dispatch  ?? actions are a bit dynamic for that
+        is this too low level
         """
         context_menu        = QMenu(self)
 
-        zoom_in_action      = context_menu.addAction("Zoom In")
-        zoom_out_action     = context_menu.addAction("Zoom Out")
-        reset_zoom_action   = context_menu.addAction("Reset Zoom")
-        fit_in_view_action  = context_menu.addAction("Fit in View")
-        get_file_name_action  = context_menu.addAction("Clip File Name")
-        drag_file_action    = context_menu.addAction("Drag Image File Out")
+        zoom_in_action      = context_menu.addAction( "Zoom In")
+        zoom_out_action     = context_menu.addAction( "Zoom Out")
+        reset_zoom_action   = context_menu.addAction( "Reset Zoom")
+        fit_in_view_action  = context_menu.addAction( "Fit in View")
+        get_file_name_action  = context_menu.addAction( "Clip File Name")
+        drag_file_action    = context_menu.addAction( "Drag Image")
 
-        photo_1_action      = context_menu.addAction("photo_1_action")
-        photo_2_action      = context_menu.addAction("photo_2_action")
+        photo_1_action      = context_menu.addAction( "photo_1_action")
+        photo_2_action      = context_menu.addAction( "photo_2_action")
 
-        action = context_menu.exec_(self.mapToGlobal(event.pos()))
+        action              = context_menu.exec_( self.mapToGlobal(event.pos()) )
 
         if action == zoom_in_action:
             self.zoom_in()
@@ -428,7 +425,7 @@ class PictureViewer( QGraphicsView ):
     # ------------------------------------
     def clear( self,   ):
         """
-
+        what it says read
         """
         scene   = QGraphicsScene()
         #view    = self( scene )
@@ -459,7 +456,6 @@ class PictureViewer( QGraphicsView ):
         to the PictureViewer
         """
         self.vlc_video_widget    = video_widget
-
 
 # -------------------------------------
 class PictureViewerPlus( QWidget ):
@@ -509,6 +505,7 @@ class PictureViewerPlus( QWidget ):
         tab      = self.build_tab_pic(  )
         self.tab_widget.addTab( tab, title  )
 
+        # ---- information, prob delete
         title    = "Information"
         tab      = self.build_tab_info(  )
         self.tab_widget.addTab( tab, title  )

@@ -492,7 +492,7 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         modeled on other documents
         """
         page            = self
-        max_col         = 10
+        max_col         = 12              # 10  sept 2006 try higher
         self.max_col    = max_col
         box_layout_1    = QVBoxLayout( page )
 
@@ -508,8 +508,8 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         # ---- buttons
         #button_layout = QHBoxLayout()
 
-        widget      = QPushButton( "!!Jump to Plant" )
-        #create_button.clicked.connect( self.create_default_row )
+        widget      = QPushButton( "Jump to Plant" )
+        widget.clicked.connect( self.jump_to_plant )
         tab_layout.addWidget( widget )
 
         # ---- tab area
@@ -537,14 +537,6 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         self.detail_notebook      = detail_notebook
 
 
-
-        # button = QPushButton( "To History" )
-        # rint( "need detail_to_history")
-        # button.clicked.connect( self.parent_window.detail_to_history )
-        # button_layout.addWidget(update_button)
-
-        #tab_layout.addLayout( button_layout )
-
     #---------------------------------
     def _build_fields( self, layout ):
         """
@@ -556,12 +548,14 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         """
         self._build_from_dict( layout )
 
+        edit_field        = self.field_dict[ "name" ]
+        edit_field.set_custom_context_menu()
+
         # ---- was plant_id  by hand ---------------
 
         kvl_model         = AppGlobal.mdi_management.get_key_value_list_model( "plant" )
         edit_field        = self.field_dict[ "plant_id" ]
         edit_field.connect_to_kvl_model( kvl_model )  # or other way around connect_widget
-
 
         #  PLANTING_BED_KVLM               = None     #    = "bed_id", for plant for stuff marked beds
         kvl_model         = AppGlobal.mdi_management.get_key_value_list_model( "planting_bed" )
@@ -708,6 +702,29 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
         """sent down from on high update the stuff_id in dict  """
         self.plant_idfind_name_in_old_field.update_dictionary( just_warning )
 
+    # -----------------------
+    def jump_to_plant( self, ):
+        """
+        what it says
+            this version pulls from detail form
+
+        """
+        # i_row      = self.get_selectd_display_row()
+
+        # if i_row < 0:
+        #     return
+
+        # model       = self.model
+        # record      = model.record( i_row )
+        # table_id    = record.value( "id" )
+
+        edit_field  = self.field_dict[ "plant_id" ]
+        table_id    = edit_field.get_raw_data()
+        if  table_id is None:
+            return
+
+        AppGlobal.mdi_management.open_document_with_id( "plant", table_id )
+
 
 
 # ==================================
@@ -772,7 +789,7 @@ class PlantingEventSubTab( base_document_tabs.SubTabWithEditBase ):
         self.model         = model
 
         model.setTable( self.table_name )
-        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+        model.setEditStrategy( QSqlTableModel.EditStrategy.OnManualSubmit )
 
     # ------------------------------------------
     def _build_dialog( self, edit_data ):

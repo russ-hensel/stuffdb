@@ -1380,8 +1380,7 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
         self.model         = model
 
         model.setTable( self.list_table_name )
-        # model.setEditStrategy( QSqlTableModel.OnManualSubmit ) # 5 6 compat
-        model.setEditStrategy(  QSqlTableModel.OnManualSubmit )
+        model.setEditStrategy( QSqlTableModel.EditStrategy.OnManualSubmit )
         #model.non_editable_columns = {0, 1, }  # really only work on custom model
 
     # ---------------------------------------
@@ -1390,12 +1389,10 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
         maybe make anscestor and promote but filter need name of key field
 
         """
-        # ---- write
         model               = self.model
 
         self.current_id     = id
         model.setFilter( f"stuff_id = {id}" )  # for stuff_event
-        # model_write.setFilter( f"pictureshow_id = {id} " )
         model.select()
 
         debug_msg    = ( f"event subtab select_by_id do we need next stuff_id = {id}" )

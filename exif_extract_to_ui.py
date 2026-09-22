@@ -63,6 +63,7 @@ class ExifExtrctToUi( ):
     # -----------------------------------
     def add_exif_data( self ):
         """
+        does not need to know the file name gets from the data
         check against data_dict  -- seem ok
         check against pp PhotoPlus
             # setup
@@ -70,6 +71,7 @@ class ExifExtrctToUi( ):
             self.exif_to_ui.add_exif_data()
 
             !! may need current exif so do not update if already have
+
 
         """
         current_val_dict   = {}
@@ -102,10 +104,10 @@ class ExifExtrctToUi( ):
             return
 
         # can we use path??   #pp.reset( full_path )
-        pp      = self.photo_plus
+        pp          = self.photo_plus    # localize
         pp.reset( str( full_path ) )
 
-        exif_dict      =  pp.get_exifread_exif_dict()
+        exif_dict   =  pp.get_exifread_exif_dict()
         # key is the field_name, but perhaps not matching the form
                 # key is a name exifread_dict[ "make" ]    =....
 

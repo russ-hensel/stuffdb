@@ -530,7 +530,7 @@ class DocumentBase( QMdiSubWindow ):
         qt_width            = my_parameters.doc_qt_width
         qt_height           = my_parameters.doc_qt_height
 
-        self.setGeometry( qt_xpos,
+        self.setGeometry(  qt_xpos,
                            qt_ypos,
                            qt_width,
                            qt_height  )
@@ -1748,7 +1748,7 @@ class ListTabBaseNew( DetailTabBase ):
 
         model.setTable( self.parent_window.detail_table_name )
 
-        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+        model.setEditStrategy( QSqlTableModel.EditStrategy.OnManualSubmit )
 
         # ----view
         view                 = QTableView()
@@ -1894,7 +1894,7 @@ class ListTabBase( DetailTabBase ):
 
         model.setTable( self.parent_window.detail_table_name )
 
-        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+        model.setEditStrategy( QSqlTableModel.EditStrategy.OnManualSubmit )
 
         # ----view
         view                 = QTableView()
@@ -3279,8 +3279,8 @@ class HistoryTabBase( QWidget ):
     def find_id_in_table( self, a_id  ):
         """
         what it says read
-        return ix_row or -1 if not found
-        just a linear search
+            return ix_row or -1 if not found
+            just a linear search
         """
         str_id              = str( a_id )
         table               = self.history_table  # QTableWidget(
@@ -3441,9 +3441,24 @@ class HistoryTabBase( QWidget ):
     # -------------------------------------
     def record_to_table( self, record ):
         """
+        temp version !! the two cases can be combined
+        in cleaner code than this but test a bit first
+
+        """
+        parameters    = AppGlobal.parameters
+        if parameters.history_at_end:
+            self.record_to_table_at_end( record )
+        else:
+            self.record_to_table_in_order( record )
+
+    # -------------------------------------
+    def record_to_table_in_order( self, record ):
+        """
         what it says read
-        from stuff history tab
+            from stuff history tab
             !! why all this setup stuff
+
+            records are listed in order viewed
         """
         table           = self.history_table  # QTableWidget
 
@@ -3454,9 +3469,9 @@ class HistoryTabBase( QWidget ):
         ix_row          = self.find_id_in_table( a_id )
 
         if ix_row >=0:
-            debug_msg   = ( f"error maybe why setup code record_to_table found row {ix_row} in "
-                             "future update maybe for now skip adding by return ")
-            logging.error( debug_msg )
+            # debug_msg   = ( f"error maybe why setup code record_to_table found row {ix_row} in "
+            #                  "future update maybe for now skip adding by return ")
+            # logging.error( debug_msg )
             is_insert       = False
 
         # ---- insert
@@ -3469,20 +3484,70 @@ class HistoryTabBase( QWidget ):
         else:
             pass
 
-        ix_col          = -1
-
+        ix_col          = -1  # !!
         ix_col          += 1
         item             = QTableWidgetItem( str( self.ix_seq  ) )
-        table.setItem( ix_row, ix_col, item   )
+        table.setItem( ix_row, ix_col, item )
 
         if is_insert:
             item             = QTableWidgetItem( str( self.ix_seq  ) )
-            table.setItem( ix_row, ix_col, item   )
+            table.setItem( ix_row, ix_col, item )
 
         for i_col_name in self.col_names:
             item             = QTableWidgetItem( str( record.value( i_col_name ) ) )
             table.setItem( ix_row, ix_col, item )
             ix_col          += 1
+
+    # -------------------------------------
+    def record_to_table_at_end( self, record ):
+        """
+        what it says read
+            from stuff history tab
+            !! why all this setup stuff
+
+            records are in order last viewed newest at end
+        """
+        table           = self.history_table  # QTableWidget
+
+        a_id            = record.value( "id" )
+        str_id          = str( a_id )
+
+        is_insert       = True
+        ix_row          = self.find_id_in_table( a_id )
+
+        if ix_row >=0:
+            debug_msg   = ( f"record_to_table() history row found {ix_row}   ")
+            logging.error( debug_msg )
+            #is_insert       = False
+
+            table.removeRow( ix_row )
+              # delete the row then laterinsert at the end
+
+        # ---- insert
+        if is_insert:
+            self.ix_seq     += 1
+            row_position    = table.rowCount()
+            table.insertRow( row_position )
+            ix_row          = row_position   # or off by 1
+
+        else:
+            pass
+
+        ix_col          = -1  # !!
+        ix_col          += 1
+        item            = QTableWidgetItem( str( self.ix_seq ) )
+        table.setItem( ix_row, ix_col, item   )
+
+        if is_insert:
+            item        = QTableWidgetItem( str( self.ix_seq ) )
+            table.setItem( ix_row, ix_col, item   )
+
+        for i_col_name in self.col_names:
+            item        = QTableWidgetItem( str( record.value( i_col_name ) ) )
+            table.setItem( ix_row, ix_col, item )
+            ix_col      += 1
+
+
 
     #-------------------------------------
     def clear( self, ):

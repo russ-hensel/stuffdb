@@ -64,14 +64,16 @@ class Parameters( ):
         get here"""
 
         #self.mode_new_user()
-        #self.mode_data_sync()
+        self.mode_data_sync()
         #self.mode_data_sync_b()
+        self.mode_picture_test()
+
         #self.mode_millhouse_b()
         #
         #self.mode_picture_test()
 
         #self.mode_data_sync_full_path()
-        self.mode_ramdisk()
+        #self.mode_ramdisk()
         #self.mode_source_db_for_copy()
         #self.mode_data_sync_b()
         #self.mode_github()
@@ -83,13 +85,11 @@ class Parameters( ):
         # self.mode_theprof()
         # self.mode_king_homer()
         #self.mode_server_king_homer()
-        #self.mode_sync_king_homer()
 
-        #self.mode_russ_2025_ram()
         #self.mode_build_new_ram()
         #self.mode_helpdb_from_scratch()
         # self.mode_russ_2025_ram()
-        #self.mode_github()
+
 
 
     # -------
@@ -105,6 +105,9 @@ class Parameters( ):
         # ---- type and location of the db file
         self.db_type            = "QSQLITE"
             # the type of database, so far we only support SQLite
+
+        self.notes_only         = False
+
         self.db_file_name       = "/tmp/ramdisk/target.db"
         self.db_file_name       = "./data/new_user.db"
 
@@ -124,27 +127,25 @@ class Parameters( ):
         self.picture_browse     = "/mnt/8ball1/first6_root/photos/photos_raw/07"
         self.picture_browse     = "/mnt/8ball1/first6_root/photos/photos_raw/2016"
 
-       #  self.picture_db_sub     = "/73"
+        #self.picture_db_sub     = "/01"
+        #self.picture_db_sub     = "/02"
        # # self.picture_db_sub     = "/76"
        # # self.picture_db_sub     = "/72"
         #self.picture_db_sub     = "/07"
         #self.picture_db_sub     = "/08"
         #self.picture_db_sub     = "/10"
         # self.picture_db_sub     = "/11"
-        self.picture_db_sub     = "/15"
-        self.picture_db_sub     = "/16"
-        self.picture_db_sub     = "/17"
+        # self.picture_db_sub     = "/15"
+        # self.picture_db_sub     = "/16"
+        # self.picture_db_sub     = "/17"
         self.picture_db_sub     = "/18"
+        self.picture_db_sub     = "/19"
        # # self.picture_db_sub     = "/26"
        #  self.picture_db_sub     = "/21"
        #  self.picture_db_sub     = "/22"
        #  #self.picture_db_sub     = "/23"
        #  # self.picture_db_sub     = "/25"
-
-        self.picture_db_sub     = "/26"
-
-
-
+        #self.picture_db_sub     = "/26"
 
         self.logging_level      = logging.DEBUG  # ERROR DEBUG
 
@@ -192,9 +193,6 @@ class Parameters( ):
         self.db_type            = "QSQLITE"
         self.db_file_name       = "./data_sync_b/stuffdb.db"
         self.db_lock_file_name  = "./data_sync_b/lock_db.txt"
-
-
-
 
     # -------
     def mode_picture_test( self ):
@@ -282,15 +280,6 @@ class Parameters( ):
         self.logging_level      = logging.DEBUG   # ERROR
 
     # -------
-    def mode_theprof( self ):
-        """
-        moved code to running+on_tweaks
-        """
-        self.mode               = "mode_theprof"
-
-
-
-    # -------
     def mode_source_db_for_copy( self ):
         """
         use only when copying db this will be the source
@@ -301,18 +290,6 @@ class Parameters( ):
         #self.db_lock_file_name  = "./data_sync/lock_db.txt"     # if present then db is locked else none
         self.db_file_name       = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/data_sync/stuffdb.db"
         self.icon               =  "./misc/db_green_on_black.png"
-
-    # -------
-    def mode_sync_king_homer( self ):
-        """
-        moved code to running+on_tweaks
-        """
-        self.mode               = "mode_sync_king_homer"
-        self.db_file_name       = "./data_sync/stuffdb.db"      #  = "sample.db"   =  ":memory:"
-        self.db_lock_file_name  = "./data_sync/lock_db.txt"     # if present then db is locked else none
-
-        self.icon               =  "./misc/db_green_on_black.png"
-
 
 
     # -------
@@ -343,19 +320,6 @@ class Parameters( ):
 
         self.icon              = "./misc/db_green_on_black.png"
 
-    # -------
-    def mode_king_homer( self ):
-        """
-        moved code to running+on_tweaks
-        """
-        self.mode               = "mode_king_homer"
-
-    # -------
-    def mode_fattony( self ):
-        """
-        moved to running_on
-        """
-        self.mode               = "mode_fattony"
 
     # -------
     def mode_github( self ):
@@ -584,7 +548,7 @@ class Parameters( ):
         # this is the path to the main.py program --
         self.py_path                = run_on.py_path
 
-        self.qt_version             = run_on.qt_version
+        self.qt_version             = run_on.qt_version       #   cls.qtpy_app_name
         self.qtpy_present           = run_on.qtpy_present
 
         # some of the next all?? should be moved over to RunningOn
@@ -812,8 +776,14 @@ class Parameters( ):
 
         self.auto_run           = True  # run code examples -- !! what but needed
 
+        # ---- history tab
         self.num_pinned         = 3
             # number of pinned items in history tab
+
+        self.history_at_end     = True
+            # if true history items have mort recent viewed at the ent
+
+        self.get_sudo      = True
 
         self.template_copy_marker = "___template_copy___"
             # marks some field when using template copy
@@ -841,6 +811,7 @@ class Parameters( ):
         template_text          = (
         """
         >>Bash ======== bash_template ======== <<
+
         ls -lah    /usr/bin/*.*
         pwd
         cd ~
@@ -853,14 +824,15 @@ class Parameters( ):
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
-        self.get_sudo      = True
+
             # check code for use
 
-        # ---- Dividers  just dividers for text notes
+        # ---- ....Dividers  just dividers for text notes
         template_name          = "Dividers"
         template_text          = (
         """
         ============ note_about_what  ============
+
         I am a programmer using python with Qt.
         I am using  xxxx
         Please tell me about xxxxxx
@@ -1190,6 +1162,14 @@ class Parameters( ):
         a_str   = string_utils.to_columns( a_str, ["db_name",
                                             f"{self.db_name}" ] )
 
+        # self.qt_version             = run_on.qt_version       #   cls.qtpy_app_name  zz
+
+        a_str   = string_utils.to_columns( a_str, ["running_on.qtpy_app_name ",
+                                            f"{self.running_on.qtpy_app_name }" ] )
+
+
+        a_str   = string_utils.to_columns( a_str, ["running_on.qtpy_qt_version ",
+                                            f"{self.running_on.qtpy_qt_version }" ] )
 
         a_str   = string_utils.to_columns( a_str, ["qt_version",
                                             f"{self.qt_version}" ] )

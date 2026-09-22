@@ -5,13 +5,6 @@
 album_document
     an ordered collection of pictures
 
-    in this version 2026-06-23  is will take code from
-          /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/pyqt_by_example/tabs/sql_widgets/tab_q_sql_relational_model_update.py
-
-          which does an update and try to make it work here
-
-          back to QSqlRelationalTableModel (first integration revision)
-          with column-index / display fixes kept
 
 """
 
@@ -39,6 +32,7 @@ from qtpy.QtSql import (QSqlQuery,
                         QSqlRelation,
                         QSqlRelationalDelegate,
                         QSqlRelationalTableModel)
+
 from qtpy.QtWidgets import (QApplication,
                             QGroupBox,
                             QHBoxLayout,
@@ -95,7 +89,7 @@ class PhotoInShowModel( QSqlRelationalTableModel ):
         self._show_id       = None
         self.photo_id_col   = None
 
-        self.setEditStrategy( QSqlRelationalTableModel.OnManualSubmit )
+        self.setEditStrategy( QSqlRelationalTableModel.EditStrategy.OnManualSubmit )
 
     # ------------------------------------------
     def setup( self ):
@@ -349,7 +343,7 @@ class AlbumDocument( base_document_tabs.DocumentBase ):
         """
         may except on no show selected
         """
-        debug_msg  = ( "AlbumDocument  add_photo_to_show  ")
+        debug_msg  = ( "AlbumDocument  add_photo_to_show  " )
         logging.debug( debug_msg )
         self.detail_tab.add_photo_to_show( photo_dict )
 
@@ -699,6 +693,10 @@ class AlbumDetailTab( base_document_tabs.DetailTabBase  ):
         self.cmnt_field         = self.field_dict[ "cmnt" ]
         self.type_field         = self.field_dict[ "type" ]
         self.add_kw_field       = self.field_dict[ "add_kw" ]
+
+        # ---- name
+        edit_field              = self.field_dict[ "name" ]
+        edit_field.set_custom_context_menu()
 
     # ---------------------------
     def select_record( self, id_value  ):
@@ -1384,7 +1382,7 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
 
         row                     = index.row()
         # column                  = index.column()
-        debug_msg = ( f"PhotoshowDetailListTab_on_list_click {row = }  ")
+        debug_msg = ( f"PhotoshowDetailListTab_on_list_click {row = }  " )
         logging.debug( debug_msg )
 
         self.list_ix            = row
@@ -1536,7 +1534,8 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
         self._display_photo_by_fn( file_name )
 
         # bad !!
-        self.parent_window.parent_window.picture_tab.display_file( file_name )  # the other tab in sub window
+        self.parent_window.parent_window.picture_tab.display_file( file_name )
+            # the other tab in sub window
         #rint( "above bad because hard to find self.picture_tab.display_file( file_name )"  )
 
     # ------------------------------------------
@@ -2337,7 +2336,8 @@ class AlbumPictureSubTab( base_document_tabs.SubTabBase  ):
             selected_indexes    = selection_model.selectedRows()
 
             if len( selected_indexes ) != 1 :
-                msg     = f"For this to work your target needs to be just one selected row. \n your have {len( selected_indexes )}"
+                msg     = ( "For this to work your target needs to be just one "
+                           f"selected row. \n your have {len( selected_indexes )} " )
                 raise app_exceptions.ReturnToGui( msg )
 
             for index in selected_indexes: # can only be one

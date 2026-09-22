@@ -1298,7 +1298,7 @@ class PeopleEventSubTab( base_document_tabs.SubTabWithEditBase ):
         self.model         = model
 
         model.setTable( self.table_name )
-        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+        model.setEditStrategy( QSqlTableModel.EditStrategy.OnManualSubmit )
 
     # ------------------------------------------
     def _build_dialog( self, data ):
@@ -1369,7 +1369,7 @@ class PeopleContactSubTab( base_document_tabs.SubTabWithEditBase ):
         self.model         = model
 
         model.setTable( self.table_name )
-        model.setEditStrategy( QSqlTableModel.OnManualSubmit )
+        model.setEditStrategy( QSqlTableModel.EditStrategy.OnManualSubmit )
 
     # ------------------------------------------
     def _build_dialog( self, edit_data ):

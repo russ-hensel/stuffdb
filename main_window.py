@@ -21,9 +21,12 @@ import traceback
 #import app_logging
 import gui_qt_ext
 import psutil
-import show_parameters
+
+
+
 from qtpy.QtCore import QCoreApplication, Qt
 from qtpy.QtGui import QAction, QIcon
+
 from qtpy.QtWidgets import (QApplication,
                             QDialog,
                             QLabel,
@@ -33,6 +36,9 @@ from qtpy.QtWidgets import (QApplication,
                             QToolBar,
                             QVBoxLayout,
                             QWidget)
+
+
+# ---- local imports
 
 import combo_dict_ext
 import mdi_management
@@ -53,9 +59,9 @@ from planting_document import PlantingDocument
 from slideshow_subwindow import SlideShowSubWindow
 from stuff_document import StuffDocument
 
-# ---- local imports
 
 
+import show_parameters
 
 
 

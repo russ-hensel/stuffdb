@@ -446,6 +446,36 @@ def build_it( a_data_dict_all ):
                                                   default_func      = None,   )
         a_table_dict.add_column( a_column_dict )
 
+        # ---- exif_tweaked
+        a_column_dict = data_dict_all.ColumnDict(    column_name    = "exif_tweaked",
+                                                  db_type           = "INTEGER",
+                                                  display_type      = "float",
+                                                  form_col_span      = 1,
+                                                  form_read_only       = True,
+
+                                                 #rec_to_edit_cnv      = "cnv_int_to_qdate",
+                                                 rec_to_edit_cnv      = "cnv_float_to_str",
+
+                                                 #dict_to_edit_cnv     = "cnv_int_to_qdate",
+                                                 dict_to_edit_cnv     = "cnv_float_to_str",
+
+                                                 #edit_to_rec_cnv      = "cnv_qdate_to_int",
+                                                 edit_to_rec_cnv      = "cnv_str_to_float",
+
+                                                 #edit_to_dict_cnv     = "cnv_qdate_to_int",
+                                                 edit_to_dict_cnv     = "cnv_str_to_float",
+
+                                                 # detail_edit_class  = "custom_widgets.CQDateEdit",
+                                                 # form_edit          = "custom_widgets.CQDateEdit",
+                                                 display_order      = 700,
+                                                 col_head_text      = "exif_tweaked",
+                                                 # col_head_width     = 15,
+                                                 # col_head_order     = 150,
+
+                                                  max_len           = None,
+                                                  default_func      = None,   )
+        a_table_dict.add_column( a_column_dict )
+
         # ---- exif_lon
         a_column_dict = data_dict_all.ColumnDict(    column_name    = "exif_lon",
                                                   db_type           = "INTEGER",

@@ -39,7 +39,7 @@ unclear on how well this works -- keep trying for awhile
 
 
 # ---- QtSql
-from PyQt.QtSql import (QSqlDriver,
+from qtpy.QtSql import ( QSqlDriver,
                          QSqlQuery,
                          QSqlRecord,
                          QSqlRelationalTableModel,
