@@ -53,7 +53,6 @@ import file_writers
 
 
 
-
 # ---- constants
 SYSTEM_LIST     = parameters.PARAMETERS.systems_list
 
@@ -507,7 +506,7 @@ class HelpCriteriaTab( base_document_tabs.CriteriaTabBase ):
         self.criteria_select()
 
 # ----------------------------------------
-class HelpListTab( base_document_tabs.ListTabBase  ):
+class HelpListTab( base_document_tabs.ListTabBase ):
 
     def __init__(self, parent_window ):
         """
@@ -520,7 +519,7 @@ class HelpListTab( base_document_tabs.ListTabBase  ):
         self._build_gui()
 
 # ----------------------------------------
-class HelpDetailTab( base_document_tabs.DetailTabBase  ):
+class HelpDetailTab( base_document_tabs.DetailTabBase ):
     """
     """
     def __init__(self, parent_window  ):
@@ -642,13 +641,13 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         # ---- code_gen: TableDict.to_build_form 2025_02_01 for help_info -- begin table entries -----------------------
 
         # ---- id
-        edit_field                  = cw.CQLineEdit(
+        edit_field                      = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "id",
                                                  )
-        self.id_field     = edit_field
-        edit_field.rec_to_edit_cnv    = edit_field.cnv_int_to_str
-        edit_field.edit_to_rec_cnv    = edit_field.cnv_str_to_int
+        self.id_field                   = edit_field
+        edit_field.rec_to_edit_cnv      = edit_field.cnv_int_to_str
+        edit_field.edit_to_rec_cnv      = edit_field.cnv_str_to_int
         edit_field.setReadOnly( True )
         edit_field.setPlaceholderText( "id" )
         # still validator / default func  None
@@ -677,6 +676,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
                                                 is_keep_prior_enabled  = True
                                                        )
         self.title_field     = edit_field
+        edit_field.setToolTip( "Title" )
         edit_field.is_keep_prior_enabled        = True
         edit_field.setPlaceholderText( "title" )
         edit_field.set_custom_context_menu()
@@ -705,6 +705,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
                                                 field_name     = "system",
                                                 is_keep_prior_enabled        = True   )
         self.system_field     = edit_field
+        edit_field.setToolTip( "System" )
         #edit_field.setEditable( True )
         edit_field.setPlaceholderText( "system" )
         edit_field.clear()
@@ -733,20 +734,22 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
                                                 parent         = None,
                                                 field_name     = "java_package",
                                                             )
-        self.java_package_field     = edit_field
+        self.java_package_field     = edit_field  # never used, wait for dict based gen
+        edit_field.setToolTip( "Package" )
         edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "java_package" )
+        edit_field.setPlaceholderText( "Package" )
         # still validator / default func  None
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
 
-        # ---- java_type
+        # ---- java_type mmodule
         edit_field                  = cw.CQLineEdit(
                                                 parent         = None,
                                                 field_name     = "java_type",
                                                               )
         self.java_type_field     = edit_field
-        edit_field.setPlaceholderText( "java_type" )
+        edit_field.setToolTip( "Module" )
+        edit_field.setPlaceholderText( "Module" )
         # still validator / default func  None
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
@@ -756,9 +759,11 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
                                                 parent         = None,
                                                 field_name     = "java_name",
                                                             )
+        edit_field.setToolTip( "Type" )
+        edit_field.setPlaceholderText( "Type" )
         self.java_name_field     = edit_field
         edit_field.is_keep_prior_enabled        = True
-        edit_field.setPlaceholderText( "java_name" )
+
         # still validator / default func  None
         self.data_manager.add_field( edit_field, is_key_word = False )
         layout.addWidget( edit_field, columnspan = 2 )
@@ -851,6 +856,7 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
                                     field_name     = "text_data",
                                                   )
         text_edit_widget    = edit_field   # edit_field is reused
+        self.text_edit_widget    = text_edit_widget   # seem to need this
         edit_field.set_custom_context_menu_text() # special for text
 
         # ---- search text
@@ -868,9 +874,10 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
         widget.clicked.connect(  text_edit_widget.scroll_to_bottom   )
         search_layout.addWidget( widget )
 
+        search_layout.addWidget( dn_button )  # Down
+        search_layout.addWidget( up_button )  # Up
         search_layout.addWidget( search_text_widget )
-        search_layout.addWidget( dn_button )
-        search_layout.addWidget( up_button )
+
 
         # text_layout     = QVBoxLayout()
         # tab_layout.addLayout( text_layout, stretch=2 )
@@ -944,11 +951,12 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
             widget.clicked.connect( connect_to )
             button_layout.addWidget( widget )
 
-        # label           = "Test\nDebug"
-        # widget          = QPushButton( label )
-        # connect_to  =  partial( self.current_record_to_pinned, 0 )
-        # widget.clicked.connect( self.test_debug )
-        # button_layout.addWidget( widget )
+        # ---- Test Debug
+        label           = "Test\nDebug"
+        widget          = QPushButton( label )
+        connect_to  =  partial( self.current_record_to_pinned, 0 )
+        widget.clicked.connect( self.test_debug )
+        button_layout.addWidget( widget )
 
  #-------------------------------------
     def build_snippet_gui( self, snippet_manager, layout, ix ):
@@ -1042,6 +1050,22 @@ class HelpDetailTab( base_document_tabs.DetailTabBase  ):
 
     # -----------------------
     def test_debug( self ):
+        """
+        a test may be working or not
+        self.field_list
+        may be some in base as well, perhaps combine ??
+        """
+        import firefox_tabs_live
+        current_tab     = firefox_tabs_live.current_tab( )
+        print( current_tab )
+        url       = current_tab[ "url"   ]
+        title     = current_tab[ "title" ]
+
+        msg       = f"{title}\n>>Url   {url}"
+        self.text_edit_widget.insert_text_at_cursor( msg )
+
+    # -----------------------
+    def test_debug_file_writer( self ):
         """
         a test may be working or not
         self.field_list

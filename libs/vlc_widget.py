@@ -30,11 +30,14 @@ if __name__ == "__main__":
 # --------------------
 
 
+import sys
+
 import vlc
 
 from qtpy.QtCore    import ( Qt, QTimer, Signal )
 from qtpy.QtGui     import ( QPalette )
 from qtpy.QtWidgets import (
+                             QDoubleSpinBox,
                              QFrame,
                              QHBoxLayout,
                              QLabel,
@@ -57,7 +60,8 @@ class VlcVideoFrame( QFrame ):
     vlc instance/player -- all the vlc-specific plumbing lives here instead
     of in a tab class, so this widget can be dropped into any other
     tab/window as a self-contained "play a video" widget
-    a_video_widget = vlc_widget.VlcVideoWidget()
+    a_video_frame  = vlc_widget.VlcVideoFrame()
+    for a frame with all the playback controls, use VlcVideoWidget instead
     """
 
     # libvlc fires these on its own internal thread, not the Qt main thread --
@@ -115,16 +119,24 @@ class VlcVideoFrame( QFrame ):
     def _ensure_embedded( self, ):
         """
         read it -- hook libvlc's rendering into this frame's native
-        ( X11 ) window. done lazily on first play rather than in __init__
+        window. done lazily on first play rather than in __init__
         since winId() should be called after this frame is part of a
         shown widget hierarchy, and a widget is normally constructed
         before its parent window has shown anything
+        linux needs X11 ( or XWayland, QT_QPA_PLATFORM=xcb ) for set_xwindow
         """
         if self.vlc_embedded:
             return
 
         win_id              = int( self.winId() )
-        self.vlc_player.set_xwindow( win_id )
+
+        if sys.platform.startswith( "win" ):
+            self.vlc_player.set_hwnd( win_id )
+        elif sys.platform == "darwin":
+            self.vlc_player.set_nsobject( win_id )
+        else:
+            self.vlc_player.set_xwindow( win_id )
+
         self.vlc_embedded   = True
 
     # -------------------------------------
@@ -197,6 +209,20 @@ class VlcVideoFrame( QFrame ):
     def get_volume( self, ):
         """ what it says, 0-100 """
         return self.vlc_player.audio_get_volume()
+
+    # -------------------------------------
+    def set_rate( self, rate ):
+        """
+        playback speed, 1.0 is normal. returns libvlc's result, 0 ok, -1 if
+        refused. vlc keeps the audio pitch by default ( scaletempo ), but
+        may mute audio at high rates
+        """
+        return self.vlc_player.set_rate( float( rate ) )
+
+    # -------------------------------------
+    def get_rate( self, ):
+        """ what it says, 1.0 is normal speed """
+        return self.vlc_player.get_rate()
 
     # -------------------------------------
     def _vlc_on_playing( self, event ):
@@ -273,12 +299,19 @@ class ClickToPositionSlider( QSlider ):
         """
         if event.button() == Qt.LeftButton:
 
+            # Qt6 dropped QMouseEvent.x()/.y() for position() ( a QPointF ),
+            # Qt5 has no position() -- pick whichever this binding has
+            if hasattr( event, "position" ):
+                a_point             = event.position()
+            else:
+                a_point             = event.pos()
+
             if self.orientation() == Qt.Horizontal:
-                click_pos           = event.x()
+                click_pos           = int( a_point.x() )
                 slider_length       = self.width()
 
             else:
-                click_pos           = event.y()
+                click_pos           = int( a_point.y() )
                 slider_length       = self.height()
 
             value                = QStyle.sliderValueFromPosition(
@@ -312,6 +345,9 @@ class VlcVideoWidget( QWidget ):
     with this media" / about to load something else / freeing resources.
 
             gui_dict   # a dict for special gui stuff, see code
+                       #   "stop_button"   -- default True
+                       #   "reload_on_end" -- default False, see set_reload_on_end()
+                       #   "speed_control" -- default True, the playback speed spin box
     """
 
     # re-broadcast anything worth logging ( play requests, vlc errors )
@@ -331,7 +367,11 @@ class VlcVideoWidget( QWidget ):
         else:
             self.gui_dict   = {}
 
-        layout              = QVBoxLayout( self )
+        self.file_name      = None     # last file given to load()/play(), used by reload_on_end
+        self.reload_on_end  = bool( self.gui_dict.get( "reload_on_end", False ) )
+        self.last_state     = None     # last vlc_state_signal text, see _on_media_state_changed
+
+        layout             = QVBoxLayout( self )
         self.setLayout( layout )
 
         # ---- the video surface -- all the vlc plumbing lives inside this widget
@@ -383,6 +423,27 @@ class VlcVideoWidget( QWidget ):
         volume_layout.addWidget( volume_slider )
         volume_slider.setValue( 80 )    # triggers _on_volume_changed, sets the initial vlc volume too
 
+        # ---- playback speed, same row as volume
+        value    = self.gui_dict.get( "speed_control" )
+        if value is None or value is True:
+            a_widget              = QLabel( "Speed" )
+            volume_layout.addWidget( a_widget )
+
+            a_widget              = QDoubleSpinBox(   )
+            a_widget.setRange( 0.25, 4.0 )
+            a_widget.setSingleStep( 0.25 )
+            a_widget.setDecimals( 2 )
+            a_widget.setSuffix( " x" )
+            a_widget.setValue( 1.0 )
+            # without this, typing "1.5" fires valueChanged at "1." then "1.5"
+            a_widget.setKeyboardTracking( False )
+            a_widget.valueChanged.connect( self._on_rate_changed )
+            self.rate_spin_box    = a_widget
+            volume_layout.addWidget( a_widget )
+
+        else:
+            self.rate_spin_box    = None
+
         # ---- play/pause + stop -- generic transport controls live here,
         # unlike "Play Vid 1/2" which is demo-specific ( picks a file ) and
         # stays in the host tab
@@ -409,6 +470,7 @@ class VlcVideoWidget( QWidget ):
         Play/Pause button starts it whenever the user is ready. use play()
         instead to load and start immediately
         """
+        self.file_name      = file_name
         self.video_frame.load( file_name )
 
         msg                 = ( f"loaded {file_name = }, not playing  " )
@@ -420,9 +482,47 @@ class VlcVideoWidget( QWidget ):
         """
         what it says -- load and play file_name, updating the status label
         """
+        self.file_name      = file_name
         self.video_frame.play( file_name )
 
         msg                 = ( f"playing {file_name = }  " )
+        self.media_status_widget.setText( msg )
+        self.status_message_signal.emit( msg )
+
+    # -------------------------------------
+    def set_reload_on_end( self, reload_on_end ):
+        """
+        what it says -- when True, a video that plays to its end is
+        re-loaded but NOT played, so it is back at the start and the
+        Play button starts it again. when False ( the default ) libvlc
+        leaves it in its "ended" state
+        """
+        self.reload_on_end  = bool( reload_on_end )
+
+        msg                 = ( f"reload_on_end set to {self.reload_on_end}" )
+        self.status_message_signal.emit( msg )
+
+    # -------------------------------------
+    def _reload_after_end( self, ):
+        """
+        read it -- called from _on_media_state_changed on "end reached"
+        when reload_on_end is set. this runs on the Qt main thread, which
+        matters: calling libvlc player methods from inside libvlc's own
+        event callback can deadlock
+        """
+        file_name           = self.file_name
+        if file_name is None:
+            return
+
+        self.video_frame.load( file_name )
+
+        # get_length_ms() is -1 until playback starts again, so
+        # _update_position will not reset the slider for us
+        self.position_slider.blockSignals( True )
+        self.position_slider.setValue( 0 )
+        self.position_slider.blockSignals( False )
+
+        msg                 = ( f"end reached, reloaded {file_name = }, not playing  " )
         self.media_status_widget.setText( msg )
         self.status_message_signal.emit( msg )
 
@@ -511,18 +611,56 @@ class VlcVideoWidget( QWidget ):
         self.video_frame.set_volume( value )
 
     # -------------------------------------
+    def _on_rate_changed( self, value ):
+        """
+        what it says -- value is the playback speed, 1.0 normal, straight
+        from the speed spin box
+        """
+        result              = self.video_frame.set_rate( value )
+
+        if result != 0:
+            msg                 = ( f"vlc refused playback speed {value}  " )
+            self.status_message_signal.emit( msg )
+
+    # -------------------------------------
+    def set_rate( self, rate ):
+        """
+        what it says -- set the playback speed from code. goes through the
+        spin box ( when there is one ) so it stays in sync with the player
+        """
+        if self.rate_spin_box is None:
+            self._on_rate_changed( rate )
+        else:
+            self.rate_spin_box.setValue( rate )
+
+    # -------------------------------------
     def _on_media_state_changed( self, state_text ):
         """
         what it says -- reflect the player state in the status label.
         runs on the Qt main thread ( see VlcVideoFrame.vlc_state_signal ),
         unlike the libvlc event callbacks that feed it
+        libvlc ( 3.0.20 at least ) sends Stopped right after EndReached --
+        keep "end reached" showing rather than let that overwrite it
         """
+        last_state          = self.last_state
+        self.last_state     = state_text
+
+        if state_text == "stopped" and last_state == "end reached":
+            return
+
         self.media_status_widget.setText( state_text )
 
         if state_text == "playing":
             self.play_pause_button.setText( "Pause" )
+            # re-apply the slider's volume once playback has started, in case
+            # libvlc ignored the pre-media setValue( 80 ) in __init__ --
+            # tested on libvlc 3.0.20 and not needed, the early volume sticks
+            # self.video_frame.set_volume( self.volume_slider.value() )
         elif state_text in ( "paused", "stopped", "end reached" ):
             self.play_pause_button.setText( "Play" )
+
+        if state_text == "end reached" and self.reload_on_end:
+            self._reload_after_end()
 
         if state_text.startswith( "error" ):
             self.status_message_signal.emit( state_text )

@@ -648,9 +648,10 @@ class PlantingDetailTab( base_document_tabs.DetailTabBase  ):
     # ------------------------
     def field_to_record( self, record ):
         """
+        !! promotable
         for Planting now from photo
         for the updates, get the gui data into the record
-        assume for new add time and id are already there?? or in a self.xxx
+        assume for new add time and id are already there?? or in a self.something
         since not sure how works put in instance
         we still need more fields her and probably in record to field
         """

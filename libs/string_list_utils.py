@@ -22,7 +22,7 @@ import string_list_utils
 # ---- Imports
 #import pprint
 #import os
-#import string_utils
+import string_utils
 
 # import adjust_path
 
@@ -34,7 +34,7 @@ import string_list_utils
 # import parameters
 # parameters      = parameters.Parameters()
 
-
+# ---- constants
 # next debug
 #rint( parameters )
 #rint( AppGlobal.parameters )
@@ -71,6 +71,48 @@ NULL_STR    = ""
 #         LINE_JOIN  = line_join
 
 # ----------------------------------------
+def dict_to_str( a_dict, indent = "" ):
+    """
+    what it says, note indent
+        should this be string lines, think not for now
+        !! should be a comp ??
+    """
+    a_str      = ""
+
+    for i_key, i_value in a_dict.items():
+        a_str   = f"{a_str}{indent}{i_key} >>{i_value}<\n"
+
+    return a_str
+
+# ------------------------------------------
+def list_to_string( a_list,  indent = "" ):
+    """
+    what it says
+    put proper new line between list elements
+    """
+
+
+    a_str      = ""
+    b_str      = ""
+    for i_object in a_list:
+
+        if  isinstance( i_object, dict ):
+            i_str   = dict_to_str( i_object, indent = "    " )
+
+        else:
+            i_str   = str( i_object, )
+
+
+        b_str   = f"{b_str}{indent}>>{i_str}<\n"
+
+    a_str   = f"{a_str}{indent}*{b_str}*\n"
+    b_str   = ""
+
+    return a_str
+
+
+
+# ----------------------------------------
 def list_remove_3_quotes_i_doubt_it( string_list ):
     """
     looks like return every other line
@@ -91,8 +133,10 @@ def list_remove_3_quotes_i_doubt_it( string_list ):
 
     # think slice with stride can do the seme
     for ix, i_split in enumerate( string_list ):
+
         if ix % 2 == 0:
             keeps.append( i_split )
+
     return keeps
 
 # ----------------------------------------
@@ -175,7 +219,7 @@ def list_to_list_max_n_blank( lines, *, max_blank = 2  ):
     return new_lines
 
 # ----------------------------------------
-def list_to_list_remove_dirt( lines, *, screen_dirt    ):
+def list_to_list_remove_dirt( lines, *, screen_dirt ):
     """
      dirt_list is a list of dictts as in parameters.screen_dirt
      trim trailing always
@@ -190,6 +234,27 @@ def list_to_list_remove_dirt( lines, *, screen_dirt    ):
         i_line  = i_line.rstrip()
         for i_key, i_value in screen_dirt.items():
             i_line   = i_line.replace( i_key, i_value )
+
+        new_lines.append( i_line )
+
+    return new_lines
+
+# ----------------------------------------
+def list_to_list_to_underscore( lines,   ):
+    """
+     dirt_list is a list of dictts as in parameters.screen_dirt
+     trim trailing always
+     for i_key, i_value in a_dict.items():
+     screen_dirt is a dict of old value to new value  -- why a dict
+         could be itterable of itterables  butnow a dict of dicts
+         string_list_utils.py
+    """
+    new_lines             = []
+
+    for i_line in lines:
+        i_line  = i_line.rstrip()
+
+        i_line   = string_utils.to_underscore( i_line)
 
         new_lines.append( i_line )
 

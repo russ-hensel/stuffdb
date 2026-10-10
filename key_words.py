@@ -150,17 +150,13 @@ class KeyWords(   ):
         # this may be a repeat that we want to elimiante
         # Execute the DELETE statement
 
-        if True:  # 5 6 compat
-            ret  =  query.exec()
-        else:
-            ret  =  query.exec_()
-
-        if not ret:
+        if not  query.exec():
             error = query.lastError()
             msg   = (f"Error deleting id {table_id}: {error.text()}")
             logging.error( msg )
 
-        else:
+        else:   # !!
+
             if VERBOSE:
                 debug_msg   = (f"Successfully deleted rows where table_id = {table_id}")
                 logging.log( LOG_LEVEL,  debug_msg, )
@@ -213,12 +209,7 @@ class KeyWords(   ):
             query.bindValue( ":word",     word )
             query.bindValue( ":table_id", table_id )
 
-            # Execute the DELETE statement
-
-            if True:  # 5 6 compat
-                ret  =  query.exec()
-            else:
-                ret  =  query.exec_()
+            ret  =  query.exec()
 
             if not ret:
                 error = query.lastError()
@@ -255,15 +246,13 @@ class KeyWords(   ):
             query.bindValue( ":id",        table_id )
             query.bindValue( ":key_word",  i_key_word )
 
-            if  True:  # 5 6 compat
-                ret  =  query.exec()
-            else:
-                ret  =  query.exec_()
+            ret  =  query.exec()
 
             if not ret:
                 msg   = ( f"Error inserting record {i_key_word}: {query.lastError().text()}" )
                 logging.error( msg )
                 1/0
+
             else:
                 if VERBOSE:
                     print( f"Record {i_key_word} inserted successfully!" )

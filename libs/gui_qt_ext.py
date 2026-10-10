@@ -56,18 +56,39 @@ from qtpy.QtWidgets import (QApplication, QCheckBox, QFileDialog, QGridLayout,
                             QPushButton, QStyledItemDelegate, QTextEdit,
                             QVBoxLayout, QWidget)
 
+
+
+from pathlib import Path
+
+from qtpy.QtCore import (
+                         Qt,
+                           )
+
+
+from qtpy.QtWidgets import (QApplication,
+                            QComboBox,
+                            QDialog,
+                            QFileDialog,
+                            QGroupBox,
+                            QHBoxLayout,
+                            QLabel,
+                            QLineEdit,
+                            QListWidget,
+                            QMessageBox,
+                            QPushButton,
+                            QSizePolicy,
+                            QSpacerItem,
+                            QTableView,
+                            QTableWidget,
+                            QTableWidgetItem,
+                            QTabWidget,
+                            QVBoxLayout,
+                            QWidget)
+
 from app_global import AppGlobal
+import string_utils
 
-#import PyQt.QtWidgets as qtw    #  qt widgets avoid so much import below
-
-
-
-
-# QCursor  =  QtGui.QCursor
-
-
-
-
+#
 # for above to work need to have an AppGlobal in the dir
 # where app was started, or provide another in this dir
 # seems to work
@@ -158,13 +179,14 @@ class SizedMessageBoxxxx( QMessageBox ):
         self.fixed_size = (fixed_width, fixed_height)
         self.custom_show_event   = custom_show_event
 
+    #---------------------
     def showEvent(self, event):
         super().showEvent(event)
         self.custom_show_event( self, event )
             # this is injected or replaceable function
             # self twice since it is not in class
 
-
+    #---------------------
     # or a null function ( pass ) may be as effective
     def resizeEvent(self, event):
         pass    # i do not have the rectangle
@@ -305,7 +327,7 @@ def util_message_box( title_text, msg_text ):
         return
     may want to extend to position color... log
     from base_document_tabs   is_delete_ok
-    gui_qt_ext.util_message_box( title_text = "abc", msg_text = "def" ) )   # import gui_qt_ext
+    gui_qt_ext.util_message_box( title_text = "abc", msg_text = "def" )    # import gui_qt_ext
 
     """
     QMessageBox.information( AppGlobal.main_window,
@@ -1071,7 +1093,7 @@ class PlaceInGrid( ):
     placer.place(  a_widget, columnspan = None,   rowspan = None, sticky = None )
 
     Interface
-        tried to use _xxx for non interface functions and var
+        tried to use _something for non interface functions and var
         debug_id
 
 
@@ -1318,9 +1340,99 @@ class PlaceInGrid( ):
 
         a_str = f"{a_str}\n   ix_col_max             {self.ix_col_max}"
 
-        #a_str = f"{a_str}\n   function               {self.function}"
-        # a_str = f"{a_str}\n   xxx        {self.xxx}"
+
         return a_str
+
+
+
+# -------------------------.
+class FileBrowser(   ):
+
+    def __init__( self, init_last_directory  = None ):
+        """
+        support memory of last directory and other options
+        basically a data struct that has the desired settings
+        for the file browse
+        """
+        #rint( "ver 499")
+        if init_last_directory is None:
+            self.last_directory     = str( Path.home() )
+
+        else:
+            self.last_directory     = str( Path( init_last_directory ).expanduser() )
+                # ---- qt will not expand a "~" itself, we must do it
+
+        # part of api
+        self.name_filter_list   = [
+             "Images (*.png *.jpg *.jpeg *.bmp *.gif)",
+             "Text files (*.txt *.md *.log)",
+             "All files (*)"
+         ]
+
+        self.use_native     = False
+        self.title          = "Select Files zz"
+
+    #---------------------
+    def browse( self, parent = None, ):
+        """
+        use_native overrides self.use_native for this one call, handy when
+        testing the two dialogs against each other
+        """
+        dialog = QFileDialog( parent, self.title )
+
+        dialog.setFileMode( QFileDialog.ExistingFiles )
+        dialog.setViewMode( QFileDialog.Detail )
+        dialog.setOption( QFileDialog.DontUseNativeDialog, not self.use_native )
+            # ---- the option is DontUse..., so it takes the opposite of a_native
+        dialog.setOption( QFileDialog.ReadOnly, False )
+
+        # msg     = ( f"browse using {a_native = } -> "
+        #             f"DontUseNativeDialog = {not a_native}" )
+        # print( msg )
+
+        dialog.setDirectory( self.last_directory )
+            # ---- 2. start there
+
+        dialog.setNameFilters( self.name_filter_list )
+
+        #rint( f"{str(self ) = }")
+
+        if dialog.exec_():
+            files                   = dialog.selectedFiles()
+            self.last_directory     = str( Path( files[0] ).parent )
+                # ---- 3. remember
+            return files
+
+        else:
+            return []
+
+    #-------------------------- import string_utils
+    def __str__( self ):
+        """
+        universal __str__
+        """
+        return string_utils.obj_to_str( self )
+
+
+# ---- one shared browser, so last_directory survives between calls
+FILE_BROWSER    = None
+
+# -------------------------
+def get_file_browser( init_last_directory = None, force_new = False ):
+    """
+    what it says -- makes the browser on first call, returns it after that
+
+    force_new = True throws the old one away and builds a new one, which is
+    what you want after editing __init__ in a live spyder kernel -- the
+    cached instance does not see source edits
+    """
+    global FILE_BROWSER
+
+    if ( FILE_BROWSER is None ) or force_new:
+        FILE_BROWSER    = FileBrowser( init_last_directory )
+
+    return FILE_BROWSER
+
 
 
 # ---- eof

@@ -20,7 +20,7 @@ level 1a and b runs on the index from level 0
 # ---- imports
 # ----QtWidgets
 
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QAction,
     QButtonGroup,
     QCheckBox,
@@ -39,8 +39,8 @@ from PyQt5.QtWidgets import (
     QWidget,
     )
 
-import string_util
-from functools import partial
+import string_utils  as    string_util
+from   functools    import partial
 
 #------------------------------------------
 class ComboSync3(  ):

@@ -64,11 +64,17 @@ LOG_LEVEL  = 10   # higher is more
 # -----------------------------
 def load_pixmap_exif_corrected( file_name ):
     """
-    what it says, read
+    what it says, read  # may have mp4 or Path issue
     QPixmap( file_name ) ignores EXIF orientation, so photos taken in
     portrait come in rotated 90 -- xviewer and friends apply it, we did not
+    for now !! skip mp4 and may not manage Path() types
     """
-    reader          = QImageReader( file_name )
+    print( "load_pixmap_exif_corrected", "not the right way to do this !! but fixes bug for now !!", file_name )
+    # logging.log( LOG_LEVEL, debug_msg, )
+    if type( file_name )  != str:
+        file_name = str( file_name )
+
+    reader          = QImageReader( file_name ) # must be a string not path
     reader.setAutoTransform( True )
     image           = reader.read()
     pixmap          = QPixmap.fromImage( image )
@@ -154,11 +160,13 @@ class PictureViewer( QGraphicsView ):
             self.display_file_base( file_name )
                 # the file is a "picture"
 
-
     # -----------------------------
     def display_file_base( self, file_name ):
         """
         what it says, read
+        some confusion over file_name types
+             Path() types may cause issue
+
         """
         self.file_name  = file_name
         pixmap          = load_pixmap_exif_corrected( file_name )
@@ -172,8 +180,8 @@ class PictureViewer( QGraphicsView ):
 
             else:
                 file_exists   = os.path.exists( file_name )
-            debug_msg   = (  f"PictureViewer display_file error    { file_name = } {file_exists = }")
-            logging.log( LOG_LEVEL,  debug_msg, )
+            debug_msg   = (  f"PictureViewer.display_file_base error  { file_name = } {file_exists = }")
+            logging.log( LOG_LEVEL, debug_msg, )
 
             self.clear()
 

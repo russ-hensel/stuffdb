@@ -386,7 +386,7 @@ class StuffdbMainWindow( QMainWindow ):
         action.triggered.connect( connect_to )
         menu.addAction( action )
 
-        action          = QAction( "Add/Copy", self )
+        action          = QAction( "Add/Copy Title", self )
         #connect_to      = functools.partial( self.add_subwindow, window_type = "stuff" )
         connect_to      = functools.partial(  self.go_active_sub_window_func,
                                               "add_copy"    )  #  "copy_prior_row"

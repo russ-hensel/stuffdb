@@ -16,6 +16,7 @@ import string_list_utils
 # ---- Imports
 #import pprint
 import os
+import re
 
 # import adjust_path
 #import string_util
@@ -51,19 +52,17 @@ def clean_string_to_list( a_string,
         #     i_line = i_line.r_strip()
         a_list   = [ i_line.rstrip() for i_line in a_list ]
 
-
-
     return a_list
 
 # ----------------------------------------
 def extract_self( a_string ):
     """
-    extract all the self.xxx = assignments
+    extract all the self.a_thing = assignments
     this is used for things like construction of __init__ and __str__
 
     += and -= need to be delt with , perhaps change to "=" then extract
     return
-        set of the xxx's
+        set of the things's
     ex:
         set_self   = clip_string_utils.extract_self( a_string )
 
@@ -93,7 +92,7 @@ def extract_self( a_string ):
     lines       = lines_new
     lines_new   = []
     for i_line in lines:
-          lines_new.append( i_line[ 5: ])
+        lines_new.append( i_line[ 5: ])
 
     # get assignments
     lines    = lines_new
@@ -149,7 +148,7 @@ def count_leading_spaces( a_string ):
 
     return leading_spaces
 
-# ---- is functions -------------------------------
+# ---- begins with functions -------------------------------
 def begins_with_url( a_string, ):
     """
     it_is  = string_util.begins_with_url( a_string )
@@ -183,6 +182,8 @@ def begins_with_file_name( a_string, ):
 
     return False
 
+
+# ---- is functions -------------------------------
 # ---------------------------------
 def is_url( a_string,  ):
     """
@@ -204,29 +205,15 @@ def is_url( a_string,  ):
     #test_url   = (a_string.split() ).[0])  #.strip()     # parse off using whitespace  and strip
 
     for i_prefix in URL_VALID_PREFIXS:
+
         if test_url.find( i_prefix ) == 0:    # find str2 in str1
             is_url_bool = True
 
     if is_url_bool:
         return ( is_url_bool, test_url )
+
     else:
         return( is_url_bool, "" )
-
-# ------------------------------------------
-def float_or_none( a_obj, ):
-
-    """
-    convert to float if it works else none
-        is it worth the import for this?
-        string_utils.float_or_none( a_obj, ) # import  string_utils
-    """
-    try:
-        ret     = float( a_obj )
-
-    except:
-        ret     = None
-
-    return ret
 
 # ------------------------------------------
 def is_filename( a_string,  ):
@@ -257,6 +244,25 @@ def is_filename( a_string,  ):
     return is_fn, test_fn
 
 # ------------ end is functions
+
+# ------------------------------------------
+def float_or_none( a_obj, ):
+
+    """
+    convert to float if it works else none
+        is it worth the import for this?
+        string_utils.float_or_none( a_obj, ) # import  string_utils
+    """
+    try:
+        ret     = float( a_obj )
+
+    except:
+        ret     = None
+
+    return ret
+
+
+
 # ------------------------------
 def print_uni( a_string_ish ):
     """
@@ -330,9 +336,36 @@ def eval_f_string( a_fstring ):
 
     return ( no_exception, ret_string )
 
+
+# ---------------------
+def to_columns( current_str, item_list, format_list = ( "{: <30}", "{:<30}" ), indent = "    "  ):
+    """
+    for __str__  probably always default format_list
+    see ColunmFormatter which is supposed to be more elaborate version
+    see its __str__
+    ex:
+        import string_util
+        a_str     = string_util.to_columns( a_str, ["column_data",    f"{self.column_data}"  ] )
+        a_str     = string_util.to_columns( a_str,
+                                            ["column_data",    f"{self.column_data}"  ],
+                                            format_list = ( "{: <30}", "{:<30}" )
+    """
+    #rint ( f"item_list {item_list}.............................................................. " )
+    line_out  = ""
+    for i_item, i_format in zip( item_list, format_list ):
+        a_col  = i_format.format( i_item )
+        line_out   = f"{indent}{line_out}{a_col}"
+    if current_str == "":
+        ret_str  = f"{line_out}"
+    else:
+        ret_str  = f"{current_str}\n{line_out}"
+    return ret_str
+
+
 # ------------------------------------------
 def string_to_py_list( a_string ):
     """
+    FROM CLIP_STRING_UTIL
     Purpose:
         take a multiline string and turn it into a python
         list of strings
@@ -379,30 +412,240 @@ def string_to_py_list( a_string ):
 
     return a_string
 
-# ---------------------
-def to_columns( current_str, item_list, format_list = ( "{: <30}", "{:<30}" ), indent = "    "  ):
+# ------------------------------------------
+def string_to_py_list_dup( a_string ):
     """
-    for __str__  probably always default format_list
-    see ColunmFormatter which is supposed to be more elaborate version
-    see its __str__
-    ex:
-        import string_util
-        a_str     = string_util.to_columns( a_str, ["column_data",    f"{self.column_data}"  ] )
-        a_str     = string_util.to_columns( a_str,
-                                            ["column_data",    f"{self.column_data}"  ],
-                                            format_list = ( "{: <30}", "{:<30}" )
-    """
-    #rint ( f"item_list {item_list}.............................................................. " )
-    line_out  = ""
-    for i_item, i_format in zip( item_list, format_list ):
-        a_col  = i_format.format( i_item )
-        line_out   = f"{indent}{line_out}{a_col}"
-    if current_str == "":
-        ret_str  = f"{line_out}"
-    else:
-        ret_str  = f"{current_str}\n{line_out}"
-    return ret_str
+    Purpose:
+        take a multiline string and turn it into a python
+        list of strings
+        usual clean up of lines
+        make multiline if long
+        left trim lines for leading spaces
 
+    Notes:
+        what if stuff already includes quotes.... tough
+        returns a string of python code
+
+    """
+    string_list, __     = clean_string_to_list( a_string )
+
+    a_list              = []  # return as list or back to string
+
+    len_max             = 0
+    tot_len             = 0
+
+    for i_string in string_list:
+        print( i_string )
+        i_string  = i_string.lstrip()
+        i_len      = len( i_string )
+        tot_len   += i_len                    # ?? place for wallrus
+        if i_len > len_max:            #!! len_max =  max( len_max, i_len )
+            len_max  = i_len
+
+        a_list.append( f'"{i_string}"' )
+
+        # ret.append( "======>" + i_string )
+    if tot_len > 100:
+        a_string   = ", \n".join( a_list )
+    else:
+        a_string   = ", ".join( a_list )
+
+    a_string   = f"[ {a_string} ]"
+
+    # if False: # debug
+    #     print( f"i_string =           {i_string}")
+    #     print( f"    leading_spaces       {i_leading_spaces}")
+    #     print( f"    first_eq             {ix_first_eq}")
+    #     print( f"    ix_first_pound_sign, {ix_first_pound_sign}")
+
+
+    return a_string
+
+
+# ------------------------------------------
+def allign_eq_signs( a_string ):
+    """
+    FROM CLIP, NOT YET FIXED BUT SHULD BE EASY
+    Purpose:
+        alligns = signs, using first line as a template
+        preserves comments
+        ignores blank lines and all comment lines
+        trims trailing blanks
+
+    Notes:
+
+        must have an exposed = sign on first line
+        allign stops if change in indent
+                     no = sign found on a line -- unless blank or comment
+
+
+
+    ?? probably want to skip blank lines ... may not allow as first
+    inconsistent use of i and ix
+
+    !! need to add += ......
+
+
+    returns a list, not a sting, join with list_to_string_lines( a_list ) if you want a string
+
+            abc         = def   # comment
+
+    change to indicate success ?
+    i_format  = "{: <30}"
+    a_col  = i_format.format( i_item )
+
+    find_eq
+
+    """
+    ( lines, ix_deleted )  = clean_string_to_list( a_string,
+                          delete_tailing_spaces  = True,
+                          delete_comments        = False,
+                          delete_blank_lines     = False,   )
+    space_count  = None
+    new_lines    = []
+
+    for i_line in lines:
+
+        if space_count is None:
+            space_count   = count_leading_spaces( i_line )
+            find_eq       = i_line.find( "=",   )
+
+            if find_eq == 0:
+                return a_string
+            #format_var    =  '{:<'  + str( find_eq - space_count ) + '}'
+            format_var    =  '{:<'  + str( find_eq     ) + '}'
+        splits        = i_line.split( "=" )
+
+        if len( splits)  < 2:
+            # no =
+            i_new_line   = i_line
+            new_lines.append( i_new_line )
+            continue
+
+        var          = ( space_count * " " ) + splits[0].strip()
+        #format_var    =  '"{: <' 30}"
+
+        assign_to    = "= " + splits[1].strip()
+        i_new_line   = to_columns( "",
+                                            [var,    assign_to  ],
+                                            format_list = [  format_var, "{:<50}" ],
+                                            indent = "" )
+
+        #i_new_line  = var + assign_to
+        new_lines.append( i_new_line )
+
+    return "\n".join( new_lines )
+
+
+# ------------------------------------------
+def to_underscore( a_string ):
+    """
+    string_utils.to_underscore( a_string )
+    """
+    #  me new_string    = a_string.replace(" ", "_").replace("-", "_")
+    # but better claud:
+    new_string   = re.sub(r"[ _-]+", "_", a_string )
+
+    return new_string
+
+# ------------------------------------------
+def num_to_string( an_int, dp_places = "not implemented yet" ):
+    """
+    string_utils.num_to_string( an_int )
+
+        if dealing with ints in some ranges may not want the dp ??
+
+    """
+    test_val   =  1_000_000_000
+    if an_int > test_val:
+        an_int = an_int/test_val
+        text   = f"{an_int:.3f} Giga"
+        return text
+
+    test_val   =  1_000_000
+    if an_int > test_val:
+        an_int = an_int/test_val
+        text   = f"{an_int:.3f} Mega"
+        return text
+
+    test_val   =  1_000
+    if an_int > test_val:
+        an_int = an_int/test_val
+        text   = f"{an_int:.3f} Kilo"
+        return text
+
+    test_val   =  1
+    if an_int > test_val:
+        an_int = an_int/test_val
+        text   = f"{an_int:.3f} "
+        return text
+
+    test_val   =  .001
+    if an_int > test_val:
+        an_int = an_int / test_val
+        text   = f"{an_int:.3f} mili"
+        return text
+
+    test_val   =  .000001
+    if an_int > test_val:
+        an_int = an_int/test_val
+        text   = f"{an_int:.3f} micro"
+        return text
+
+    text   = str( an_int )
+    return text
+
+
+#-------------------------------
+def delta_time_to_string( a_float ):
+    """
+    delta_time in seconds
+    use a unit that makes sense
+        string_utils.delta_time_to_string( a_float )
+
+    """
+    minutes    = 60
+    hour       = 60 * minutes
+    day        = 24 * hour
+
+    test_val   = day
+    if a_float > test_val:
+        value  = a_float/test_val
+        text   = f"{value:.3f} Days"
+        return text
+
+    test_val   =  hour
+    if a_float > test_val:
+        a_float = a_float/test_val
+        text   = f"{a_float:.3f} Hours"
+        return text
+
+    test_val   =  minutes
+    if a_float > test_val:
+        a_float = a_float/test_val
+        text   = f"{a_float:.3f} Minutes"
+        return text
+
+    test_val   =  1
+    if a_float > test_val:
+        an_int = a_float/test_val
+        text   = f"{a_float:.3f} Seconds"
+        return text
+
+    test_val   =  .001
+    if a_float > test_val:
+        a_float = a_float / test_val
+        text   = f"{a_float:.3f} mili Seconds"
+        return text
+
+    test_val   =  .000001
+    if a_float > test_val:
+        a_float = a_float/test_val
+        text   = f"{a_float:.3f} micro Seconds"
+        return text
+
+    text   = str( a_float )
+    return text
 
 # -----------------------------------------
 class ColumnFormater( ):
@@ -474,7 +717,6 @@ class ColumnFormater( ):
         what it says, read
         data accumulated in object
         """
-        pass
         self.column_data.append( column_tuple )
         # Could check length against column specs
 
@@ -551,229 +793,9 @@ class ColumnFormater( ):
 
         return a_str
 
-# ------------------------------------------
-def string_to_py_list( a_string ):
-    """
-    FROM CLIP_STRING_UTIL
-    Purpose:
-        take a multiline string and turn it into a python
-        list of strings
-        usual clean up of lines
-        make multiline if long
-        left trim lines for leading spaces
-
-    Notes:
-        what if stuff already includes quotes.... tough
-        returns a string of python code
-
-    """
-    string_list, __     = clean_string_to_list( a_string )
-
-    a_list              = []  # return as list or back to string
-
-    len_max             = 0
-    tot_len             = 0
-
-    for i_string in string_list:
-        print( i_string )
-        i_string  = i_string.lstrip()
-        i_len      = len( i_string )
-        tot_len   += i_len                    # ?? place for wallrus
-        if i_len > len_max:
-            len_max  = i_len
-
-        a_list.append( f'"{i_string}"' )
-
-        # ret.append( "======>" + i_string )
-    if tot_len > 100:
-        a_string   = ", \n".join( a_list )
-    else:
-        a_string   = ", ".join( a_list )
-
-    a_string   = f"[ {a_string} ]"
-
-    # if False: # debug
-    #     print( f"i_string =           {i_string}")
-    #     print( f"    leading_spaces       {i_leading_spaces}")
-    #     print( f"    first_eq             {ix_first_eq}")
-    #     print( f"    ix_first_pound_sign, {ix_first_pound_sign}")
 
 
-    return a_string
-
-
-
-# ------------------------------------------
-def allign_eq_signs( a_string ):
-    """
-    FROM CLIP, NOT YET FIXED BUT SHULD BE EASY
-    Purpose:
-        alligns = signs, using first line as a template
-        preserves comments
-        ignores blank lines and all comment lines
-        trims trailing blanks
-
-    Notes:
-
-        must have an exposed = sign on first line
-        allign stops if change in indent
-                     no = sign found on a line -- unless blank or comment
-
-
-
-    ?? probably want to skip blank lines ... may not allow as first
-    inconsistent use of i and ix
-
-    !! need to add += ......
-
-
-    returns a list, not a sting, join with list_to_string_lines( a_list ) if you want a string
-
-            abc         = def   # comment
-
-    change to indicate success ?
-    i_format  = "{: <30}"
-    a_col  = i_format.format( i_item )
-
-    find_eq
-
-    """
-
-    ( lines, ix_deleted )  = clean_string_to_list( a_string,
-                          delete_tailing_spaces  = True,
-                          delete_comments        = False,
-                          delete_blank_lines     = False,   )
-    space_count  = None
-    new_lines    = []
-    for i_line in lines:
-        if space_count is None:
-            space_count   = string_utils.count_leading_spaces( i_line )
-            find_eq       = i_line.find( "=",   )
-            if find_eq == 0:
-                return a_string
-            #format_var    =  '{:<'  + str( find_eq - space_count ) + '}'
-            format_var    =  '{:<'  + str( find_eq     ) + '}'
-        splits        = i_line.split( "=" )
-        if len( splits)  < 2:
-            # no =
-            i_new_line   = i_line
-            new_lines.append( i_new_line )
-            continue
-
-        var          = ( space_count * " " ) + splits[0].strip()
-        #format_var    =  '"{: <' 30}"
-
-        assign_to    = "= " + splits[1].strip()
-        i_new_line   = string_utils.to_columns( "",
-                                            [var,    assign_to  ],
-                                            format_list = [  format_var, "{:<50}" ],
-                                            indent = "" )
-
-        #i_new_line  = var + assign_to
-        new_lines.append( i_new_line )
-
-    return "\n".join( new_lines )
-
-
-# ------------------------------------------
-def num_to_string( an_int, dp_places = "not implemented yet" ):
-    """
-    string_utils.num_to_string( an_int )
-
-        if dealing with ints in some ranges may not want the dp ??
-
-    """
-    test_val   =  1_000_000_000
-    if an_int > test_val:
-        an_int = an_int/test_val
-        text   = f"{an_int:.3f} Giga"
-        return text
-
-    test_val   =  1_000_000
-    if an_int > test_val:
-        an_int = an_int/test_val
-        text   = f"{an_int:.3f} Mega"
-        return text
-
-    test_val   =  1_000
-    if an_int > test_val:
-        an_int = an_int/test_val
-        text   = f"{an_int:.3f} Kilo"
-        return text
-
-    test_val   =  1
-    if an_int > test_val:
-        an_int = an_int/test_val
-        text   = f"{an_int:.3f} "
-        return text
-
-    test_val   =  .001
-    if an_int > test_val:
-        an_int = an_int / test_val
-        text   = f"{an_int:.3f} mili"
-        return text
-
-    test_val   =  .000001
-    if an_int > test_val:
-        an_int = an_int/test_val
-        text   = f"{an_int:.3f} micro"
-        return text
-
-    text   = str( an_int )
-    return text
-
-#-------------------------------
-def delta_time_to_string( a_float ):
-    """
-    delta_time in seconds
-    use a unit that makes sense
-        string_utils.delta_time_to_string( a_float )
-
-    """
-    minutes    = 60
-    hour       = 60 * minutes
-    day        = 24 * hour
-
-    test_val   = day
-    if a_float > test_val:
-        value  = a_float/test_val
-        text   = f"{value:.3f} Days"
-        return text
-
-    test_val   =  hour
-    if a_float > test_val:
-        a_float = a_float/test_val
-        text   = f"{a_float:.3f} Hours"
-        return text
-
-    test_val   =  minutes
-    if a_float > test_val:
-        a_float = a_float/test_val
-        text   = f"{a_float:.3f} Minutes"
-        return text
-
-    test_val   =  1
-    if a_float > test_val:
-        an_int = a_float/test_val
-        text   = f"{a_float:.3f} Seconds"
-        return text
-
-    test_val   =  .001
-    if a_float > test_val:
-        a_float = a_float / test_val
-        text   = f"{a_float:.3f} mili Seconds"
-        return text
-
-    test_val   =  .000001
-    if a_float > test_val:
-        a_float = a_float/test_val
-        text   = f"{a_float:.3f} micro Seconds"
-        return text
-
-    text   = str( an_int )
-    return text
-
-
+# ---- tests =========== move to sub
 #---------------------------
 def test_delta_time_to_string():
     """
@@ -939,12 +961,14 @@ def test_column_formatterxxx():
 
     print( a_column_formatter.get_result() )
 
+# ---------------------------
 class TestClass():
     def __init__( self ):
         self.aaaa = "all a's"
         self.bbb  = "some Be gooe"
     def __str__( self ):
         return obj_to_str( self )
+
 
 # --------------------
 def test_obj_to_str():
@@ -960,15 +984,33 @@ def test_obj_to_str():
     # print(a_str)
     print( f"{str( a_test_class ) }"   )
 
+
+# --------------------
+def test_to_underscore():
+    """
+
+
+    """
+    a_str   = "here we go"
+    print( f"{a_str =  }\n     {to_underscore( a_str ) = }")
+
+
+
+    a_str   = "here 2026-10-02  go"
+    print( f"{a_str =  }\n     {to_underscore( a_str ) = }")
+
+
+
 # ---- test_column_formatter() and...
 # --------------------
-if __name__ == "x__main__":
-   #move tests to sub dir and delete here
-   1/0
-   test_num_to_string()
-   test_obj_to_str()
-   test_clean_string_to_list()
-   test_delta_time_to_string()
+if __name__ == "__main__":
+    #move tests to sub dir and delete here
+    #1/0
+    test_num_to_string()
+    test_obj_to_str()
+    test_clean_string_to_list()
+    test_delta_time_to_string()
+    test_to_underscore()
 # --------------------
 
 

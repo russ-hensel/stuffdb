@@ -30,13 +30,16 @@ import subprocess
 
 
 #-----------------------------------------------
-def get_thumbnail( video_path, output_path, timestamp = "10%", size = 320, quality = 8 ):
+def make_thumbnail( video_path, output_path, timestamp = "10%", size = 320, quality = 8 ):
     """
+    does not get it makes it consider change of names also paths or not
     what it says -- extract one frame from video_path and save it as an
     image at output_path ( image format is taken from output_path's
     extension -- .jpg/.png ). raises subprocess.CalledProcessError on
     failure ( e.g. bad video_path ), FileNotFoundError if
     ffmpegthumbnailer itself is not installed
+
+    are the paths paths or strings
 
         video_path      -- path to the source video
         output_path     -- path to write the thumbnail image to
@@ -49,7 +52,7 @@ def get_thumbnail( video_path, output_path, timestamp = "10%", size = 320, quali
                             the video's original size
         quality         -- jpeg/png quality, 0 ( worst ) - 10 ( best )
 
-        from video_thumbnail import get_thumbnail  #  get_thumbnail( video_path, output_path, timestamp = "10%", size = 320, quality = 8 )
+        from video_thumbnail import make_thumbnail  #  make_thumbnail( video_path, output_path, timestamp = "10%", size = 320, quality = 8 )
     """
     command             = [
                             "ffmpegthumbnailer",
@@ -61,5 +64,35 @@ def get_thumbnail( video_path, output_path, timestamp = "10%", size = 320, quali
                             ]
 
     subprocess.run( command, check = True, capture_output = True )
+
+
+# --------------------------------
+def test_make_thumbnail():
+
+    """
+    # --- How to use it now ---
+    this makes filters from partial
+
+
+    """
+    a_file      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/utils/readme_rsh.txt"
+    new_path    = make_thumbnail( a_file, "bmp" )
+    print( f"new_path  {new_path}")
+
+    a_file      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/utils/readme_rsh"
+    new_path    = set_extension( a_file, "bmp" )
+    print( f"new_path  {new_path}")
+
+    a_file      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/utils/readme_rsh.txt"
+    new_path    = set_extension( a_file, "mp3" )
+    print( f"new_path  {new_path}")
+
+    a_file      = Path( "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/utils/readme_rsh.txt" )
+    new_path    = set_extension( a_file, "mp3" )
+    print( f"new_path  {new_path}")
+
+# "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/utils/string_list_utils.py",
+# "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/utils/string_utils.py"
+
 
 # ---- eof

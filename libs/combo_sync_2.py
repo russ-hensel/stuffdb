@@ -30,7 +30,7 @@ level 1a and b runs on the index from level 0
 # ---- imports
 # ----QtWidgets
 
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QAction,
     QButtonGroup,
     QCheckBox,

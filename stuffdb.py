@@ -20,7 +20,7 @@ if __name__ == "__main__":
 # --------------------
 
 # ---- version
-__version__   = "Ver .094: 2026-07-26.01"
+__version__   = "Ver .095: 2026-10-04.01"
 
 # ---- imports
 import datetime
@@ -39,7 +39,6 @@ import traceback
   # where your QApplication gets constructed and make sure map_popup (or any module importing it) is imported before
   # that line, or wire it in early like your other core imports.
 
-  # Usage:
 
 
 from qtpy.QtCore import ( QTimer, )

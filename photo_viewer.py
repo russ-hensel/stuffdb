@@ -204,7 +204,7 @@ class PhotoViewer( QGraphicsView ):
         self.setTransformationAnchor( QGraphicsView.AnchorUnderMouse )
         self.setResizeAnchor( QGraphicsView.AnchorUnderMouse )
         self.vlc_media_frame    = None   # if present for mp4......
-            # interface  photo_viewer.vlc_media_frame   = xxx
+            # interface  photo_viewer.vlc_media_frame   = something
 
     # -----------------------------
     def display_file( self, file_name  ):

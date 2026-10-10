@@ -180,16 +180,6 @@ class HelpSubWindow( stuffdb_tabbed_sub_window.StuffdbTabbedSubWindow ):
         sub_window.show()
 
     # ---------------------------------------
-    def fetch_id_testxxxxx( self,  ):
-        """
-        just for testing will be deleted
-        """
-        id  = 55
-        print( f"fetch_id_test{id = }")
-        self.fetch_row_by_id(  id )
-        #self.text_tab.fetch_text_row_by_id(  id )
-
-    # ---------------------------------------
     def fetch_row_by_id( self, id ):
         """
         rename call, delete
@@ -951,16 +941,14 @@ class HelpDetailTab( stuffdb_tabbed_sub_window.StuffdbTab  ):
         """
         for stuff now from photo
         for the updates, get the gui data into the record
-        assume for new add time and id are already there?? or in a self.xxx
+        assume for new add time and id are already there?? or in a self.something
         since not sure how works put in instance
         we still need more fields her and probably in record to field
         """
-
         if self.record_state    == self.RECORD_NEW:  # may be needed
             record.setValue("id", int( self.new_record_id ) )
 
 
-        #record.setValue( "name",       self.name_field.text())
         record.setValue( "add_kw",     self.add_kw_field.text())
         record.setValue( "title",      self.title_field.text())
         # record.setValue( "photo_fn",      self.photo_fn_field.text())
@@ -973,15 +961,12 @@ class HelpDetailTab( stuffdb_tabbed_sub_window.StuffdbTab  ):
         """
         for stuff
         """
-# self.descr_field.clear()
-# self.add_kw_field.clear()
 
 
         self.title_field.setText(     record.value(    "title"       ))
         #self.name_field.setText(      record.value(    "name"       ))  # probably shoul have
         self.add_kw_field.setText(    record.value(    "add_kw"       ))
         #self.photo_fn_field.setText(  record.value(    "photo_fn"       ))
-
 
         # self.add_ts_field.setText(record.value(      "add_ts"    ))
         # self.edit_ts_field.setText(record.value(     "edit_ts"   ))
@@ -994,7 +979,6 @@ class HelpDetailTab( stuffdb_tabbed_sub_window.StuffdbTab  ):
         print( msg  )
         # does this work
         # self.id_field.setText(  str( record.value(    "id"      ) ) )
-
 
     # ------------------------
     def clear_fields(self):
@@ -1031,8 +1015,6 @@ class TestDetaiSubTabxxxxxxx( QWidget,    ):
         self.parent_window   = parent_window
         self._build_gui()
 
-
-
     # ------------------------------------------
     def _build_gui( self,   ):
         """
@@ -1053,7 +1035,7 @@ class TestDetaiSubTabxxxxxxx( QWidget,    ):
         # placer.place( a_widget )
 
         # ---- Channel Like
-        a_widget  = QLabel( "xxx:" )
+        a_widget  = QLabel( "" )
         placer.new_row()
         placer.place( a_widget )
 
@@ -1384,14 +1366,9 @@ class HelpTextTab( stuffdb_tabbed_sub_window.StuffdbTab  ):
         """
         in photo may be promotable --- need new ancestor
         for the updates, get the gui data into the record
-        assume for new add time and id are already there?? or in a self.xxx
+        assume for new add time and id are already there?? or in a self.something
         since not sure how works put in instance
         """
-        # if self.record_state    == self.RECORD_NEW:  # may be needed
-        #     # self.record_id
-        #     self.id_field.setText(  str( self.record_id     ) )
-        #     pass
-
         if self.record_state    == self.RECORD_NEW:  # may be needed
             record.setValue("id", int( self.new_record_id ) )
 
@@ -1411,9 +1388,8 @@ class HelpTextTab( stuffdb_tabbed_sub_window.StuffdbTab  ):
         #     record.setValue("text_data", new_text)
         #     model.insertRecord( model.rowCount(), record
 
-
     # ------------------------
-    def record_to_field(self, record ):
+    def record_to_field( self, record ):
         """
         in photo may be promotable
         should be for fetch

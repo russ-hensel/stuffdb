@@ -69,6 +69,7 @@ import qsql_utils
 import db_dup_files
 import run_with_dialog
 import file_utils
+import string_utils
 
 # ---- import end
 
@@ -307,7 +308,7 @@ class DbManagementSubWindow( QMdiSubWindow ):
         # may want to keep at end of this init
         AppGlobal.mdi_management.register_document(  self )
 
-        self.detail_table_name      = "xxx"  # need for framework do not delete
+        self.detail_table_name      = "framework_fills"  # need for framework do not delete
         # self.key_word_table_name    = "stuff_key_word"
         # self.text_table_name        = "stuff_text"  # text tables always id and text_data
             # used in text tab base
@@ -3164,30 +3165,26 @@ class OutputTab( QWidget ):
 
     # -----------------------
     def bot( self, ):
-        """ """
+        """
+        """
         widget      = self.msg_widget
-
 
         widget.moveCursor(QTextCursor.End)
         widget.ensureCursorVisible()
-
-
 
         # cursor      = widget.textCursor()
         # cursor.movePosition(QTextCursor.Start)     # or QTextCursor.MoveAnchor mode is default
         # widget.setTextCursor(cursor)
         # widget.ensureCursorVisible()
 
-
-    # -----------------------
+    #-------------------------- import string_utils
     def __str__( self ):
+        """
+        universal __str__
+        """
+        return string_utils.obj_to_str( self )
 
-        a_str   = ""
-        a_str   = "\n>>>>>>>>>>* xxxxxx *<<<<<<<<<<<<"
-
-        return a_str
-
-
+#-----------------------------
 def test_clean_path_part(   ):
 
 

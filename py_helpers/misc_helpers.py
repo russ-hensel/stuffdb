@@ -11,6 +11,7 @@ module of helpers for >>py to extend functionality beyond just stuffdb.py ...
 # ---- tof
 
 # ---- imports
+import platform, subprocess
 
 # ---- end imports
 
@@ -80,6 +81,23 @@ def  insert_if_missing( a_path_name ):
 
     # if a_path_name
     # sys.path.insert( 1, f"./py_helpers" )   # for installation off dev machines
+
+# -----------------------------------------
+def ping( host, timeout = 1 ):
+    """
+    see notes >>search ping py
+    claud
+    """
+
+    count_flag      = "-n"   if platform.system() == "Windows" else "-c"
+    timeout_flag    = ["-w", str(timeout * 1000)] if platform.system() == "Windows" else ["-W", str(timeout)]
+    result = subprocess.run(
+        ["ping", count_flag, "1", *timeout_flag, host],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    )
+
+    return result.returncode == 0
+
 
 # -----------------------------------------
 def  list_to_toc( a_list ):

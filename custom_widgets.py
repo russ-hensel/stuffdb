@@ -130,10 +130,10 @@ def move_cursor_to_button( button ):
     center_point = button_rect.center()
 
     # Convert to global screen coordinates
-    global_point = button.mapToGlobal(QPoint(
-        button_rect.width() // 2,
+    global_point = button.mapToGlobal( QPoint(
+        button_rect.width()  // 2,
         button_rect.height() // 2
-    ))
+    ) )
 
     # Move the cursor
     QCursor.setPos(global_point)
@@ -463,6 +463,10 @@ class ShellExe( object ):
                                for i_code_line in code_lines
                                    if i_code_line.strip() != "" ]
 
+        for ix, i_item in enumerate( code_lines_new ):
+            msg     = f"    {ix}: >{i_item}<"
+            print( msg )
+
         # works but ugly
         # now combine across \
         code_lines_newer   = []
@@ -472,7 +476,9 @@ class ShellExe( object ):
             if got_bs:
                 len_newer  = len( code_lines_newer )
                 code_lines_newer[ len_newer -1 ] += i_code_line
+
             else:
+
                 if i_code_line.startswith( "#" ):
                     i_code_line =  f"echo '{i_code_line}'"
                 code_lines_newer.append( i_code_line )
@@ -483,10 +489,17 @@ class ShellExe( object ):
             if code_lines_newer[ last_line ].endswith( "\\" ):
                 got_bs             = True
                 code_lines_newer[ last_line ] = code_lines_newer[ last_line ].removesuffix( "\\" )
+
             else:
                 got_bs             = False
 
         code_lines_new   = code_lines_newer
+
+        for ix, i_item in enumerate( code_lines_new ):
+            msg     = f"    {ix}: >{i_item}<"
+            print( msg )
+
+
         #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}")
         # line one == 0 is a comment add echo in front and quote
         code_lines_new[ 0 ]    = f"echo '{code_lines_new[ 0 ]}'   "
@@ -525,41 +538,7 @@ class ShellExe( object ):
 
         return new_list
 
-    # ----------------------------------
-    def build_command_1_2xxx( self, add_echo = True, add_newline = False ):
-        """
-        from command_0 suck dry and delete
-        build command from arg1 and arg2
-        self.build_command_1_2
-        ex:
-        return self.build_command_1_2( add_echo = add_echo, add_newline = add_newline )
-
-        ! need a 0 1 2 version and a generalized one see commands 3 for vert which seems to do it
-        """
-        print( "build_command_1_2" )
-        args        = self.get_ddl_args()
-
-        cmd_prefix  = self.build_prefix()
-
-        cmd_list    = cmd_prefix + [ f"{args[1]} {args[2]}",
-                                     "exec bash",
-                                     ]
-
-        if add_echo:
-            cmd_list    = self.build_echo( cmd_list )
-
-        if add_newline:
-            cmd_str     = "\n".join( cmd_list )   # may still want to strip exec bash  !!
-
-        else:
-            cmd_str     = ";".join( cmd_list )
-            cmd_str     = f'gnome-terminal -- bash -c "{cmd_str}"'
-
-        #rint( cmd_str )
-        #rint( cmd_list )
-
-        return cmd_str
-
+# ---------------------------------------------
 class IdleExe( ):
     """
     for executing shell commands that begin as a list
@@ -869,9 +848,9 @@ class TextEditExtMixin(  ):
         copy_action.triggered.connect( widget.copy )
         copy_action.setEnabled( has_selection )
 
-        paste_action = menu.addAction("Paste")
+        paste_action = menu.addAction( "Paste" )
         paste_action.triggered.connect( widget.paste )
-        paste_action.setEnabled(can_paste)
+        paste_action.setEnabled( can_paste )
         #menu.addSeparator()
 
         # ---- date
@@ -889,12 +868,16 @@ class TextEditExtMixin(  ):
         foo_action.triggered.connect( self.smart_paste_clipboard )
         foo_action.setEnabled( can_paste )
 
+        #menu.addSeparator()
+
+        # ---- "Paste URL"
+        foo_action = menu.addAction( "Paste URL" )
+        foo_action.triggered.connect( self.paste_url ) # zz self.smart_paste_clipboard
+        #foo_action.setEnabled( can_paste )
+        foo_action.setEnabled( True )
+
         menu.addSeparator()
 
-        # ---- "Smarten"
-        foo_action = menu.addAction( "Smarten" )
-        foo_action.triggered.connect( self.smarten  )
-        foo_action.setEnabled(has_selection)
 
         # ---- "Search Selected"
         foo_action = menu.addAction( "Search Selected" )
@@ -903,8 +886,48 @@ class TextEditExtMixin(  ):
 
         menu.addSeparator()
 
+        # ---- "Strip Trail in Sel"
+        foo_action = menu.addAction("Strip Trail in Sel")
+        foo        = partial( self.strip_selected,  keep_leading = True )
+        foo_action.triggered.connect( foo )
+        foo_action.setEnabled( has_selection )
+
+        # ---- "Strip Lead and Trail in Sel"
+        foo_action = menu.addAction( "Strip Lead and Trail in Sel" )
+        foo        = partial( self.strip_selected,  keep_leading = False )
+        foo_action.triggered.connect( foo )
+        foo_action.setEnabled( has_selection )
+
+        # ---- "0_sreen_dirt"
+        foo_action = menu.addAction( "0_sreen_dirt" )
+        processing_function     = partial( string_list_utils.list_to_list_remove_dirt, screen_dirt = AppGlobal.parameters.screen_dirt )
+        foo                     = partial( self.process_selected,  processing_function = processing_function )
+        foo_action.triggered.connect( foo )
+        foo_action.setEnabled( has_selection )
+
+        #menu.addSeparator()
+
+        # ---- "to underscore"
+        foo_action = menu.addAction( "to Underscore" )
+        # processing_function     = partial( string_list_utils.list_to_list_remove_dirt, screen_dirt = AppGlobal.parameters.screen_dirt )
+        foo                     = partial( self.process_selected,  processing_function = string_list_utils.list_to_list_to_underscore )
+        foo_action.triggered.connect( foo )
+        foo_action.setEnabled( has_selection )
+
+        # ---- ""Update Markup""
+        foo_action = menu.addAction("Update Markup")
+        foo_action.triggered.connect( self.update_markup )
+        foo_action.setEnabled( has_selection )
+
+        #menu.addSeparator()
+
+        # ---- "Smarten"
+        foo_action = menu.addAction( "Smarten" )
+        foo_action.triggered.connect( self.smarten  )
+        foo_action.setEnabled( has_selection )
+
         # ---- submenu
-        submenu                 = menu.addMenu("Max Lines ...")
+        submenu                 = menu.addMenu( "Max Lines ..." )
 
         # Add actions to the submenu -- but for now these might not connet to anything
         # pdf_action              = submenu.addAction("Export to PDF")
@@ -916,37 +939,18 @@ class TextEditExtMixin(  ):
         processing_function     = partial( string_list_utils.list_to_list_max_n_blank,  max_blank = 0 )
         foo                     = partial( self.process_selected, processing_function = processing_function )
         foo_action.triggered.connect( foo )
-        foo_action.setEnabled(has_selection)
+        foo_action.setEnabled( has_selection )
 
         # ----  "Max 1 Blank Lines"
         foo_action              = submenu.addAction( "Max 1 Blank Lines" )
         processing_function     = partial( string_list_utils.list_to_list_max_n_blank,  max_blank = 1 )
         foo                     = partial( self.process_selected,  processing_function = processing_function )
         foo_action.triggered.connect( foo )
-        foo_action.setEnabled(has_selection)
+        foo_action.setEnabled( has_selection )
 
         # ---- "max_2_blank_lines"
         foo_action              = submenu.addAction("Max 2 Blank Lines")
         processing_function     = partial( string_list_utils.list_to_list_max_n_blank,  max_blank = 2 )
-        foo                     = partial( self.process_selected,  processing_function = processing_function )
-        foo_action.triggered.connect( foo )
-        foo_action.setEnabled( has_selection )
-
-        # ---- "Strip Trail in Sel"
-        foo_action = menu.addAction("Strip Trail in Sel")
-        foo        = partial( self.strip_selected,  keep_leading = True )
-        foo_action.triggered.connect( foo )
-        foo_action.setEnabled(has_selection)
-
-        # ---- "Strip Lead and Trail in Sel"
-        foo_action = menu.addAction( "Strip Lead and Trail in Sel" )
-        foo        = partial( self.strip_selected,  keep_leading = False )
-        foo_action.triggered.connect( foo )
-        foo_action.setEnabled(has_selection)
-
-        # ---- "0_sreen_dirt"
-        foo_action = menu.addAction("0_sreen_dirt")
-        processing_function     = partial( string_list_utils.list_to_list_remove_dirt, screen_dirt = AppGlobal.parameters.screen_dirt )
         foo                     = partial( self.process_selected,  processing_function = processing_function )
         foo_action.triggered.connect( foo )
         foo_action.setEnabled( has_selection )
@@ -960,11 +964,7 @@ class TextEditExtMixin(  ):
         foo_action.triggered.connect( foo )
         foo_action.setEnabled( has_selection )
 
-        # ---- ""Update Markup""
-        foo_action = menu.addAction("Update Markup")
-        foo_action.triggered.connect( self.update_markup )
-        foo_action.setEnabled(has_selection)
-        menu.addSeparator()
+
 
         # ---- "Open Urls"
         foo_action = menu.addAction("Open Urls")
@@ -1522,6 +1522,46 @@ class TextEditExtMixin(  ):
         cursor.setPosition(selection_start)
         cursor.setPosition(selection_end, cursor.KeepAnchor)
         text_edit.setTextCursor(cursor)
+
+
+    #-----------------------------------
+    def paste_url( self, ):
+        """
+        what it says
+
+        """
+        import firefox_tabs_live
+        current_tab     = firefox_tabs_live.current_tab( )
+        print( current_tab )
+        url             = current_tab[ "url"   ]
+        title           = current_tab[ "title" ]
+
+        msg             = f"\n{title}\n>>Url   {url}\n"
+        self.insert_text_at_cursor( msg )
+        self.insert_text_at_cursor( "" )       # extra line at end or in msg
+
+        # text            = QApplication.clipboard().text( )
+        # splits          = text.split( "\n" )
+        # new_lines       = []
+
+        # for i_line in splits:
+        #     ii_line      = i_line
+
+        #     if string_utils.begins_with_url( i_line ):
+        #         ii_line  = f">>url   {i_line}"
+
+        #     elif string_utils.begins_with_file_name( i_line ):
+        #         ii_line  = f">>shell   {i_line}\n>>copy     {i_line}"
+
+        #     new_lines.append( ii_line )
+
+        # # !! integrate the next if a multiline
+        # #new_lines.append( "the end")
+        # new_text = "\n".join( new_lines )
+
+        # self.insert_text_at_cursor( new_text )
+        # self.insert_text_at_cursor( "" )       # extra line at end
+
 
     #-----------------------------------
     def smarten( self, ):
@@ -2728,27 +2768,7 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         self._is_keep_prior_enabled  = enable
 
     # ---- crud cycle -------------------------------
-    # # -----------------------
-    # def set_data_to_clear( self   ):
-    #     """
-    #     often replaced with ... set_data_to_....
-    #     but could be clear or default or pass
-    #     """
-    #     self.set_prepped_data( "", is_changed = True )
-    #     pass # debug
 
-    # # ------------------------------------
-    # def on_text_changedxxxxx( self, new_data ):
-    #     """
-    #     !! probably phase out
-    #     may be edited or messed with
-    #     on data change for each drop the new data
-    #     this is probably a bit messed up but also not needed??
-    #     """
-    #     #self.is_changed  = True
-    #     self.on_data_changed( )
-    #     self.prior_value   = new_data
-    #     #rint(f"line edit on_data_changed: {new_data} saved to prior_value ")  !!
 
     # -------------------------
     def _build_context_menu_is_used_correct ( self ):
@@ -2846,8 +2866,8 @@ class CQCheckBox( QCheckBox, CQEditBase ):
                                )
 
         # self.setEditable(True)  # !! may need to be at top debug make ...
-        self.default_typexxx          = "string"          # deprecate
-        #self.default_value         = "default-value"     # deprecate
+
+
         self.prior_value           = ""  # something of a valid type
         #self.textEdited.connect(self.on_text_changed )  #  text is sent new_text
         #self.textChanged.connect(self.on_text_changed)
@@ -2976,13 +2996,12 @@ class CQComboBox( QComboBox, CQEditBase ):
                                )
 
         # self.setEditable(True)  # !! may need to be at top debug make ...
-        self.default_typexxx          = "string"          # deprecate
-        #self.default_value         = "default-value"     # deprecate
+
         self.prior_value           = ""  # something of a valid type
         #self.textEdited.connect(self.on_text_changed )  #  text is sent new_text
         #self.textChanged.connect(self.on_text_changed)
             #-----------------------------
-        self.null_surogatexxx          = ""
+
         # ---- set functions
         #a_partial           = partial( self.do_ct_value, "do_ct_value!!" )
         a_partial           = partial( self.set_value, "" )
@@ -3202,7 +3221,7 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         #self.textEdited.connect(self.on_text_changed )  #  text is sent new_text
         #self.textChanged.connect(self.on_text_changed)
         #-----------------------------
-        self.null_surogatexxx          = ""
+
         # ---- set functions
         #a_partial           = partial( self.do_ct_value, "do_ct_value!!" )
         a_partial           = partial( self.set_value, "" )
@@ -4005,15 +4024,16 @@ class CQTextEdit( QTextEdit,  CQEditBase, TextEditExtMixin,   ):
         #self.insert_text_at_cursor( self.prior_text )
         self.insert_text_at_cursor( self.prior_text )
 
-    def keyPressEvent_for_tab(self, event):   # automatically called? no setup
-
-        """ what wyh is this, --- a tab inser perhaps """
+    #-----------------------------
+    def keyPressEvent_for_tab( self, event):   # automatically called? no setup
+        """ what wyh is this, --- a tab insert perhaps
+        """
         if event.key() == 0x01000001:  # Qt.Key_Tab
             cursor = self.textCursor()
             cursor.insertText( ' ' * self.tab_width )
+
         else:
             super().keyPressEvent(event)
-
 
     # ------------------------------------
     def on_text_changed( self,   ):
@@ -4245,7 +4265,7 @@ class CQDateEdit( QDateEdit,  CQEditBase ):
         # self.setDate( qdate  )  # was going to validate next seems to fix
         #super( QDateEdit, self).setDate( qdate )  # Ensure QDateEdit.setDate() is called
             # above still going to to self.validate sometimes
-        # xxx= """
+
         # i am in a control that inherits from QDateEdit as well as others.
         # i want to call the method setDate in the control, but it seems to
         # be going thew wrong place.  any fixes for this?

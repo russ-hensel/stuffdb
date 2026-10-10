@@ -96,6 +96,9 @@ class ExifExtrctToUi( ):
         if full_path is None:
             return
 
+        # mp4 are causing errors, !! enhance to read them for now give up
+        # or put in caller picture_document  !! ??
+
         # !! debug delete some
         if exif_make is None or exif_make == "":
             pass
@@ -107,6 +110,7 @@ class ExifExtrctToUi( ):
         pp          = self.photo_plus    # localize
         pp.reset( str( full_path ) )
 
+        # consider a try
         exif_dict   =  pp.get_exifread_exif_dict()
         # key is the field_name, but perhaps not matching the form
                 # key is a name exifread_dict[ "make" ]    =....

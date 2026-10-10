@@ -673,7 +673,7 @@ class StuffDetailTab( base_document_tabs.DetailTabBase ):
         width  = 50
         for ix in range( self.max_col ):  # try to tweak size to make it work
             widget   = QSpacerItem( width, 10, QSizePolicy.Expanding, QSizePolicy.Minimum)
-            #widget   = QSpacerItem( width, 10, QSizePolicy_Expanding, QSizePolicy_Minimum)  # 5 6 compat
+
             layout.addItem( widget, 0, ix  )  # row column
 
         self.stuff_combo_dict_ext   = combo_dict_ext.STUFF_COMBO_DICT_EXT
@@ -1228,9 +1228,8 @@ class EventSqlTableModel( QSqlTableModel ):
                 return super().data(index, Qt.EditRole)
 
         # elif role == Qt.TextAlignmentRole:
-        elif role == Qt.TextAlignmentRole:   # 5 6 compat
+        elif role == Qt.TextAlignmentRole:
             # Handle alignment for all columns
-            # 5 6 compat changes, old cod like return Qt.AlignLeft | Qt.AlignVCenter
 
             if col == 0:  # id
                 return Qt.AlignLeft | Qt.AlignVCenter
@@ -1303,7 +1302,6 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
            # now do not need stuff in EventSql.....
 
         view.setSelectionBehavior( QTableView.SelectRows )
-        #view.setSelectionBehavior( SelectRows )   # 5 6 compat
 
         ix_col = -1   # could make loop or even list comp
 

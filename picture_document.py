@@ -27,7 +27,7 @@ import time
 from   datetime import datetime
 from   functools import partial
 from   pathlib import Path
-
+from   video_thumbnail import make_thumbnail
 
 
 from qtpy.QtCore import (QCoreApplication,
@@ -93,7 +93,8 @@ import photo_plus_ext
 import string_utils
 import wat_inspector
 import os_services
-
+import gui_qt_ext
+import file_utils
 
 #from   album_document  import AlbumDocument
 
@@ -115,7 +116,6 @@ def select_count( test_file_name ):
     """
     file_name   = Path( test_file_name ).name
     file_found  = False
-
 
     sql         = ( "SELECT COUNT(*) AS record_count "
                   " FROM photo "
@@ -468,7 +468,8 @@ class DupDialog( QDialog ):
         item        = widget.item( row, col )
 
         if item:
-            print(f"Cell clicked: Row {row}, Column {col}, Data: {item.text()}")
+            msg     = (f"Cell clicked: Row {row}, Column {col}, Data: {item.text()}")
+            logging.debug( msg )
 
         file_name   = item.text()
         self.dup_file_viewer.display_file( file_name )
@@ -477,7 +478,8 @@ class DupDialog( QDialog ):
         item        = widget.item( row, col )
 
         if item:
-            print(f"Cell clicked: self.db_fn Row {row}, Column {col}, Data: {item.text()}")
+            msg     = (f"Cell clicked: self.db_fn Row {row}, Column {col}, Data: {item.text()}")
+            logging.debug( msg )
 
         file_name   = item.text()
         self.db_file_viewer.display_file( file_name )
@@ -518,6 +520,9 @@ class ProgressDialog( QDialog ):
 
     #------------------------
     def toggle_pause(self):
+        """
+        ?? not my ususal syntax check it out
+        """
         self._is_paused = not self._is_paused
         self.pause_btn.setText("Continue") if self._is_paused else self.pause_btn.setText("Pause")
 
@@ -530,10 +535,11 @@ class ProgressDialog( QDialog ):
         """
         The core logic. This runs a standard loop but manually
         pumps the Qt event queue.
-        what is item ??
+        what is item ??  zz
         """
         try:
             for item in self.iterator:
+                #breakpoint()
                 QCoreApplication.processEvents()
 
                 # --- CHECK HALT ---
@@ -628,11 +634,8 @@ class AlbumSqlTableModel( QSqlRelationalTableModel ):
         """
         ix_col = index.column()
 
-        if False:
-            pass
-
         # Check role first
-        elif role == Qt.DisplayRole:
+        if   role == Qt.DisplayRole:
             # if col == 4:  # match to code in view
             #     value = super().data(index, Qt.EditRole)
             #     if value is not None:
@@ -669,7 +672,6 @@ class AlbumSqlTableModel( QSqlRelationalTableModel ):
 
         # Default to base class for all other roles and columns
         return super().data(index, role)
-
 
 
 # ----------------------------------------
@@ -1405,7 +1407,8 @@ class PictureCriteriaTab( base_document_tabs.CriteriaTabBase, ):
 
         # !! next is too much   !! change to list comp ---
         columns      = data_dict_all.SCHEMA.get_list_columns( self.parent_window.detail_table_name )
-        column_list  = [ i_column.column_name for i_column in columns ]  # !! fix in all coduments or do we fix columns above
+        column_list  = [ i_column.column_name for i_column in columns ]
+            # !! fix in all coduments or do we fix columns above
 
         a_key_word_processor            = key_words.KeyWords( kw_table_name, AppGlobal.qsql_db_access.db )
         query_builder.table_name        = parent_document.detail_table_name
@@ -1992,8 +1995,6 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         edit_field.set_custom_context_menu()
 
 
-        return
-
     # ---------------------------
     def select_record( self, id_value  ):
         """
@@ -2083,7 +2084,8 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
             return
 
         map_popup.show_map_popup( exif_lat, exif_lon, )
-            # show_map_popup( latitude, longitude, parent = None, *, zoom_start = 15, title = None, modal = False ):
+            # show_map_popup( latitude, longitude, parent = None, *,
+            #  zoom_start = 15, title = None, modal = False ):
 
     # ----------------------------------
     def g_earth( self ):
@@ -2126,7 +2128,6 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
 
         # if not ( exif_lon and exif_lon ):
         #     return
-
 
     # ----------------------------------
     def open_lat_long_map( self ):
@@ -2273,7 +2274,7 @@ class PictureDetailTab( base_document_tabs.DetailTabBase ):
         self.name_field.setText( name + "*" )
 
     # -----------------------------
-    def default_new_row(self, next_key ):
+    def default_new_row( self, next_key ):
         """
         what it says
             this is for a new row on the window -- no save
@@ -2395,9 +2396,25 @@ class PictureBrowseSubTab( QWidget ):
         this tab does not interact with the db directly
         it browses and previews picture files, and
         can fill the picture id in other tabs
+        somewhat cap insensitive
         """
         super().__init__()
-        self.parent_window   = parent_window
+        self.parent_window      = parent_window
+        file_browser            = gui_qt_ext.FileBrowser(
+            init_last_directory = AppGlobal.parameters.picture_browse )
+
+        self.file_browser       = file_browser
+        file_browser.title      = "Select Files for Import"
+
+        file_browser.name_filter_list   = [
+             "Still Images (*.png *.jpg *.jpeg *.bmp *.gif *.PNG *.JPG *.JPEG *.BMP *.GIF)",
+             "Video ( *.mp4 *.MP4 )",
+             "Still and Video ( *.png *.jpg *.jpeg *.bmp *.gif *.mp4  *.PNG *.JPG *.JPEG *.BMP *.GIF *.MP4 )",
+             "All files (*)"
+              ]
+
+        file_browser.use_native     = AppGlobal.parameters.file_browser_native
+
         self.__build_gui()
 
     #-------------------------------------
@@ -2407,7 +2424,6 @@ class PictureBrowseSubTab( QWidget ):
         Returns:
             none
             and model
-
         """
         tab                 = self
         tab_layout          = QHBoxLayout(tab)
@@ -2415,7 +2431,7 @@ class PictureBrowseSubTab( QWidget ):
         tab_layout.addLayout( button_layout )
 
         # ---- model and headers
-        headers = [ "File Name", "Date", "What" ] # search width
+        headers             = [ "File Name", "Date", "What" ] # search width
 
         self.model          = table_model.TableModel( headers )
 
@@ -2464,12 +2480,6 @@ class PictureBrowseSubTab( QWidget ):
         a_widget.clicked.connect( self.dup_check )
         button_layout.addWidget( a_widget )
 
-        # # ----- think this was old where it moved the highlighted index only...
-        # # hide until we can revisit
-        # a_widget        = QPushButton( "move_to_pic" )
-        # a_widget.clicked.connect( self.move_to_pic )
-        # button_layout.addWidget( a_widget )
-
         a_widget        = QPushButton( "Import" )
         self.launch_btn = a_widget
         a_widget.clicked.connect( self.move_all )
@@ -2515,39 +2525,43 @@ class PictureBrowseSubTab( QWidget ):
         can we sort ?
 
         """
-        initial_dir     = AppGlobal.parameters.picture_browse
+        # initial_dir     = self.last_browse_dir
 
-        file_dialog     = QFileDialog( self, "Select Files" )
+        # file_dialog     = QFileDialog( self, "Select Files" )
 
-        file_dialog.setFileMode( QFileDialog.ExistingFiles ) #multiple file selection
-        # Define name filters (case insensitive)
-        name_filters = [
-           ( "Common Graphics (*.jpg *.jpeg *.png *.gif *.bmp *.tiff"
-              " *.tif *.webp *.svg *.ico *.JPG *.JPEG *.PNG *.GIF *.BMP *.TIFF *.TIF *.WEBP *.SVG *.ICO)" ),
+        # file_dialog.setFileMode( QFileDialog.ExistingFiles ) #multiple file selection
+        # # Define name filters (case insensitive)
+        # name_filters = [
+        #    ( "Common Graphics (*.jpg *.jpeg *.png *.gif *.bmp *.tiff"
+        #       " *.tif *.webp *.svg *.ico *.JPG *.JPEG *.PNG *.GIF *.BMP *.TIFF *.TIF *.WEBP *.SVG *.ICO)" ),
 
-            ( "Common Media (*.mp4 *.avi *.mov *.wmv *.flv *.webm *.mkv *.m4v "
-               "*.mp3 *.wav *.flac *.aac *.ogg *.wma *.MP4 *.AVI *.MOV *.WMV "
-               "*.FLV *.WEBM *.MKV *.M4V *.MP3 *.WAV *.FLAC *.AAC *.OGG *.WMA)" ),
+        #     ( "Common Media (*.mp4 *.avi *.mov *.wmv *.flv *.webm *.mkv *.m4v "
+        #        "*.mp3 *.wav *.flac *.aac *.ogg *.wma *.MP4 *.AVI *.MOV *.WMV "
+        #        "*.FLV *.WEBM *.MKV *.M4V *.MP3 *.WAV *.FLAC *.AAC *.OGG *.WMA)" ),
 
-            "JPEG Images (*.jpg *.jpeg *.JPG *.JPEG)",
-            "All Files (*)"
-             ]
-        file_dialog.setNameFilters( name_filters )
-        file_dialog.setDirectory( initial_dir )
-        # file_dialog.setWindowTitle(  title      )
-        # #file_dialog.setNameFilter(   file_types  )
+        #     "JPEG Images (*.jpg *.jpeg *.JPG *.JPEG)",
+        #     "All Files (*)"
+        #      ]
+        # file_dialog.setNameFilters( name_filters )
+        # file_dialog.setDirectory( initial_dir )
+        # # file_dialog.setWindowTitle(  title      )
+        # # #file_dialog.setNameFilter(   file_types  )
 
-        if not file_dialog.exec():
-            return
+        # if not file_dialog.exec():
+        #     return
 
-        files = file_dialog.selectedFiles()
+        # files = file_dialog.selectedFiles()
+
+        # !! new not finished zz do better init
+        files           = self.file_browser.browse()
+
         self.model.clear_data()
 
         # msg       = ("browse Selected files:")
         # logging.debug( msg )
 
         for file in files:
-            print(file)
+            #rint(file)
             file_path    = Path( file )
             st_size      = file_path.stat().st_size
             st_mtime     = file_path.stat().st_mtime
@@ -2572,7 +2586,7 @@ class PictureBrowseSubTab( QWidget ):
         # Show the dialog non-modally
         self.dial.show()
 
-        # may need time to paint
+        # may need time to paint give it
         QCoreApplication.processEvents()
         QCoreApplication.processEvents()
 
@@ -2681,9 +2695,6 @@ class PictureBrowseSubTab( QWidget ):
         move all picture files to new picture documents
             want to change this to require
                 see setup
-
-        may want to change to selected rows
-
         """
         # msg   = ( "move_all begin ^^^^^^^^^^^^^^^^^^^^^^^   call move to pic  but add to album in process  ")
         # logging.debug( msg )
@@ -2708,16 +2719,18 @@ class PictureBrowseSubTab( QWidget ):
         # ---- ready for dialog
         self.open_move_all_dialog( )
 
-        # msg         = ( "\n maybe finished return ++++++++++++++++++++++++++++++++++++++++++++")
-        # logging.debug( msg )
-
     # --------------------------------------
     def move_to_pic( self, index: QModelIndex ):
         """
+        currently called from inside the itterator so called once per
+        file, it does not need to itterate itself
+        some of checks might be moved outside the iteration but maybe ok here
+
+
         consider a full rename to current standards
         move picture file to correct directory and
         names to the form, then save as file is moved
-        may link to double click?
+
 
         still need to worry about saves at begin and end
         the sub dir needs to fill with default
@@ -2831,7 +2844,6 @@ class PictureBrowseSubTab( QWidget ):
             logging.debug( msg )
             raise Exception( msg )
             # !! need to end this now loops, an except would at least end the loop
-            return
 
         # parent_window.sub_dir_field.set_prepped_data( db_sub )   --- maybe after move works
         parent_window.file_field.set_preped_data( str( file_name_path_name ), is_changed = True )
@@ -2843,6 +2855,7 @@ class PictureBrowseSubTab( QWidget ):
 
         try:
             shutil.move( file_name_path_src, file_name_path_dest )
+            # file_name_path_dest file_name_path_src both are  Path
 
         except Exception as a_except:
             # !! do we message here or let it go up the chain
@@ -2852,9 +2865,23 @@ class PictureBrowseSubTab( QWidget ):
             logging.error( msg )
             raise app_exceptions.ApplicationError( msg )
 
-        #   zz  PhotoPlus  file fields need to be moved first
-        exif_to_ui.add_exif_data()
 
+        # if an mp4 we need to construct a thumbnail
+        suffix    = file_name_path_dest.suffix.lower()   # includes the dot .mpr
+
+        if suffix == ".mp4":
+            thumb_file_path     = file_utils.set_extension( file_name_path_dest, ".png" )
+            # may want a utility to do to all and may want to put in parameters
+            make_thumbnail( file_name_path_dest,
+                            thumb_file_path,
+                            timestamp   = "10%",
+                            size        = 320,
+                            quality     = 8   )
+
+        else: # because mp4 do not have this zz
+            exif_to_ui.add_exif_data()
+
+        # pretty much done
         model.removeRow( row )
 
         #rint(  "might be nice to select the next logical row if any ")
@@ -2864,8 +2891,8 @@ class PictureBrowseSubTab( QWidget ):
                        "next logical row if any .. and more print here ")
         logging.debug( msg )
 
-        msg = ( "move_to_pic we should automatically save here !! ")
-        logging.error( msg )
+        # msg = ( "move_to_pic we should automatically save here !! ")
+        # logging.error( msg )
 
         msg = ( "move_to_pic need to make display seems ok !! perhaps is ok ")
         logging.debug( msg )
@@ -2886,7 +2913,8 @@ class PictureBrowseSubTab( QWidget ):
         row           = source_index.row()
 
         # Retrieve the data for the entire row
-        row_data    = [ self.model.data(self.model.index( row, col )) for col in range( self.model.columnCount() ) ]
+        row_data    = [ self.model.data(self.model.index( row, col ))
+                        for col in range( self.model.columnCount() ) ]
 
         msg         = (f"on_row_clicked {row = } clicked: {row_data}")
         logging.debug( msg )
@@ -3141,9 +3169,11 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         self._build_gui()
 
         sender_signal           = AppGlobal.mdi_management.update_sync_obj.update_sync_signals.update_sync_pre
+            #ugly
         sender_signal.connect( self.update_sync_pre )
 
-        # self.model_indexer  = table_model.ModelIndexer( self.model, self.model_ituple )  # table,  table_id
+        # self.model_indexer  = table_model.ModelIndexer(
+        #         self.model, self.model_ituple )  # table,  table_id
 
     # ------------------------------------------
     def _build_gui( self, ):
@@ -3161,7 +3191,8 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         button_layout        = left_layout  # need not add is a dup
 
         # ---- model_other
-        model, view         = self.make_table_model_view( "from Other Documents", connect_dclick = None )
+        model, view         = self.make_table_model_view(
+                                    "from Other Documents", connect_dclick = None )
         connect_to          = partial( self.add_from_selected, view )
         view.doubleClicked.connect( connect_to )
         #model_other.add_indexer(  self.model_other_ituple )
@@ -3170,7 +3201,8 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         right_layout.addWidget( view )
 
         # ---- model_history
-        model, view         = self.make_table_model_view( "History", connect_dclick = None )
+        model, view         = self.make_table_model_view(
+                                  "History", connect_dclick = None )
         connect_to          = partial( self.add_from_selected, view )
         view.doubleClicked.connect( connect_to )
         self.model_history  = model
@@ -3178,7 +3210,8 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         right_layout.addWidget( view )
 
         # ----  model_display
-        model, view         = self.make_table_model_view( "for this Picture", connect_dclick = None )
+        model, view         = self.make_table_model_view(
+                                   "for this Picture", connect_dclick = None )
         self.model_display  = model
         self.view_display   = view
         right_layout.addWidget( view )
@@ -3583,19 +3616,19 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
         model           =  self.model  # need to find the id and table in this and delete it
                 # QSqlTableModel
 
-        """
-        for table table_name = 'photo_subject'
-        CREATE TABLE  photo_subject    (
-    0 id  INTEGER ,
-    1 photo_id_old  VARCHAR(15) ,
-    2 table_id_old  VARCHAR(15) ,
-    3 table_joined  VARCHAR(30) ,
-    4 photo_id  INTEGER ,
-    5 table_id  INTEGER
-    ) ;
+        # """
+        # for table table_name = 'photo_subject'
+        # CREATE TABLE  photo_subject    (
+        # 0 id  INTEGER ,
+        # 1 photo_id_old  VARCHAR(15) ,
+        # 2 table_id_old  VARCHAR(15) ,
+        # 3 table_joined  VARCHAR(30) ,
+        # 4 photo_id  INTEGER ,
+        # 5 table_id  INTEGER
+        # ) ;
 
+        #     """
 
-            """
         ix_row_display  = ix_row   # because reuse below
 
         for ix_row in reversed( range( model.rowCount()) ):
@@ -3764,9 +3797,12 @@ class PictureSubjectSubTab( base_document_tabs.SubTabBase ):
             record = model.record(ix_row)
 
             for i in range(record.count()):
-                msg   = ( f"loop_thru_other Field by index {i = } {record.fieldName(i)}: {record.value(i)}")
+                msg   = (  "loop_thru_other Field by index "
+                          f" {i = } {record.fieldName(i)}: {record.value(i)}")
                 logging.debug( msg )
-            msg   = ( f"{record.value(ix_table_joined)}) {record.value(ix_table_id)})" )
+
+            msg   = ( f"{record.value(ix_table_joined)}) "
+                      f" {record.value(ix_table_id)})" )
             logging.debug( msg )
 
             record_key    = (record.value(ix_table_joined), record.value(ix_table_id))

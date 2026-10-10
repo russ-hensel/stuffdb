@@ -36,7 +36,7 @@ VERBOSE   = False
 SYS_ARGS  = sys.argv
 
 if VERBOSE:
-    print( "parameters from -----  /_projects/stuffdb/parameters.py")
+    print( "parameters from ----- /stuffdb/parameters.py")
     print( __file__ )
 
 #===========================
@@ -65,17 +65,15 @@ class Parameters( ):
 
         #self.mode_new_user()
         self.mode_data_sync()
-        #self.mode_data_sync_b()
-        self.mode_picture_test()
+        self.mode_data_sync_b()
+        #self.mode_picture_test()
 
         #self.mode_millhouse_b()
         #
         #self.mode_picture_test()
-
-        #self.mode_data_sync_full_path()
         #self.mode_ramdisk()
         #self.mode_source_db_for_copy()
-        #self.mode_data_sync_b()
+
         #self.mode_github()
 
         #self.mode_github()
@@ -89,8 +87,6 @@ class Parameters( ):
         #self.mode_build_new_ram()
         #self.mode_helpdb_from_scratch()
         # self.mode_russ_2025_ram()
-
-
 
     # -------
     def mode_new_user( self ):
@@ -134,18 +130,18 @@ class Parameters( ):
         #self.picture_db_sub     = "/07"
         #self.picture_db_sub     = "/08"
         #self.picture_db_sub     = "/10"
-        # self.picture_db_sub     = "/11"
+        # self.picture_db_sub     = "/11"Next →
         # self.picture_db_sub     = "/15"
-        # self.picture_db_sub     = "/16"
+        self.picture_db_sub     = "/16"
         # self.picture_db_sub     = "/17"
-        self.picture_db_sub     = "/18"
-        self.picture_db_sub     = "/19"
+        #self.picture_db_sub     = "/18"
+        #self.picture_db_sub     = "/19"
        # # self.picture_db_sub     = "/26"
        #  self.picture_db_sub     = "/21"
        #  self.picture_db_sub     = "/22"
        #  #self.picture_db_sub     = "/23"
        #  # self.picture_db_sub     = "/25"
-        #self.picture_db_sub     = "/26"
+        self.picture_db_sub     = "/26"
 
         self.logging_level      = logging.DEBUG  # ERROR DEBUG
 
@@ -173,7 +169,7 @@ class Parameters( ):
     # -------
     def mode_millhouse( self ):
         """
-
+        another mode
         """
         self.mode               = "mode_millhouse"
 
@@ -185,7 +181,7 @@ class Parameters( ):
     # -------
     def mode_millhouse_b( self ):
         """
-
+        another mode
         """
         self.mode               = "mode_millhouse_b"
 
@@ -197,7 +193,7 @@ class Parameters( ):
     # -------
     def mode_picture_test( self ):
         """
-        moved code to running+on_tweaks
+        another mode
         """
         self.mode               = "mode_picture_test"
 
@@ -417,7 +413,7 @@ class Parameters( ):
             self.icon               =  "./misc/db_green_on_black.png"
             #self.icon               =  "./misc/db_red_on_black.png"
 
-        elif computer_id == "millhouse-mintxxx":
+        elif computer_id == "millhouse-minx":
             #self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
             #self.win_geometry   = '1300x600+20+20'
 
@@ -644,6 +640,8 @@ class Parameters( ):
         self.picture_browse     = "/mnt/WIN_D/PhotosRaw/2024/pixel4a/july4"
             # browsing starts from here see PictureDocument
 
+        self.file_browser_native = True
+
         # picture to use when a valid picture is not found or does not exist
 
         self.picture_nf_file_name           = "./misc/404.png"
@@ -780,6 +778,8 @@ class Parameters( ):
         self.num_pinned         = 3
             # number of pinned items in history tab
 
+        self.clear_skip         = 5
+
         self.history_at_end     = True
             # if true history items have mort recent viewed at the ent
 
@@ -834,8 +834,8 @@ class Parameters( ):
         ============ note_about_what  ============
 
         I am a programmer using python with Qt.
-        I am using  xxxx
-        Please tell me about xxxxxx
+        I am using  a_thing
+        Please tell me about something
 
         .................
 
@@ -1180,6 +1180,14 @@ class Parameters( ):
         a_str   = string_utils.to_columns( a_str, ["num_help_snippets",
                                             f"{self.num_help_snippets}" ] )
 
+        a_str   = string_utils.to_columns( a_str, ["clear_skip",      # zz
+                                            f"{self.clear_skip}" ] )
+
+        a_str   = string_utils.to_columns( a_str, ["num_pinned",      # zz
+                                            f"{self.num_pinned}" ] )
+
+        a_str   = string_utils.to_columns( a_str, ["history_at_end",      # zz
+                                            f"{self.history_at_end}" ] )
 
         a_str   = string_utils.to_columns( a_str, ["logger_id", f"{self.logger_id}" ] )
         a_str   = string_utils.to_columns( a_str, ["logging_level", f"{self.logging_level}" ] )

@@ -14,8 +14,6 @@ Created on Thu Dec 25 09:21:26 2025
 @author: russ not quite vibe coded
 
 
-
-
 """
 
 # ---- tof
@@ -42,7 +40,7 @@ def file_name_has_extension( file_name, *, ext_list, invert_logic = False ):
     'extensions' should be a list/tuple of strings like ['.py', '.txt']
 
     foo    = partial( file_name_has_extension,  [".py"]  )
-
+    if   file_utils.file_name_has_extension( file_name [".mp4"] )
     """
     # Convert list to tuple because str.endswith() requires a tuple for multiple suffixes
     is_true     = str(file_name).lower().endswith(tuple(ext.lower() for ext in ext_list ))
@@ -91,19 +89,42 @@ def path_name_starts_with( path_name, *, prefix_list = [ "txt" ], invert_logic  
     Checks if a name, file or dir,  has a prefix in prefix_list.
     Handles both string paths and Path objects.
     invert logic for exclusing
+    still needs testing
     """
     # Convert list to tuple: str.startswith() accepts a tuple for bulk checking
     # name      = Path(path_name).name
 
-
-    is_true   = Path(path_name).name.startswith(tuple(prefix_list))
+    is_true   = Path(path_name).name.startswith( tuple(prefix_list) )
 
     if invert_logic:
         print( f">>>{not is_true} {Path(path_name).name}" )
         return not is_true
     else:
         print( f">>>{is_true} {Path(path_name).name}" )
-        is_true
+        return  is_true
+
+# ----------------------------
+def set_extension( a_path, extension ):
+    """
+        a_path is a Path or a string
+
+        return
+            a_path with its extension replaced by extension
+
+        extension may be given with or without the leading dot,
+        "" removes the extension
+        a_path may be a Path or a str, a Path is returned
+        a_path    = file_utils.set_extension( file_name, ".png" )
+
+    """
+    a_path          = Path( a_path )
+    extension       = extension.strip()
+
+    if extension and not extension.startswith( "." ):
+        extension       = ( f".{extension}" )
+
+    return a_path.with_suffix( extension )
+
 
 # ----------------------------
 def file_iterator_for_all( root_dir,   ):
@@ -315,6 +336,36 @@ def test_file_iterator():
         print( f"{i_file}" )
 
 # --------------------------------
+def test_set_extension():
+
+    """
+    # --- How to use it now ---
+    this makes filters from partial
+
+
+    """
+    a_file      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/utils/readme_rsh.txt"
+    new_path    = set_extension( a_file, "bmp" )
+    print( f"new_path  {new_path}")
+
+    a_file      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/utils/readme_rsh"
+    new_path    = set_extension( a_file, "bmp" )
+    print( f"new_path  {new_path}")
+
+    a_file      = "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/utils/readme_rsh.txt"
+    new_path    = set_extension( a_file, "mp3" )
+    print( f"new_path  {new_path}")
+
+    a_file      = Path( "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/utils/readme_rsh.txt" )
+    new_path    = set_extension( a_file, "mp3" )
+    print( f"new_path  {new_path}")
+
+# "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/utils/string_list_utils.py",
+# "/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/rshlib/utils/string_utils.py"
+
+
+
+# --------------------------------
 def test_file_iterator_2():
 
     """
@@ -515,8 +566,9 @@ if __name__ == "__main__":
 
     #test_file_iterator_2()
     #test_file_name_starts_with_partial()
-    test_path_name_starts_with_partial()
+    #test_path_name_starts_with_partial()
     # test_file_iterator_for_all()
+    test_set_extension()
 
     print( "all done")
 

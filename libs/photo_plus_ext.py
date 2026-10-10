@@ -2,12 +2,12 @@
 
 # ---- tof
 """
+!! comments to db >>
 consider cahge to photoExif
 
 THIS IS A NEW IMPLEMENTATION OF PhotoPlus..... for the stuff
 
 db, we will leave the old one around for geo_photo
-
 
 Purpose:
     part of my ( rsh ) library of reusable code
@@ -34,15 +34,15 @@ stuff related to photo extensions
 
     in the string
 
-    GPSInfo: {1: 'S', 2: (34.0, 4.0, 30.35), 3: 'E', 4: (18.0, 25.0, 19.84), 5: b'\x00', 6: 122.14, 7: (13.0, 33.0, 30.0), 16: 'M', 17: 47.0, 29: '2023:09:29'}
+    GPSInfo: {1: 'S', 2: (34.0, 4.0, 30.35), 3: 'E', 4:
+              (18.0, 25.0, 19.84), 5: b'\x00', 6: 122.14, 7:
+                  (13.0, 33.0, 30.0), 16: 'M', 17: 47.0, 29: '2023:09:29'}
     ResolutionUnit: 2
 
     https://exiftool.org/TagNames/GPS.html
 
     GPS Tags
     *>url  https://exiftool.org/TagNames/GPS.html
-
-
 
     in a dict
     GPSLatitudeRef  = 1
@@ -54,7 +54,9 @@ stuff related to photo extensions
     0x0002 	GPSLatitude = 2
         example  =  (34.0, 4.0, 30.35
 
-    GPSLongitudeRef  3	string[2] 	(ExifTool will also accept a number when writing this tag, positive for east longitudes or negative for west, or a string containing E, East, W or West)
+    GPSLongitudeRef  3	string[2] 	(ExifTool will also accept a number when
+         writing this tag, positive for east longitudes or negative for west,
+         or a string containing E, East, W or West)
         'E' = East
         'W' = West
 
@@ -63,22 +65,24 @@ stuff related to photo extensions
         example  = (18.0, 25.0, 19.84)
 
 
-0x0005 	GPSAltitudeRef 	int8u 	(ExifTool will also accept number when writing this tag, with negative numbers indicating below sea level)
-0 = Above Sea Level
-1 = Below Sea Level
-0x0006 	GPSAltitude 	rational64u
-0x0007 	GPSTimeStamp 	rational64u[3] 	(UTC time of GPS fix. When writing, date is stripped off if present, and time is adjusted to UTC if it includes a timezone)
-0x0008 	GPSSatellites 	string
-0x0009 	GPSStatus 	string[2] 	'A' = Measurement Active
-'V' = Measurement Void
-0x000a 	GPSMeasureMode 	string[2] 	2 = 2-Dimensional Measurement
-3 = 3-Dimensional Measurement
-0x000b 	GPSDOP 	rational64u
-0x000c 	GPSSpeedRef 	string[2] 	'K' = km/h
-'M' = mph
-'N' = knots
+    0x0005 	GPSAltitudeRef 	int8u 	(ExifTool will also accept number
+        when writing this tag, with negative numbers indicating below sea level)
+    0 = Above Sea Level
+    1 = Below Sea Level
+    0x0006 	GPSAltitude 	rational64u
+    0x0007 	GPSTimeStamp 	rational64u[3] 	(UTC time of GPS fix. When writing, d
+        ate is stripped off if present, and time is adjusted to UTC if it includes a timezone)
+    0x0008 	GPSSatellites 	string
+    0x0009 	GPSStatus 	string[2] 	'A' = Measurement Active
+    'V' = Measurement Void
+    0x000a 	GPSMeasureMode 	string[2] 	2 = 2-Dimensional Measurement
+    3 = 3-Dimensional Measurement
+    0x000b 	GPSDOP 	rational64u
+    0x000c 	GPSSpeedRef 	string[2] 	'K' = km/h
+    'M' = mph
+    'N' = knots
 
-"""
+    """
 
 
 # ---- imports
@@ -117,7 +121,7 @@ from   pathlib import Path
 # ---- local imports
 
 import string_utils
-import data
+#import data
 
 # FileInfo     = collections.namedtuple( "FileInfo" , "lat long elav date", defaults=( None, None ) )
 # or could make a photo plus for each
@@ -333,7 +337,7 @@ class PhotoPlus():
         # print( ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..")
         # print( f"\n{1} {type(tags) })")
 
-        if tags is {}:
+        if tags == {}:
             return {}
 
         exifread_dict    = {}
@@ -427,10 +431,10 @@ class PhotoPlus():
     #     return ret
 
     # ----------------------------------------
-    def get_pil_exif_dict( self, all = False    ):
+    def get_pil_exif_dict( self, get_all = False ):
         """
         this pil method may be archived use exifread
-        arg all so far does nothing
+        arg get_all so far does nothing
         """
         # -----
         print( f"\n\n{self.filename}")
@@ -586,35 +590,30 @@ class PhotoPlus():
 # ----------------------------------------
 class WebMap():
     """
-
      builds a .png of the map of the location.... as specified in the arguments
-
 
      but has someone already done this do not go too far
      center (required if markers not present) defines the center of the map,
      equidistant from all edges of the map. This parameter takes a location
      as either a comma-separated {latitude,longitude} pair
-     (e.g. "40.714728,-73.998672") or a string address (e.g. "city hall, new york, ny") identifying a unique location on the face of the earth. For more information, see Locations.
 
       open file
       build html local
-      center (required if markers not present) defines the center of the map, equidistant from all edges of the map.
+      center (required if markers not present) defines the center of the map,
+          equidistant from all edges of the map.
       This parameter takes a location as either a comma-separated {latitude,longitude}
-      pair (e.g. "40.714728,-73.998672") or a string address (e.g. "city hall, new york, ny") identifying a unique location on the face of the earth. For more information, see Locations.
-
-
+      pair (e.g. "40.714728,-73.998672") or a string address
+          (e.g. "city hall, new york, ny") identifying a unique location
+          on the face of the earth. For more information, see Locations.
     """
     def __init__( self, api_key, **kwargs ):
-
-
+        """ """
         self.reset( api_key,  **kwargs )
 
     # -----------------------------
     def reset( self, api_key,  **kwargs ):
         """
-
-
-
+        !! what
         """
 
     #----------------------------------------------------------------------
@@ -696,7 +695,7 @@ class StaticMap():
         # markers=size:mid%7Ccolor:0x2e3a5c%7Clabel:1%7CAlbany%2C%20NY
 
         #rint( f"\n\n StaticMap.reset   url {self.url},\n    size {self.size}, ...." )
-        return
+
 
     # ----------------------------------------
     def _append_request( self, a_request, a_key, a_value ):
@@ -972,7 +971,7 @@ class DistanceFrom():
             new_lon -= 360
 
         elif new_lon < -180:
-             new_lon += 360
+            new_lon += 360
 
         new_lon_west  = new_lon
 
@@ -1098,6 +1097,7 @@ class DistanceFrom():
         a_str = f"{a_str}{line_begin}   from name             {self.from_name}"
         a_str = f"{a_str}{line_begin}   from lat, long        {self.from_lat}, {self.from_long}"
         places  = self.places
+
         for i_key, i_value in places.items():
             for i_name, i_data in i_value.items():
                 a_str = f"{a_str}{line_begin}      {i_name}, {i_value}"

@@ -53,10 +53,9 @@ Example::
 
 from qtpy.QtSql import QSqlQuery
 
-# Columns returned in every yielded dict (see spec / photo table).
-OUTPUT_KEYSxxx = ("id", "name", "file", "sub_dir")
 
 
+#---------------------
 class PhotoRowGenerator:
     """
     Iterable that runs one prepared SELECT and yields one dict per row.
@@ -83,7 +82,6 @@ class PhotoRowGenerator:
         self.output_keys    =  output_keys
 
         self.last_error     = ""
-
 
     # -----------------------------------------
     def __iter__(self):
@@ -131,11 +129,11 @@ class PhotoRowGenerator:
 
 
 # Example SELECT for the photo table (spec).
-DEFAULT_PHOTO_SELECTxxx = (
-    "SELECT id, name, file, sub_dir FROM photo WHERE type = :ptype"
-)
+# DEFAULT_PHOTO_SELECT = (
+#     "SELECT id, name, file, sub_dir FROM photo WHERE type = :ptype"
+# )
 
-
+#---------------------
 class ExifExtractor( ):
     def __init__( self, db, sql, out_file_name ):
         """
@@ -166,7 +164,6 @@ class ExifExtractor( ):
     # -----------------------------------
     def get_exif( self, file_sub, file_name ):
         """
-
         return dict of my version of values
         """
 
@@ -278,7 +275,6 @@ class ExifExtractor( ):
 
         return rows_affected
 
-
 #------------------------------------
 def update_exif_with_select( sql ):
     """
@@ -301,9 +297,6 @@ def update_exif_with_select( sql ):
 
     time_to_run     = "Update time: " + string_utils.delta_time_to_string( end - begin  )
     print( time_to_run )
-
-
-# --------------------
 
 #------------------------------------
 def test_1():
@@ -334,7 +327,6 @@ def test_1():
     #     "SELECT id, name, file, sub_dir FROM photo WHERE sub_dir = '26' "
     #        )
 
-
         # match out var and bind to this
     out_file_name       = "./exif_out"
 
@@ -348,7 +340,6 @@ if __name__ == "__main__":
 
     test_1()
 # --------------------
-
 
 
 # ---- eof ---------------------------
