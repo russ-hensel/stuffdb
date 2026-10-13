@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=stuffdb_for_all_mode_from_cline.sh
+Comment=run /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/russ_util/stuffdb_for_all_mode_from_cline.sh
+GenericName=stuffdb_for_all
+X-GNOME-FullName=stuffdb_for_all
+Exec=bash  /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/russ_util/stuffdb_for_all_mode_from_cline.sh
+Icon=/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/misc/db_green_on_black.png
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Development;
+MimeType=
+Name[en_US]=stuffdb_for_all_mode_from_cline
+GenericName[en_US]=stuffdb_for_all_mode_from_cline.sh
