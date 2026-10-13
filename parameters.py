@@ -66,12 +66,15 @@ class Parameters( ):
         #self.mode_new_user()
         self.mode_data_sync()
         self.mode_data_sync_b()
+        self.mode_ramdisk()
+        self.mode_example_db()
+
         #self.mode_picture_test()
 
         #self.mode_millhouse_b()
         #
         #self.mode_picture_test()
-        #self.mode_ramdisk()
+
         #self.mode_source_db_for_copy()
 
         #self.mode_github()
@@ -140,8 +143,8 @@ class Parameters( ):
        #  self.picture_db_sub     = "/21"
        #  self.picture_db_sub     = "/22"
        #  #self.picture_db_sub     = "/23"
-       #  # self.picture_db_sub     = "/25"
-        self.picture_db_sub     = "/26"
+        self.picture_db_sub     = "/25"
+        #self.picture_db_sub     = "/26"
 
         self.logging_level      = logging.DEBUG  # ERROR DEBUG
 
@@ -153,18 +156,43 @@ class Parameters( ):
         """
         moved code to running+on_tweaks
         """
-        self.mode              = "mode_data_sync_b"
-        self.db_file_name      = "./data_sync_b/stuffdb.db"      #  = "sample.db"   =  ":memory:"
-        self.db_lock_file_name = "./data_sync_b/lock_db.txt"     # if present then db is locked else None
-        self.db_lock_file_name =  None
+        self.mode               = "mode_data_sync_b"
+        self.db_file_name       = "./data_sync_b/stuffdb.db"      #  = "sample.db"   =  ":memory:"
+        self.db_lock_file_name  = "./data_sync_b/lock_db.txt"     # if present then db is locked else None
+        self.db_lock_file_name  =  None
 
         self.picture_db_sub     = "/delete"
         self.logging_level      = logging.DEBUG   # ERROR DEBUG
 
         self.picture_browse     = "/mnt/8ball1/first6_root/temp_picture_test/temp_picture_src"
 
-        self.icon              = "./misc/db_green_on_black.png"
-        self.icon              = "./misc/db_red_on_black.png"
+        self.icon               = "./misc/db_green_on_black.png"
+        self.icon               = "./misc/db_red_on_black.png"
+
+
+    # -------
+    def mode_example_db( self ):
+        """
+
+        """
+        self.mode               = "mode_example_db"
+        self.db_file_name       = "./data/example_stuffdb.db"      #  = "sample.db"   =  ":memory:"
+
+        self.db_lock_file_name  = "./data/lock_db.txt"         # if present then db is locked else None
+        self.db_lock_file_name  =  None
+
+        self.picture_db_sub     = "/delete"
+        self.logging_level      = logging.DEBUG   # ERROR DEBUG
+
+        self.picture_browse     = ".data/"        # but no pictures here
+
+        self.icon               = "./misc/db_green_on_black.png"
+        self.icon               = "./misc/db_red_on_black.png"
+
+        self.notes_only         = True
+            # only the notes part of the app
+            # will be available
+
 
     # -------
     def mode_millhouse( self ):
@@ -231,6 +259,8 @@ class Parameters( ):
         self.db_file_name       = "/tmp/ramdisk/stuffdb.db"
         self.db_file_name       = "/tmp/ramdisk/new_user.db"
         self.db_file_name       = "/tmp/ramdisk/stuffdb.db"
+        self.db_file_name       = "/tmp/ramdisk/new_stuffdb.db"
+        self.db_file_name       = "/tmp/ramdisk/new_new_stuffdb.db"
 
     # -------
     def mode_from_computer_id( self ):

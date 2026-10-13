@@ -143,7 +143,8 @@ def is_mounted_with_info(path, check_responsive = False, timeout=5):
     else:
         mounted = True
 
-    info["is_mounted"] = mounted  # lets include this
+    info[ "is_mounted" ] = mounted  # lets include this
+
     return mounted, info
 
 
@@ -195,18 +196,23 @@ def _main(argv):
     for p in args.paths:
         info = mount_info(p)
         path = _normalise(p)
+
         if info is None:
             say(f"NOT MOUNTED: {path}")
             status = 1
+
         elif info["fstype"] == "autofs":
             say(f"NOT MOUNTED: {path} (automount configured, not yet triggered)")
             status = 1
+
         elif args.check and not is_responsive(path, args.timeout):
             say(f"UNRESPONSIVE: {path} ({info['fstype']} from {info['source']}, "
                 f"no response in {args.timeout:g}s)")
             status = 1
+
         else:
             say(f"MOUNTED: {path} ({info['fstype']} from {info['source']})")
+
     return status
 
 

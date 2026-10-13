@@ -6,6 +6,29 @@ Created on Wed Nov 12 17:00:54 2025
 @author: russ
 """
 
+# not complete but a good start
+
+uv pip install PyQt6
+uv pip install Pillow
+uv pip install exifread
+uv pip install folium
+uv pip install geopy
+uv pip install gmplot
+uv pip install gpxpy
+uv pip install psutil
+uv pip install python-vlc
+uv pip install pytz
+uv pip install qtpy
+uv pip install simplekml
+uv pip install unidecode
+uv pip install wat-inspector
+
+
+
+
+
+
+----------------- older
 
 shifting to project_tomel, not done this is bad but butter
 
@@ -21,7 +44,7 @@ import PIL.Image
 
 
 --------------- uv
-uv pip install PyQt6    # and may need fixup in stuffdb 
+uv pip install PyQt6    # and may need fixup in stuffdb
 uv pip install qtpy
 uv pip install exifread
 uv pip install geopy
@@ -33,6 +56,22 @@ uv pip install psutil
 uv pip install folium
 uv pip install pytz
 uv pip install simplekml
+uv pip install unidecode
+uv pip install qtpy
+uv pip install exifread
+uv pip install geopy
+uv pip install gpxpy
+uv pip install wat-inspector
+uv pip install Pillow
+uv pip install gmplot
+uv pip install psutil
+uv pip install folium
+uv pip install pytz
+uv pip install simplekml
+uv pip install unidecode
+
+
+uv pip install python-vlc
 uv pip install unidecode
 
 

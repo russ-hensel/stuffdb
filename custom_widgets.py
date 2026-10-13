@@ -515,7 +515,7 @@ class ShellExe( object ):
         debug_msg   = ( f"run_code_lines about to os.system with {cmd_str = }" )
         logging.log( LOG_LEVEL,  debug_msg, )
 
-        result = os.system( cmd_str  )
+        result = os.system( cmd_str )
         #rint( f"result = os.system >>{result}<<\n\n")
 
     # ----------------------------------
@@ -886,6 +886,13 @@ class TextEditExtMixin(  ):
 
         menu.addSeparator()
 
+        # ---- "Sort/Del Dups for Line Pairs"
+        foo_action              = menu.addAction( "Toggle Comment" )
+        #processing_function     = partial( string_list_utils.alt_line_sort,  which_line = 0, del_dups = True   )
+        foo                     = partial( self.process_selected,  processing_function = string_list_utils.comment_uncomment )
+        foo_action.triggered.connect( foo )
+        foo_action.setEnabled( has_selection )
+
         # ---- "Strip Trail in Sel"
         foo_action = menu.addAction("Strip Trail in Sel")
         foo        = partial( self.strip_selected,  keep_leading = True )
@@ -898,7 +905,7 @@ class TextEditExtMixin(  ):
         foo_action.triggered.connect( foo )
         foo_action.setEnabled( has_selection )
 
-        # ---- "0_sreen_dirt"
+        # ---- "0 Sreen Dirt"
         foo_action = menu.addAction( "0_sreen_dirt" )
         processing_function     = partial( string_list_utils.list_to_list_remove_dirt, screen_dirt = AppGlobal.parameters.screen_dirt )
         foo                     = partial( self.process_selected,  processing_function = processing_function )
@@ -915,7 +922,7 @@ class TextEditExtMixin(  ):
         foo_action.setEnabled( has_selection )
 
         # ---- ""Update Markup""
-        foo_action = menu.addAction("Update Markup")
+        foo_action = menu.addAction( "Update Markup" )
         foo_action.triggered.connect( self.update_markup )
         foo_action.setEnabled( has_selection )
 
@@ -963,8 +970,6 @@ class TextEditExtMixin(  ):
         foo                     = partial( self.process_selected,  processing_function = processing_function )
         foo_action.triggered.connect( foo )
         foo_action.setEnabled( has_selection )
-
-
 
         # ---- "Open Urls"
         foo_action = menu.addAction("Open Urls")
@@ -1298,8 +1303,6 @@ class TextEditExtMixin(  ):
             lines   = self.undent_lines( lines )
 
         return lines
-
-    #----------------------------------
 
     #------------------------------------
     def update_markup(self, ):

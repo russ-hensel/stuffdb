@@ -34,7 +34,7 @@ import tempfile
 # ----------------------------------------
 class BashCmd( ):
     """
-    hold a list of commands, build a bash script, run it in gnome-terminal
+    hold a list of commands, build a bash script on disk, run it in gnome-terminal
     """
     def __init__( self, cmd_list = None, title = "bash_cmd" ):
         """
@@ -107,8 +107,10 @@ class BashCmd( ):
         """
         script          = self.build_script()
         fd, script_fn   = tempfile.mkstemp( prefix = "bash_cmd_", suffix = ".sh" )
+
         with os.fdopen( fd, "w" ) as a_file:
             a_file.write( script )
+
         os.chmod( script_fn, 0o700 )
         self.script_fn  = script_fn
         return script_fn
@@ -166,5 +168,14 @@ if __name__ == "__main__":
 
     a_bash_cmd  = run_cmd_list( cmd_list )
     print( a_bash_cmd )
+
+    cmd_list   = [  """sudo smartctl -a /dev/sda""",
+                      """sudo smartctl -x /dev/sda""",
+                      ]
+
+    a_bash_cmd  = run_cmd_list( cmd_list )
+    print( a_bash_cmd )
+
+
 
 # ---- eof

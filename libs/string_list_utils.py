@@ -240,6 +240,34 @@ def list_to_list_remove_dirt( lines, *, screen_dirt ):
     return new_lines
 
 # ----------------------------------------
+def comment_uncomment( lines, ):
+    """
+    Toggle comments on a list of lines.
+    If the first line starts with "#" remove a leading "#" from each
+    line that has one, otherwise add a "#" to the front of every line.
+    Returns a new list, lines is not modified.
+    """
+    new_lines             = []
+
+    if not lines:
+        return new_lines
+
+    uncomment             = lines[ 0 ].startswith( "#" )
+
+    for i_line in lines:
+
+        if uncomment:
+            if i_line.startswith( "#" ):
+                i_line   = i_line[ 1: ]
+
+        else:
+            i_line   = "#" + i_line
+
+        new_lines.append( i_line )
+
+    return new_lines
+
+# ----------------------------------------
 def list_to_list_to_underscore( lines,   ):
     """
      dirt_list is a list of dictts as in parameters.screen_dirt

@@ -1,0 +1,9 @@
+4.0K	/home/russ/icons/spyder3.png
+4.0K	/home/russ/icons/spyder_about.svg
+4.0K	/home/russ/icons/spyder (copy).png
+4.0K	/home/russ/icons/spydr48.png
+12K	/home/russ/icons/spyder.png
+16K	/home/russ/icons/spyder2-attach.svg
+100K	/home/russ/icons/spyder.ico
+100K	/home/russ/icons/spyder_light.ico
+248K	/home/russ/icons

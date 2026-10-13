@@ -1,0 +1,15 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=spy_py_13_qt_6
+Comment=run spyder in a venv with python py_13_qt_6
+GenericName=Python IDE
+X-GNOME-FullName=Python IDE from Anaconda
+Exec=bash  /home/russ/python_uv_venv/spyder_py_13_qt5.sh
+Icon=/home/russ/icons/spyder.png
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Development;
+MimeType=
+Name[en_US]=spy_py_13_qt_6
+GenericName[en_US]=spy_py_13_qt_6
