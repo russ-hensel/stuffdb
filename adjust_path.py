@@ -58,6 +58,13 @@ except ValueError as error:
     print(f"fallback to 1/0")
     1/0
 
+
+file_path          = Path( __file__ )
+parts              = file_path.parts
+if parts[ -2 ]    != APP_MODULE[ 1: ]:
+    print( f"application need to be in directory {APP_MODULE[ 1: ]}" )
+    1/0
+
 py3_root            = src_root
 proj_root           = f"{py3_root}/_projects"
 ex_root             = f"{py3_root}/_examples"

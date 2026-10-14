@@ -30,7 +30,7 @@ import  data_dict_all
 # ---- imports local -- then constants
 logger      = logging.getLogger( )
 #for custom logging level at module
-LOG_LEVEL   = 20   # higher is more
+LOG_LEVEL   = 10   # higher is more
 
 # -----------------------------------------
 class UpdateSyncSignals( QObject ):
@@ -60,7 +60,7 @@ class UpdateSyncSignals( QObject ):
         """
         why self here not in declaration because magic
         """
-        debug_msg   = ( "stuff_container_update emit next")
+        debug_msg   = ( "UpdateSyncSignals emit_update_sync_pre() emit next")
         logging.log( LOG_LEVEL,  debug_msg, )
 
         self.update_sync_pre.emit(
@@ -75,7 +75,7 @@ class UpdateSyncSignals( QObject ):
     def emit_update_sync_post( self ):
         """
         """
-        debug_msg   = ( "stuff_container_update emit next")
+        debug_msg   = ( "UpdateSyncSignals emit_update_sync_post emit next")
         logging.log( LOG_LEVEL,  debug_msg, )
 
         self.update_sync_post.emit(  )

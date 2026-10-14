@@ -33,7 +33,6 @@ import platform
 import subprocess
 from   unidecode import unidecode
 
-# ---- Qt
 
 from qtpy.QtGui  import ( QCursor,
                           QTextCursor,
@@ -89,14 +88,30 @@ REPLACE_LIST        = [    ( "*>url ",   ">>url " ),   # note deliberate space m
                     ]
 
 
-# make sure equivalent
-QT_DATE_FORMAT         = "yyyy-MM-dd"  # "yyyy-MM-dd"
-PY_DATE_FORMAT         = "%Y-%m-%d"   # strftime("%Y-%m-%d")
+# # make sure equivalent
+# QT_DATE_FORMAT         = "yyyy-MM-dd"  # "yyyy-MM-dd"
+# PY_DATE_FORMAT         = "%Y-%m-%d"   # strftime("%Y-%m-%d")
+
+parameters             = AppGlobal.parameters
+QT_DATE_FORMAT         = parameters.qt_date_format
+PY_DATE_FORMAT         = parameters.py_date_format
+
 
 # DATE_FORMAT         = "yyyy-MM-dd"
 # "%Y-%m-%d" )
     # my standard date format
 
+
+def today_as_str( ):
+    """
+    today_as_str()
+    """
+    dt_now     = datetime.now()
+    text       = dt_now.strftime( PY_DATE_FORMAT ) + " "
+    return text
+
+
+#----------------------------
 class ValidationIssue(  Exception ):
     """
     see __init__
@@ -742,11 +757,35 @@ class TextEditExtMixin(  ):
         self.search_text_widget.setText( selected_text )
             # do not do the first search
 
+    # # ---------------------
+    # def search_down( self,   ):
+    #     """
+    #     search for text see search up
+    #         case insensitive
+    #     """
+    #     text_edit   = self
+    #     search_text = self.search_text_widget.text()
+
+    #     if search_text:
+    #         cursor = text_edit.textCursor()
+    #         cursor.setPosition( self.last_position )
+    #         found = text_edit.find( search_text )
+
+    #         if found:
+    #             self.last_position = text_edit.textCursor().position()
+    #             text_edit.ensureCursorVisible()  # Scroll to the found text
+
+    #         else:
+    #             self.last_position = 0
+    #             cursor.setPosition(self.last_position)
+    #             text_edit.setTextCursor(cursor)
+    #             text_edit.ensureCursorVisible()  # Optional: Scroll to top if reset
+
     # ---------------------
-    def search_down( self,   ):
+    def search_down( self, ):
         """
         search for text see search up
-            case insensitive
+        case insensitive new with claude extra scroll
         """
         text_edit   = self
         search_text = self.search_text_widget.text()
@@ -754,17 +793,29 @@ class TextEditExtMixin(  ):
         if search_text:
             cursor = text_edit.textCursor()
             cursor.setPosition( self.last_position )
+            text_edit.setTextCursor( cursor )        # find() starts from the widget's cursor
             found = text_edit.find( search_text )
 
             if found:
                 self.last_position = text_edit.textCursor().position()
-                text_edit.ensureCursorVisible()  # Scroll to the found text
+                text_edit.ensureCursorVisible()      # bring the match into view
+                self.keep_margin_below_cursor( 5 )   # then 5 more lines, cursor unchanged
 
             else:
                 self.last_position = 0
-                cursor.setPosition(self.last_position)
-                text_edit.setTextCursor(cursor)
-                text_edit.ensureCursorVisible()  # Optional: Scroll to top if reset
+                cursor.setPosition( self.last_position )
+                text_edit.setTextCursor( cursor )
+                text_edit.ensureCursorVisible()
+
+    # # ---------------------
+    # def scroll_lines( self, lines ):
+    #     """
+    #     scroll the view by lines (negative = up) without moving the cursor
+    #     """
+    #     line_height = self.fontMetrics().lineSpacing()
+    #     scroll_bar  = self.verticalScrollBar()
+    #     scroll_bar.setValue( scroll_bar.value() + lines * line_height )
+
 
     # ---------------------
     def search_up( self, ):
@@ -799,6 +850,23 @@ class TextEditExtMixin(  ):
                 cursor.setPosition( self.last_position )
                 text_edit.setTextCursor(cursor)
                 text_edit.ensureCursorVisible()
+
+    #----------------------------
+    def keep_margin_below_cursor( self, lines ):
+        """
+        make sure there are at least `lines` lines visible below the cursor,
+        without scrolling the cursor line off the top
+        """
+        line_height = self.fontMetrics().lineSpacing()
+        margin      = lines * line_height
+        cursor_rect = self.cursorRect()                  # in viewport coordinates
+        view_height = self.viewport().height()
+
+        overflow = cursor_rect.bottom() + margin - view_height
+        overflow = min( overflow, cursor_rect.top() )    # keep the match on screen
+        if overflow > 0:
+            scroll_bar = self.verticalScrollBar()
+            scroll_bar.setValue( scroll_bar.value() + overflow )   # clamped at the end by Qt
 
     #----------------------------
     def set_custom_context_menu_text( self, ):
@@ -905,13 +973,6 @@ class TextEditExtMixin(  ):
         foo_action.triggered.connect( foo )
         foo_action.setEnabled( has_selection )
 
-        # ---- "0 Sreen Dirt"
-        foo_action = menu.addAction( "0_sreen_dirt" )
-        processing_function     = partial( string_list_utils.list_to_list_remove_dirt, screen_dirt = AppGlobal.parameters.screen_dirt )
-        foo                     = partial( self.process_selected,  processing_function = processing_function )
-        foo_action.triggered.connect( foo )
-        foo_action.setEnabled( has_selection )
-
         #menu.addSeparator()
 
         # ---- "to underscore"
@@ -975,9 +1036,18 @@ class TextEditExtMixin(  ):
         foo_action = menu.addAction("Open Urls")
         foo_action.triggered.connect( self.goto_urls_in_selection )
         foo_action.setEnabled(has_selection)
+
         menu.addSeparator()
 
-        select_all_action = menu.addAction("Select All")
+        # ---- 0_Screen Dirt zero_screen_dirt
+        foo_action = menu.addAction( "0_screen_dirt" )
+        # processing_function     = partial( string_list_utils.list_to_list_remove_dirt, screen_dirt = AppGlobal.parameters.screen_dirt )
+        # foo                     = partial( self.process_selected,  processing_function = processing_function )
+        foo                       = self.zero_screen_dirt
+        foo_action.triggered.connect( foo )
+
+        # ---- "Select All"
+        select_all_action = menu.addAction( "Select All" )
         select_all_action.triggered.connect(widget.selectAll)
 
         # ---- "coyp all "
@@ -1304,6 +1374,32 @@ class TextEditExtMixin(  ):
 
         return lines
 
+    # ---------------------
+    def zero_screen_dirt( self, lines ):
+        """
+        what it says
+            apply to all text
+        """
+        lines     = self.get_lines()
+        lines     = string_list_utils.list_to_list_remove_dirt( lines, screen_dirt = AppGlobal.parameters.screen_dirt )
+        self.set_lines( lines )
+
+    # ---------------------
+    def set_lines( self, lines ):
+        """
+        replace all the text with a list of lines, as one undoable edit
+        """
+        cursor = self.textCursor()
+        cursor.select( cursor.SelectionType.Document )   # PyQt5: QTextCursor.Document
+        cursor.insertText( "\n".join( lines ) )
+
+    # ---------------------
+    def get_lines( self, ):
+        """
+        return the text as a list of lines (no line endings)
+        """
+        return self.toPlainText().split( "\n" )
+
     #------------------------------------
     def update_markup(self, ):
         """
@@ -1432,9 +1528,9 @@ class TextEditExtMixin(  ):
          what it says
          inc extra spaces ??
          """
-         dt_now     = datetime.now()
-         text       = dt_now.strftime("%Y-%m-%d") + " "
-         self.insert_text_at_cursor( text )
+         # dt_now     = datetime.now()
+         # text       = dt_now.strftime( PY_DATE_FORMAT ) + " "
+         self.insert_text_at_cursor( today_as_str() )
 
     #-----------------------------------
     def paste_lat_long( self, ):
@@ -2391,7 +2487,7 @@ class CQEditBase():
         convert dictionary data to a new data type
         should be ts timestamp not int
         """
-        py_datetime  = datetime( qdate.year(), qdate.month(), qdate.day())
+        py_datetime  = datetime( qdate.year(), qdate.month(), qdate.day() )
         timestamp    = int( py_datetime.timestamp() )
         return timestamp
 
@@ -2416,7 +2512,7 @@ class CQEditBase():
 
         except ValueError as error:
             error_message   = str(error)
-            msg             = (f"Caught an error: for {self.field_name = } {error_message}")
+            msg             = (f"custom_widgets Caught an error: for {self.field_name = } {error_message}")
             logging.error( msg )
 
         return converted_data
@@ -2740,9 +2836,9 @@ class CQLineEdit( QLineEdit, CQEditBase ):
         what it says
             or paste date
         """
-        dt_now     = datetime.now()
-        text       = dt_now.strftime("%Y-%m-%d") + " "
-        self.insert( text )
+        # dt_now     = datetime.now()
+        # text       = dt_now.strftime( PY_DATE_FORMAT ) + " "
+        self.insert( today_as_str() )
 
     #----------------------------
     def set_copy_prior( self, enable ):
@@ -3509,11 +3605,13 @@ class CQHistoryComboBox( QComboBox, CQEditBase ):
         what it says
             or paste date
             could test type of widget
+
+            ??  line_edit  = self.lineEdit()
         """
-        dt_now     = datetime.now()
-        text       = dt_now.strftime("%Y-%m-%d") + " "
+        # dt_now     = datetime.now()
+        # text       = dt_now.strftime( PY_DATE_FORMAT ) + " "
         line_edit  = self.lineEdit()
-        line_edit.insert( text )
+        line_edit.insert( today_as_str() )
 
 #-------------------------------
 class CQDictComboBox( QComboBox, CQEditBase ):

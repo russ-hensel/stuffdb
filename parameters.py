@@ -65,9 +65,9 @@ class Parameters( ):
 
         #self.mode_new_user()
         self.mode_data_sync()
-        self.mode_data_sync_b()
-        self.mode_ramdisk()
-        self.mode_example_db()
+        #self.mode_data_sync_b()
+        # self.mode_ramdisk()
+        # self.mode_example_db()
 
         #self.mode_picture_test()
 
@@ -763,9 +763,12 @@ class Parameters( ):
                                     "", ]
 
         # ---- file match tolerance
-        self.dt_tolerance       = datetime.timedelta(  days=7, hours= 0,   )
+        self.dt_tolerance       = datetime.timedelta( days=7, hours= 0, )
 
         self.size_tolerance     = 1_000   # bytes
+
+        self.qt_date_format     = "yyyy_MM_dd"   # qt and python use different fromatting
+        self.py_date_format     = "%Y_%m_%d"     # qt and python use different fromatting
 
         # ---- screen dirt  -- tuples would do as well but would need code change
         self.screen_dirt   =    { "`":        "",

@@ -122,7 +122,7 @@ class StuffDocument( base_document_tabs.DocumentBase ):
 
         sub_window              = self
         mdi_area                = AppGlobal.main_window.mdi_area
-        main_notebook.currentChanged.connect( self.on_tab_changed )
+        # main_notebook.currentChanged.connect( self.on_tab_changed ) ccc
 
         ix                        = -1
 
@@ -147,7 +147,8 @@ class StuffDocument( base_document_tabs.DocumentBase ):
         main_notebook.addTab( self.picture_tab, "Picture"     )
 
         ix                         += 1
-        self.detail_text_index      = ix  # phase out !!
+        # self.detail_text_index      = ix  # phase out !!  qqq
+        self.text_tab_index         = ix
         self.text_tab               = StuffTextTab( self )
         main_notebook.addTab( self.text_tab, "Text" )
 

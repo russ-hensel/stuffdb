@@ -163,14 +163,14 @@ class SendSignals( QObject ):
 
     # --------------------------
     def stuff_container_update_xxx( self, update_type, stuff_id, stuff_data, ):
-        debug_msg   = ( "stuff_container_update emit next")
+        debug_msg   = ( "mdi_management stuff_container_update_xxx() emit next")
         logging.log( LOG_LEVEL,  debug_msg, )
 
         self.stuff_container_update_signal.emit( update_type, stuff_id, stuff_data,   )
 
     # --------------------------
     def stuff_container_update_old( self, update_type, stuff_id, stuff_data, ):
-        debug_msg   = ( "stuff_container_update emit next")
+        debug_msg   =  ( "mdi_management stuff_container_update_old() emit next")
         logging.log( LOG_LEVEL,  debug_msg, )
 
         self.stuff_container_update_signal.emit( update_type, stuff_id, stuff_data,   )
@@ -253,8 +253,8 @@ class MdiManagement( QObject ):
         keep a list, or dict.... for now a list
         !! unsubscribe
         """
-        debug_msg     = f"forget_document begin { window_id } !! update closed_topics "
-        logging.log( LOG_LEVEL,  debug_msg, )
+        # debug_msg     = f"mdi_management forget_document() begin { window_id } !! update closed_topics "
+        # logging.log( LOG_LEVEL,  debug_msg, )
 
         self.remove_menu_item( window_id  )
 

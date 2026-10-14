@@ -61,6 +61,7 @@ try:
 
     src_root   = cwd[ : ix   ]
     print( f"in try {src_root = }" )
+
 except ValueError as error:
     # Access the first argument (the message)
     error_message = error.args[0]

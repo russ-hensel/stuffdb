@@ -374,7 +374,8 @@ def build_it( a_schema_dict ):
     # ---- id_in   the new one
     a_column_dict = data_dict_all.ColumnDict(    column_name    = "id_in",
                                              display_order          = 31,
-                                             form_col_span          = 1,
+                                             form_col_span          = 2,
+
                                              db_type                = "INTEGER",
 
                                              detail_edit_class  = "cw_2.CQModelComboBox",

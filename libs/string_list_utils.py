@@ -227,6 +227,8 @@ def list_to_list_remove_dirt( lines, *, screen_dirt ):
      screen_dirt is a dict of old value to new value  -- why a dict
          could be itterable of itterables  butnow a dict of dicts
          string_list_utils.py
+    return
+        revised list
     """
     new_lines             = []
 
@@ -270,12 +272,8 @@ def comment_uncomment( lines, ):
 # ----------------------------------------
 def list_to_list_to_underscore( lines,   ):
     """
-     dirt_list is a list of dictts as in parameters.screen_dirt
-     trim trailing always
-     for i_key, i_value in a_dict.items():
-     screen_dirt is a dict of old value to new value  -- why a dict
-         could be itterable of itterables  butnow a dict of dicts
-         string_list_utils.py
+    space and other chars are converted to underscores
+    see called function
     """
     new_lines             = []
 

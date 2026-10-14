@@ -264,9 +264,6 @@ class DataManager(   ):
     # ---------------------------
     def select_record( self, id_value ):
         """
-
-
-
         promoted   seems ok to be here
         """
         record   = None
@@ -304,7 +301,7 @@ class DataManager(   ):
         perf_start   = time.perf_counter()
 
         if   self.record_state == RECORD_NULL:
-            msg      = ( f"update_db record null no action, return {self.table_name}")
+            msg      = ( f"DataManager update_db record null no action, return {self.table_name}")
             logging.debug( msg )
             return
             # if self.key_word_table_name:
@@ -348,34 +345,35 @@ class DataManager(   ):
         # msg          = f"update_db elapsed perf_counter { delta_perf }"
         # logging.info( msg )
 
+    # # ---------------------------
+    # def update_record_fetched(self):
+    #     """
+    #     from russ crud  -- copied from PictureTextTab -- now promoted
+    #     what are the fields
+    #     key words done in update_db
+    #     when i had problems with update i had several versions of this
+    #         now in Ver 63: I will deleted them look in old versions if you
+    #         want that code
+    #     """
+    #     self.update_record_fetched_v3( )
+
     # ---------------------------
     def update_record_fetched(self):
         """
         from russ crud  -- copied from PictureTextTab -- now promoted
-        what are the fields
-        key words done in update_db
-        when i had problems with update i had several versions of this
-            now in Ver 63: I will deleted them look in old versions if you
-            want that code
-        """
-        self.update_record_fetched_v3( )
-
-    # ---------------------------
-    def update_record_fetched_v3(self):
-        """
-        from russ crud  -- copied from PictureTextTab -- now promoted
+        was v3
         what are the fields
         key words done in update_db
         v3   adding another select -- this seems wrong -- if work look for other options
         this seems to work so go with it for now
         """
-        debug_msg    = ( f"update_record_fetched_v3  {self.record_state  = }"   )
-        logging.log( LOG_LEVEL,  debug_msg, )
+        # debug_msg    = ( f"DataManger update_record_fetched_v3  {self.record_state  = }"   )
+        # logging.log( LOG_LEVEL,  debug_msg, )
 
         model       = self.model      # QSqlTableModel(
 
         if not self.record_state  == RECORD_FETCHED:
-            msg   = ( "update_record_fetched_v3 bad_state, return  "
+            msg   = ( "DataManger update_record_fetched bad_state, return  "
                       f"{self.record_state  = } {self.table_name = }")
             logging.error( msg )
             return
@@ -394,18 +392,18 @@ class DataManager(   ):
                 model.setRecord( 0, record )  # chat says required
                 #model.submitAll()
                 ok   = self.model_submit_all( model,
-                              "DataManager.update_record_fetched_v1 "
+                              "DataManager.update_record_fetched "
                              f"{id_value = } {self.table_name = } ")
                 model.select()
                 self.current_record     = model.record( 0 ) # refresh the value
 
             else:
-                msg   = ( f"update_record_fetched_v3 for {id_value} got 0 records " )
+                msg   = ( f"DataManager,update_record_fetched for {id_value} got 0 records " )
                 logging.error( msg )
 
                 # 1/0   # pretty poor  !!
         else:
-            msg   = ( f"update_record_fetched_v3 for id_value = >{id_value}< was falsy " )
+            msg   = ( f"DataManager.update_record_fetched for id_value = >{id_value}< was falsy " )
             logging.error( msg )
             1/0   # pretty poor
 
@@ -426,28 +424,28 @@ class DataManager(   ):
                 now in Ver 63: I will deleted them look in old versions if you
                 want that code
         """
-        debug_msg       = ( f"document_manager update_new_record_v3"
-                            f"  {self.table_name  = } " )
-        logging.log( LOG_LEVEL,  debug_msg, )
+        # debug_msg       = ( f"DataManager.update_new_record"
+        #                     f"  {self.table_name  = } " )
+        # logging.log( LOG_LEVEL,  debug_msg, )
 
         model   = self.model     # QSqlTableModel(
         if not self.record_state  == RECORD_NEW:
-            msg       = ( f"document_manager update_new_record_v3 bad state,"
+            msg       = ( f"DataManager update_new_record  bad state,"
                           f" return  {self.record_state  = } {self.table_name  = } ")
             logging.error( msg )
             return
 
         model.setFilter( f"id = {self.current_id}" )
 
-        debug_msg    = info_about.INFO_ABOUT.find_info_for(
-                        model,
-                        msg             = "update_new_record",
-                        max_len         = None,
-                        xin             = "",
-                        print_it        = False,
-                        sty             = "",
-                        include_dir     = False,  )
-        logging.log( LOG_LEVEL,  debug_msg, )
+        # debug_msg    = info_about.INFO_ABOUT.find_info_for(
+        #                 model,
+        #                 msg             = "update_new_record",
+        #                 max_len         = None,
+        #                 xin             = "",
+        #                 print_it        = False,
+        #                 sty             = "",
+        #                 include_dir     = False,  )
+        # logging.log( LOG_LEVEL,  debug_msg, )
 
         record  = model.record()   # type is QSqlRecord
 
@@ -456,8 +454,9 @@ class DataManager(   ):
         # Error just for debugging
         #record.setValue( "add_kw", "data_for_add_kw" )
 
-        debug_msg       = f"update_new_record prior to insertRecord {model.rowCount() = } "
-        logging.log( LOG_LEVEL,  debug_msg, )
+        # debug_msg       = f"DataManager update_new_record prior to insertRecord {model.rowCount() = } "
+        # logging.log( LOG_LEVEL,  debug_msg, )
+
         # seems key to modify record first then insert -- may want to look into someroe r
         # but seems like that was what id did in ver 1
         model.insertRecord( model.rowCount(), record )  # QSqlTableModel
@@ -475,9 +474,10 @@ class DataManager(   ):
         #QMessageBox.information(self, "Save New", msg )
         model.setFilter( f"id = {self.current_id}" )  # hope does not trigger a fetch
 
-        msg          = "update_new_record_v3 at very end "
-        debug_msg    = ( f"\n{msg}" )
-        logging.log( LOG_LEVEL,  debug_msg, )
+        # msg          = "DataManager update_new_record at very end "
+        # debug_msg    = ( f"\n{msg}" )
+        # logging.log( LOG_LEVEL,  debug_msg, )
+
         self.current_record     = model.record( 0 ) # refresh the value
 
         if self.history_tab is not None:

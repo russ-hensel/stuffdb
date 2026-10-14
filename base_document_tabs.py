@@ -28,7 +28,7 @@ from qtpy import QtCore, QtWidgets
 from qtpy.QtCore import QDate, QDateTime, QModelIndex, Qt, Slot
 from qtpy.QtGui import QColor, QFont, QIcon, QPalette
 from qtpy.QtSql import      ( QSqlQuery, QSqlQueryModel, QSqlTableModel, QSqlRelationalTableModel, )
-from qtpy.QtWidgets import (QApplication,
+from qtpy.QtWidgets import ( QApplication,
                             QComboBox,
                             QDialog,
                             QGridLayout,
@@ -110,7 +110,6 @@ WIDGET_CLASS_DICT   = { "CQLineEdit":           cw.CQLineEdit,
 PLSB_IX_FN                =  3  # column number PLSB picture list subtab base
 PLSB_IX_SUB_DIR           =  2  # was ix_sub_dir
 
-
 # --------------------------------
 def model_submit_all( model, msg ):
     """
@@ -119,10 +118,11 @@ def model_submit_all( model, msg ):
 
     ok     = stuffdb_tabbed_sub_window.model_submit_all( model,  f"we are here {id = }" )
     """
+    1/0   # indications are that this should never be called .95 delete
     debug_loc        = "model_submit_all"
     if model.submitAll():
-        debug_msg        = f"{debug_loc} >>> {msg = }  "
-        logging.error( debug_msg )   # logging.log( LOG_LEVEL,  debug_msg, )
+        # debug_msg        = f"{debug_loc} >>> {msg = }  "
+        # logging.debug( debug_msg )   # logging.log( LOG_LEVEL,  debug_msg, )
         ok   = True
 
     else:
@@ -624,22 +624,23 @@ class DocumentBase( QMdiSubWindow ):
         #                " redundant in some cases so perhaps provide a mechanism to skip" )
         # logging.debug( debug_msg )
 
-        old_index                = self.current_tab_index
-        self.current_tab_index   = index
+        old_index               = self.current_tab_index
+        self.current_tab_index  = index
         #self.tab_page_info()
+        criteria_tab            = self.criteria_tab
+        criteria_tab_index      = self.criteria_tab_index
 
-        if old_index == 0 and index != 0:  # !=0 happens at construct
-            self.criteria_tab.criteria_select_if( )
+        if old_index == criteria_tab_index and index != criteria_tab_index:  # !=0 happens at construct  qqq
+            criteria_tab.criteria_select_if( )
 
         if  index == self.criteria_tab_index:
-            self.criteria_tab.tab_selected()  # or activate
+            criteria_tab.tab_selected()  # or activate
 
-        if ( ( index == self.criteria_tab_index ) and
-             ( self.criteria_tab.key_words_widget is not None ) ):
-            self.criteria_tab.key_words_widget.setFocus()
+        if ( ( index == criteria_tab_index ) and
+             ( criteria_tab.key_words_widget is not None ) ):
+            criteria_tab.key_words_widget.setFocus()
 
         if  index == self.picture_tab_index:
-            pass
             #rint( "activate the picture tab")
             self.picture_tab.get_topic()
 
@@ -878,7 +879,7 @@ class DocumentBase( QMdiSubWindow ):
     def delete( self, ):
         """
         links to main menu bar save  ... might want to delete but look around
-        get active window function
+        get active window function  qqq
 
         """
         if not is_delete_ok():
@@ -905,7 +906,8 @@ class DocumentBase( QMdiSubWindow ):
         self.list_tab.delete_row_by_id( current_id )
         self.history_tab.delete_row_by_id( current_id )
 
-        next_id   = self.next_list_to_detail( do_update = False )
+        # next_id   = self.next_list_to_detail( do_update = False )  # qqq is no return
+        self.next_list_to_detail( do_update = False )
                 # no update because no record, could be in record_state
                 # and hope it works --- need tab shift?
                 # if not perhaps stay on criteria or clear the detail ... to
@@ -915,7 +917,7 @@ class DocumentBase( QMdiSubWindow ):
         # self.record_state   = RECORD_DELETE   # this is in detail tab not here
         #self.record_state   = RECORD_NULL
 
-        debug_msg   = f"DocumentBase_delete  done   for {self.subwindow_name = }"
+        debug_msg   = f"DocumentBase_delete done for {self.subwindow_name = }"
         logging.debug( debug_msg )
 
     # --------------------------
@@ -2689,7 +2691,7 @@ class HistoryTabBase( QWidget ):
         self.ix_col_seq      = 0
         self.ix_col_id       = 0
         sender_signal        = AppGlobal.mdi_management.update_sync_obj.update_sync_signals.update_sync_pre
-        sender_signal.connect( self.update_sync_pre )
+        sender_signal.connect( self.update_sync_pre ) # no clean up needed see stuffdb
         self._build_gui()
         self.tab_name        = "HistoryTabBase -- tab failed to set"
             # because should be extended
@@ -2944,13 +2946,16 @@ class HistoryTabBase( QWidget ):
             return
 
         self.list_ix    = ix_row
-        a_id             = int( item.text() )
+        a_id            = item.text()
 
-        if a_id == "" or a_id is None:
+        try:
+            a_id        = int( item.text() )
+
+        except Exception as an_except:
+            msg   = str( an_except )
+            logging.debug( msg )
             return
-        # msg        = f"on_cell_clicked  Row {ix_row}, Column
-        #    {self.ix_col_id}, Data: {a_id = }"
-        # rint( msg )
+
         self.parent_window.select_record( a_id )
 
     # ----------------------------
@@ -2967,9 +2972,15 @@ class HistoryTabBase( QWidget ):
             return
 
         self.list_ix    = ix_row
-        a_id            = int( item.text() )
 
-        if a_id == "" or a_id is None:
+        a_id            = item.text()
+
+        try:
+            a_id        = int( item.text() )
+
+        except Exception as an_except:
+            msg   = str( an_except )
+            logging.debug( msg )
             return
 
         self.parent_window.copy_record( a_id )
@@ -2992,7 +3003,17 @@ class HistoryTabBase( QWidget ):
 
         item            = table.item( ix_row, self.ix_col_id )
         self.list_ix    = ix_row
-        a_id            = int( item.text() )
+
+        a_id            = item.text()
+
+        try:
+            a_id        = int( item.text() )
+
+        except Exception as an_except:
+            msg   = str( an_except )
+            logging.debug( msg )
+            return
+
         # msg        = f"on_cell_clicked  Row {ix_row}, Column
         #    {self.ix_col_id}, Data: {a_id = }"
         # rint( msg )
@@ -3047,11 +3068,14 @@ class HistoryTabBase( QWidget ):
         get detail record and put in pinned table at position
         ix_row
         """
-        table           = self.pinned_table  # QTableWidget(
+        table           = self.pinned_table  # QTableWidget
 
         # get the record from detail -- assume has one
         detail_tab      = self.parent_window.detail_tab
         record          = detail_tab.data_manager.current_record
+
+        if record is None:
+            return   # qqq
 
         ix_col          = 0
         for i_col_name in self.col_names:

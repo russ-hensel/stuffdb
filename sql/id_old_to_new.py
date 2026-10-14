@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# ---- tof readme
 """
 Created on Sun Oct 27 14:23:51 2024
 
 @author: russ
+Python approach for photo table, not really what
+i generally need
+
+should be able to do in just sql  see
+/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/sql/update_old_id_and_related.py
+
+
+
 """
 # -*- coding: utf-8 -*-
 #>>>>>python example for file read write -- and some file info
@@ -26,13 +35,9 @@ Search for the following in the code below:
 """
 #import datetime
 
-# ---- QtCore
-# ---- QtSql
+
 from PyQt5.QtSql import QSqlQuery
-# ----QtWidgets Boxs, Dialogs
-# ----QtWidgets layouts
-# ----QtWidgets big
-# ----QtWidgets
+
 
 # ---- imports
 import db_create
@@ -41,18 +46,10 @@ import db_create
 
 
 
-
-
 # ---- Imports
 
 
 
-
-"""
-
-
-
-"""
 
 
 # ---- quasi constants and constants

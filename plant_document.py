@@ -132,42 +132,43 @@ class PlantDocument( base_document_tabs.DocumentBase ):
         info   = self.detail_tab.data_manager.get_topic_string()
         return info
 
-    # --------------------------------
-    def get_topic_old( self ):
-        """
-        of the detail record -- now info
-        see picture get plant info....
-        """
-        # topic     = "plant topic "
-        # if self.record_state:
-        #     topic    = f"{topic} {self.record_state = }"
-        # topic    = f"{topic} {self.detail_tab.name_field.text()}"
+    # # --------------------------------
+    # def get_topic_old( self ):
+    #     """
+    #     of the detail record -- now info
+    #     see picture get plant info....
+    #     deleted in .97
+        # """
+        # # topic     = "plant topic "
+        # # if self.record_state:
+        # #     topic    = f"{topic} {self.record_state = }"
+        # # topic    = f"{topic} {self.detail_tab.name_field.text()}"
 
-        # return   topic
-        # info     = "get_topic plant need to fix record state  "
-        # return info
-        record_state    = self.detail_tab.data_manager.record_state
-        # probably in data manager
-        if record_state:  # else no record
-            a_id        = self.detail_tab.id_field.get_raw_data()
-            name        = self.detail_tab.name_field.get_raw_data()
-            descr       = self.detail_tab.descr_field.get_raw_data()
-            latin_name  = self.detail_tab.latin_name_field.get_raw_data()
-            add_kw      = self.detail_tab.add_kw_field.get_raw_data()
+        # # return   topic
+        # # info     = "get_topic plant need to fix record state  "
+        # # return info
+        # record_state    = self.detail_tab.data_manager.record_state
+        # # probably in data manager
+        # if record_state:  # else no record
+        #     a_id        = self.detail_tab.id_field.get_raw_data()
+        #     name        = self.detail_tab.name_field.get_raw_data()
+        #     descr       = self.detail_tab.descr_field.get_raw_data()
+        #     latin_name  = self.detail_tab.latin_name_field.get_raw_data()
+        #     add_kw      = self.detail_tab.add_kw_field.get_raw_data()
 
-            #topic    = f"{topic} {self.record_state = }"
-            #topic     = f"{topic} {self.detail_tab.name_field.text() = }"
-            #info      = (f"{name} {latin_name} {descr = }  ") #!! this is a debug format
-            info    = (f"{ name} {latin_name} {descr}").strip()
+        #     #topic    = f"{topic} {self.record_state = }"
+        #     #topic     = f"{topic} {self.detail_tab.name_field.text() = }"
+        #     #info      = (f"{name} {latin_name} {descr = }  ") #!! this is a debug format
+        #     info    = (f"{ name} {latin_name} {descr}").strip()
 
-            if info == "":
-                info = f"plant {a_id} has blank name and ...."
+        #     if info == "":
+        #         info = f"plant {a_id} has blank name and ...."
 
-        else:
-            # maybe an error
-            info   = "null record in plant document "
+        # else:
+        #     # maybe an error
+        #     info   = "null record in plant document "
 
-        return  info
+        # return  info
 
     # ------------------------------------------
     def _build_gui( self, ):
