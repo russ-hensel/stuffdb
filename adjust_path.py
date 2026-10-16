@@ -5,14 +5,7 @@
 """
 Created on Tue Jul 30 15:34:13 2024
 
-@author: russ
-
-
 import adjust.path
-
-
-!! add doc here and in notes
-
 
 
 """
@@ -61,9 +54,10 @@ except ValueError as error:
 
 file_path          = Path( __file__ )
 parts              = file_path.parts
+
 if parts[ -2 ]    != APP_MODULE[ 1: ]:
     print( f"application need to be in directory {APP_MODULE[ 1: ]}" )
-    1/0
+    print( f"this file is {__file__}")
 
 py3_root            = src_root
 proj_root           = f"{py3_root}/_projects"
@@ -107,7 +101,6 @@ sys.path.insert( 1, f"{src_root}/stuffdb/sql" )
 sys.path.insert( 1, f"{src_root}/stuffdb/geo_photo" )
 sys.path.insert( 1, f"{src_root}/stuffdb/sql" )
 sys.path.insert( 1, f"{src_root}/rsh" )
-
 
 
 if VERBOSE >= 10:

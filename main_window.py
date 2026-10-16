@@ -210,7 +210,7 @@ class StuffdbMainWindow( QMainWindow ):
         toolbar.addAction(action)
 
         # ----
-        action          = QAction(  "Add/Copy", self )
+        action          = QAction(  "Add/Copy-Titles", self )
         connect_to      = functools.partial(  self.go_active_sub_window_func,
                                               "add_copy"    )    # "copy_prior_row"     )
         action.triggered.connect( connect_to )
@@ -233,13 +233,13 @@ class StuffdbMainWindow( QMainWindow ):
         gui_qt_ext.color_toolbar_action( toolbar, action, bg_color = "#FF5555", text_color = "#FFFFFF" )
 
         # ---- List nav
-        action          = QAction( QIcon.fromTheme( "go-previous" ), "⬅ Previous", self )
+        action          = QAction( QIcon.fromTheme( "go-previous" ), "⬅ Previous on List", self )
         a_function      = functools.partial(  self.go_active_sub_window_func,
                                               "prior_list_to_detail"     )
         action.triggered.connect( a_function )
         toolbar.addAction(action)
 
-        action          = QAction( QIcon.fromTheme( "go-next" ), "Next ➡", self )
+        action          = QAction( QIcon.fromTheme( "go-next" ), "Next on List ➡", self )
         a_function      = functools.partial(  self.go_active_sub_window_func,
                                               "next_list_to_detail"     )
         action.triggered.connect( a_function )
@@ -268,13 +268,13 @@ class StuffdbMainWindow( QMainWindow ):
 
         # ---- history nav
         # ---- go-previous
-        action          = QAction( QIcon.fromTheme( "go-previous" ), "⬅ Previous", self )
+        action          = QAction( QIcon.fromTheme( "go-previous" ), "⬅ Previous in History", self )
         a_function      = functools.partial(  self.go_active_sub_window_func,
                                               "prior_history_to_detail"     )
         action.triggered.connect( a_function )
         toolbar.addAction(action)
 
-        action          = QAction( QIcon.fromTheme( "go-next" ), "Next ➡", self )
+        action          = QAction( QIcon.fromTheme( "go-next" ), "Next in History ➡", self )
         a_function      = functools.partial(  self.go_active_sub_window_func,
                                               "next_history_to_detail"     )
         action.triggered.connect( a_function )

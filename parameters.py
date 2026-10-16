@@ -65,7 +65,7 @@ class Parameters( ):
 
         #self.mode_new_user()
         self.mode_data_sync()
-        #self.mode_data_sync_b()
+        self.mode_data_sync_b()
         # self.mode_ramdisk()
         # self.mode_example_db()
 

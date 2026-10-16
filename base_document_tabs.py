@@ -3040,12 +3040,13 @@ class HistoryTabBase( QWidget ):
         dest_table      = self.pinned_table   #
 
         if ix_src_row < 0 or ix_src_row >= src_table.rowCount():
-            msg         =  (f"Invalid source row: {ix_src_row}")
-            # ---- !! add logging as error
+            msg         =  (f"history_to_pinned() Invalid source row: {ix_src_row}")
+            logging.error( msg )
             return
 
         if ix_dest_row < 0 or ix_dest_row >= dest_table.rowCount():
-            msg         = (f"Invalid destination row: {ix_dest_row}")
+            msg         = (f"history_to_pinned() Invalid destination row: {ix_dest_row}")
+            logging.error( msg )
             return
 
         # Copy each cell from source row to destination row
@@ -3058,7 +3059,7 @@ class HistoryTabBase( QWidget ):
             if not dest_item:
                 dest_item = QtWidgets.QTableWidgetItem()
                 dest_table.setItem( ix_dest_row, col, dest_item )
-            dest_item.setText(text)
+            dest_item.setText( text )
 
         # self.status_label.setText(f"Copied row {ix_table_one} to row {ix_table_two}")
 
@@ -3163,7 +3164,7 @@ class HistoryTabBase( QWidget ):
         ix_row          = self.find_id_in_table( a_id )
 
         if ix_row >=0:
-            debug_msg   = ( f"record_to_table() history row found {ix_row}   ")
+            debug_msg   = ( f"record_to_table_at_end() history row found {ix_row}   ")
             logging.error( debug_msg )
             #is_insert       = False
 
@@ -3246,7 +3247,7 @@ class HistoryTabBase( QWidget ):
             num_rows (int): Number of empty rows to add
         """
         current_row_count = table_widget.rowCount()
-        table_widget.setRowCount(current_row_count + num_rows)
+        table_widget.setRowCount( current_row_count + num_rows )
 
     # --------------------------------
     def delete_row_by_id( self, id_to_delete ):
@@ -3353,14 +3354,11 @@ class TextTabBase( DetailTabBase ):
     # -------------------------------------
     def _build_text_gui( self, a_layout ):
         """
-        like to build gui on text tabs borrowed here
-        in help_document, try to make copy over to base document text tab
-        we may be able to make this a method in base see base document ??
-
-        new since last back lets use boxes
-        like to build gui on text tabs borrowed here
-        in help_document, try to make copy over to base document text tab
-        we may be able to make this a method in base see base document ??
+        this may not compute:
+            new since last back lets use boxes
+            like to build gui on text tabs borrowed here
+            in help_document, try to make copy over to base document text tab
+            we may be able to make this a method in base see base document ??
         """
         tab_layout      = QHBoxLayout()
         a_layout.addLayout( tab_layout )
@@ -3462,12 +3460,6 @@ class TextTabBase( DetailTabBase ):
             connect_to  =  partial( self.current_record_to_pinned, ix )
             widget.clicked.connect( connect_to )
             button_layout.addWidget( widget )
-
-        # label           = "Test\nDebug"
-        # widget          = QPushButton( label )
-        # connect_to  =  partial( self.current_record_to_pinned, 0 )
-        # widget.clicked.connect( self.test_debug )
-        # button_layout.addWidget( widget )
 
  #-------------------------------------
     def build_snippet_gui( self, snippet_manager, layout, ix ):

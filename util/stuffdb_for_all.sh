@@ -9,14 +9,16 @@ echo "dirname : [$(dirname "$0")]"
 echo "pwd     : [$(pwd)]"
 
 # Activate uv environment
-#source  $PYTHON_VENV/py_13/bin/activate
+
+# use a line like this if your environment is not set up
+#PYTHON_VENV=/home/russ/python_uv_venv
+# the name of the env is py3_13_qt6
 source              $PYTHON_VENV/py3_13_qt6/bin/activate
 
+# next fully hardcoded version
 #source  /home/russ/python_uv_venv/py3_13_qt6/bin/activate
 
-
-
-echo  "Which Python:"
+echo  "Check for python venf with Which Python:"
 which   python
 echo  "end which Python:"
 
@@ -30,6 +32,8 @@ echo  "end which Python:"
 # next is for debugging
 #export QT_DEBUG_PLUGINS=1
 
+# use a line like this if your environment is not set up
+#PYTHON_PROJECTS=/mnt/8ball1/first6_root/russ/0000/python00/python3/_projects
 
 cd         $PYTHON_PROJECTS/stuffdb
 echo       $PYTHON_PROJECTS/stuffdb

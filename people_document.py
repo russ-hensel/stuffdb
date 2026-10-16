@@ -442,12 +442,12 @@ class PeopleDetailTab( base_document_tabs.DetailTabBase  ):
 
         sub_tab      = PeopleEventSubTab( self )
         self.event_sub_tab   = sub_tab
-        self.sub_tab_list.append( sub_tab )
+        # base __init__ appends to sub_tab_list
         tab_folder.addTab( sub_tab, "Events" )
 
         sub_tab      = PeopleContactSubTab( self )
-        self.event_sub_tab   = sub_tab
-        self.sub_tab_list.append( sub_tab )
+        self.contact_sub_tab = sub_tab
+        # base __init__ appends to sub_tab_list
         tab_folder.addTab( sub_tab, "ContactInfo" )
 
         # Main notebook
@@ -1357,7 +1357,7 @@ class PeopleContactSubTab( base_document_tabs.SubTabWithEditBase ):
         self._build_model()
         self._build_gui()
 
-        self.parent_window.sub_tab_list.append( self )    # a function might be better
+        # base __init__ appends to sub_tab_list
 
     # ---------------------------------
     def _build_model( self, ):

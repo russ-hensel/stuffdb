@@ -24,6 +24,11 @@ from qtpy.QtCore import (
                             QTimer,
                             )
 
+from qtpy.QtGui import (
+                         QStandardItem,
+                         QStandardItemModel,
+                         )
+
 from qtpy.QtSql import (
                          QSqlDatabase,
                          QSqlQuery,
@@ -32,6 +37,7 @@ from qtpy.QtSql import (
 
 
 from qtpy.QtWidgets import (
+                             QAbstractItemView,
                              QDialog,
                              QHBoxLayout,
                              QLabel,
@@ -42,6 +48,7 @@ from qtpy.QtWidgets import (
                              QSpacerItem,
                              QTableView,
                              QTabWidget,
+                             QTreeView,
                              QVBoxLayout
                              )
 
@@ -597,12 +604,18 @@ class StuffDetailTab( base_document_tabs.DetailTabBase ):
         # ----fields
         self._build_fields( placer )
 
+        widget              = QPushButton( "Jump To Container" )
+        connect_to          = self.jump_to_container
+        widget.clicked.connect( connect_to  )
+        placer.addWidget( widget )
+
+
         # ---- tab area
         tab_layout.new_row( )
 
         tab_folder   = QTabWidget()
         # tab_folder.setTabPosition(QTabWidget.West)
-        tab_folder.setMovable(True)
+        tab_folder.setMovable( True )
         tab_layout.addWidget( tab_folder, columnspan = max_col )
 
         sub_tab                 = StuffPictureListSubTab( self )
@@ -612,8 +625,14 @@ class StuffDetailTab( base_document_tabs.DetailTabBase ):
 
         sub_tab                 = StuffEventSubTab( self )
         self.event_sub_tab      = sub_tab
-        self.sub_tab_list.append( sub_tab )
+        # base __init__ appends to sub_tab_list
         tab_folder.addTab( sub_tab, "Events" )
+
+        # ---- ..... contnets
+        sub_tab                 = StuffContentsSubTab( self )
+        self.contents_sub_tab   = sub_tab
+        # base __init__ appends to sub_tab_list
+        tab_folder.addTab( sub_tab, "Contents" )
 
         # Main notebook
         detail_notebook        = QTabWidget()
@@ -1076,6 +1095,30 @@ class StuffDetailTab( base_document_tabs.DetailTabBase ):
 
 
 
+
+    # ------------------------
+    def jump_to_container( self ):
+        """
+        save the current record then select the record in id_in
+        id_in of -99 or None means no container
+        """
+        a_id        = self.field_dict[ "id_in" ].get_raw_data()
+        current_id  = self.data_manager.current_id
+
+        debug_msg   = ( f"{self.tab_name} jump_to_container {current_id = } {a_id = }" )
+        logging.debug( debug_msg )
+
+        if a_id in ( None, "", -99 ):
+            msg     = ( "This item is not in a container." )
+            QMessageBox.information( self, "Jump To Container", msg )
+            return
+
+        if a_id == current_id:
+            return
+
+        document    = self.parent_window
+        document.update_db()
+        document.select_record( a_id )
 
     # ------------------------
     def get_picture_file_name(self):
@@ -1583,6 +1626,242 @@ class StuffEventSubTab( base_document_tabs.SubTabWithEditBase  ):
         a_str   = "\n>>>>>>>>>>* StuffEventSubTab  *<<<<<<<<<<<<"
 
         return a_str
+
+# ----------------------------------------
+class StuffContentsSubTab( base_document_tabs.SubTabBase  ):
+    """
+    view only tree of the contents of the current stuff record
+        child records have id_in = id of the parent ( the container )
+        current record is the single root, children recursively below it
+        no parent is id_in -99 or NULL, but we only walk down so
+        that does not matter here
+    see russ_util/tree_view_from_db_notes.md
+    """
+    def __init__( self, parent_window ):
+        """
+        the usual
+        """
+        super().__init__( parent_window )
+
+        self.table_name      = "stuff"
+        self.tab_name        = "StuffContentsSubTab"
+        self.max_depth       = 20       # guard against cycles in bad data
+        self.header_labels   = [ "Name", "ID" ]
+
+        self._build_model()
+        self._build_gui()
+
+    # ------------------------------------------
+    def _build_gui( self, ):
+        """
+        what it says, read
+        """
+        page                = self
+
+        layout              = QVBoxLayout( page )
+        button_layout       = QHBoxLayout()
+
+        view                = QTreeView()
+        self.view           = view
+        view.setModel( self.model )
+
+        view.setEditTriggers( QAbstractItemView.NoEditTriggers )   # view only
+        view.setSelectionBehavior( QAbstractItemView.SelectRows )
+        view.setAlternatingRowColors( True )
+        view.setSortingEnabled( True )
+        view.sortByColumn( 0, Qt.AscendingOrder )
+        view.setColumnWidth( 0, 1700 )     # name, user can still drag it
+        view.setColumnWidth( 1, 100 )
+
+        header              = view.header()
+        header.setStretchLastSection( False )  # else ID column takes spare width
+
+        view.clicked.connect( self.on_clicked )
+        view.doubleClicked.connect( self.on_double_clicked )
+
+        layout.addWidget( view )
+
+        # ---- info label
+        widget              = QLabel( "" )
+        self.info_label     = widget
+        layout.addWidget( widget )
+
+        # ---- buttons
+        layout.addLayout( button_layout )
+
+        widget        = QPushButton( "Expand All" )
+        widget.clicked.connect( view.expandAll )
+        button_layout.addWidget( widget )
+
+        widget        = QPushButton( "Collapse All" )
+        widget.clicked.connect( view.collapseAll )
+        button_layout.addWidget( widget )
+
+        button_layout.addStretch()
+
+    # ---------------------------------
+    def _build_model( self, ):
+        """
+        the model is filled in select_by_id
+        """
+        model              = QStandardItemModel( self )
+        self.model         = model
+        model.setHorizontalHeaderLabels( self.header_labels )
+
+    # ---------------------------------------
+    def select_by_id( self, a_id ):
+        """
+        rebuild the tree with a_id as the root
+        a_id may be a new key that is not in the db yet, then tree is empty
+        """
+        self.current_id     = a_id
+
+        model               = self.model
+        model.removeRows( 0, model.rowCount() )
+            # not model.clear(), that drops the columns and so the column widths
+        self.info_label.setText( "" )
+
+        if a_id is None:
+            return
+
+        records             = self.fetch_subtree( a_id )
+
+        # ---- pass 1 make a row per record
+        row_dict            = {}
+        for i_id, i_id_in, i_name in records:
+            row_dict[ i_id ]    = self.make_row( i_id, i_name )
+
+        # ---- pass 2 attach rows to their parent
+        root_item           = model.invisibleRootItem()
+        for i_id, i_id_in, i_name in records:
+            if i_id == a_id:
+                root_item.appendRow( row_dict[ i_id ] )
+            else:
+                parent_row          = row_dict.get( i_id_in )
+                if parent_row is None:
+                    # cte only returns rows with a parent in the set, but be safe
+                    msg     = ( f"{self.tab_name} parent not found {i_id = } {i_id_in = }" )
+                    logging.error( msg )
+                    continue
+                parent_row[ 0 ].appendRow( row_dict[ i_id ] )
+
+        self.view.expandAll()
+
+        n_contents          = max( 0, len( records ) - 1 )
+        msg                 = ( f"{n_contents} item(s) in contents" )
+        self.info_label.setText( msg )
+
+        debug_msg    = ( f"{self.tab_name} select_by_id {a_id = } {len( records ) = }" )
+        logging.debug( debug_msg )
+
+    # ---------------------------------------
+    def fetch_subtree( self, a_id ):
+        """
+        return list of ( id, id_in, name ) for a_id and everything below it
+        recursive cte walks down id_in -> id, depth limit stops cycles
+        """
+        sql         = ( """
+            WITH RECURSIVE sub( id, id_in, name, depth ) AS (
+                SELECT id, id_in, name, 0
+                    FROM stuff
+                    WHERE id = ?
+                UNION ALL
+                SELECT s.id, s.id_in, s.name, sub.depth + 1
+                    FROM stuff s
+                    JOIN sub ON s.id_in = sub.id
+                    WHERE sub.depth < ?
+                )
+            SELECT DISTINCT id, id_in, name FROM sub
+            """ )
+
+        query       = QSqlQuery( self.db )
+        query.prepare( sql )
+        query.addBindValue( a_id )
+        query.addBindValue( self.max_depth )
+
+        records     = []
+        if not query.exec():
+            msg     = ( f"{self.tab_name} fetch_subtree error {query.lastError().text()}" )
+            logging.error( msg )
+            return records
+
+        while query.next():
+            records.append( ( query.value( 0 ), query.value( 1 ), query.value( 2 ) ) )
+
+        return records
+
+    # ---------------------------------------
+    def make_row( self, a_id, a_name ):
+        """
+        list of QStandardItem one per column, id hidden in UserRole on item 0
+        """
+        name_item   = QStandardItem( a_name or "" )
+        name_item.setData( a_id, Qt.UserRole )
+
+        id_item     = QStandardItem()
+        id_item.setData( a_id, Qt.DisplayRole )    # int so it sorts as a number
+
+        return [ name_item, id_item ]
+
+    # ---------------------------------------
+    def on_clicked( self, index ):
+        """
+        show the path from the root to the clicked node
+        """
+        a_id        = index.siblingAtColumn( 0 ).data( Qt.UserRole )
+
+        names       = []
+        ix_index    = index.siblingAtColumn( 0 )
+        while ix_index.isValid():
+            names.insert( 0, ix_index.data() )
+            ix_index    = ix_index.parent()
+
+        msg         = ( f"{' / '.join( names )}    ( id {a_id} )" )
+        self.info_label.setText( msg )
+
+    # ---------------------------------------
+    def on_double_clicked( self, index ):
+        """
+        save the document then fetch the record double clicked on
+        same calls as DocumentBase.set_list_to_detail_ix
+        """
+        a_id        = index.siblingAtColumn( 0 ).data( Qt.UserRole )
+
+        if a_id is None or a_id == self.current_id:
+            return
+
+        # select_record rebuilds this tree, so do it after this signal returns
+        QTimer.singleShot( 0, lambda: self.save_and_select( a_id ) )
+
+    # ---------------------------------------
+    def save_and_select( self, a_id ):
+        """
+        what it says
+        """
+        document    = self.parent_window.parent_window   # detail tab -> document
+
+        debug_msg   = ( f"{self.tab_name} save_and_select {a_id = }" )
+        logging.debug( debug_msg )
+
+        document.update_db()
+        document.select_record( a_id )
+
+    # -----------------------
+    def update_db( self ):
+        """
+        view only, nothing to save
+        """
+        pass
+
+    # -----------------------
+    def __str__( self ):
+
+        a_str   = ""
+        a_str   = "\n>>>>>>>>>>* StuffContentsSubTab  *<<<<<<<<<<<<"
+
+        return a_str
+
+# ------------------------------------
 
 # ------------------------------------
 class StuffPictureListSubTab( base_document_tabs.PictureListSubTabBase ):
