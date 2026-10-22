@@ -65,7 +65,7 @@ class Parameters( ):
 
         #self.mode_new_user()
         self.mode_data_sync()
-        self.mode_data_sync_b()
+        #self.mode_data_sync_b()
         # self.mode_ramdisk()
         # self.mode_example_db()
 
@@ -126,6 +126,8 @@ class Parameters( ):
         self.picture_browse     = "/mnt/8ball1/first6_root/photos/photos_raw/07"
         self.picture_browse     = "/mnt/8ball1/first6_root/photos/photos_raw/2016"
 
+        self.get_sudo           = True
+
         #self.picture_db_sub     = "/01"
         #self.picture_db_sub     = "/02"
        # # self.picture_db_sub     = "/76"
@@ -157,18 +159,26 @@ class Parameters( ):
         moved code to running+on_tweaks
         """
         self.mode               = "mode_data_sync_b"
+        #self.get_sudo           = False
+
+
         self.db_file_name       = "./data_sync_b/stuffdb.db"      #  = "sample.db"   =  ":memory:"
         self.db_lock_file_name  = "./data_sync_b/lock_db.txt"     # if present then db is locked else None
         self.db_lock_file_name  =  None
 
-        self.picture_db_sub     = "/delete"
+
+
         self.logging_level      = logging.DEBUG   # ERROR DEBUG
+
+        self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
+        self.picture_db_root    = "/mnt/8ball1/first6_root/photos/photos_db"
+        self.picture_db_root    = None
+        self.picture_db_sub     = "/delete"
 
         self.picture_browse     = "/mnt/8ball1/first6_root/temp_picture_test/temp_picture_src"
 
         self.icon               = "./misc/db_green_on_black.png"
         self.icon               = "./misc/db_red_on_black.png"
-
 
     # -------
     def mode_example_db( self ):
@@ -192,7 +202,6 @@ class Parameters( ):
         self.notes_only         = True
             # only the notes part of the app
             # will be available
-
 
     # -------
     def mode_millhouse( self ):
@@ -345,7 +354,6 @@ class Parameters( ):
         self.db_password        = "nopassword"
 
         self.icon              = "./misc/db_green_on_black.png"
-
 
     # -------
     def mode_github( self ):
@@ -544,8 +552,10 @@ class Parameters( ):
             msg    = ( f"In parameters: no special settings for computer_id {computer_id}" )
             logging.debug( msg )
             # next should be in os_tweaks not here
+
             if self.running_on.os_is_win:
                 self.ex_editor          =  r"C:\apps\Notepad++\notepad++.exe"
+
             else:
                 self.ex_editor          =  r"leafpad"    # Linux raspberry pi maybe
 
@@ -607,6 +617,19 @@ class Parameters( ):
             # only the notes part of the app
             # will be available
 
+        # ---- .... style sheet
+        self.app_style          = "Fusion"       # gives the style sheet a consistent base on Mint
+        self.app_style_file     = "./misc/modern_dark.qss"
+        self.app_style_file     = "./misc/modern_light.qss"
+            # # ---- style
+            # self.q_app.setStyle( "Fusion" )     # gives the style sheet a consistent base on Mint
+            # with open( "modern_dark.qss", encoding="utf-8" ) as f:
+            #     self.q_app.setStyleSheet( f.read() )
+
+        self.app_style          = None       # gives the style sheet a consistent base on Mint
+        self.app_style_file     = None
+
+        # ---- .... size
         # control initial size and position with:
         self.qt_width           = 1200
         self.qt_height          = 600
@@ -663,21 +686,22 @@ class Parameters( ):
         self.logging_level          = logging.ERROR
             # logging level used by app logger
 
-        self.logger_id          = "stuffdb"
+        self.logger_id              = "stuffdb"
             # id of app in logging file
 
         # ---- file  and path names more
-        self.picture_browse     = "/mnt/WIN_D/PhotosRaw/2024/pixel4a/july4"
+        self.picture_browse         = "/mnt/WIN_D/PhotosRaw/2024/pixel4a/july4"
             # browsing starts from here see PictureDocument
 
-        self.file_browser_native = True
-
-        # picture to use when a valid picture is not found or does not exist
+        self.file_browser_native    = True
+            # specifies using the native file browser
 
         self.picture_nf_file_name           = "./misc/404.png"
+            # picture to use when a valid picture is not found or does not exist
+
         self.video_thumb_nf_file_name       = "./misc/404_thumb_not_found.png"
         self.video_nf_file_name             = "./misc/404_video.png"
-
+            # picture to use when a valid video thumbnail is not found or does not exist
 
         self.picture_db_root    = "/mnt/WIN_D/PhotoDB/"
         self.picture_db_root    = "/mnt/8ball1/first6_root/photos/photos_db"
@@ -707,7 +731,6 @@ class Parameters( ):
                                         "--command=pinta",
                                         "com.github.PintaProject.Pinta",
                                         ]
-
 
             # the editor that will be envoked when you edit a picture
             # notice pinta a bit complex  --- flatpak version
@@ -753,8 +776,8 @@ class Parameters( ):
         self.help_path     =  "./docs"
             # what it says, but not used much as most help is in the db
 
-        self.idle_venv     = "py_12_misc"   # idle will open in this python venv
-            # path leading to all docs and help
+        # self.idle_venv     = "py_12_misc"   # idle will open in this python venv
+        #     # path leading to all docs and help
 
         self.use_add_where = False    # on criteria have add_where field
 
@@ -816,7 +839,8 @@ class Parameters( ):
         self.history_at_end     = True
             # if true history items have mort recent viewed at the ent
 
-        self.get_sudo      = True
+        self.get_sudo           = True
+            # will try to get sudo pass from some sort of sectet
 
         self.template_copy_marker = "___template_copy___"
             # marks some field when using template copy
@@ -900,25 +924,36 @@ class Parameters( ):
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
-        # ---- .... idle_template
-        template_name          = "Idle"
+
+        self.ide_cmd    = "python -m idlelib " # or "thonny"
+            # the default ide for >>Idle cmd
+
+        # ---- .... ide_template
+        template_name          = "Ide"
         template_text          = (
         """
-        >>idle  ======== python_that_runs_this ======== <<
+        >>Ide ======== with existing file or inline code ======== <<
+
+        #>venv  = /home/russ/python_uv_venv/py3_13_qt6/bin/activate
+        #>file  = /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/py_helpers/ide_example.py
+        #>xide  = python -m idlelib
+        #>ide   =  thonny
+
         print( "high_their_sailor")
         print( "done")
+
         >> ------------ end ------------ <<
 
         """  )
         self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
-        # ---- ....idle_file_template
-        template_name          = "Idle_file"
-        template_text          = (
-        """
-        >>idle_file   ./libs/example_file_in_libs.py
-        """  )
-        self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
+        # # ---- ....idle_file_template
+        # template_name          = "Ide"
+        # template_text          = (
+        # """
+        # >>idle_file   ./libs/example_file_in_libs.py
+        # """  )
+        # self.text_snippets[template_name] = textwrap.dedent( template_text ).strip()
 
         # ---- slideshow
         self.picture_sleep      = 3  # time between pictures in units of seconds

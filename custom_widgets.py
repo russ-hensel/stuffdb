@@ -70,6 +70,7 @@ import exec_qt
 import string_list_utils
 import data
 import history_sync
+import gui_qt_ext
 
 #import convert_db_display
 #import mdi_management
@@ -110,7 +111,6 @@ def today_as_str( ):
     text       = dt_now.strftime( PY_DATE_FORMAT ) + " "
     return text
 
-
 #----------------------------
 class ValidationIssue(  Exception ):
     """
@@ -129,7 +129,7 @@ class ValidationIssue(  Exception ):
             msg  = f"File Load failed, {an_except.why}"
             AppGlobal.gui.display_info_string( msg )
         """
-        super( ).__init__(  why  )  # message
+        super( ).__init__( why )  # message
         self.control   = widget
 
 #-------------------------------
@@ -228,9 +228,16 @@ def set_rec_data( record, field_name, data   ):
 def get_sudo(  ):
     """
     for the Easter egg
+    can we put in parameters
     """
-    a_value    =  data.get_data( "simpsons" )
-    a_value    = a_value[ :9 ]
+    try:
+        import my_data
+        a_value    = my_data.get_data( "simpsons" )
+        #breakpoint()
+        a_value    = a_value[ :9 ]
+
+    except:
+        a_value   = "no data for you!"
 
     return a_value
 
@@ -437,7 +444,7 @@ class TableModel( QAbstractTableModel ):
         self.endInsertRows()
 
     # ---------------------------
-    def removeRow(self, row_index):
+    def removeRow( self, row_index ):
         """
         what it says, read
         """
@@ -473,14 +480,14 @@ class ShellExe( object ):
         """
         we may be rsripping multiple times like in caller
         """
-
         code_lines_new     = [i_code_line.strip()
                                for i_code_line in code_lines
                                    if i_code_line.strip() != "" ]
 
-        for ix, i_item in enumerate( code_lines_new ):
-            msg     = f"    {ix}: >{i_item}<"
-            print( msg )
+        # debug:
+        # for ix, i_item in enumerate( code_lines_new ):
+        #     msg     = f"    {ix}: >{i_item}<"
+        #     print( msg )
 
         # works but ugly
         # now combine across \
@@ -493,14 +500,13 @@ class ShellExe( object ):
                 code_lines_newer[ len_newer -1 ] += i_code_line
 
             else:
-
                 if i_code_line.startswith( "#" ):
                     i_code_line =  f"echo '{i_code_line}'"
                 code_lines_newer.append( i_code_line )
 
             # remove trailing \
 
-            last_line   = len(code_lines_newer) - 1
+            last_line   = len( code_lines_newer ) - 1
             if code_lines_newer[ last_line ].endswith( "\\" ):
                 got_bs             = True
                 code_lines_newer[ last_line ] = code_lines_newer[ last_line ].removesuffix( "\\" )
@@ -510,9 +516,10 @@ class ShellExe( object ):
 
         code_lines_new   = code_lines_newer
 
-        for ix, i_item in enumerate( code_lines_new ):
-            msg     = f"    {ix}: >{i_item}<"
-            print( msg )
+        # debug
+        # for ix, i_item in enumerate( code_lines_new ):
+        #     msg     = f"    {ix}: >{i_item}<"
+        #     print( msg )
 
 
         #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}")
@@ -520,8 +527,8 @@ class ShellExe( object ):
         code_lines_new[ 0 ]    = f"echo '{code_lines_new[ 0 ]}'   "
 
         #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}")
-        code_lines_new      = self.add_echo( code_lines_new )
-        debug_msg    = ( f""""run_code_lines in shellext    >>shell {code_lines_new =}""")
+        code_lines_new  = self.add_echo( code_lines_new )
+        debug_msg       = ( f""""run_code_lines in shellext    >>shell {code_lines_new =}""")
         logging.log( LOG_LEVEL,  debug_msg, )
 
         cmd_str     = ";".join( code_lines_new )
@@ -542,8 +549,10 @@ class ShellExe( object ):
         """
         new_list      = []
         for i_item in code_lines:
+
             if i_item.startswith( "echo" ):
                 new_list.append( i_item )
+
             else:
                 new_list.append( f"echo '{i_item}'")
                 # now look for command part comment
@@ -553,102 +562,354 @@ class ShellExe( object ):
 
         return new_list
 
+
+# # ---------------------------------------------
+# class NewIdle( ):
+#     """
+#     for executing shell commands that begin as a list
+#     this may need refactoring
+#     based on cmd_assist perhaps should go back there
+#     should be a singleton for now built by TextEditExt
+#     """
+#     def __init__( self ):
+#         """
+#         """
+#         self.idle_shell_script   = "./output/idle_shell_script.sh"
+#             # in future pehaps us temp files
+#         self.idle_temp_py        = "./output/idle_python_temp.py"
+#             # in future pehaps us temp files
+#     #--------
+#     def run( self,  code_lines ):
+#         """
+#         #venv =
+#         #file     = some file
+#         """
+
+
+#         # look for
+
+#         # meta_line   = [ j_line for i_line in code_lines if ( j_line := i_line.strip() ).startswith( "#" ) ]
+#         # for i_line in meta_line:
+#         #     print( i_line )
+#         venv_lines    = self.get_line_with_prefix( code_lines, "#>venv" )
+#         file_lines    = self.get_line_with_prefix( code_lines, "#>file" )
+#             # run file not code
+
+#         py_file_name  = self.get_argument( file_lines,    )
+
+#         venv_name     = self.get_argument( venv_lines,   )
+
+#         if venv_name == "error" or py_file_name == "error":
+#             1/0
+
+#         # now write a shell script
+#         sh_lines      = []
+#         sh_lines.append( "#!/bin/bash" )
+#         if venv_name != "":
+#             sh_lines.append( "source " + venv_name )
+
+#         # ---- python file
+#         if py_file_name == "":
+#             idle_py_name  = self.idle_temp_py
+
+#         else:
+#             idle_py_name  = py_file_name
+
+
+#         sh_lines.append( "python -m idlelib  " +  idle_py_name  )
+#         #sh_lines.append( "thonny  " +  idle_py_name  )
+
+#         # write idle_runner.sh
+#         file_name  = self.idle_shell_script
+#         with open( file_name, 'w' ) as a_file:
+#             for i_line in sh_lines:
+#                 a_file.write( f"{i_line}\n" )  # note addition of \n
+
+#         if py_file_name != "":
+#             # done
+#             pass
+
+#         else:
+#             file_name  = self.idle_temp_py
+#             with open( file_name, 'w' ) as a_file:
+#                 for i_line in code_lines[ 1: ]:    # skip first line
+#                     a_file.write( f"{i_line}\n" )  # note addition of \n
+
+#         # run the shell script
+#         #subprocess.run(   ["bash", self.idle_shell_script ] )  # blocking
+#         subprocess.Popen( ["bash", self.idle_shell_script ] )
+
+#     #-------------
+#     def get_argument( self, lines,   ):
+#          """
+#          return
+#              "error" if an error
+#              ""    if no error but no file
+#              else the argument
+#              and do a prefix check
+
+#          """
+#          len_lines  = len( lines )
+
+#          if   len_lines == 0:
+#              return ""
+
+#          elif len_lines > 1:
+#              return "error"
+
+#          else:
+#              splits  = lines[0].split( "=" )
+#              if len( splits ) != 2:
+#                  return "error"
+
+#          argument  = splits[ 1 ].strip()
+
+#          # # prefix check
+#          # if splits[ 0 ].strip != prefix:
+#          #     pass
+
+#          return argument
+
+#     #-------------
+#     def get_line_with_prefix( self, lines, prefix ):
+#         """
+#         while we are at it remove the prefix and clean up the line !!
+#         """
+#         new_lines  = [ j_line for i_line in lines if ( j_line := i_line.strip() ).startswith( prefix ) ]
+
+#         newer_lines = []
+#         for i_line in new_lines:
+#             splits   = i_line.split( "=" )
+#             if splits[0].strip() == prefix:
+#                 newer_lines.append( i_line )
+
+#         return newer_lines
+
 # ---------------------------------------------
-class IdleExe( ):
+class Ide( ):
     """
-    for executing shell commands that begin as a list
-    this may need refactoring
-    based on cmd_assist perhaps should go back there
-    should be a singleton for now built by TextEditExt
+    run an ide against some code
+        ok for ides that work with command  file_name om connmad line
     """
     def __init__( self ):
-        """ """
-        self.venv               = "py_12_misc"  # !! change to parameter
-        self.file_name_temp_py  = "temp_py.py"
-        self.file_name_temp_sh  = "temp_sh.sh"
-
+        """
+        """
+        self.ide_shell_script   = "./output/ide_shell_script.sh"
+            # in future pehaps us temp files
+        self.ide_temp_py        = "./output/ide_python_temp.py"
+            # in future pehaps us temp files
     #--------
-    def write_file_py( self, code_lines, file_name = None ):
-        """ """
-        file_name    = self.file_name_temp_py
+    def run( self,  code_lines ):
+        """
+        #venv =
+        #file     = some file
+        #ide= some ide command
+        """
 
+
+        # look for
+
+        # meta_line   = [ j_line for i_line in code_lines if ( j_line := i_line.strip() ).startswith( "#" ) ]
+        # for i_line in meta_line:
+        #     print( i_line )
+        venv_lines    = self.get_line_with_prefix( code_lines, "#>venv" )
+        file_lines    = self.get_line_with_prefix( code_lines, "#>file" )
+        ide_lines     = self.get_line_with_prefix( code_lines, "#>ide" )
+            # run file not code
+
+        py_file_name  = self.get_argument( file_lines, )
+
+        venv_name     = self.get_argument( venv_lines, )
+
+
+        ide_cmd       = self.get_argument( ide_lines, )
+        if ide_cmd == "":
+            ide_cmd = AppGlobal.ide_cmd
+
+        if venv_name == "error" or py_file_name == "error" or ide_cmd == "error":
+            error_text = ( "There is an error in the arguments to this >>Ide.." )
+            gui_qt_ext.error_message_box( error_text )
+            return
+
+        # now write a shell script
+        sh_lines      = []
+        sh_lines.append( "#!/bin/bash" )
+
+        if venv_name != "":
+            sh_lines.append( "source " + venv_name )
+
+        # ---- python file
+        if py_file_name == "":
+            ide_py_name  = self.ide_temp_py
+
+        else:
+            ide_py_name  = py_file_name
+
+        sh_lines.append( f"{ide_cmd} {ide_py_name}" )
+        # sh_lines.append( "python -m idlelib  " +  idle_py_name  )
+        #sh_lines.append( "thonny  " +  idle_py_name  )
+
+        # write idle_runner.sh
+        file_name  = self.ide_shell_script
         with open( file_name, 'w' ) as a_file:
-                # wa will append so file should be deleted time to time w will overwrite
-            a_file.writelines(f"{line}\n" if not line.endswith("\n") else line for line in code_lines )
+            for i_line in sh_lines:
+                a_file.write( f"{i_line}\n" )  # note addition of \n
 
-    #--------
-    def write_file_sh( self, sh_lines, file_name = None ):
-        """ """
-        file_name    = self.file_name_temp_sh
+        if py_file_name == "":
 
-        with open( file_name, 'w' ) as a_file:    # wa will append so file should be deleted time to time w will overwrite
-            a_file.writelines(f"{line}\n" if not line.endswith("\n") else line for line in sh_lines )
+            file_name  = self.ide_temp_py
+            with open( file_name, 'w' ) as a_file:
+                for i_line in code_lines[ 1: ]:    # skip first line
+                    a_file.write( f"{i_line}\n" )  # note addition of \n
 
-    #--------
-    def get_venv_lines( self, venv ):
+        # run the shell script
+        #subprocess.run(   ["bash", self.idle_shell_script ] )  # blocking
+        subprocess.Popen( ["bash", self.ide_shell_script ] )
+
+    #-------------
+    def get_argument( self, lines,   ):
+         """
+         return
+             "error" if an error
+             ""    if no error but no file
+             else the argument
+             and do a prefix check
+
+         """
+         len_lines  = len( lines )
+
+         if   len_lines == 0:
+             return ""
+
+         elif len_lines > 1:
+             return "error"
+
+         else:
+             splits  = lines[0].split( "=" )
+             if len( splits ) != 2:
+                 return "error"
+
+         argument  = splits[ 1 ].strip()
+
+         # # prefix check
+         # if splits[ 0 ].strip != prefix:
+         #     pass
+
+         return argument
+
+    #-------------
+    def get_line_with_prefix( self, lines, prefix ):
         """
-        get the lines for the venv setup
-            this may move to module or other more central place
+        while we are at it remove the prefix and clean up the line !!
         """
-        venv_setup_dict     = AppGlobal.parameters.venv_setup_dict
-        venv_lines          = venv_setup_dict.get( venv, None )
+        new_lines  = [ j_line for i_line in lines if ( j_line := i_line.strip() ).startswith( prefix ) ]
 
-        return venv_lines
+        newer_lines = []
+        for i_line in new_lines:
+            splits   = i_line.split( "=" )
+            if splits[0].strip() == prefix:
+                newer_lines.append( i_line )
 
-    #--------
-    def idle_on_temp_file( self, code_lines ):
-        """
-        >>idle   may be setup
-        extract code lines to a file and us sh command
-        to run idle in a venv environment
+        return newer_lines
 
 
-        self.write_file_py( code_lines, )
-        sh_lines        = [ f"conda activate {self.venv}", f"idle  {self.file_name_temp_py}" ]
-        self.write_file_sh( sh_lines )
-
-        """
-        code_lines_0        = code_lines[0]
-        code_lines[0]       = f"# -- {code_lines_0}"
-        self.write_file_py( code_lines, )
-            # py file done, need to do sh file
-
-        code_lines0_splits  = code_lines_0.split()
-        venv                = code_lines0_splits[1]
-        venv_lines          = self.get_venv_lines( venv )
-
-        # !! what to do if none
-
-        sh_lines            = venv_lines
-        sh_lines.append( f"idle {self.file_name_temp_py}")
-        self.write_file_sh( sh_lines )
-
-        #subprocess.run(  ["bash", self.file_name_temp_sh ] )
-        #    # blocking
-        subprocess.Popen(["bash", self.file_name_temp_sh] )
-            # non blocking --- see help
-
-    #---------------------
-    def idle_file( self, venv, file_name ):
-        """
-        open idle
-
-        think links to  >>idle_file  venv  filename
-        """
-        venv_lines      = self.get_venv_lines( venv )
-
-        sh_lines        = venv_lines  + [ f"idle  {file_name}" ]
-        self.write_file_sh( sh_lines )
-
-        # next seems to be blocking
-        #subprocess.run(["bash", self.file_name_temp_sh ])
-
-        # should be non blocking
-        subprocess.Popen([ "bash", self.file_name_temp_sh])
 
 
-        # next is wrong because we need the environment set up
-        #subprocess.run([ "idle", file_name ])
+# # ---------------------------------------------
+# class IdleExe( ):
+#     """
+#     for executing shell commands that begin as a list
+#     this may need refactoring
+#     based on cmd_assist perhaps should go back there
+#     should be a singleton for now built by TextEditExt
+#     """
+#     def __init__( self ):
+#         """ """
+#         self.venv               = "py_12_misc"  # !! change to parameter
+#         self.file_name_temp_py  = "temp_py.py"
+#         self.file_name_temp_sh  = "temp_sh.sh"
+
+#     #--------
+#     def write_file_py( self, code_lines, file_name = None ):
+#         """ """
+#         file_name    = self.file_name_temp_py
+
+#         with open( file_name, 'w' ) as a_file:
+#                 # wa will append so file should be deleted time to time w will overwrite
+#             a_file.writelines(f"{line}\n" if not line.endswith("\n") else line for line in code_lines )
+
+#     #--------
+#     def write_file_sh( self, sh_lines, file_name = None ):
+#         """ """
+#         file_name    = self.file_name_temp_sh
+
+#         with open( file_name, 'w' ) as a_file:    # wa will append so file should be deleted time to time w will overwrite
+#             a_file.writelines(f"{line}\n" if not line.endswith("\n") else line for line in sh_lines )
+
+#     #--------
+#     def get_venv_lines( self, venv ):
+#         """
+#         get the lines for the venv setup
+#             this may move to module or other more central place
+#         """
+#         venv_setup_dict     = AppGlobal.parameters.venv_setup_dict
+#         venv_lines          = venv_setup_dict.get( venv, None )
+
+#         return venv_lines
+
+#     #--------
+#     def idle_on_temp_file( self, code_lines ):
+#         """
+#         >>idle   may be setup
+#         extract code lines to a file and us sh command
+#         to run idle in a venv environment
+
+
+#         self.write_file_py( code_lines, )
+#         sh_lines        = [ f"conda activate {self.venv}", f"idle  {self.file_name_temp_py}" ]
+#         self.write_file_sh( sh_lines )
+
+#         """
+#         code_lines_0        = code_lines[0]
+#         code_lines[0]       = f"# -- {code_lines_0}"
+#         self.write_file_py( code_lines, )
+#             # py file done, need to do sh file
+
+#         code_lines0_splits  = code_lines_0.split()
+#         venv                = code_lines0_splits[1]
+#         venv_lines          = self.get_venv_lines( venv )
+
+#         # !! what to do if none
+
+#         sh_lines            = venv_lines
+#         sh_lines.append( f"idle {self.file_name_temp_py}")
+#         self.write_file_sh( sh_lines )
+
+#         #subprocess.run(  ["bash", self.file_name_temp_sh ] )
+#         #    # blocking
+#         subprocess.Popen(["bash", self.file_name_temp_sh] )
+#             # non blocking --- see help
+
+#     #---------------------
+#     def idle_file( self, venv, file_name ):
+#         """
+#         open idle
+
+#         think links to  >>idle_file  venv  filename
+#         """
+#         venv_lines      = self.get_venv_lines( venv )
+
+#         sh_lines        = venv_lines  + [ f"idle  {file_name}" ]
+#         self.write_file_sh( sh_lines )
+
+#         # next seems to be blocking
+#         #subprocess.run(["bash", self.file_name_temp_sh ])
+
+#         # should be non blocking
+#         subprocess.Popen([ "bash", self.file_name_temp_sh])
+
+#         # next is wrong because we need the environment set up
+#         #subprocess.run([ "idle", file_name ])
 
 # -------------------------------
 class TextEditExtMixin(  ):
@@ -673,7 +934,7 @@ class TextEditExtMixin(  ):
         # self.prior_text             = ""
 
         # ---- additional services
-        self.idle_exe               = IdleExe()
+        #self.idle_exe               = IdleExe()
         self.shell_exe              = ShellExe()
 
     #-------------------------------------------
@@ -848,7 +1109,7 @@ class TextEditExtMixin(  ):
                     # ng
                 self.last_position = len( text_edit.toPlainText() )
                 cursor.setPosition( self.last_position )
-                text_edit.setTextCursor(cursor)
+                text_edit.setTextCursor( cursor )
                 text_edit.ensureCursorVisible()
 
     #----------------------------
@@ -857,13 +1118,14 @@ class TextEditExtMixin(  ):
         make sure there are at least `lines` lines visible below the cursor,
         without scrolling the cursor line off the top
         """
-        line_height = self.fontMetrics().lineSpacing()
-        margin      = lines * line_height
-        cursor_rect = self.cursorRect()                  # in viewport coordinates
-        view_height = self.viewport().height()
+        line_height     = self.fontMetrics().lineSpacing()
+        margin          = lines * line_height
+        cursor_rect     = self.cursorRect()                  # in viewport coordinates
+        view_height     = self.viewport().height()
 
-        overflow = cursor_rect.bottom() + margin - view_height
-        overflow = min( overflow, cursor_rect.top() )    # keep the match on screen
+        overflow        = cursor_rect.bottom() + margin - view_height
+        overflow        = min( overflow, cursor_rect.top() )    # keep the match on screen
+
         if overflow > 0:
             scroll_bar = self.verticalScrollBar()
             scroll_bar.setValue( scroll_bar.value() + overflow )   # clamped at the end by Qt
@@ -875,7 +1137,6 @@ class TextEditExtMixin(  ):
             call in the init of the final widget ?
         """
         self.setContextMenuPolicy( Qt.CustomContextMenu )
-
         self.customContextMenuRequested.connect( self.show_context_menu )
 
         # widget.setContextMenuPolicy( QtCore.Qt.CustomContextMenu )
@@ -945,7 +1206,6 @@ class TextEditExtMixin(  ):
         foo_action.setEnabled( True )
 
         menu.addSeparator()
-
 
         # ---- "Search Selected"
         foo_action = menu.addAction( "Search Selected" )
@@ -1160,15 +1420,20 @@ class TextEditExtMixin(  ):
 
         # ---- idle and idle file
         elif cmd == "idle":   # want a one line and may line
-            msg     = ( "  >>idle in process ................................")
+            msg     = ( "  >>idle in process -- using NewIdle................................")
             self.log( msg = msg, )
-            self.idle_exe.idle_on_temp_file( code_lines )
 
-        elif cmd == "idle_file":   # want a one line and many line
-            #!! need error check here and in idle if list will be out of range
-            venv            = cmd_args[ 0 ]
-            file_name       = cmd_args[ 1 ]
-            self.idle_exe.idle_file( venv, file_name  )
+            #self.idle_exe.idle_on_temp_file( code_lines )
+            new_idle   = NewIdle()
+            new_idle.run( code_lines )
+
+        # ---- ide
+        elif cmd == "ide":   # want a one line and may line
+            msg     = ( "  >>ide in process ...............................")
+            self.log( msg = msg, )
+
+            a_ide    = Ide()
+            a_ide.run( code_lines )
 
         # ---- text
         elif cmd == "text":
@@ -1184,23 +1449,29 @@ class TextEditExtMixin(  ):
         # ---- bash  >>bash
         elif cmd == "bash":
             #rint( f"you need to implement >>shell {code_lines}")
-            print(f"need to fix bash{code_lines} how comments " )
+            msg     = (f"need to fix bash{code_lines} how comments " )
+            self.log( msg = msg, )
             code_lines   = [i_line.rstrip() for i_line in code_lines ]
 
-            # ---- have_sudo
-            have_sudo  = False
+            # ---- have_sudo on a line then
             if AppGlobal.parameters.get_sudo:
                 for i_code_line in code_lines:
                     if "sudo" in i_code_line:
-                        have_sudo  = True
+                        QApplication.clipboard().setText( get_sudo() )
+                        break
 
-            if have_sudo:
-                get_sudo()
-                QApplication.clipboard().setText( get_sudo() )
-
-            #code_lines   = code_lines.rstrip() ng it is a list
             if self.shell_exe:
                 self.shell_exe.run_code_lines( code_lines )
+
+        # # ---- bash  >>bash
+        # elif cmd == "test":
+        #     #rint( f"you need to implement >>shell {code_lines}")
+        #     msg     = (f"cmd == 'test' {code_lines}" )  # zz
+        #     self.log( msg = msg, )
+        #     #code_lines   = [i_line.rstrip() for i_line in code_lines ]
+        #     new_idle   = NewIdle()
+        #     new_idle.run( code_lines )
+
 
         # ---- shell
         elif cmd == "shell":
@@ -1215,7 +1486,7 @@ class TextEditExtMixin(  ):
             # logging.debug( msg )
             #breakpoint( )
 
-            # reject if >>search not on line clicked -- will dake a bigger fix
+            # reject if >>search not on line clicked -- will take a bigger fix
             # if len( code_lines ) > 1:
             #     return
 
@@ -1244,8 +1515,8 @@ class TextEditExtMixin(  ):
             move_cursor_to_button( self.dn_button )
             self.search_down()
 
-        elif cmd == "xxx":
-            pass
+        # elif cmd == "xxx":
+        #     pass
 
         else:
             msg   = ( f"{cmd = } \n {cmd_args = }" )
@@ -1461,6 +1732,7 @@ class TextEditExtMixin(  ):
         leading_spaces       = " " * num_leading_spaces
 
         for i_line in lines:
+
             if i_line.startswith( leading_spaces ):
                 i_line   = i_line[ num_leading_spaces : ]
             new_lines.append( i_line )
@@ -1476,19 +1748,20 @@ class TextEditExtMixin(  ):
         """
         # Get the current cursor and selection
 
-        text_edit   = self
-        cursor      = text_edit.textCursor()
+        text_edit       = self
+        cursor          = text_edit.textCursor()
+
         if not cursor.hasSelection():
             return
 
         # Get selected text
-        selected_text = cursor.selectedText()
+        selected_text   = cursor.selectedText()
 
         # Split into lines
         lines = selected_text.split('\u2029')  # QTextEdit uses Unicode paragraph separator
 
-        processed_lines     = processing_function( lines )
-        processed_text      = "\n".join( processed_lines )
+        processed_lines = processing_function( lines )
+        processed_text  = "\n".join( processed_lines )
 
         # Store selection positions
         selection_start = cursor.selectionStart()
@@ -1556,6 +1829,7 @@ class TextEditExtMixin(  ):
         """
         text_edit   = self
         cursor      = text_edit.textCursor()
+
         if not cursor.hasSelection():
             return
 
@@ -1622,7 +1896,6 @@ class TextEditExtMixin(  ):
         cursor.setPosition(selection_end, cursor.KeepAnchor)
         text_edit.setTextCursor(cursor)
 
-
     #-----------------------------------
     def paste_url( self, ):
         """
@@ -1638,29 +1911,6 @@ class TextEditExtMixin(  ):
         msg             = f"\n{title}\n>>Url   {url}\n"
         self.insert_text_at_cursor( msg )
         self.insert_text_at_cursor( "" )       # extra line at end or in msg
-
-        # text            = QApplication.clipboard().text( )
-        # splits          = text.split( "\n" )
-        # new_lines       = []
-
-        # for i_line in splits:
-        #     ii_line      = i_line
-
-        #     if string_utils.begins_with_url( i_line ):
-        #         ii_line  = f">>url   {i_line}"
-
-        #     elif string_utils.begins_with_file_name( i_line ):
-        #         ii_line  = f">>shell   {i_line}\n>>copy     {i_line}"
-
-        #     new_lines.append( ii_line )
-
-        # # !! integrate the next if a multiline
-        # #new_lines.append( "the end")
-        # new_text = "\n".join( new_lines )
-
-        # self.insert_text_at_cursor( new_text )
-        # self.insert_text_at_cursor( "" )       # extra line at end
-
 
     #-----------------------------------
     def smarten( self, ):
@@ -1818,7 +2068,8 @@ class TextEditExtMixin(  ):
             cursor.setPosition(new_end, QTextCursor.KeepAnchor)
 
         except Exception as e:
-            print(f"Error during indentation: {e}")
+            print(f"Error during indentation: {e}")  # !!
+
         finally:
             cursor.endEditBlock()
             self.setTextCursor(cursor)
@@ -1835,8 +2086,8 @@ class TextEditExtMixin(  ):
             return
 
         # Get selection boundaries
-        start_pos = cursor.selectionStart()
-        end_pos = cursor.selectionEnd()
+        start_pos   = cursor.selectionStart()
+        end_pos     = cursor.selectionEnd()
 
         cursor.setPosition(start_pos)
         start_block = cursor.block()
@@ -1879,14 +2130,14 @@ class TextEditExtMixin(  ):
                                              len(start_block.text()) -
                                              len(start_block.text().lstrip(' ')))
 
-            new_start = max(start_pos - spaces_removed_from_start, start_block.position())
-            new_end = end_pos - total_removed
+            new_start   = max(start_pos - spaces_removed_from_start, start_block.position())
+            new_end     = end_pos - total_removed
 
             cursor.setPosition(new_start)
             cursor.setPosition(new_end, QTextCursor.KeepAnchor)
 
         except Exception as e:
-            print(f"Error during unindentation: {e}")
+            print(f"Error during unindentation: {e}")   # !!
 
         finally:
             cursor.endEditBlock()
@@ -1899,17 +2150,17 @@ class TextEditExtMixin(  ):
         """
         try:
             # Get current line and cursor position within the line
-            current_block = cursor.block()
+            current_block       = cursor.block()
             cursor_pos_in_block = cursor.positionInBlock()
 
             # Calculate spaces needed to reach next tab stop
-            spaces_to_next_tab = self.tab_width - (cursor_pos_in_block % self.tab_width)
+            spaces_to_next_tab  = self.tab_width - (cursor_pos_in_block % self.tab_width )
 
             # Insert spaces
-            cursor.insertText(' ' * spaces_to_next_tab)
+            cursor.insertText( ' ' * spaces_to_next_tab )
 
         except Exception as e:
-            print(f"Error during cursor indentation: {e}")
+            print(f"Error during cursor indentation: {e}")  # !!
 
     #-----------------------------------
     def _calculate_indent_spaces(self, start_block):
@@ -1926,10 +2177,14 @@ class TextEditExtMixin(  ):
                     # Count leading spaces (convert tabs to spaces for calculation)
                     leading_spaces = 0
                     for char in line_text:
+
                         if char == ' ':
                             leading_spaces += 1
+
                         elif char == '\t':
+
                             leading_spaces += self.tab_width
+
                         else:
                             break
 

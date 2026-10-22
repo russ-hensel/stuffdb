@@ -152,11 +152,26 @@ class App( ):
 
         self.parameters         = parameters.Parameters( )
         AppGlobal.parameters    = self.parameters
+        the_parameters          = self.parameters
 
         # after parameters are set up
         import app_logging
         an_applogging    = app_logging.AppLogging( )
         # app_logging.init()
+
+        # ---- style  ?? think about error
+        app_style      = the_parameters.app_style
+        if  app_style:
+            self.q_app.setStyle( app_style )     # gives the style sheet a consistent base on Mint
+
+        app_style_file = the_parameters.app_style_file
+        if app_style_file:
+            with open( the_parameters.app_style_file, encoding="utf-8" ) as f:
+                self.q_app.setStyleSheet( f.read() )
+
+        # the_parameters.app_style
+        # the_parameters.app_style_file
+
 
         # ---- DB CONNECT
         a_qsql_db_access        = qsql_db_access.QsqlDbAccess( STUFFDB_CONNECTION_NAME )

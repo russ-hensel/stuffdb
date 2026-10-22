@@ -54,6 +54,19 @@ def clean_string_to_list( a_string,
 
     return a_list
 
+
+# ---------------------------
+def camel_to_snakexxxfixmewhenneeded ( camel_str ):
+    # Add underscores before uppercase letters and convert to lowercase
+    # might be better as s string util
+    # two step so acronyms stay together: HTMLParser -> html_parser
+    # step 1 splits an acronym from a following word, step 2 splits lower/digit from upper
+    snake_str = re.sub( r'([A-Z]+)([A-Z][a-z])', r'\1_\2', camel_str )
+    snake_str = re.sub( r'([a-z\d])([A-Z])',     r'\1_\2', snake_str ).lower()
+    return snake_str
+
+
+
 # ----------------------------------------
 def extract_self( a_string ):
     """
@@ -68,25 +81,30 @@ def extract_self( a_string ):
 
     """
     # may be others but ones i use the most
-    a_string      = a_string.replace( "+=", "")
-    a_string      = a_string.replace( "-=", "")
+    a_string      = a_string.replace( "+=", "=")
+    a_string      = a_string.replace( "-=", "=")
     # clean up lines
-    ( lines, ix_deleted )    = clean_string_to_list( a_string,
+    lines                    = clean_string_to_list( a_string,
                                  delete_tailing_spaces  = True,
                                  delete_comments        = False,
                                  delete_blank_lines     = False,   )
-    # remove leading space
-    lines_new   = []
-    for i_line in lines:
-        lines_new.append( i_line.strip() )
-    # print( lines )
+    # # remove leading space
+    # # lines_new   = []
+    # # for i_line in lines:
+    # #     lines_new.append( i_line.strip() )
+    # lines_new = [ i_line.strip() for i_line in lines ]
+    # # print( lines )
 
-    # starts with self
-    lines       = lines_new
-    lines_new   = []
-    for i_line in lines:
-        if  i_line.startswith( "self." ):
-            lines_new.append( i_line )
+    # # starts with self
+    # lines       = lines_new
+    # # lines_new   = []
+    # # for i_line in lines:
+    # #     if  i_line.startswith( "self." ):
+    # #         lines_new.append( i_line )
+    # lines_new = [ i_line for i_line in lines if i_line.startswith( "self." ) ]
+
+    # one step
+    lines_new = [ i_line.strip() for i_line in lines if i_line.strip().startswith( "self." ) ]
 
     # remove self.
     lines       = lines_new
@@ -152,6 +170,8 @@ def count_leading_spaces( a_string ):
 def begins_with_url( a_string, ):
     """
     it_is  = string_util.begins_with_url( a_string )
+    this checks only using the valid prefixes
+    return bool
     """
     parts       = a_string.split()
     if len( parts ) == 0: # pretty much null string
@@ -168,7 +188,9 @@ def begins_with_url( a_string, ):
 #------------------------------
 def begins_with_file_name( a_string, ):
     """
-    it_is  = string_utils.begins_with_url( a_string )
+    it_is  = string_utils.begins_with_file_name( a_string )
+    returns
+        bool
     """
     parts       = a_string.split()
     if len( parts ) == 0: # pretty much null string
@@ -198,10 +220,10 @@ def is_url( a_string,  ):
     consider typing the string get_string_type
     return tuple ( boolean, cleaned up url ( truncate at space or cr or lf ... ) )
     """
-    is_url_bool                 = False
+    is_url_bool     = False
 
-    parts       = a_string.split()
-    test_url    = parts[0]
+    parts           = a_string.split()
+    test_url        = parts[0]
     #test_url   = (a_string.split() ).[0])  #.strip()     # parse off using whitespace  and strip
 
     for i_prefix in URL_VALID_PREFIXS:
@@ -219,7 +241,6 @@ def is_url( a_string,  ):
 def is_filename( a_string,  ):
 #def is_filename( self, a_string,  ):   is_file    file_exists  ?? not sure
     """
-
     looks to see if file exists
     clean up a_string and see if it starts with a file name
     return flag, cleaned_up_filename
@@ -252,6 +273,8 @@ def float_or_none( a_obj, ):
     convert to float if it works else none
         is it worth the import for this?
         string_utils.float_or_none( a_obj, ) # import  string_utils
+    returns
+        the float else none
     """
     try:
         ret     = float( a_obj )
@@ -260,8 +283,6 @@ def float_or_none( a_obj, ):
         ret     = None
 
     return ret
-
-
 
 # ------------------------------
 def print_uni( a_string_ish ):
@@ -287,7 +308,7 @@ def obj_to_str( an_object ):
 
 
     """
-    print( f"---------for {an_object.__class__.__name__} -------------" )
+    #rint( f"---------for {an_object.__class__.__name__} -------------" )
     lines       =   [ f"{key: <20} = {value!r: <50}"  for   key, value  in an_object.__dict__.items() ]
     lines.sort( )
     a_str       = " \n".join( lines )
@@ -375,7 +396,9 @@ def string_to_py_list( a_string ):
 
     Notes:
         what if stuff already includes quotes.... tough
-        returns a string of python code
+    returns
+        a string of python code
+
 
     """
     string_list, __     = clean_string_to_list( a_string )
@@ -745,8 +768,6 @@ class ColumnFormater( ):
             #for i_column_spec in self.column_specs
         return a_str
 
-
-
     # ----------------------------------------
     def get_str( self,  ):
         """
@@ -834,8 +855,6 @@ def test_delta_time_to_string():
 
     a_float  = a_float/10
     print( f"{a_float} -> {delta_time_to_string(a_float)}")
-
-
 
 
 #---------------------------

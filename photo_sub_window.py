@@ -126,7 +126,6 @@ class PhotoSubWindow( stuffdb_tabbed_sub_window.StuffdbTabbedSubWindow ):
 
         self._build_gui()
 
-
     # ------------------------------------------
     def _build_gui( self, ):
         """
@@ -272,7 +271,7 @@ class PhotoSubWindow( stuffdb_tabbed_sub_window.StuffdbTabbedSubWindow ):
         !! promote the whole thing?? need key to be id col 0 seems ok
         might be functioalize if we use an argument for self.list.tab
         """
-        print( f"on_list_clicked  save first if necessary")
+        #rint( f"on_list_clicked  save first if necessary")
         row                     = index.row()
         column                  = index.column()
 
@@ -280,13 +279,12 @@ class PhotoSubWindow( stuffdb_tabbed_sub_window.StuffdbTabbedSubWindow ):
 
         id_index                = self.list_tab.list_model.index( index.row( ), 0 )
         db_key                  = self.list_tab.list_model.data( id_index, Qt.DisplayRole )
-        print( f"photo Clicked on list row {row}, column {column}, {db_key = }" )
+        #rint( f"photo Clicked on list row {row}, column {column}, {db_key = }" )
 
         #self.detail_tab.fetch_detail_row_by_id( db_key )
         #self.fetch_row_by_id( db_key )
 
         self.select_record( db_key )
-
 
         self.main_notebook.setCurrentIndex( self.detail_tab_index )
         #self.detail_tab.id_field.setText( str( db_key )  ) # fetch currently does not include the id
@@ -303,7 +301,7 @@ class PhotoSubWindow( stuffdb_tabbed_sub_window.StuffdbTabbedSubWindow ):
         """
         row                 = index.row()
         column              = index.column()
-        print( f"Clicked on row {row}, column {column}, value tbd" ) # " value: {value}" )
+        #rint( f"Clicked on row {row}, column {column}, value tbd" ) # " value: {value}" )
 
     # --------------------------
     def on_tab_changed( self, event ):
@@ -311,10 +309,12 @@ class PhotoSubWindow( stuffdb_tabbed_sub_window.StuffdbTabbedSubWindow ):
         not currently use, but may trigger a save or other action
         in the future
         """
-        #old_prior               = self.prior_tab
-        self.prior_tab          = self.current_tab  # because not updated yet
-        self.current_tab        = self.main_notebook.currentIndex()
-        current_text            = self.main_notebook.tabText( self.current_tab )
+        # #old_prior               = self.prior_tab
+        # self.prior_tab          = self.current_tab  # because not updated yet
+        # self.current_tab        = self.main_notebook.currentIndex()
+        # current_text            = self.main_notebook.tabText( self.current_tab )
+
+
         #rint( f"on_tab_changed {self.prior_tab = } {self.current_tab = }   {current_text = }" )
 
         # # could be done at any time
@@ -336,23 +336,24 @@ class PhotoSubWindow( stuffdb_tabbed_sub_window.StuffdbTabbedSubWindow ):
         print( "save.... need to complete and route to update_db ")
         self.update_db()
 
-    # --------------------------
-    def update_db_try_premote( self,   ):
-        """
-        also know as update -- update detail tab and text...
-        """
-        #self.detail_tab.db_update()
+    # # --------------------------
+    # def update_db_try_premote( self,   ):
+    #     """
+    #     also know as update -- update detail tab and text...
+    #     """
+    #     #self.detail_tab.db_update()
 
-        self.detail_tab.update_db()
-        self.text_tab.update_db()
+    #     self.detail_tab.update_db()
+    #     self.text_tab.update_db()
 
-        msg     = "update_db.... need to complete and route to db_update -- done ??"
-        print( msg )
+    #     msg     = "update_db.... need to complete and route to db_update -- done ??"
+    #     print( msg )
 
     # --------------------------
     def delete_record( self,   ):
         """
         also know as update -- update detail tab and text...
+        promotable ? !!
         """
         #self.detail_tab.db_update()
 
@@ -381,8 +382,10 @@ class PhotoSubWindow( stuffdb_tabbed_sub_window.StuffdbTabbedSubWindow ):
         botonno =  QPushButton("No")
         msgbox.addButton(botonno, QMessageBox.NoRole)
         msgbox.exec_()
+
         if msgbox.clickedButton() == botonno:
             return False
+
         else:
             return True
 
@@ -397,7 +400,7 @@ class PhotoSubWindow( stuffdb_tabbed_sub_window.StuffdbTabbedSubWindow ):
             """
         next_key      = AppGlobal.key_gen.get_next_key(   self.detail_table_name )
         self.detail_tab.copy_prior_row( next_key )
-        self.text_tab.copy_prior_row(  next_key )
+        self.text_tab.copy_prior_row(   next_key )
 
     # ------------------------------------------
     def criteria_select( self,     ):
@@ -417,11 +420,11 @@ class PhotoSubWindow( stuffdb_tabbed_sub_window.StuffdbTabbedSubWindow ):
 
         query_builder.table_name    = self.detail_table_name
         query_builder.column_list   = [
-            "id",
-            "name",
-            "add_kw",
-            "photo_fn",
-              ]
+                                        "id",
+                                        "name",
+                                        "add_kw",
+                                        "photo_fn",
+                                          ]
 
         key_words           = criteria_dict[ "key_words" ].strip().lower()
         if key_words:
@@ -441,26 +444,26 @@ class PhotoSubWindow( stuffdb_tabbed_sub_window.StuffdbTabbedSubWindow ):
 
         if query.exec():
             model.setQuery( query )
+
             if model.lastError().isValid():
                 msg     = f"Query Error: {model.lastError().text() = }"
-                print(  msg )
                 AppGlobal.logger.error( msg )
+
         else:
-            print( "Query Execution Error:", query.lastError().text())
-            print(  msg )
+            msg     = ( "Query Execution Error:", query.lastError().text())
             AppGlobal.logger.error( msg )
 
         self.main_notebook.setCurrentIndex( self.list_tab_index )
 
-    # -----------------------------------
-    def detail_to_history_promote( self, ):
-        """
-        what it says, read
-        links two sub_windows
+    # # -----------------------------------
+    # def detail_to_history_promote( self, ):
+    #     """
+    #     what it says, read
+    #     links two sub_windows
 
-        """
-        index    = self.detail_tab.tab_model.index( 0, 0 )
-        self.add_row_history( index )
+    #     """
+    #     index    = self.detail_tab.tab_model.index( 0, 0 )
+    #     self.add_row_history( index )
 
     # -----------------------------------
     def add_row_history( self, index ):
@@ -565,7 +568,7 @@ class PhotoCriteriaTab( stuffdb_tabbed_sub_window.StuffdbTab , ):
 
         """
         page            = self
-        tab             = page
+        # tab             = page
 
         placer          = gui_qt_ext.PlaceInGrid(
         central_widget  = page,
@@ -589,7 +592,6 @@ class PhotoCriteriaTab( stuffdb_tabbed_sub_window.StuffdbTab , ):
         a_widget    = QLineEdit()
         placer.place( a_widget )
         self.name_widget    = a_widget
-
 
 
         # a_widget    = QComboBox()
@@ -680,7 +682,7 @@ class PhotoListTab( stuffdb_tabbed_sub_window.StuffdbTab   ):
 
         """
         page            = self
-        tab             = page
+        # tab             = page
         #a_notebook.addTab( page, 'Channels ' )
         placer          = gui_qt_ext.PlaceInGrid(
             central_widget  = page,
@@ -705,13 +707,13 @@ class PhotoListTab( stuffdb_tabbed_sub_window.StuffdbTab   ):
         # model.setHeaderData( 4, Qt.Horizontal, "mypref")
         # model.setHeaderData( 5, Qt.Horizontal, "mygroup")
 
-        # Set up the view
+        # ---- Set up the view
         view                 = QTableView()
         self.list_view       = view
         view.setModel( model )
         placer.place(  view )
 
-        self.select_all_for_test()
+        self.select_all_for_test()  # !! probably get rid of this
 
     # ------------------------------------------
     def select_all_for_test( self,  ):
@@ -781,14 +783,12 @@ class PhotoDetailTab( stuffdb_tabbed_sub_window.StuffdbTab   ):
         what it says read
         trying with placer to add labels
         Returns:
-            none
+            none  -- not using data dict in use why not
         """
         # tab             = self
         # tab_layout      = QVBoxLayout(tab)
 
-
         page            = self
-        tab             = page
 
         box_layout_1    =  QVBoxLayout( page )
 
@@ -815,7 +815,6 @@ class PhotoDetailTab( stuffdb_tabbed_sub_window.StuffdbTab   ):
         # self.add_ts_field       = a_field
         # a_field.setPlaceholderText("add_ts")
         # placer.place( a_field )
-
 
 
         # ---- define fields
@@ -959,7 +958,6 @@ class PhotoDetailTab( stuffdb_tabbed_sub_window.StuffdbTab   ):
         # tab_folder.setTabPosition(QTabWidget.West)
         tab_folder.setMovable(True)
 
-
         box_layout_1.addWidget( tab_folder )
         sub_tab      = TestDetaiSubTab( self )
         tab_folder.addTab( sub_tab, "a test" )
@@ -997,8 +995,6 @@ class PhotoDetailTab( stuffdb_tabbed_sub_window.StuffdbTab   ):
         # delete_button.clicked.connect(self.delete_detail_row)
         # button_layout.addWidget(delete_button)
 
-
-
         # # update_button = QPushButton("db_update detail")
         # # update_button.clicked.connect(self.db_update )
         # # button_layout.addWidget(update_button)
@@ -1033,7 +1029,6 @@ class PhotoDetailTab( stuffdb_tabbed_sub_window.StuffdbTab   ):
         self.name_field     = a_field
         a_field.setPlaceholderText( "name" )
         tab_layout.addWidget( a_field )
-
 
 
         self.descr_field = QLineEdit()
@@ -1139,8 +1134,6 @@ class PhotoDetailTab( stuffdb_tabbed_sub_window.StuffdbTab   ):
         a_widget.clicked.connect(  self.add_to_show )
         button_layout.addWidget( a_widget )
 
-
-
         button_layout.addWidget(update_button)
 
         tab_layout.addLayout( button_layout )
@@ -1168,8 +1161,6 @@ class PhotoDetailTab( stuffdb_tabbed_sub_window.StuffdbTab   ):
         """
 
 
-
-
         """
         photo_id      =  int( self.id_field.text() )
         photo_fn      =  self.photo_fn_field.text()
@@ -1180,8 +1171,6 @@ class PhotoDetailTab( stuffdb_tabbed_sub_window.StuffdbTab   ):
                                }
 
         AppGlobal.add_photo_target.add_photo_to_show( row_dict )
-
-
 
     # -----------------------------
     def copy_prior_row( self, next_key ):

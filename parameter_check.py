@@ -49,18 +49,26 @@ def check_parameters( ):
     picture_nf_file_name    = PARAMETERS.picture_nf_file_name
     picture_db_root         = PARAMETERS.picture_db_root
 
-    # this fix up might be moved and or made more robust
-    picture_db_sub      = PARAMETERS.picture_db_sub
-    if picture_db_sub.startswith( "/" ):
-        picture_db_sub  = picture_db_sub[1:]
-    title               = "Bad Parameter Setting "
+    if picture_db_root:
 
-    picture_dir_path   = Path().joinpath( picture_db_root, picture_db_sub  )
-    #str( picture_dir_path )
-    if not picture_dir_path.exists( ):
-        msg      = ( f"{picture_dir_path = } not valid /nmore message here ??")
-        QMessageBox.information( AppGlobal.main_window,
-                                     title, msg )
+        # this fix up might be moved and or made more robust
+        picture_db_sub      = PARAMETERS.picture_db_sub
+        if picture_db_sub.startswith( "/" ):
+            picture_db_sub  = picture_db_sub[1:]
+        title               = "Bad Parameter Setting "
+
+        picture_dir_path   = Path().joinpath( picture_db_root, picture_db_sub  )
+        #str( picture_dir_path )
+        if not picture_dir_path.exists( ):
+            msg      = ( f"{picture_dir_path = } not valid /nmore message here ??")
+            msg      = ( f"Setup in for pictures in parameters is incorrect\n"
+                           "use >>Search parameters for pictures\n"
+                           "for aisistance " )
+
+
+
+            QMessageBox.information( AppGlobal.main_window,
+                                         title, msg )
     # else:
     #     msg      = ( f"{picture_dir_path} exists")
     #     QMessageBox.information( AppGlobal.main_window,
