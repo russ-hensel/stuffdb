@@ -65,7 +65,7 @@ class Parameters( ):
 
         #self.mode_new_user()
         self.mode_data_sync()
-        #self.mode_data_sync_b()
+        self.mode_data_sync_b()
         # self.mode_ramdisk()
         # self.mode_example_db()
 
@@ -107,8 +107,11 @@ class Parameters( ):
 
         self.notes_only         = False
 
-        self.db_file_name       = "/tmp/ramdisk/target.db"
-        self.db_file_name       = "./data/new_user.db"
+        self.db_file_name       = "./data/example_stuffdb.db"
+
+        self.db_lock_file_name  = None     # if present then db is locked else none
+
+        self.picture_db_root    = "./data"  # wrongish if you are using pictures
 
     # -------
     def mode_data_sync( self ):

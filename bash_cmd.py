@@ -130,6 +130,15 @@ class BashCmd( ):
         subprocess.Popen( args, cwd = cwd )
 
     # -----------------------
+    def reset_run( self, *, cmd_list = None, title = None, cwd = None ):
+        """
+        what it says
+        """
+        self.reset( cmd_list = cmd_list, title = title )
+        self.run( cwd = cwd )
+
+
+    # -----------------------
     def __str__( self ):
 
         a_str   = ">>>>>>>>>>* BashCmd *<<<<<<<<<<<<"
@@ -160,7 +169,7 @@ if __name__ == "__main__":
     """pwd""",
     """cd  ../""",
     """ls *.py""",
-    """TARGET_BASE="/mnt/millhouse/rsync/_projects/stuffdb" """,
+    """TARGET_BASE="something>>>>>>>>>>>>>>>" """,
     """echo   TARGET_BASE""",
     """echo  $TARGET_BASE""",
 

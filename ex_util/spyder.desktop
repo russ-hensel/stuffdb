@@ -1,0 +1,13 @@
+[Desktop Entry]
+#do comments hurt?
+Name=Spyder
+Comment=run spyder from .sh file
+GenericName=Python IDE
+X-GNOME-FullName=Python IDE from Anaconda
+Exec=bash  /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/ex_util/stuffdb_launcher_1.sh
+Icon=      /mnt/8ball1/first6_root/russ/0000/python00/python3/_projects/stuffdb/ex_util/spyder.png
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Development;
+MimeType=

@@ -145,7 +145,7 @@ class CounterIterator:
     """
     see init
     """
-    def __init__(self, *, photo_browse_sub_tab ):
+    def __init__( self, *, photo_browse_sub_tab ):
         """
         what would be out of loop locals are set up here as self.
         what would have been self get a instance variable here like
@@ -155,6 +155,9 @@ class CounterIterator:
         self.photo_browse_sub_tab   = photo_browse_sub_tab
         self.on_first_row           = True
         pbst                        = self.photo_browse_sub_tab
+        self.row_rount              = pbst.model.rowCount()
+            # at time of init
+
         self.ix                     = 0
 
     #-----------------------
@@ -171,9 +174,10 @@ class CounterIterator:
         #     return val
 
         "what would have been photo_browse_sub_tab is now pbst"
+
+        pbst          = self.photo_browse_sub_tab
         while True:
             self.ix       += 1
-            pbst          = self.photo_browse_sub_tab
             #status_label
 
             if pbst.model.rowCount() == 0:
@@ -503,20 +507,22 @@ class ProgressDialog( QDialog ):
         self.setFixedSize(350, 180)
 
         # UI Setup
-        self.layout = QVBoxLayout(self)
-        self.status_label = QLabel("Ready to start...", self)
+        self.layout = QVBoxLayout( self )
+        self.status_label   = QLabel( "Ready to start...", self )
         self.layout.addWidget( self.status_label )
 
-        self.btn_layout = QHBoxLayout()
-        self.pause_btn = QPushButton("Pause")
-        self.halt_btn = QPushButton("Halt")
+        self.btn_layout     = QHBoxLayout()
+        self.pause_btn      = QPushButton("Pause")
+        self.halt_btn       = QPushButton("Halt")
 
-        self.btn_layout.addWidget(self.pause_btn)
+        self.btn_layout.addWidget( self.pause_btn )
         self.btn_layout.addWidget(self.halt_btn)
-        self.layout.addLayout(self.btn_layout)
+        self.layout.addLayout( self.btn_layout )
 
         self.pause_btn.clicked.connect( self.toggle_pause )
         self.halt_btn.clicked.connect( self.halt_process )
+        self.row_count      = iterator.row_rount
+            # initial
 
     #------------------------
     def toggle_pause(self):
@@ -524,19 +530,20 @@ class ProgressDialog( QDialog ):
         ?? not my ususal syntax check it out
         """
         self._is_paused = not self._is_paused
-        self.pause_btn.setText("Continue") if self._is_paused else self.pause_btn.setText("Pause")
+        self.pause_btn.setText( "Continue" ) if self._is_paused else self.pause_btn.setText("Pause")
 
     #------------------------
-    def halt_process(self):
+    def halt_process( self ):
         self._is_halted = True
 
     #------------------------
-    def run_loop(self):
+    def run_loop( self ):
         """
         The core logic. This runs a standard loop but manually
         pumps the Qt event queue.
         what is item ??  zz
         """
+        row_count  = self.row_count
         try:
             for item in self.iterator:
                 #breakpoint()
@@ -544,7 +551,7 @@ class ProgressDialog( QDialog ):
 
                 # --- CHECK HALT ---
                 if self._is_halted:
-                    self.set_main_lable_text( "Main Status: Halted")
+                    self.set_main_lable_text( "Main Status: Halted" )
                     break
 
                 # --- CHECK PAUSE ---
@@ -556,8 +563,8 @@ class ProgressDialog( QDialog ):
                     time.sleep(0.01) # Avoid 100% CPU usage during pause
 
                 # --- UPDATE UI ---
-                self.status_label.setText( f"Importing: {item}" )
-                self.set_main_lable_text( "Main Status: Running ({item})")
+                self.status_label.setText( f"Importing: {item} of {row_count}" )
+                self.set_main_lable_text( "Main Status: Running ({item})" )
 
                 # --- THE MAGIC LINE ---
                 # This keeps the UI responsive and allows clicks to be registered
@@ -2578,10 +2585,10 @@ class PictureBrowseSubTab( QWidget ):
         """
         self.launch_btn.setEnabled( False )
              # CRITICAL: Prevent re-entrancy
-             # not enough want to get main window i think
+             # not enough want to get main window i think zz
 
         it          = CounterIterator( photo_browse_sub_tab = self )
-        self.dial   = ProgressDialog( iterator = it   )
+        self.dial   = ProgressDialog( iterator = it )
 
         # Show the dialog non-modally
         self.dial.show()

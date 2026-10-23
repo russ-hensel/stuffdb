@@ -484,61 +484,67 @@ class ShellExe( object ):
                                for i_code_line in code_lines
                                    if i_code_line.strip() != "" ]
 
-        # debug:
-        # for ix, i_item in enumerate( code_lines_new ):
-        #     msg     = f"    {ix}: >{i_item}<"
-        #     print( msg )
+        # claude wrote me -- !! optimize if it works -- maybe rework api
+        import bash_cmd
+        a_bash_cmd     = bash_cmd.BashCmd(  )
+        # a_bash_cmd.run(   )
+        a_bash_cmd.reset_run( cmd_list = code_lines_new[ 1: ], title = code_lines_new[ 0 ] )
 
-        # works but ugly
-        # now combine across \
-        code_lines_newer   = []
-        got_bs             = False    # bs is back_slash line continuation
-        for ix, i_code_line in enumerate( code_lines_new ):
+        # # debug:
+        # # for ix, i_item in enumerate( code_lines_new ):
+        # #     msg     = f"    {ix}: >{i_item}<"
+        # #     print( msg )
 
-            if got_bs:
-                len_newer  = len( code_lines_newer )
-                code_lines_newer[ len_newer -1 ] += i_code_line
+        # # works but ugly
+        # # now combine across \
+        # code_lines_newer   = []
+        # got_bs             = False    # bs is back_slash line continuation
+        # for ix, i_code_line in enumerate( code_lines_new ):
 
-            else:
-                if i_code_line.startswith( "#" ):
-                    i_code_line =  f"echo '{i_code_line}'"
-                code_lines_newer.append( i_code_line )
+        #     if got_bs:
+        #         len_newer  = len( code_lines_newer )
+        #         code_lines_newer[ len_newer -1 ] += i_code_line
 
-            # remove trailing \
+        #     else:
+        #         if i_code_line.startswith( "#" ):
+        #             i_code_line =  f"echo '{i_code_line}'"
+        #         code_lines_newer.append( i_code_line )
 
-            last_line   = len( code_lines_newer ) - 1
-            if code_lines_newer[ last_line ].endswith( "\\" ):
-                got_bs             = True
-                code_lines_newer[ last_line ] = code_lines_newer[ last_line ].removesuffix( "\\" )
+        #     # remove trailing \
 
-            else:
-                got_bs             = False
+        #     last_line   = len( code_lines_newer ) - 1
+        #     if code_lines_newer[ last_line ].endswith( "\\" ):
+        #         got_bs             = True
+        #         code_lines_newer[ last_line ] = code_lines_newer[ last_line ].removesuffix( "\\" )
 
-        code_lines_new   = code_lines_newer
+        #     else:
+        #         got_bs             = False
 
-        # debug
-        # for ix, i_item in enumerate( code_lines_new ):
-        #     msg     = f"    {ix}: >{i_item}<"
-        #     print( msg )
+        # code_lines_new   = code_lines_newer
+
+        # # debug
+        # # for ix, i_item in enumerate( code_lines_new ):
+        # #     msg     = f"    {ix}: >{i_item}<"
+        # #     print( msg )
 
 
-        #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}")
-        # line one == 0 is a comment add echo in front and quote
-        code_lines_new[ 0 ]    = f"echo '{code_lines_new[ 0 ]}'   "
+        # #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}")
+        # # line one == 0 is a comment add echo in front and quote
+        # code_lines_new[ 0 ]    = f"echo '{code_lines_new[ 0 ]}'   "
 
-        #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}")
-        code_lines_new  = self.add_echo( code_lines_new )
-        debug_msg       = ( f""""run_code_lines in shellext    >>shell {code_lines_new =}""")
-        logging.log( LOG_LEVEL,  debug_msg, )
+        # #rint( f"run_code_lines in shellext    >>shell {code_lines_new =}")
+        # code_lines_new  = self.add_echo( code_lines_new )
+        # debug_msg       = ( f""""run_code_lines in shellext    >>shell {code_lines_new =}""")
+        # logging.log( LOG_LEVEL,  debug_msg, )
 
-        cmd_str     = ";".join( code_lines_new )
-        cmd_str     = f"""gnome-terminal -- bash -c "{cmd_str}; echo 'exec bash' ;exec bash" """
+        # cmd_str     = ";".join( code_lines_new )
+        # cmd_str     = f"""gnome-terminal -- bash -c "{cmd_str}; echo 'exec bash' ;exec bash" """
 
-        debug_msg   = ( f"run_code_lines about to os.system with {cmd_str = }" )
-        logging.log( LOG_LEVEL,  debug_msg, )
+        # debug_msg   = ( f"run_code_lines about to os.system with {cmd_str = }" )
+        # logging.log( LOG_LEVEL,  debug_msg, )
 
-        result = os.system( cmd_str )
-        #rint( f"result = os.system >>{result}<<\n\n")
+        # result = os.system( cmd_str )
+        # #rint( f"result = os.system >>{result}<<\n\n")
 
     # ----------------------------------
     def add_echo(self, code_lines ):
@@ -705,26 +711,22 @@ class Ide( ):
         #file     = some file
         #ide= some ide command
         """
-
-
-        # look for
-
-        # meta_line   = [ j_line for i_line in code_lines if ( j_line := i_line.strip() ).startswith( "#" ) ]
-        # for i_line in meta_line:
-        #     print( i_line )
         venv_lines    = self.get_line_with_prefix( code_lines, "#>venv" )
         file_lines    = self.get_line_with_prefix( code_lines, "#>file" )
         ide_lines     = self.get_line_with_prefix( code_lines, "#>ide" )
             # run file not code
 
         py_file_name  = self.get_argument( file_lines, )
-
         venv_name     = self.get_argument( venv_lines, )
-
-
         ide_cmd       = self.get_argument( ide_lines, )
+
         if ide_cmd == "":
             ide_cmd = AppGlobal.ide_cmd
+
+        if venv_name == "":
+            error_text = ( ">>Ide.. needs a #>venv setting" )
+            gui_qt_ext.error_message_box( error_text )
+            return
 
         if venv_name == "error" or py_file_name == "error" or ide_cmd == "error":
             error_text = ( "There is an error in the arguments to this >>Ide.." )
@@ -756,7 +758,6 @@ class Ide( ):
                 a_file.write( f"{i_line}\n" )  # note addition of \n
 
         if py_file_name == "":
-
             file_name  = self.ide_temp_py
             with open( file_name, 'w' ) as a_file:
                 for i_line in code_lines[ 1: ]:    # skip first line
